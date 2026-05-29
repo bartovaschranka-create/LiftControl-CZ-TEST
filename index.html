@@ -1109,29 +1109,10 @@ function migrateImportedRecord(record){
   const r = Object.assign({}, record || {});
   if(!r.id) r.id = uid();
 
-  // Starší zálohy měly u sekce C opačnou logiku:
-  // ANO = bez závad/závada, NE = závaday.
-  // Aktuální verze používá ANO = bez závad, NE = závada.
-  const map = oldCMapForRecord(r);
-  const migratedC = {};
-  Object.entries(map).forEach(([newKey, oldKey]) => {
-    if(oldKey && Object.prototype.hasOwnProperty.call(record, oldKey)){
-      migratedC[newKey] = invertOldCAnswer(record[oldKey]);
-      migratedC[newKey + '_p'] = record[oldKey + '_p'] || '';
-    } else {
-      migratedC[newKey] = 'ANO';
-      migratedC[newKey + '_p'] = '';
-    }
-  });
-
-  // Smaž původní C pole, aby se nepletla nová struktura.
-  Object.keys(r).forEach(k => {
-    if(/^C[0-9]+(_p)?$/.test(k) || /^C_/.test(k)) delete r[k];
-  });
-  Object.assign(r, migratedC);
-
-  // Starší protokoly neobsahují nové kontroly funkcí. Necháváme je prázdné,
-  // aby protokol netvrdil kontrolu, která se v původní verzi nevyplnila.
+  // Importované/starší protokoly zůstávají v původní logice sekce C:
+  // ANO = závada/poškození, NE = bez závad.
+  r.cLogic = r.cLogic || 'legacy';
+  r.importedFrom = r.importedFrom || '5.2';
   if(!r.savedAt) r.savedAt = new Date().toISOString();
   return r;
 }
@@ -1296,11 +1277,19 @@ function isRevizeExpired(r){
 }
 function syncRevizeIssue(r){ if(!isRevizeExpired(r)) return; r.B2 = 'NE'; r.zaverOprava = 'ANO'; r.zaverBezpecny = 'NE'; const msg = 'Prošlá platnost revize.'; const cur = String(r.B2_p||'').trim(); r.B2_p = !cur ? msg : (cur.toLowerCase().includes('prošlá platnost revize') ? cur : cur + ' ' + msg); }
 function isInvertedIssueKey(key){ return key === 'zaverServis' || key === 'zaverOprava'; }
-function isProblemAnswer(key, value){
+function getCLogic(record){
+  return record && record.cLogic === 'positive' ? 'positive' : 'legacy';
+}
+function isCProblemAnswer(record, value){
   if(value !== 'ANO' && value !== 'NE') return false;
+  return getCLogic(record) === 'positive' ? value === 'NE' : value === 'ANO';
+}
+function isProblemAnswer(key, value, record){
+  if(value !== 'ANO' && value !== 'NE') return false;
+  if(isGeneralCheckKey(key)) return isCProblemAnswer(record, value);
   return isInvertedIssueKey(key) ? value === 'ANO' : value === 'NE';
 }
-function countIssues(r){ return getStepsForRecord(r).filter(s => (s.type === 'yn' || s.type === 'yntext' || s.type === 'yntextphoto') && isProblemAnswer(s.k, r[s.k])).length + (isRevizeExpired(r) ? 1 : 0); }
+function countIssues(r){ return getStepsForRecord(r).filter(s => (s.type === 'yn' || s.type === 'yntext' || s.type === 'yntextphoto') && isProblemAnswer(s.k, r[s.k], r)).length + (isRevizeExpired(r) ? 1 : 0); }
 function hasIssue(r){ return countIssues(r) > 0 || r.zaverOprava === 'ANO' || r.zaverBezpecny === 'NE' || isRevizeExpired(r); }
 function yn(v){ return { ano: v==='ANO' ? '☒' : '☐', ne: v==='NE' ? '☒' : '☐' }; }
 function isGeneralCheckKey(key){ return /^C[0-9]+$/.test(String(key||'')) || /^C_/.test(String(key||'')); }
@@ -1352,8 +1341,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid()};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'positive', appVersion:'1.0 / 5.26'};
   rec = Object.assign({}, rec, prefill || {});
+  if(!editId && !rec.cLogic) rec.cLogic = 'positive';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.0 / 5.26';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -1398,11 +1389,13 @@ function showStep(){
   els.stepChip.textContent = sectionLabel(s.section||'Úvodní údaje');
   els.title.textContent = s.t;
   els.stepDesc.textContent = isGeneralCheckKey(s.k)
-    ? 'Logika sekce C: ANO = bez závad, NE = závada.'
+    ? (getCLogic(rec) === 'positive'
+      ? 'Logika sekce C: ANO = bez závad, NE = závada.'
+      : 'Starší protokol: původní logika sekce C – ANO = závada, NE = bez závad.')
     : '';
   els.nextBtn.textContent = stepIndex === activeSteps.length-1 ? 'Uložit protokol' : 'Další';
 
-  const invertedVisual = isInvertedIssueKey(s.k);
+  const invertedVisual = isInvertedIssueKey(s.k) || (isGeneralCheckKey(s.k) && getCLogic(rec) === 'legacy');
   const yesClass = invertedVisual ? 'no' : 'yes';
   const noClass = invertedVisual ? 'yes' : 'no';
 
@@ -1418,7 +1411,7 @@ function showStep(){
   } else if(s.type === 'yn'){
     html = `<div class="yesno"><button class="yn-btn ${yesClass}" data-answer="ANO">✔ ANO</button><button class="yn-btn ${noClass}" data-answer="NE">✖ NE</button></div>`;
   } else if(s.type === 'yntext' || s.type === 'yntextphoto'){
-    const needsNote = s.k === 'B1' ? rec[s.k]==='NE' : (isGeneralCheckKey(s.k) ? rec[s.k]==='ANO' : rec[s.k]==='NE');
+    const needsNote = s.k === 'B1' ? rec[s.k]==='NE' : (isGeneralCheckKey(s.k) ? isProblemAnswer(s.k, rec[s.k], rec) : rec[s.k]==='NE');
     const label = s.k === 'B1' ? 'Závady' : 'Popis závady';
     const issuePhoto = (rec.issuePhotos || {})[s.k] || {};
     const issueSrc = getPhotoSrc(issuePhoto);
@@ -1571,7 +1564,7 @@ function showStep(){
   els.content.querySelectorAll('[data-answer]').forEach(btn => btn.addEventListener('click', () => { rec[s.k] = btn.dataset.answer; nextStep(); }));
   els.content.querySelectorAll('[data-answer-text]').forEach(btn => btn.addEventListener('click', () => {
     rec[s.k] = btn.dataset.answerText;
-    const needsNote = s.k === 'B1' ? btn.dataset.answerText === 'NE' : (isGeneralCheckKey(s.k) ? btn.dataset.answerText === 'ANO' : btn.dataset.answerText === 'NE');
+    const needsNote = s.k === 'B1' ? btn.dataset.answerText === 'NE' : (isGeneralCheckKey(s.k) ? isProblemAnswer(s.k, btn.dataset.answerText, rec) : btn.dataset.answerText === 'NE');
     if(!needsNote){
       rec[s.textKey] = '';
       nextStep();
@@ -1726,6 +1719,8 @@ async function nextStep(){
   syncModelPreferences(rec);
   const okSave = confirm('Chceš protokol uložit?');
   if(!okSave) return;
+  if(!rec.cLogic) rec.cLogic = 'positive';
+  if(!rec.appVersion) rec.appVersion = '1.0 / 5.26';
   rec.savedAt = new Date().toISOString();
   await saveProtocol(rec);
   closeWizard();
@@ -1922,7 +1917,7 @@ function rowsHtml(items,r, opts={}){
     let noteText = note;
     if(it.chargerCheck && ch === 'BEZ'){ noteText = 'Bez nabíječe – není závada'; }
     if(it.socketCheck && sock === 'BEZ'){ noteText = 'Bez zásuvky v koši 230 V – není závada'; }
-    const cls = isProblemAnswer(it.k, val) ? 'status-bad' : '';
+    const cls = isProblemAnswer(it.k, val, r) ? 'status-bad' : '';
     return `<tr class="${cls}">${numbered?`<td class="num-col">${idx+1}</td>`:''}<td class="item-col">${escapeHtml(it.printLabel||it.l)}</td><td class="yn-col"><span class="box">${marks.ano}</span></td><td class="yn-col"><span class="box">${marks.ne}</span></td><td class="note-col">${escapeHtml(noteText)}</td></tr>`;
   }).join('');
 }
@@ -1994,7 +1989,7 @@ function renderPaper(r){
           </div>
         </div>
         <div class="section-card">
-          <div class="section-head">C. Všeobecná kontrola zařízení <span class="section-note">ANO = bez závad &nbsp;&nbsp; NE = závada</span></div>
+          <div class="section-head">C. Všeobecná kontrola zařízení <span class="section-note">${getCLogic(r) === 'positive' ? 'ANO = bez závad &nbsp;&nbsp; NE = závada' : 'Starší logika: ANO = závada &nbsp;&nbsp; NE = bez závad'}</span></div>
           <table class="proto-table"><thead><tr><th class="num-col">Č.</th><th class="item-col">Kontrolovaná položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.C,r,{numbered:true})}</tbody></table>
         </div>
         <div class="page-number">Strana 1 z 2</div>
