@@ -518,6 +518,112 @@ header .header-sub{
   font-weight:500;
 }
 
+
+/* print hotfix: remove blank pages after the 2 protocol pages */
+@media print{
+  @page{
+    size:A4 portrait;
+    margin:0;
+  }
+
+  html, body{
+    width:210mm!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+
+  body > *:not(#preview){
+    display:none!important;
+  }
+
+  #preview{
+    display:block!important;
+    position:static!important;
+    width:210mm!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+
+  #preview .modal-content,
+  #preview .preview-shell,
+  #preview .paper-wrap,
+  #previewBody,
+  #preview .paper,
+  #preview .paper-doc{
+    display:block!important;
+    position:static!important;
+    width:210mm!important;
+    min-width:0!important;
+    max-width:210mm!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+
+  #preview .preview-header,
+  #preview .preview-actions{
+    display:none!important;
+  }
+
+  #preview .paper-page{
+    display:flex!important;
+    flex-direction:column!important;
+    width:210mm!important;
+    max-width:210mm!important;
+    height:296.5mm!important;
+    min-height:0!important;
+    max-height:296.5mm!important;
+    margin:0!important;
+    padding:10mm 8mm 8mm 8mm!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    background:#fff!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+
+  #preview .paper-page:first-child{
+    page-break-after:always!important;
+    break-after:page!important;
+  }
+
+  #preview .paper-page:last-child{
+    page-break-after:auto!important;
+    break-after:auto!important;
+  }
+
+  #preview .paper-page + .paper-page{
+    page-break-before:auto!important;
+    break-before:auto!important;
+  }
+
+  #preview .paper-doc::before,
+  #preview .paper-doc::after,
+  #previewBody::before,
+  #previewBody::after,
+  #preview .paper::before,
+  #preview .paper::after{
+    content:none!important;
+    display:none!important;
+  }
+}
+
 </style>
 </head>
 <body>
