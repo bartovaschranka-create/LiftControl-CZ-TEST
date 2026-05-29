@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LiftCheck CZ">
+<title>LiftCheck CZ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef4fb;--panel:#ffffff;--panel2:#f8fbff;--text:#0f172a;--muted:#64748b;--line:#dbe6f2;--primary:#2563eb;--primary2:#1d4ed8;--danger:#dc2626;--ok:#16a34a;--shadow:0 10px 30px rgba(15,23,42,.08);--radius:18px}
+body.dark{--bg:#0b1220;--panel:#111827;--panel2:#0f172a;--text:#e5e7eb;--muted:#94a3b8;--line:#243244;--primary:#3b82f6;--primary2:#2563eb;--danger:#ef4444;--ok:#22c55e;--shadow:0 10px 30px rgba(0,0,0,.28)}
+*{box-sizing:border-box} html,body{margin:0;padding:0;overscroll-behavior-y:none} body{font-family:Inter,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--panel2) 100%);color:var(--text);overscroll-behavior-y:none}
+body.dark header{background:rgba(2,6,23,.94)}
+header{position:sticky;top:0;z-index:20;background:rgba(15,23,42,.92);backdrop-filter:blur(10px);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 16px;min-height:calc(env(safe-area-inset-top,0px) + 70px);box-shadow:0 8px 24px rgba(15,23,42,.22);overscroll-behavior:none;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+.theme-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:8px 11px;font-size:.82rem;white-space:nowrap}
+.settings-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:14px;padding:9px 12px;font-size:1.15rem;line-height:1;min-width:46px}
+.settings-panel{display:grid;gap:12px}
+.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.settings-note{font-size:.84rem;color:var(--muted);line-height:1.45}
+.stat-total{background:var(--panel2);color:var(--text);border-color:var(--line)}
+.stat-issues{background:#dc2626;color:#fff;border-color:#b91c1c}
+.stat-ok{background:#16a34a;color:#fff;border-color:#15803d}
+.stat-issues .stat-label,.stat-ok .stat-label{color:rgba(255,255,255,.82)}
+.stat-issues .stat-value,.stat-ok .stat-value{color:#fff}
+.badge-ok{background:#16a34a!important;color:#fff!important;border-color:#15803d!important}
+.badge-warn{background:#dc2626!important;color:#fff!important;border-color:#b91c1c!important}
+body.dark .stat-total{background:var(--panel2);color:var(--text);border-color:var(--line)}
+body.dark .stat-issues{background:#dc2626;color:#fff;border-color:#b91c1c}
+body.dark .stat-ok{background:#16a34a;color:#fff;border-color:#15803d}
+
+.header-title{font-size:1.15rem;font-weight:700;line-height:1.25}.test-badge{display:inline-flex;margin-left:8px;padding:3px 8px;border-radius:999px;background:#dc2626;color:#fff;font-size:.72rem;vertical-align:middle}.photo-preview{margin-top:12px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#f8fbff}.photo-preview img{display:block;width:100%;height:auto}.photo-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0}.photo-box{border:1px solid #000;min-height:82px;text-align:center;font-size:8.2px;padding:3px}.photo-box img{width:100%;height:62px;object-fit:cover;display:block;margin-bottom:3px;cursor:zoom-in}.issue-photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}.issue-photo-box{border:1px solid #000;min-height:92px;text-align:center;font-size:8.2px;padding:4px}.issue-photo-box img{width:100%;height:74px;object-fit:cover;display:block;margin-bottom:3px;cursor:zoom-in}.photo-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.photo-thumb{margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#f8fbff}.photo-thumb img{display:block;width:100%;max-height:220px;object-fit:contain;cursor:zoom-in}.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}.lightbox.show{display:flex}.lightbox img{max-width:96vw;max-height:88vh;object-fit:contain}.lightbox-close{display:none}.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:58px;border-radius:16px;background:rgba(255,255,255,.14);color:#fff;font-size:38px;line-height:1;display:flex;align-items:center;justify-content:center}.lightbox-prev{left:14px}.lightbox-next{right:14px}.lightbox-counter{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);border-radius:999px;padding:6px 12px;font-size:.9rem}.header-sub{font-size:.82rem;color:#cbd5e1;margin-top:4px}
+body.dark .hero,body.dark .summary-card,body.dark .card,body.dark .wizard-shell,body.dark .preview-shell{background:var(--panel);border-color:var(--line)}
+body.dark .hero,body.dark .wizard-shell{background:linear-gradient(180deg,#111827 0%,#0f172a 100%)}
+body.dark .stat,body.dark .meta,body.dark .empty,body.dark .photo-preview,body.dark .photo-thumb{background:var(--panel2);border-color:var(--line)}
+body.dark .search,body.dark .filter,body.dark input,body.dark textarea,body.dark select,body.dark .modal-content,body.dark .ghost{background:#0f172a;color:var(--text);border-color:var(--line)}
+body.dark .secondary{background:#243244;color:var(--text)}
+body.dark input::placeholder,body.dark textarea::placeholder{color:#94a3b8}
+body.dark .paper{background:#fff;color:#111827}
+body.dark .paper *{color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:22px}.dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-bottom:18px}
+.hero,.summary-card,.card,.wizard-shell,.preview-shell{background:var(--panel);border:1px solid rgba(219,230,242,.8);border-radius:var(--radius);box-shadow:var(--shadow)}
+.hero{padding:18px;background:linear-gradient(135deg,#ffffff 0%,#f6faff 100%)}.hero h1,.hero p{display:none}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:0}
+.summary-card{padding:18px}.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.stat{padding:14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}.stat-label{font-size:.8rem;color:var(--muted);margin-bottom:6px}.stat-value{font-weight:700;font-size:1.3rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 14px}.toolbar-right{display:flex;gap:10px;flex-wrap:wrap}.search,.filter{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:.95rem}.search{min-width:250px}
+.list{display:grid;gap:14px}.card{padding:16px 18px}.card-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.card-title{font-size:1.06rem;font-weight:700}.card-sub{font-size:.88rem;color:var(--muted);margin-top:4px}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.badge{padding:6px 10px;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid transparent}.badge-ok{background:#ecfdf3;color:#166534;border-color:#bbf7d0}.badge-warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}.badge-info{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.meta{background:#f8fbff;border:1px solid var(--line);padding:12px;border-radius:14px}.meta-label{font-size:.75rem;color:var(--muted);margin-bottom:4px}.meta-value{font-weight:600;font-size:.92rem}
+.actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weight:600;font-size:.94rem}button:disabled{opacity:.6;cursor:not-allowed}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#e8eef6;color:#0f172a}.ghost{background:#fff;border:1px solid var(--line);color:#0f172a}.danger{background:var(--danger);color:#fff}.mini{padding:9px 12px;font-size:.86rem;border-radius:12px}
+.empty{padding:28px;border:2px dashed var(--line);border-radius:18px;background:#fbfdff;text-align:center;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;align-items:center;justify-content:center;padding:18px;z-index:40}.modal.show{display:flex}.modal-content{width:min(100%,760px);max-height:92vh;overflow:auto;background:#fff;border-radius:24px;box-shadow:0 24px 60px rgba(15,23,42,.28)}
+.wizard-shell{padding:22px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}.preview-shell{padding:18px;background:#f8fbff}
+.progress-wrap{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.progress-label{font-size:.84rem;color:var(--muted)}.progress{height:10px;background:#e8eef6;border-radius:999px;overflow:hidden;margin-bottom:16px}.progress-bar{height:100%;background:linear-gradient(90deg,#3b82f6 0%,#1d4ed8 100%);width:0%}
+.step-chip{display:inline-flex;align-items:center;gap:8px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:8px 12px;font-size:.8rem;font-weight:700;margin-bottom:14px}.step-title{margin:0 0 8px;font-size:1.3rem}.step-desc{margin:0 0 16px;color:var(--muted);line-height:1.5}
+.yesno{display:grid;grid-template-columns:1fr 1fr;gap:12px}.yn-btn{min-height:72px;font-size:1.15rem;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:10px}.yes{background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);color:#fff}.no{background:linear-gradient(180deg,#ef4444 0%,#dc2626 100%);color:#fff}
+.field{margin-top:12px} label{display:block;font-size:.86rem;color:var(--muted);margin-bottom:7px;font-weight:600} input,textarea,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-size:1rem;background:#fff;color:var(--text);outline:none}
+input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
+.suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
+.wizard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 20%);padding-top:16px}
+.preview-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.preview-title{font-size:1.05rem;font-weight:700}.preview-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}.preview-actions-left,.preview-actions-right{display:flex;gap:10px;flex-wrap:wrap}
+.paper-wrap{background:#fff;padding:12px;border-radius:18px;overflow:auto}.paper{background:#fff;color:#000;padding:9mm 8mm 8mm 8mm;font-size:10.9px;line-height:1.24;border:none;box-shadow:none;width:210mm;max-width:100%;margin:0 auto}.paper h2{margin:0 0 6px;text-align:center;font-size:18px;letter-spacing:.6px;font-weight:700}.paper .subhead{margin:0 0 9px;text-align:center;font-size:10.2px;color:#000}.paper table{width:100%;border-collapse:collapse;margin-bottom:6px;table-layout:auto}
+.paper table tr{page-break-inside:avoid;break-inside:avoid}
+.paper table thead,.paper table tbody{page-break-inside:avoid;break-inside:avoid}.paper td,.paper th{border:1px solid #000;padding:5px 6px;vertical-align:top}.paper th{font-weight:700;text-align:left;background:#fff}.paper .top-table td{padding:4px 5px}.paper .section-block{margin-bottom:7px}
+.paper .section-block{page-break-before:auto}.paper .section-title{font-weight:700;margin:9px 0 4px;font-size:11.1px;background:#fff;color:#000;border-top:2px solid #000;border-bottom:2px solid #000;border-left:1px solid #000;border-right:1px solid #000;padding:4px 7px;letter-spacing:.1px}.paper .check-col{width:18%;font-weight:600;white-space:nowrap}.paper .desc-col{width:22%}.paper .status-ok{background:#fff}.paper tr.status-bad td,.paper tr.status-bad th{background:#fee2e2!important;border:2px solid #dc2626!important}.issue-label{display:inline-block;margin-right:4px;padding:2px 5px;border:1px solid #dc2626;color:#991b1b;font-weight:700;font-size:8px;background:#fff1f2}.paper .crossed-out td{color:#666;text-decoration:line-through}.paper .expired{background:#fff;color:#000;font-weight:700}.paper .notes{min-height:34px}.paper .footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;page-break-inside:avoid;break-inside:avoid}.paper .sign-box{border:1px solid #000;padding:12px;min-height:80px}.paper .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400;letter-spacing:.2px}.paper .evaluation-text{font-weight:700}
+.qr-reader{width:100%;min-height:280px;border:1px dashed var(--line);border-radius:18px;overflow:hidden;background:#0f172a}.qr-help{margin-top:10px;padding:12px 14px;border-radius:14px;background:#f8fbff;border:1px solid var(--line);font-size:.9rem;color:var(--muted)}.history-list{display:grid;gap:10px}.history-item{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hidden{display:none !important}
+@media print{body{background:#fff}body *{visibility:hidden}#preview,#preview *{visibility:visible}#preview{position:absolute;left:0;top:0;width:100%;display:block !important;background:#fff;padding:0;margin:0}#preview .modal-content{width:100% !important;max-height:none !important;overflow:visible !important;border-radius:0 !important;box-shadow:none !important;background:#fff !important}#preview .preview-shell{padding:0 !important;background:#fff !important;overflow:visible !important}#preview .preview-header,#preview .preview-actions{display:none !important}#preview .paper-wrap{padding:0;background:#fff;border-radius:0;overflow:visible !important}#preview .paper{box-shadow:none;width:auto;max-width:none;margin:0;padding:7mm 7mm 6mm 7mm}#preview .paper table tr{page-break-inside:avoid;break-inside:avoid}#preview .paper .section-title{page-break-after:avoid}#preview .paper .footer-grid{page-break-inside:avoid;break-inside:avoid}@page{size:A4 portrait;margin:6mm}}
+@media (max-width:920px){.dashboard{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.container{padding:14px}.toolbar,.preview-header,.preview-actions{flex-direction:column;align-items:stretch}.meta-grid,.yesno,.summary-grid{grid-template-columns:1fr}.modal-content{width:100%;max-height:100vh;border-radius:18px}.search{min-width:0;width:100%}.toolbar-right{width:100%}.hero-actions{flex-direction:column}.hero-actions button{width:100%}}
+
+/* v19 fix: dashboard stat colors must override base .stat rule */
+.summary-card .summary-grid .stat.stat-total{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important;}
+.summary-card .summary-grid .stat.stat-issues{background:#dc2626!important;color:#fff!important;border-color:#b91c1c!important;}
+.summary-card .summary-grid .stat.stat-ok{background:#16a34a!important;color:#fff!important;border-color:#15803d!important;}
+.summary-card .summary-grid .stat.stat-issues .stat-label,
+.summary-card .summary-grid .stat.stat-ok .stat-label{color:rgba(255,255,255,.88)!important;}
+.summary-card .summary-grid .stat.stat-issues .stat-value,
+.summary-card .summary-grid .stat.stat-ok .stat-value{color:#fff!important;}
+body.dark .summary-card .summary-grid .stat.stat-total{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important;}
+body.dark .summary-card .summary-grid .stat.stat-issues{background:#dc2626!important;color:#fff!important;border-color:#b91c1c!important;}
+body.dark .summary-card .summary-grid .stat.stat-ok{background:#16a34a!important;color:#fff!important;border-color:#15803d!important;}
+
+/* v48 protocol redesign */
+.summary-grid .stat{display:flex;align-items:center;gap:12px}
+.stat-ico{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.78);font-size:1.05rem;flex:0 0 36px}
+.stat-total .stat-ico{background:#dbeafe}.stat-issues .stat-ico{background:rgba(255,255,255,.18)}.stat-ok .stat-ico{background:rgba(255,255,255,.18)}.stat-last .stat-ico{background:#e2e8f0}
+.actions .secondary,.preview-actions .secondary,.preview-actions .ghost{background:#e5e7eb;color:#111827;border:1px solid #cbd5e1}
+.actions .secondary:hover,.preview-actions .secondary:hover,.preview-actions .ghost:hover{background:#dbe1e8}
+#preview .modal-content{width:min(96vw,1380px);max-height:94vh}
+#preview .preview-shell{padding:16px;background:#edf1f5}
+#preview .paper-wrap{background:#edf1f5;padding:10px;border-radius:18px}
+.paper{width:100%!important;max-width:none!important;margin:0 auto;padding:0!important;border:none;box-shadow:none;background:transparent!important;color:#111}
+.paper-doc{display:grid;gap:14px}
+.paper-page{background:#fff;border:1px solid #d1d5db;border-radius:6px;box-shadow:0 2px 12px rgba(15,23,42,.06);width:100%;min-height:1120px;padding:18mm 14mm 14mm 14mm;display:flex;flex-direction:column;gap:10px}
+.paper-header{text-align:center;margin-bottom:4px}.paper-header h2{margin:0 0 4px!important;font-size:24px!important;letter-spacing:.2px}.paper-header .subhead{font-size:13px!important;margin:0!important;color:#333!important}
+.proto-meta{width:100%;border-collapse:collapse;font-size:12.5px}.proto-meta td,.proto-meta th,.proto-table td,.proto-table th{border:1px solid #707070;padding:6px 7px;vertical-align:top}
+.proto-meta td.label{width:16%;font-weight:700;background:#f2f2f2}.proto-meta td.value{width:34%}
+.paper-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section-card{display:flex;flex-direction:column;gap:0}
+.section-head{border:1px solid #707070;background:#ededed;padding:6px 8px;font-weight:700;font-size:12.8px}
+.section-note{float:right;font-weight:600;font-size:11px;color:#333}
+.proto-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.proto-table th{background:#f3f4f6;font-weight:700}.proto-table .num-col{width:34px;text-align:center}.proto-table .item-col{width:auto}.proto-table .yn-col{width:48px;text-align:center}.proto-table .note-col{width:38%}
+.box{font-size:16px;line-height:1;display:inline-block}.muted-note{color:#555;font-size:11px}
+.findings-box{border:1px solid #707070;min-height:92px;padding:8px}.findings-lines{display:grid;gap:10px;margin-top:8px}.findings-lines div{border-bottom:1px solid #999;height:20px}
+.photo-section{border:1px solid #707070}.photo-section .section-head{border:0;border-bottom:1px solid #707070}.photo-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:0}.photo-mini{border-right:1px solid #707070;padding:6px;font-size:9px;text-align:center;min-height:112px}.photo-mini:last-child{border-right:none}.photo-mini img{width:100%;height:70px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:5px}
+.issue-strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #707070}.issue-mini{padding:6px;border-right:1px solid #707070;min-height:84px;font-size:10px;text-align:center}.issue-mini:last-child{border-right:none}.issue-mini img{width:100%;height:56px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}
+.conclusion-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:10px}.signature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.signature-grid > div{border:1px solid #707070;border-top:none;padding:8px;min-height:74px}
+.page-number{text-align:right;font-size:11px;color:#333;margin-top:auto}
+@media print{
+  #preview .paper-wrap{padding:0!important;background:#fff!important}
+  .paper-doc{gap:0}
+  .paper-page{border:none;box-shadow:none;border-radius:0;min-height:auto;padding:10mm 8mm 8mm 8mm;page-break-after:always;break-after:page}
+  .paper-page:last-child{page-break-after:auto;break-after:auto}
+  .paper-header h2{font-size:21px!important}
+  .proto-meta{font-size:11.5px}.proto-table{font-size:10.9px}
+  .photo-mini{min-height:100px}.issue-mini{min-height:72px}
+  @page{size:A4 portrait;margin:0}
+}
+@media (max-width:900px){.paper-row-2,.conclusion-grid{grid-template-columns:1fr}.paper-page{padding:10mm 8mm}}
+
+
+/* v49 hard print fix: A4 portrait, no half-page scaling */
+@media print{
+  html, body{
+    width:210mm !important;
+    min-width:210mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#fff !important;
+    overflow:visible !important;
+  }
+
+  body *{
+    visibility:hidden !important;
+  }
+
+  #preview, #preview *,
+  #previewBody, #previewBody *{
+    visibility:visible !important;
+  }
+
+  #preview{
+    position:absolute !important;
+    inset:auto !important;
+    left:0 !important;
+    top:0 !important;
+    width:210mm !important;
+    min-width:210mm !important;
+    height:auto !important;
+    display:block !important;
+    background:#fff !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow:visible !important;
+  }
+
+  #preview .modal-content,
+  #preview .preview-shell,
+  #preview .paper-wrap,
+  #previewBody{
+    width:210mm !important;
+    min-width:210mm !important;
+    max-width:none !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+  }
+
+  #preview .preview-header,
+  #preview .preview-actions{
+    display:none !important;
+  }
+
+  #preview .paper{
+    width:210mm !important;
+    min-width:210mm !important;
+    max-width:210mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#fff !important;
+    box-shadow:none !important;
+    border:0 !important;
+    transform:none !important;
+  }
+
+  #preview .paper-doc{
+    display:block !important;
+    width:210mm !important;
+    min-width:210mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+
+  #preview .paper-page{
+    width:210mm !important;
+    min-width:210mm !important;
+    max-width:210mm !important;
+    min-height:297mm !important;
+    height:297mm !important;
+    margin:0 !important;
+    padding:11mm 9mm 9mm 9mm !important;
+    box-sizing:border-box !important;
+    display:flex !important;
+    flex-direction:column !important;
+    page-break-after:always !important;
+    break-after:page !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+    overflow:hidden !important;
+  }
+
+  #preview .paper-page:last-child{
+    page-break-after:auto !important;
+    break-after:auto !important;
+  }
+
+  #preview .paper-header h2{
+    font-size:20px !important;
+    line-height:1.15 !important;
+  }
+
+  #preview .paper-header .subhead{
+    font-size:10.5px !important;
+    line-height:1.25 !important;
+  }
+
+  #preview .proto-meta{
+    font-size:10.5px !important;
+  }
+
+  #preview .proto-table{
+    font-size:9.7px !important;
+    line-height:1.15 !important;
+  }
+
+  #preview .proto-meta td,
+  #preview .proto-meta th,
+  #preview .proto-table td,
+  #preview .proto-table th{
+    padding:3.5px 4.5px !important;
+  }
+
+  #preview .section-head{
+    font-size:10.8px !important;
+    padding:4.5px 6px !important;
+  }
+
+  #preview .photo-mini img{
+    height:54px !important;
+  }
+
+  #preview .photo-mini{
+    min-height:86px !important;
+    font-size:7.8px !important;
+    padding:4px !important;
+  }
+
+  #preview .issue-mini{
+    min-height:62px !important;
+    font-size:8px !important;
+    padding:4px !important;
+  }
+
+  #preview .issue-mini img{
+    height:44px !important;
+  }
+
+  #preview .findings-box{
+    min-height:58px !important;
+    padding:5px !important;
+  }
+
+  #preview .signature-grid > div{
+    min-height:54px !important;
+    padding:6px !important;
+  }
+
+  #preview .page-number{
+    margin-top:auto !important;
+    font-size:9px !important;
+  }
+
+  @page{
+    size:A4 portrait;
+    margin:0;
+  }
+}
+
+
+/* v50 sidebar restore */
+header{
+  justify-content:flex-start!important;
+}
+.menu-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-right:4px;
+}
+.side-panel{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:245px;
+  z-index:35;
+  background:#071120;
+  color:#e5e7eb;
+  border-right:1px solid rgba(255,255,255,.08);
+  box-shadow:12px 0 30px rgba(15,23,42,.18);
+  padding:18px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  transform:translateX(0);
+  transition:transform .22s ease;
+}
+.side-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 4px 14px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.side-logo{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+}
+.side-title{
+  font-weight:800;
+  font-size:.96rem;
+  letter-spacing:.01em;
+}
+.side-sub{
+  color:#94a3b8;
+  font-size:.78rem;
+  margin-top:2px;
+}
+.side-nav{
+  display:grid;
+  gap:7px;
+}
+.side-link{
+  width:100%;
+  text-align:left;
+  border-radius:12px;
+  padding:11px 12px;
+  background:transparent;
+  color:#cbd5e1;
+  border:1px solid transparent;
+  font-size:.92rem;
+  font-weight:650;
+}
+.side-link:hover,.side-link.active{
+  background:rgba(37,99,235,.16);
+  color:#fff;
+  border-color:rgba(96,165,250,.18);
+}
+.side-bottom{
+  margin-top:auto;
+  display:grid;
+  gap:8px;
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.side-small{
+  width:100%;
+  text-align:left;
+  border-radius:10px;
+  padding:9px 10px;
+  background:rgba(255,255,255,.06);
+  color:#dbeafe;
+  border:1px solid rgba(255,255,255,.08);
+  font-size:.82rem;
+}
+.side-version{
+  color:#94a3b8;
+  font-size:.78rem;
+  padding:6px 2px 0;
+}
+.side-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:30;
+}
+.container{
+  transition:margin-left .22s ease, max-width .22s ease;
+}
+@media (min-width:921px){
+  body:not(.side-collapsed) .container{
+    margin-left:245px;
+    max-width:calc(100vw - 285px);
+  }
+  body.side-collapsed .side-panel{
+    transform:translateX(-245px);
+  }
+}
+@media (max-width:920px){
+  .side-panel{
+    width:min(82vw,300px);
+    transform:translateX(-105%);
+    padding-top:calc(env(safe-area-inset-top,0px) + 16px);
+  }
+  body.side-open .side-panel{
+    transform:translateX(0);
+  }
+  body.side-open .side-overlay{
+    display:block;
+  }
+  .side-link{
+    font-size:.9rem;
+    padding:10px 11px;
+  }
+  .side-title{
+    font-size:.92rem;
+  }
+}
+@media print{
+  .side-panel,.side-overlay,header{
+    display:none!important;
+  }
+  body:not(.side-collapsed) .container{
+    margin-left:0!important;
+    max-width:none!important;
+  }
+}
+
+
+/* v56 upcoming controls */
+.upcoming-list{display:grid;gap:10px}
+.upcoming-item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:13px 14px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+body.dark .upcoming-item{background:var(--panel2);border-color:var(--line)}
+.upcoming-main{min-width:0}
+.upcoming-title{font-weight:750;font-size:.98rem}
+.upcoming-sub{font-size:.84rem;color:var(--muted);margin-top:3px}
+.upcoming-date{text-align:right;font-weight:750;white-space:nowrap}
+.upcoming-badge{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;font-size:.74rem;font-weight:700;border:1px solid transparent}
+.upcoming-overdue{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.upcoming-soon{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+.upcoming-ok{background:#ecfdf5;color:#166534;border-color:#bbf7d0}
+.upcoming-empty{padding:22px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);background:#fbfdff;text-align:center}
+body.dark .upcoming-empty{background:var(--panel2)}
+@media(max-width:640px){.upcoming-item{grid-template-columns:1fr}.upcoming-date{text-align:left}}
+
+</style>
+</head>
+<body>
+<header>
+  <button id="sideToggleBtn" class="settings-btn menu-toggle" type="button" aria-label="Menu">☰</button>
+  <div class="header-title">LiftCheck CZ <span class="test-badge">1.0 / 5.26</span></div>
+</header>
+<div id="sideOverlay" class="side-overlay"></div>
+<aside id="sidePanel" class="side-panel">
+  <div class="side-brand">
+    <div class="side-logo">✓</div>
+    <div>
+      <div class="side-title">LiftCheck CZ</div>
+      <div class="side-sub">verze 1.0 / 5.26</div>
+    </div>
+  </div>
+  <nav class="side-nav">
+    <button type="button" class="side-link active" data-side-action="overview">Přehled</button>
+    <button type="button" class="side-link" onclick="window._openWizard()">Nový protokol</button>
+    <button type="button" class="side-link" data-side-action="protocols">Protokoly</button>
+    <button type="button" class="side-link" id="upcomingBtn">Blížící se kontroly</button>
+    <button type="button" class="side-link" id="sideSettingsBtn">Nastavení</button>
+  </nav>
+  <div class="side-bottom">
+    <button type="button" class="side-small" id="sideThemeBtn">Tmavý / světlý režim</button>
+    <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
+    <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
+    <div class="side-version">Verze: 1.0 / 5.26</div>
+  </div>
+</aside>
+
+<div class="container" id="appRoot">
+  <div class="dashboard">
+    <section class="hero">
+      <div class="hero-actions">
+        <button class="primary" id="newProtocolBtn" type="button" onclick="window._openWizard()">Začít nový protokol</button>
+      </div>
+    </section>
+    <aside class="summary-card">
+      <div class="card-title">Přehled</div>
+      <div class="summary-grid">
+        <div class="stat stat-total"><div class="stat-ico">📄</div><div><div class="stat-label">Celkem protokolů</div><div class="stat-value" id="statTotal">0</div></div></div>
+        <div class="stat stat-issues"><div class="stat-ico">⚠️</div><div><div class="stat-label">Se závadou</div><div class="stat-value" id="statIssues">0</div></div></div>
+        <div class="stat stat-ok"><div class="stat-ico">✅</div><div><div class="stat-label">Bez závad</div><div class="stat-value" id="statOk">0</div></div></div>
+        <div class="stat stat-last"><div class="stat-ico">📅</div><div><div class="stat-label">Poslední datum</div><div class="stat-value" id="statLast">—</div></div></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toolbar">
+    <div class="card-title">Uložené protokoly</div>
+    <div class="toolbar-right">
+      <input id="searchInput" class="search" placeholder="Hledat podle výrobního čísla, typu nebo místa">
+      <select id="statusFilter" class="filter">
+        <option value="all">Vše</option>
+        <option value="issues">Jen se závadou</option>
+        <option value="ok">Jen bez závad</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="list" class="list"></div>
+</div>
+
+
+<div class="modal" id="settingsModal"><div class="modal-content"><div class="wizard-shell">
+  <h3 class="step-title">Nastavení</h3>
+  <p class="step-desc">Správa aplikace a provozních dat.</p>
+  <div class="settings-panel">
+    <div class="settings-row">
+      <button id="themeToggle" class="secondary" type="button">Tmavý režim</button>
+      <button class="ghost" type="button" onclick="exportBackup()">Export zálohy</button>
+      <button class="ghost" id="importBackupBtn" type="button">Import zálohy</button>
+      <input id="importBackupInput" type="file" accept="application/json,.json" class="hidden">
+    </div>
+    <div class="settings-row">
+      <button class="danger" id="clearAllBtn" type="button">Vymazat všechny uložené protokoly</button>
+    </div>
+    <div class="settings-note">Mazání je chráněné heslem. Před většími úpravami vždy nejdřív proveď export zálohy. Import starší zálohy automaticky převede logiku sekce C na aktuální verzi.</div>
+  </div>
+  <div class="wizard-actions"><button id="closeSettingsBtn" class="secondary" type="button">Zavřít</button></div>
+</div></div></div>
+
+<div class="modal" id="upcomingModal"><div class="modal-content"><div class="preview-shell">
+  <div class="preview-header">
+    <div>
+      <div class="preview-title">Blížící se kontroly</div>
+      <div class="card-sub">Načteno z uložených protokolů podle pole „Následná kontrola do“.</div>
+    </div>
+  </div>
+  <div id="upcomingBody" class="list"></div>
+  <div class="preview-actions">
+    <div class="preview-actions-left"><button id="closeUpcomingBtn" class="secondary" type="button">Zavřít</button></div>
+  </div>
+</div></div></div>
+
+<div class="modal" id="wizard"><div class="modal-content"><div class="wizard-shell">
+  <div class="progress-wrap"><div class="progress-label" id="progressLabel">Krok 1</div><div class="progress-label" id="progressPercent">0 %</div></div>
+  <div class="progress"><div class="progress-bar" id="progress"></div></div>
+  <div class="step-chip" id="stepChip">Úvodní údaje</div>
+  <h3 class="step-title" id="title"></h3>
+  <p class="step-desc" id="stepDesc"></p>
+  <div id="content"></div>
+  <div class="wizard-actions"><button id="closeWizardBtn" class="ghost" type="button">Ukončit</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button id="prevStepBtn" class="secondary" type="button">Zpět</button><button id="nextBtn" class="primary" type="button">Další</button></div></div>
+</div></div></div>
+
+<div class="modal" id="qrModal"><div class="modal-content"><div class="wizard-shell">
+  <h3 class="step-title">📷 Vyfotit / vybrat QR kód plošiny</h3>
+  <p class="step-desc">Vyfoť štítek nebo vyber fotku z galerie. Aplikace z obrázku načte QR a předvyplní typ zařízení i výrobní číslo.</p>
+  <div id="qrReader" class="qr-reader" style="display:flex;align-items:center;justify-content:center;background:#f8fbff;color:#64748b;min-height:160px">Vyfoť QR kód nebo vyber fotku z galerie.</div>
+  <div class="qr-help">Jednoduché focení QR bez serveru. Když se QR nepodaří přečíst, aplikace tě vrátí zpět na další pokus.</div>
+  <input id="qrFileInput" type="file" accept="image/*" capture="environment" style="margin-top:12px">
+  <div id="qrStatus" class="helper">Na mobilu se otevře foťák nebo galerie.</div>
+  <div class="wizard-actions"><button id="closeQrBtn" class="ghost" type="button">Zavřít</button><div style="display:flex;gap:10px;flex-wrap:wrap"><button id="clearQrBtn" class="secondary" type="button">Vyfotit / vybrat QR</button></div></div>
+</div></div></div>
+
+<div class="modal" id="historyModal"><div class="modal-content"><div class="preview-shell">
+  <div class="preview-header"><div><div class="preview-title">Historie této plošiny</div><div class="card-sub" id="historySubtitle"></div></div></div>
+  <div id="historyBody" class="history-list"></div>
+  <div class="preview-actions"><div class="preview-actions-left"><button id="closeHistoryBtn" class="secondary" type="button">Zavřít</button></div></div>
+</div></div></div>
+
+<div class="modal" id="preview"><div class="modal-content"><div class="preview-shell">
+  <div class="preview-header"><div><div class="preview-title">Náhled vyplněného formuláře</div><div class="card-sub">Připravené pro tisk nebo uložení jako PDF</div></div><div class="badges" id="previewBadges"></div></div>
+  <div class="paper-wrap print-root"><div id="previewBody"></div></div>
+  <div class="preview-actions"><div class="preview-actions-left"><button id="closePreviewBtn" class="secondary" type="button">Ukončit</button></div><div class="preview-actions-right"><button id="savePreviewBtn" class="secondary" type="button">Uložit PDF</button><button id="printPreviewBtn" class="secondary" type="button">Tisk</button></div></div>
+</div></div></div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-nav lightbox-prev" type="button" onclick="event.stopPropagation(); prevLightboxPhoto();">‹</button>
+  <img id="lightboxImg" alt="Zvětšená fotka" onclick="event.stopPropagation();">
+  <button class="lightbox-nav lightbox-next" type="button" onclick="event.stopPropagation(); nextLightboxPhoto();">›</button>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+<script>
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyAwWq_3iHtTYEMxFeo0CY30gqF3XzALBjI',
+  authDomain: 'doctype-test.firebaseapp.com',
+  projectId: 'doctype-test',
+  storageBucket: 'doctype-test.firebasestorage.app',
+  messagingSenderId: '248395640600',
+  appId: '1:248395640600:web:6bb92e4cf075801966786d'
+};
+
+const COLLECTION_NAME = 'protokoly_test';
+const STORAGE_PREFIX = 'ctvrtletni-test';
+const MAX_PHOTOS = 6;
+const MAX_PHOTO_BYTES = 500 * 1024;
+const PHOTO_STEPS = [
+  {k:'photo_right', photoKey:'right', t:'Fotka 1/6 – pravý boční pohled', type:'photo', section:'Fotky'},
+  {k:'photo_front', photoKey:'front', t:'Fotka 2/6 – čelní pohled', type:'photo', section:'Fotky'},
+  {k:'photo_left', photoKey:'left', t:'Fotka 3/6 – levý boční pohled', type:'photo', section:'Fotky'},
+  {k:'photo_rear', photoKey:'rear', t:'Fotka 4/6 – zadní část', type:'photo', section:'Fotky'},
+  {k:'photo_plate', photoKey:'plate', t:'Fotka 5/6 – výrobní štítek', type:'photo', section:'Fotky'},
+  {k:'photo_control', photoKey:'control', t:'Fotka 6/6 – ovladač / ovládací panel', type:'photo', section:'Fotky'}
+];
+const PHOTO_LABELS = {right:'Pravý bok',front:'Čelo',left:'Levý bok',rear:'Zadní část',control:'Ovladač',plate:'Výrobní štítek'};
+
+const BRANCHES = ['Praha','Brno','Ostrava','Plzeň','Liberec','Olomouc','České Budějovice','Hradec Králové','Pardubice','Zlín','Most','Jihlava','Znojmo','Sokolov'];
+const TECHNICI = ['Jan Bartoš','Petr Čáp','Lukáš Machačka','Vít Procházka','Ondřej Lakva'];
+const MODELS = [
+  // nůžkové
+  'JLG ES1530L','JLG 1532 R','GS-1930','GS-2032','GS-2046','GS-2632','GS-2646','GS-3232','GS-3246','GS-4046','GS-4069 DC','GS-3369 DC','GS-2669 DC','GS-4655 DC','GS-2669 RT','GS-3369 RT','GS-3390 RT','GS-4069 RT','GS-4390 RT','GS-5390 RT','ES1330','ES1530','ES1930','ES1932','ES2030','ES2032','ES2630','ES2632','ES2646','ES3246','R1932','R2632','R3246','25RTS','33RTS','40RTS','3394RT','4394RT','500RTS','330LRT','430LRT','530LRT','260MRT','Zoomlion ZS1218ERT','Zoomlion ZS1414AC-Li',
+  // kloubové
+  'JLG Toucan 10E','JLG Toucan 10E-L','JLG Toucan 12E Plus','GENIE Z-30/20 N','GENIE Z-45/25 JRT','GENIE Z-51/30 JRT','JLG 450 AJ','JLG 450AJ','JLG 520 AJ','JLG 520AJ',
+  // teleskopické
+  'JLG 460 SJ','JLG 660 SJ','JLG 860 SJ','JLG 1200 SJP',
+  // vlečné – jen to, co má půjčovna Zeppelin
+  'Niftylift 120T','Ommelift 1300 EBP','Ommelift 1500 EXBP','Ommelift 1700 EXBP'
+];
+
+const COMMON_SECTIONS = {
+  A:[{k:'A1',l:'Deník zdvihacího zařízení'},{k:'A2',l:'Návod k použití'},{k:'A3',l:'Klíč pro ovládání'}],
+  B:[{k:'B1',l:'Bez závad',desc:true}],
+  D:[{k:'D14',l:'Předepsané množství hydr. oleje',printLabel:'14. Předepsané množství hydr. oleje',desc:true},{k:'D15',l:'Předepsané množství elektrolytu',printLabel:'15. Předepsané množství elektrolytu',desc:true}]
+};
+const SECTION_VARIANTS = {
+  scissor: {
+    C:makeCheckItems([
+      ['C1','Celkové znečištění'],
+      ['C2','Poškození kol'],
+      ['C3','Poškození základny/podvozku'],
+      ['C4','Poškození akumulátorů'],
+      ['C5','Poškození sestavy nůžek'],
+      ['C6','Poškození hydraulických válců'],
+      ['C7','Poškození hydraulických hadic'],
+      ['C8','Netěsnost hydraulické soustavy'],
+      ['C9','Poškození ovládacího kabelu'],
+      ['C10','Poškození podlahy koše'],
+      ['C11','Poškození zábradlí']
+    ]),
+    E:[
+      {k:'E16',l:'Funkce nabíječe',printLabel:'16. Funkce nabíječe',desc:true,chargerCheck:true},
+      {k:'E_socket230',l:'Kontrola zásuvky v koši 230 V',printLabel:'17. Kontrola zásuvky v koši 230 V',desc:true,socketCheck:true},
+      {k:'E19',l:'Funkce spodního ovládacího panelu',printLabel:'18. Funkce spodního ovládacího panelu',desc:true},
+      {k:'E20',l:'Funkce nouzového spouštění',printLabel:'19. Funkce nouzového spouštění',desc:true},
+      {k:'E21',l:'Funkce horního ovládacího panelu',printLabel:'20. Funkce horního ovládacího panelu',desc:true}
+    ]
+  },
+  boom: {
+    C:makeCheckItems([
+      ['C1','Celkové znečištění'],
+      ['C2','Poškození kol'],
+      ['C3','Poškození základny/podvozku'],
+      ['C4','Poškození akumulátorů'],
+      ['C5','Poškození ramene'],
+      ['C6','Poškození hydraulických válců'],
+      ['C7','Poškození hydraulických hadic'],
+      ['C8','Netěsnost hydraulické soustavy'],
+      ['C9','Poškození ovládacího kabelu'],
+      ['C10','Poškození podlahy koše'],
+      ['C11','Poškození zábradlí']
+    ]),
+    E:[
+      {k:'E16',l:'Funkce nouzového spouštění',printLabel:'16. Funkce nouzového spouštění',desc:true},
+      {k:'E17',l:'Funkce nosnosti koše',printLabel:'17. Funkce nosnosti koše',desc:true},
+      {k:'E18',l:'Funkce nabíječe',printLabel:'18. Funkce nabíječe',desc:true,chargerCheck:true},
+      {k:'E_socket230',l:'Kontrola zásuvky v koši 230 V',printLabel:'19. Kontrola zásuvky v koši 230 V',desc:true,socketCheck:true},
+      {k:'E19',l:'Funkce spodního ovládacího panelu',printLabel:'20. Funkce spodního ovládacího panelu',desc:true},
+      {k:'E20',l:'Funkce horního ovládacího panelu',printLabel:'21. Funkce horního ovládacího panelu',desc:true}
+    ]
+  },
+  mast: {
+    C:makeCheckItems([
+      ['C1','Celkové znečištění'],
+      ['C2','Poškození kol'],
+      ['C3','Poškození základny/podvozku'],
+      ['C4','Poškození akumulátorů'],
+      ['C5','Poškození sloupu/ramene'],
+      ['C6','Poškození hydraulických válců'],
+      ['C7','Poškození hydraulických hadic'],
+      ['C8','Netěsnost hydraulické soustavy'],
+      ['C9','Poškození ovládacího kabelu'],
+      ['C10','Poškození podlahy koše'],
+      ['C11','Poškození zábradlí']
+    ]),
+    E:[
+      {k:'E14',l:'Funkce nouzového spouštění',printLabel:'14. Funkce nouzového spouštění',desc:true},
+      {k:'E15',l:'Funkce nosnosti koše',printLabel:'15. Funkce nosnosti koše',desc:true},
+      {k:'E16',l:'Funkce nabíječe',printLabel:'16. Funkce nabíječe',desc:true,chargerCheck:true},
+      {k:'E_socket230',l:'Kontrola zásuvky v koši 230 V',printLabel:'17. Kontrola zásuvky v koši 230 V',desc:true,socketCheck:true},
+      {k:'E17',l:'Funkce spodního ovládacího panelu',printLabel:'18. Funkce spodního ovládacího panelu',desc:true},
+      {k:'E18',l:'Funkce horního ovládacího panelu',printLabel:'19. Funkce horního ovládacího panelu',desc:true}
+    ]
+  }
+};
+
+const MODEL_PREFS_KEY = 'platform_protocol_model_prefs_v1';
+function normalizeModelKey(model){ return String(model||'').trim().toUpperCase(); }
+function getModelPrefs(){ try{ return JSON.parse(localStorage.getItem(MODEL_PREFS_KEY) || '{}'); }catch(e){ return {}; } }
+function saveModelPrefs(prefs){ try{ localStorage.setItem(MODEL_PREFS_KEY, JSON.stringify(prefs)); }catch(e){} }
+function getModelPref(model){ const key = normalizeModelKey(model); return key ? (getModelPrefs()[key] || {}) : {}; }
+function setModelPref(model, patch){ const key = normalizeModelKey(model); if(!key) return; const prefs = getModelPrefs(); prefs[key] = Object.assign({}, prefs[key] || {}, patch); saveModelPrefs(prefs); }
+function getChargerItem(record){ const sections = getSectionsForRecord(record || {}); return (sections.E || []).find(it => it.chargerCheck) || null; }
+function getKnownChargerPresence(record){
+  if(record && ['ANO','BEZ','ZAVADA'].includes(record.chargerPresent)) return record.chargerPresent;
+  const pref = getModelPref(record && record.typ);
+  if(pref && ['ANO','BEZ','ZAVADA'].includes(pref.chargerPresent)) return pref.chargerPresent;
+  return '';
+}
+function getKnownSocket230Presence(record){
+  if(record && ['ANO','BEZ'].includes(record.socket230Present)) return record.socket230Present;
+  return '';
+}
+function cloneSectionItems(items){ return (items || []).map(it => Object.assign({}, it)); }
+function makeCheckItems(rows){ return rows.map(([k,l]) => ({k,l,desc:true})); }
+function renumberControlSections(sections){
+  let n = 1;
+  ['C','D','E'].forEach(sec => {
+    sections[sec] = cloneSectionItems(sections[sec]).map(it => Object.assign({}, it, { printLabel: (n++) + '. ' + it.l }));
+  });
+  return sections;
+}
+function syncModelPreferences(record){
+  if(record && record.typ && ['ANO','BEZ','ZAVADA'].includes(record.chargerPresent)){
+    setModelPref(record.typ, { chargerPresent: record.chargerPresent });
+  }
+}
+function normalizeTypeText(value){
+  return String(value || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function detectProtocolType(model){
+  const m = normalizeTypeText(model);
+  if(!m) return 'boom';
+
+  // Sloupové plošiny – vlastní varianta protokolu.
+  if(m.includes('TOUCAN')) return 'mast';
+
+  // Vlečné / kloubové / teleskopické plošiny – kontrola ramene.
+  if(m.includes('OMMELIFT') || m.includes('NIFTYLIFT') || /(^|\s)120T($|\s)/.test(m)) return 'boom';
+  if(m.includes('GENIE Z') || /\bZ[- ]?\d/.test(m)) return 'boom';
+  if(/\b(450|520)\s?AJ\b/.test(m)) return 'boom';
+  if(/\b(460|660|860)\s?SJ\b/.test(m) || /\b1200\s?SJP\b/.test(m)) return 'boom';
+  if(m.includes('KLOUB') || m.includes('TELESKOP') || m.includes('RAMEN')) return 'boom';
+
+  // Nůžkové plošiny – kontrola sestavy nůžek.
+  if(m.includes('NUZ') || m.includes('SCISSOR')) return 'scissor';
+  if(m.includes('ZOOMLION ZS') || /\bZS\d/.test(m)) return 'scissor';
+  if(/\bGS[- ]?\d/.test(m) || /\bES[- ]?\d/.test(m) || /\bJLG\s?1532\s?R\b/.test(m)) return 'scissor';
+  if(/\bR\d{4}\b/.test(m) || m.includes('RTS') || m.includes('MRT') || m.includes('LRT')) return 'scissor';
+
+  return 'boom';
+}
+function hasStabilizers(model){
+  const m = String(model||'').toUpperCase();
+  return m.includes('OMMELIFT') || m.includes('NIFTYLIFT') || m.includes('120T');
+}
+function getBoomC(model){
+  return makeCheckItems([
+    ['C1','Celkové znečištění'],
+    ['C2','Poškození kol'],
+    ['C3','Poškození základny/podvozku'],
+    ['C4','Poškození akumulátorů'],
+    ['C5','Poškození ramene'],
+    ['C6','Poškození hydraulických válců'],
+    ['C7','Poškození hydraulických hadic'],
+    ['C8','Netěsnost hydraulické soustavy'],
+    ['C9','Poškození ovládacího kabelu'],
+    ['C10','Poškození podlahy koše'],
+    ['C11','Poškození zábradlí']
+  ]);
+}
+
+function isOmmePlatform(model){
+  const m = String(model||'').toUpperCase();
+  return m.includes('OMMELIFT') || m.includes('OMME');
+}
+function addTiltOrLevelCheck(sections, record){
+  sections.E = cloneSectionItems(sections.E || []);
+  const exists = sections.E.some(it => it.k === 'E_tilt_sensor' || it.k === 'E_level_ok');
+  if(!exists){
+    const item = isOmmePlatform(record && record.typ)
+      ? {k:'E_level_ok', l:'Libela bez poškození', desc:true}
+      : {k:'E_tilt_sensor', l:'Funkce náklonového čidla', desc:true};
+    sections.E.splice(Math.min(2, sections.E.length), 0, item);
+  }
+  return sections;
+}
+
+function getSectionsForRecord(record){
+  const type = detectProtocolType(record && record.typ);
+  const sections = {
+    A: cloneSectionItems(COMMON_SECTIONS.A),
+    B: cloneSectionItems(COMMON_SECTIONS.B),
+    C: type === 'boom' ? getBoomC(record && record.typ) : cloneSectionItems(SECTION_VARIANTS[type].C),
+    D: cloneSectionItems(COMMON_SECTIONS.D),
+    E: cloneSectionItems(SECTION_VARIANTS[type].E)
+  };
+  return renumberControlSections(addTiltOrLevelCheck(sections, record));
+}
+
+const introSteps = [
+  {k:'typ',t:'Typ zařízení',type:'modelSelect',section:'Úvodní údaje'},
+  {k:'vc',t:'Výrobní číslo',type:'text',section:'Úvodní údaje'},
+  {k:'datum',t:'Datum kontroly',type:'date',section:'Úvodní údaje'},
+  {k:'revizeDo',t:'Platnost revize do',type:'date',section:'Úvodní údaje'},
+  {k:'mh',t:'Stav motohodin',type:'number',section:'Úvodní údaje'},
+  {k:'dalsiKontrola',t:'Následná kontrola nejpozději do',type:'date',section:'Úvodní údaje'},
+  {k:'rok',t:'Rok výroby',type:'yearInput',section:'Úvodní údaje'},
+  {k:'umisteni',t:'Umístění / pobočka',type:'branchSelect',section:'Úvodní údaje'},
+  {k:'technik',t:'Kontrolu provedl',type:'technikSelect',section:'Úvodní údaje'},
+  {k:'poznamka',t:'Poznámka k protokolu',type:'textarea',section:'Úvodní údaje'}
+];
+
+function getStepsForRecord(record){
+  const sections = getSectionsForRecord(record);
+  const dynamicSteps = [...introSteps];
+  dynamicSteps.push(...PHOTO_STEPS);
+  const chargerItem = getChargerItem(record);
+  const knownCharger = getKnownChargerPresence(record);
+  ['A','C','D','E','B'].forEach(sec => {
+    sections[sec].forEach(item => {
+      if(item.chargerCheck){
+        if(!knownCharger){
+          dynamicSteps.push({k:'chargerPresent',t:'Zařízení má nabíječ',type:'chargerPresence',section:'E'});
+        } else if(knownCharger === 'ANO'){
+          dynamicSteps.push({k:item.k,t:item.l,type:item.desc?'yntextphoto':'yn',textKey:item.k+'_p',section:sec,chargerCheck:true});
+        } else if(knownCharger === 'ZAVADA'){
+          dynamicSteps.push({k:'chargerMissingIssue',t:'Nabíječ chybí / závada',type:'yntextphoto',textKey:'chargerMissingIssue_p',section:'E',chargerMissing:true});
+        }
+      } else if(item.socketCheck){
+        const knownSocket = getKnownSocket230Presence(record);
+        if(!knownSocket){
+          dynamicSteps.push({k:'socket230Present',t:'Zařízení má zásuvku v koši 230 V',type:'socketPresence',section:'E'});
+        } else if(knownSocket === 'ANO'){
+          dynamicSteps.push({k:item.k,t:item.l,type:item.desc?'yntextphoto':'yn',textKey:item.k+'_p',section:sec,socketCheck:true});
+        }
+      } else {
+        dynamicSteps.push({k:item.k,t:item.l,type:item.desc?'yntextphoto':'yn',textKey:item.k+'_p',section:sec});
+      }
+    });
+  });
+  dynamicSteps.push({k:'zaverServis',t:'Nutná běžná servisní kontrola',type:'yn',section:'Závěr'},{k:'zaverOprava',t:'Nutná oprava',type:'yn',section:'Závěr'},{k:'zaverBezpecny',t:'Zařízení je schopné bezpečného provozu',type:'yn',section:'Závěr'});
+  return dynamicSteps;
+}
+
+let firebaseAvailable = false;
+let storageAvailable = false;
+let db = null;
+let storage = null;
+try {
+  if (window.firebase && firebase.initializeApp && firebase.firestore) {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firebaseAvailable = true;
+    if(firebase.storage){
+      storage = firebase.storage();
+      storageAvailable = true;
+    }
+  }
+} catch(e) {
+  console.warn('Firebase není dostupný, přepínám na lokální režim.', e);
+  firebaseAvailable = false;
+  storageAvailable = false;
+}
+function loadLocalData(){
+  try { return JSON.parse(localStorage.getItem('ctvrtletni_protokoly_local') || '[]'); } catch(e) { return []; }
+}
+function saveLocalData(rows){
+  try { localStorage.setItem('ctvrtletni_protokoly_local', JSON.stringify(rows)); } catch(e) {}
+}
+
+function dataUrlBytes(dataUrl){
+  if(!dataUrl || !dataUrl.includes(',')) return 0;
+  const b64 = dataUrl.split(',')[1] || '';
+  return Math.floor((b64.length * 3) / 4);
+}
+function loadImageFromFile(file){
+  return new Promise((resolve,reject)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+async function compressPhoto(file, maxBytes=MAX_PHOTO_BYTES){
+  const img = await loadImageFromFile(file);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  let maxSide = 1600;
+  let quality = 0.82;
+  let out = '';
+  for(let attempt=0; attempt<14; attempt++){
+    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    out = canvas.toDataURL('image/jpeg', quality);
+    if(dataUrlBytes(out) <= maxBytes) return {dataUrl:out, bytes:dataUrlBytes(out), width:canvas.width, height:canvas.height};
+    if(quality > 0.55) quality -= 0.08; else maxSide = Math.round(maxSide * 0.82);
+  }
+  return {dataUrl:out, bytes:dataUrlBytes(out), width:canvas.width, height:canvas.height};
+}
+async function uploadDataUrl(path, dataUrl){
+  const blob = await (await fetch(dataUrl)).blob();
+  const ref = storage.ref().child(path);
+  await ref.put(blob, {contentType:'image/jpeg'});
+  return await ref.getDownloadURL();
+}
+async function prepareRecordForSave(record){
+  record.photos = record.photos || {};
+  record.issuePhotos = record.issuePhotos || {};
+  if(!(firebaseAvailable && storageAvailable && storage)) return record;
+  for(const step of PHOTO_STEPS){
+    const key = step.photoKey;
+    const p = record.photos[key];
+    if(p && p.dataUrl){
+      const path = `${STORAGE_PREFIX}/${record.id}/${key}.jpg`;
+      const url = await uploadDataUrl(path, p.dataUrl);
+      record.photos[key] = {url, path, label:PHOTO_LABELS[key], bytes:p.bytes||0, updatedAt:new Date().toISOString()};
+    }
+  }
+  for(const [key,p] of Object.entries(record.issuePhotos || {})){
+    const safeKey = String(key).replace(/[^a-zA-Z0-9_-]/g,'_');
+    const list = Array.isArray(p) ? p : (p ? [p] : []);
+    const out = [];
+    for(let i=0;i<list.length;i++){
+      const item = list[i];
+      if(item && item.dataUrl){
+        const path = `${STORAGE_PREFIX}/${record.id}/issue_${safeKey}_${i+1}.jpg`;
+        const url = await uploadDataUrl(path, item.dataUrl);
+        out.push({url, path, label:item.label || key, question:item.question || '', bytes:item.bytes||0, updatedAt:new Date().toISOString()});
+      } else if(item) {
+        out.push(item);
+      }
+    }
+    record.issuePhotos[key] = out;
+  }
+  return record;
+}
+async function saveProtocol(record){
+  record = await prepareRecordForSave(record);
+  if(firebaseAvailable && db){
+    await db.collection(COLLECTION_NAME).doc(record.id).set(record);
+  } else {
+    const rows = loadLocalData();
+    const idx = rows.findIndex(x => x.id === record.id);
+    if(idx >= 0) rows[idx] = record; else rows.unshift(record);
+    saveLocalData(rows);
+    data = rows;
+    render();
+  }
+}
+async function deleteProtocol(id){
+  if(firebaseAvailable && db){
+    await db.collection(COLLECTION_NAME).doc(id).delete();
+  } else {
+    data = loadLocalData().filter(x => x.id !== id);
+    saveLocalData(data);
+    render();
+  }
+}
+async function deleteAllProtocols(){
+  if(firebaseAvailable && db){
+    const snap = await db.collection(COLLECTION_NAME).get();
+    await Promise.all(snap.docs.map(d => d.ref.delete()));
+  } else {
+    localStorage.removeItem('ctvrtletni_protokoly_local');
+    data = [];
+    render();
+  }
+}
+
+async function exportBackup(){
+  try{
+    let rows = [];
+    if(firebaseAvailable && db){
+      const snap = await db.collection(COLLECTION_NAME).get();
+      rows = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    } else {
+      rows = loadLocalData();
+    }
+    const payload = {
+      app: 'LiftCheck CZ',
+      collection: COLLECTION_NAME,
+      exportedAt: new Date().toISOString(),
+      count: rows.length,
+      data: rows
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href = URL.createObjectURL(blob);
+    a.download = `protokoly_TEST_backup_${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }catch(e){
+    console.error('Export zálohy selhal:', e);
+    alert('Export zálohy selhal. Zkontroluj konzoli / Firebase oprávnění.');
+  }
+}
+
+function readFileAsText(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+}
+function invertOldCAnswer(v){
+  if(v === 'ANO') return 'NE';
+  if(v === 'NE') return 'ANO';
+  return v || '';
+}
+function oldCMapForRecord(record){
+  const type = detectProtocolType(record && record.typ);
+  if(type === 'scissor'){
+    return {C1:'C1', C2:'C5', C3:null, C4:'C9', C5:'C10', C6:'C11', C7:'C12', C8:'C13', C9:'C7', C10:'C8', C11:'C4'};
+  }
+  if(type === 'mast'){
+    return {C1:'C1', C2:'C3', C3:null, C4:'C7', C5:'C8', C6:'C9', C7:'C10', C8:'C11', C9:'C5', C10:'C6', C11:'C2'};
+  }
+  return {C1:'C1', C2:'C4', C3:null, C4:'C8', C5:'C9', C6:'C11', C7:'C12', C8:'C13', C9:'C6', C10:'C7', C11:'C3'};
+}
+function migrateImportedRecord(record){
+  const r = Object.assign({}, record || {});
+  if(!r.id) r.id = uid();
+
+  // Starší zálohy měly u sekce C opačnou logiku:
+  // ANO = bez závad/závada, NE = závaday.
+  // Aktuální verze používá ANO = bez závad, NE = závada.
+  const map = oldCMapForRecord(r);
+  const migratedC = {};
+  Object.entries(map).forEach(([newKey, oldKey]) => {
+    if(oldKey && Object.prototype.hasOwnProperty.call(record, oldKey)){
+      migratedC[newKey] = invertOldCAnswer(record[oldKey]);
+      migratedC[newKey + '_p'] = record[oldKey + '_p'] || '';
+    } else {
+      migratedC[newKey] = 'ANO';
+      migratedC[newKey + '_p'] = '';
+    }
+  });
+
+  // Smaž původní C pole, aby se nepletla nová struktura.
+  Object.keys(r).forEach(k => {
+    if(/^C[0-9]+(_p)?$/.test(k) || /^C_/.test(k)) delete r[k];
+  });
+  Object.assign(r, migratedC);
+
+  // Starší protokoly neobsahují nové kontroly funkcí. Necháváme je prázdné,
+  // aby protokol netvrdil kontrolu, která se v původní verzi nevyplnila.
+  if(!r.savedAt) r.savedAt = new Date().toISOString();
+  return r;
+}
+async function importBackupFile(file){
+  if(!file) return;
+  let parsed;
+  try{
+    const text = await readFileAsText(file);
+    parsed = JSON.parse(text);
+  }catch(e){
+    console.error(e);
+    alert('Soubor se nepodařilo načíst jako JSON zálohu.');
+    return;
+  }
+  const rows = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.data) ? parsed.data : []);
+  if(!rows.length){
+    alert('V souboru nejsou nalezené žádné protokoly.');
+    return;
+  }
+
+  const ok = confirm(`Načíst ${rows.length} protokolů ze zálohy?\n\nImport pouze doplní chybějící protokoly. Existující stejné ID se přeskočí.`);
+  if(!ok) return;
+
+  const existing = new Set((data || []).map(r => r.id));
+  let imported = 0;
+  let skipped = 0;
+  for(const row of rows){
+    if(row && row.id && existing.has(row.id)){
+      skipped++;
+      continue;
+    }
+    const migrated = migrateImportedRecord(row);
+    await saveProtocol(migrated);
+    existing.add(migrated.id);
+    imported++;
+  }
+  render();
+  alert(`Import hotový.\nNačteno: ${imported}\nPřeskočeno duplicit: ${skipped}`);
+}
+window.importBackupFile = importBackupFile;
+
+window.exportBackup = exportBackup;
+function startLocalMode(){
+  data = loadLocalData();
+  render();
+}
+
+let data = [];
+let suggestionsStore = {};
+let rec = {};
+let stepIndex = 0;
+let currentPreview = null;
+let qrEnabled = false;
+let qrPickerActive = false;
+
+const els = {
+  list: document.getElementById('list'),
+  searchInput: document.getElementById('searchInput'),
+  statusFilter: document.getElementById('statusFilter'),
+  statTotal: document.getElementById('statTotal'),
+  statIssues: document.getElementById('statIssues'),
+  statOk: document.getElementById('statOk'),
+  statLast: document.getElementById('statLast'),
+  wizard: document.getElementById('wizard'),
+  progress: document.getElementById('progress'),
+  progressLabel: document.getElementById('progressLabel'),
+  progressPercent: document.getElementById('progressPercent'),
+  stepChip: document.getElementById('stepChip'),
+  title: document.getElementById('title'),
+  stepDesc: document.getElementById('stepDesc'),
+  content: document.getElementById('content'),
+  nextBtn: document.getElementById('nextBtn'),
+  preview: document.getElementById('preview'),
+  previewBody: document.getElementById('previewBody'),
+  previewBadges: document.getElementById('previewBadges'),
+  qrModal: document.getElementById('qrModal'),
+  qrReader: document.getElementById('qrReader'),
+  qrStatus: document.getElementById('qrStatus'),
+  qrBtn: document.getElementById('qrBtn'),
+  historyModal: document.getElementById('historyModal'),
+  historyBody: document.getElementById('historyBody'),
+  historySubtitle: document.getElementById('historySubtitle')
+};
+
+function uid(){ return Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+function todayLocal(){ return new Date().toISOString().slice(0,10); }
+function formatDateTime(val){
+  if(!val) return '—';
+  try{
+    const d = new Date(val);
+    if(isNaN(d)) return val;
+    const pad = n => String(n).padStart(2,'0');
+    return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }catch(e){ return val; }
+}
+function formatDate(val){
+  if(!val) return '—';
+  try{
+    const d = new Date(val);
+    if(isNaN(d)) return val;
+    const pad = n => String(n).padStart(2,'0');
+    return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+  }catch(e){ return val; }
+}
+function formatMonthYear(val){
+  if(!val) return '—';
+  const s = String(val).trim();
+  const m = s.match(/^(\d{4})-(\d{2})$/);
+  if(m) return `${m[2]}.${m[1]}`;
+  try{
+    const d = new Date(val);
+    if(isNaN(d)) return val;
+    const pad = n => String(n).padStart(2,'0');
+    return `${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+  }catch(e){ return val; }
+}
+function parseRevizeDoEndDate(val){
+  if(!val) return null;
+  const s = String(val).trim();
+  const m = s.match(/^(\d{4})-(\d{2})$/);
+  if(m){ return new Date(Number(m[1]), Number(m[2]), 0); }
+  const d = new Date(s + (s.length === 10 ? 'T00:00:00' : ''));
+  return isNaN(d) ? null : d;
+}
+function addMonthsToDate(dateStr, months=3){ const d = new Date(dateStr || todayLocal()); const day = d.getDate(); d.setMonth(d.getMonth() + months); if(d.getDate() < day) d.setDate(0); return d.toISOString().slice(0,10); }
+function escapeHtml(v=''){ return String(v).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+function addSuggestion(key,val){ const clean = String(val||'').trim(); if(!clean || clean.length < 2) return; suggestionsStore[key] = suggestionsStore[key] || []; if(!suggestionsStore[key].includes(clean)) suggestionsStore[key].unshift(clean); suggestionsStore[key] = suggestionsStore[key].slice(0,20); }
+function getSuggestions(key,fallback=[]){ return [...new Set([...(suggestionsStore[key]||[]), ...fallback])]; }
+function filterSuggestions(items,q){
+  q = String(q||'').trim().toLowerCase();
+  if(!q) return [];
+
+  const normalize = (v) => String(v||'').toLowerCase().replace(/\s+/g,'').trim();
+  const seen = new Set();
+  const out = [];
+  const queryCompact = normalize(q);
+
+  for(const item of items){
+    const raw = String(item||'');
+    const rawLower = raw.toLowerCase();
+    const rawCompact = normalize(raw);
+
+    if(!(rawLower.includes(q) || rawCompact.includes(queryCompact))) continue;
+    if(seen.has(rawCompact)) continue;
+
+    seen.add(rawCompact);
+    out.push(item);
+    if(out.length >= 12) break;
+  }
+
+  return out;
+}
+function renderSuggestBox(items,key,isTextarea=false){ if(!items.length) return ''; return `<div class="suggest-box">${items.map(v => `<div class="suggest-item" data-key="${key}" data-value="${escapeHtml(v)}" data-textarea="${isTextarea ? '1':'0'}">${escapeHtml(v)}</div>`).join('')}</div>`; }
+function yearOptions(baseDate){ const y = Number(String(baseDate||todayLocal()).slice(0,4)) || new Date().getFullYear(); return Array.from({length:11}, (_,idx) => String(y-idx)); }
+function autoFillDefaults(){ if(!rec.datum) rec.datum = todayLocal(); if(!rec.dalsiKontrola) rec.dalsiKontrola = addMonthsToDate(rec.datum,3); }
+function isRevizeExpired(r){
+  if(!r?.revizeDo) return false;
+  const revEnd = parseRevizeDoEndDate(r.revizeDo);
+  if(!revEnd) return false;
+  const checkDate = new Date((r.datum || todayLocal()) + 'T00:00:00');
+  return revEnd < checkDate;
+}
+function syncRevizeIssue(r){ if(!isRevizeExpired(r)) return; r.B2 = 'NE'; r.zaverOprava = 'ANO'; r.zaverBezpecny = 'NE'; const msg = 'Prošlá platnost revize.'; const cur = String(r.B2_p||'').trim(); r.B2_p = !cur ? msg : (cur.toLowerCase().includes('prošlá platnost revize') ? cur : cur + ' ' + msg); }
+function isInvertedIssueKey(key){ return key === 'zaverServis' || key === 'zaverOprava'; }
+function isProblemAnswer(key, value){
+  if(value !== 'ANO' && value !== 'NE') return false;
+  return isInvertedIssueKey(key) ? value === 'ANO' : value === 'NE';
+}
+function countIssues(r){ return getStepsForRecord(r).filter(s => (s.type === 'yn' || s.type === 'yntext' || s.type === 'yntextphoto') && isProblemAnswer(s.k, r[s.k])).length + (isRevizeExpired(r) ? 1 : 0); }
+function hasIssue(r){ return countIssues(r) > 0 || r.zaverOprava === 'ANO' || r.zaverBezpecny === 'NE' || isRevizeExpired(r); }
+function yn(v){ return { ano: v==='ANO' ? '☒' : '☐', ne: v==='NE' ? '☒' : '☐' }; }
+function isGeneralCheckKey(key){ return /^C[0-9]+$/.test(String(key||'')) || /^C_/.test(String(key||'')); }
+function sectionLabel(key){ return ({A:'A. Průvodní dokumentace a vybavení',B:'B. Stav zařízení',C:'C. Všeobecná kontrola zařízení',D:'D. Kontrola provozních náplní',E:'E. Kontrola funkcí','Úvodní údaje':'Úvodní údaje','Fotky':'Fotodokumentace','Závěr':'Závěr'})[key] || key; }
+function findProtocolsByMachine(serial){ return data.filter(r => String(r.vc||'').trim().toLowerCase() === String(serial||'').trim().toLowerCase()).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))); }
+function parseQrPayload(raw){ const text = String(raw||'').replace(/\s+/g,' ').trim(); const upper = text.toUpperCase(); let typ = ''; for(const model of MODELS){ if(upper.includes(model.toUpperCase())){ typ = model; break; } } const serial = (upper.match(/([A-Z]{2}\d{2}[A-Z]-\d{4,}|GS\d{2}[A-Z]-\d{4,})/) || [])[1] || ''; return { typ, vc: serial, raw: text }; }
+function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
+function updateStats(rows){ els.statTotal.textContent = rows.length; els.statIssues.textContent = rows.filter(hasIssue).length; els.statOk.textContent = rows.length - rows.filter(hasIssue).length; const last = [...rows].sort((a,b)=>String(b.savedAt||b.datum||'').localeCompare(String(a.savedAt||a.datum||'')))[0]; els.statLast.textContent = last ? formatDate(last.savedAt || last.datum) : '—'; }
+
+function render(){
+  let rows = [...data];
+  const query = els.searchInput.value.trim().toLowerCase();
+  const filter = els.statusFilter.value;
+  if(query) rows = rows.filter(r => [r.vc,r.typ,r.umisteni,r.technik].some(v => String(v||'').toLowerCase().includes(query)));
+  if(filter === 'issues') rows = rows.filter(hasIssue);
+  if(filter === 'ok') rows = rows.filter(r => !hasIssue(r));
+  rows.sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||'')));
+  if(!rows.length){ els.list.innerHTML = '<div class="empty"><div>Zatím tu nic není.</div></div>'; updateStats([]); return; }
+  els.list.innerHTML = rows.map(r => `
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${escapeHtml(r.vc||'')}</div>
+          <div class="card-sub">${escapeHtml(r.typ||'')} ${r.umisteni ? '· '+escapeHtml(r.umisteni) : ''}</div><div class="card-sub">Uloženo: ${escapeHtml(formatDateTime(r.savedAt || r.datum))}</div>
+          <div class="badges">
+            <span class="badge ${hasIssue(r)?'badge-warn':'badge-ok'}">${hasIssue(r)?'Se závadou':'Bez závad'}</span>
+            ${firebaseAvailable ? '' : '<span class="badge badge-warn">Sdílení vypnuté</span>'}
+          </div>
+        </div>
+        <div class="card-sub">${escapeHtml(formatDate(r.datum))}</div>
+      </div>
+      <div class="meta-grid">
+        <div class="meta"><div class="meta-label">Technik</div><div class="meta-value">${escapeHtml(r.technik||'—')}</div></div>
+        <div class="meta"><div class="meta-label">Rok výroby</div><div class="meta-value">${escapeHtml(r.rok||'—')}</div></div>
+        <div class="meta"><div class="meta-label">Následná kontrola</div><div class="meta-value">${escapeHtml(formatDate(r.dalsiKontrola))}</div></div>
+        <div class="meta"><div class="meta-label">Bezpečný provoz</div><div class="meta-value">${escapeHtml(r.zaverBezpecny||'—')}</div></div>
+      </div>
+      <div class="actions">
+        <button class="secondary mini" data-action="preview" data-id="${r.id}">Náhled</button>
+        <button class="secondary mini" data-action="edit" data-id="${r.id}">Upravit</button>
+        <button class="secondary mini" data-action="pdf" data-id="${r.id}">Tisk</button>
+        <button class="danger mini" data-action="delete" data-id="${r.id}">Smazat</button>
+      </div>
+    </div>`).join('');
+  updateStats(rows);
+}
+
+function openModal(el){ el.classList.add('show'); }
+function closeModal(el){ el.classList.remove('show'); }
+
+function openWizard(editId=null, prefill={}){
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid()};
+  rec = Object.assign({}, rec, prefill || {});
+
+  // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
+  if(rec.vc){
+    const history = findProtocolsByMachine(rec.vc);
+    if(history.length){
+      const last = history[0];
+
+      if(!rec.typ && last.typ){
+        rec.typ = last.typ;
+      }
+      if(!rec.rok && last.rok){
+        rec.rok = last.rok;
+      }
+      // Platnost revize do se z historie nepředvyplňuje – technik ji zadá ručně jen jako měsíc/rok.
+      if((!rec.chargerPresent) && (['ANO','BEZ','ZAVADA'].includes(last.chargerPresent))){
+        rec.chargerPresent = last.chargerPresent;
+      }
+    }
+  }
+
+  if((!rec.chargerPresent) && rec.typ){
+    const pref = getModelPref(rec.typ);
+    if(pref && ['ANO','BEZ','ZAVADA'].includes(pref.chargerPresent)) rec.chargerPresent = pref.chargerPresent;
+  }
+
+  autoFillDefaults();
+  stepIndex = 0;
+  showStep();
+  openModal(els.wizard);
+}
+window._openWizard = openWizard;
+function closeWizard(){ closeModal(els.wizard); }
+function prevStep(){ if(stepIndex > 0){ stepIndex--; showStep(); } }
+
+function showStep(){
+  const activeSteps = getStepsForRecord(rec);
+  const s = activeSteps[stepIndex];
+  const pct = Math.round(((stepIndex+1)/activeSteps.length) * 100);
+  els.progress.style.width = pct + '%';
+  els.progressPercent.textContent = pct + ' %';
+  els.progressLabel.textContent = `Krok ${stepIndex+1} z ${activeSteps.length}`;
+  els.stepChip.textContent = sectionLabel(s.section||'Úvodní údaje');
+  els.title.textContent = s.t;
+  els.stepDesc.textContent = isGeneralCheckKey(s.k)
+    ? 'Logika sekce C: ANO = bez závad, NE = závada.'
+    : '';
+  els.nextBtn.textContent = stepIndex === activeSteps.length-1 ? 'Uložit protokol' : 'Další';
+
+  const invertedVisual = isInvertedIssueKey(s.k);
+  const yesClass = invertedVisual ? 'no' : 'yes';
+  const noClass = invertedVisual ? 'yes' : 'no';
+
+  let html = '';
+  if(s.type === 'chargerPresence'){
+    if(rec._chargerNoMode){
+      html = `<div class="yesno"><button class="yn-btn no" data-charger-reason="zavada">✖ Závada</button><button class="yn-btn yes" data-charger-reason="bez">✔ Bez nabíječe</button></div><div class="helper">„Bez nabíječe“ není závada – typicky dieselové plošiny bez nabíječe.</div>`;
+    } else {
+      html = `<div class="yesno"><button class="yn-btn yes" data-charger-answer="ANO">✔ ANO</button><button class="yn-btn no" data-charger-answer="NE">✖ NE</button></div>`;
+    }
+  } else if(s.type === 'socketPresence'){
+    html = `<div class="yesno"><button class="yn-btn yes" data-socket230-answer="ANO">✔ ANO</button><button class="yn-btn yes" data-socket230-answer="BEZ">— Bez zásuvky</button></div><div class="helper">„Bez zásuvky“ není závada. Pokud zásuvku má, následuje kontrola její funkce/stavu.</div>`;
+  } else if(s.type === 'yn'){
+    html = `<div class="yesno"><button class="yn-btn ${yesClass}" data-answer="ANO">✔ ANO</button><button class="yn-btn ${noClass}" data-answer="NE">✖ NE</button></div>`;
+  } else if(s.type === 'yntext' || s.type === 'yntextphoto'){
+    const needsNote = s.k === 'B1' ? rec[s.k]==='NE' : (isGeneralCheckKey(s.k) ? rec[s.k]==='ANO' : rec[s.k]==='NE');
+    const label = s.k === 'B1' ? 'Závady' : 'Popis závady';
+    const issuePhoto = (rec.issuePhotos || {})[s.k] || {};
+    const issueSrc = getPhotoSrc(issuePhoto);
+    const issueSize = issuePhoto.bytes ? ` · ${Math.round(issuePhoto.bytes/1024)} kB` : '';
+    const issuePhotoHtml = (s.type === 'yntextphoto' && needsNote) ? `
+      <div class="field" id="issuePhotoWrap">
+        <label>Fotka k závadě / poškození</label>
+        <input id="issuePhotoInput" type="file" accept="image/*" capture="environment">
+        <div class="helper">Volitelné. Aplikace fotku automaticky zmenší na max. cca 500 kB.</div>
+        ${issueSrc ? `<div class="photo-thumb"><img src="${escapeHtml(issueSrc)}" data-full-src="${escapeHtml(issueSrc)}" onclick="openLightbox(this.dataset.fullSrc)" alt="Fotka závady"></div><div class="helper">Fotka uložena${issueSize}</div><div class="photo-tools"><button class="danger mini" type="button" id="deleteIssuePhotoBtn">Smazat fotku závady</button></div>` : ''}
+      </div>` : '';
+    html = `<div class="yesno"><button class="yn-btn ${yesClass}" data-answer-text="ANO">✔ ANO</button><button class="yn-btn ${noClass}" data-answer-text="NE">✖ NE</button></div><div class="field ${needsNote ? '' : 'hidden'}" id="descWrap"><label>${label}</label><textarea id="descInput">${escapeHtml(rec[s.textKey]||'')}</textarea></div>${issuePhotoHtml}`;
+  } else if(s.type === 'photo'){
+    rec.photos = rec.photos || {};
+    const p = rec.photos[s.photoKey] || {};
+    const src = p.dataUrl || p.url || '';
+    const size = p.bytes ? ` · ${Math.round(p.bytes/1024)} kB` : '';
+    html = `<div class="field"><label>${s.t}</label><input id="photoInput" type="file" accept="image/*" capture="environment"><div class="helper">Max. 500 kB po automatické kompresi. Fotku můžeš přeskočit tlačítkem Další.</div>${src ? `<div class="photo-preview"><img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)" alt="${escapeHtml(s.t)}"></div><div class="helper">Uloženo v kroku${size}</div><div class="photo-tools"><button class="danger mini" type="button" id="deleteMainPhotoBtn">Smazat tuto fotku</button></div>` : ''}</div>`;
+  } else if(s.type === 'textarea'){
+    html = `<div class="field suggest-wrap"><textarea id="mainTextarea">${escapeHtml(rec[s.k]||'')}</textarea><div id="suggestHost"></div></div>`;
+  } else if(s.type === 'date'){
+    const dateInputType = s.k === 'revizeDo' ? 'month' : 'date';
+    const help = s.k === 'revizeDo' ? '<div class="helper">Stačí vybrat měsíc a rok. Den se neřeší.</div>' : '';
+    html = `<div class="field"><input id="mainInput" type="${dateInputType}" value="${escapeHtml(rec[s.k]||'')}">${help}</div>`;
+  } else {
+    const inputType = (s.type === 'yearInput' || s.type === 'number') ? 'number' : 'text';
+    html = `<div class="field suggest-wrap"><input id="mainInput" type="${inputType}" value="${escapeHtml(rec[s.k]||'')}" autocomplete="off"><div id="suggestHost"></div></div>`;
+  }
+  els.content.innerHTML = html;
+
+  const mainInput = document.getElementById('mainInput');
+  const mainTextarea = document.getElementById('mainTextarea');
+  const descInput = document.getElementById('descInput');
+
+  if(mainInput){
+    mainInput.addEventListener('input', () => { rec[s.k] = mainInput.value; refreshSuggestions(); });
+    mainInput.addEventListener('blur', () => setTimeout(hideSuggestions, 120));
+  }
+  if(mainTextarea){
+    mainTextarea.addEventListener('input', () => { rec[s.k] = mainTextarea.value; refreshSuggestions(); });
+    mainTextarea.addEventListener('blur', () => setTimeout(hideSuggestions, 120));
+  }
+  if(descInput){
+    descInput.addEventListener('input', () => { rec[s.textKey] = descInput.value; });
+  }
+  const photoInput = document.getElementById('photoInput');
+  if(photoInput){
+    photoInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      els.stepDesc.textContent = 'Zpracovávám fotku...';
+      try{
+        const out = await compressPhoto(file, MAX_PHOTO_BYTES);
+        rec.photos = rec.photos || {};
+        rec.photos[s.photoKey] = {dataUrl:out.dataUrl, bytes:out.bytes, label:PHOTO_LABELS[s.photoKey], width:out.width, height:out.height};
+        if(stepIndex < activeSteps.length - 1){
+          stepIndex++;
+          showStep();
+        } else {
+          showStep();
+        }
+      }catch(err){
+        console.error(err);
+        alert('Fotku se nepodařilo zpracovat. Zkus jinou fotku.');
+      }
+    });
+  }
+  const deleteMainPhotoBtn = document.getElementById('deleteMainPhotoBtn');
+  if(deleteMainPhotoBtn){
+    deleteMainPhotoBtn.addEventListener('click', () => {
+      if(confirm('Smazat tuto fotku z rozpracovaného protokolu?')){
+        rec.photos = rec.photos || {};
+        delete rec.photos[s.photoKey];
+        showStep();
+      }
+    });
+  }
+  const issuePhotoInput = document.getElementById('issuePhotoInput');
+  if(issuePhotoInput){
+    issuePhotoInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      const currentList = getIssuePhotoList(rec.issuePhotos, s.k);
+      if(currentList.length >= 4){
+        alert('U této závady můžeš uložit maximálně 4 fotky.');
+        e.target.value = '';
+        return;
+      }
+      els.stepDesc.textContent = 'Zpracovávám fotku závady...';
+      try{
+        const out = await compressPhoto(file, MAX_PHOTO_BYTES);
+        rec.issuePhotos = rec.issuePhotos || {};
+        currentList.push({dataUrl:out.dataUrl, bytes:out.bytes, label:s.k, question:s.t, width:out.width, height:out.height});
+        setIssuePhotoList(rec.issuePhotos, s.k, currentList);
+        showStep();
+      }catch(err){
+        console.error(err);
+        alert('Fotku závady se nepodařilo zpracovat. Zkus jinou fotku.');
+      }
+    });
+  }
+  els.content.querySelectorAll('.delete-issue-photo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.issueIndex);
+      if(confirm('Smazat tuto fotku závady z rozpracovaného protokolu?')){
+        rec.issuePhotos = rec.issuePhotos || {};
+        const currentList = getIssuePhotoList(rec.issuePhotos, s.k);
+        currentList.splice(idx,1);
+        setIssuePhotoList(rec.issuePhotos, s.k, currentList);
+        showStep();
+      }
+    });
+  });
+  els.content.querySelectorAll('[data-charger-answer]').forEach(btn => btn.addEventListener('click', () => {
+    const ans = btn.dataset.chargerAnswer;
+    if(ans === 'ANO'){
+      rec.chargerPresent = 'ANO';
+      rec._chargerNoMode = false;
+      nextStep();
+    } else {
+      rec._chargerNoMode = true;
+      showStep();
+    }
+  }));
+  els.content.querySelectorAll('[data-charger-reason]').forEach(btn => btn.addEventListener('click', () => {
+    const reason = btn.dataset.chargerReason;
+    rec._chargerNoMode = false;
+    if(reason === 'bez'){
+      rec.chargerPresent = 'BEZ';
+      rec.chargerMissingIssue = '';
+      rec.chargerMissingIssue_p = '';
+      if(rec.issuePhotos) delete rec.issuePhotos.chargerMissingIssue;
+    } else {
+      rec.chargerPresent = 'ZAVADA';
+      rec.chargerMissingIssue = 'NE';
+      rec.chargerMissingIssue_p = rec.chargerMissingIssue_p || '';
+    }
+    nextStep();
+  }));
+  els.content.querySelectorAll('[data-socket230-answer]').forEach(btn => btn.addEventListener('click', () => {
+    const ans = btn.dataset.socket230Answer;
+    rec.socket230Present = ans;
+    if(ans === 'BEZ'){
+      rec.E_socket230 = '';
+      rec.E_socket230_p = '';
+      if(rec.issuePhotos) delete rec.issuePhotos.E_socket230;
+    }
+    nextStep();
+  }));
+  els.content.querySelectorAll('[data-answer]').forEach(btn => btn.addEventListener('click', () => { rec[s.k] = btn.dataset.answer; nextStep(); }));
+  els.content.querySelectorAll('[data-answer-text]').forEach(btn => btn.addEventListener('click', () => {
+    rec[s.k] = btn.dataset.answerText;
+    const needsNote = s.k === 'B1' ? btn.dataset.answerText === 'NE' : (isGeneralCheckKey(s.k) ? btn.dataset.answerText === 'ANO' : btn.dataset.answerText === 'NE');
+    if(!needsNote){
+      rec[s.textKey] = '';
+      nextStep();
+    } else {
+      showStep();
+      setTimeout(() => document.getElementById('descInput')?.focus(), 40);
+    }
+  }));
+}
+
+function refreshSuggestions(){
+  const activeSteps = getStepsForRecord(rec);
+  const s = activeSteps[stepIndex];
+  const host = document.getElementById('suggestHost');
+  if(!host) return;
+  const val = rec[s.k] || '';
+  let source = [];
+  if(s.type === 'modelSelect') source = getSuggestions(s.k, MODELS);
+  else if(s.type === 'branchSelect') source = getSuggestions(s.k, BRANCHES);
+  else if(s.type === 'technikSelect') source = getSuggestions(s.k, TECHNICI);
+  else if(s.type === 'yearInput') source = yearOptions(rec.datum);
+  else source = getSuggestions(s.k);
+  host.innerHTML = renderSuggestBox(filterSuggestions(source, val), s.k, s.type === 'textarea');
+  host.querySelectorAll('.suggest-item').forEach(item => item.addEventListener('click', () => {
+    const key = item.dataset.key;
+    const value = item.dataset.value;
+    rec[key] = value;
+    const mainInput = document.getElementById('mainInput');
+    const mainTextarea = document.getElementById('mainTextarea');
+    if(mainInput) mainInput.value = value;
+    if(mainTextarea) mainTextarea.value = value;
+    hideSuggestions();
+  }));
+}
+function hideSuggestions(){ const host = document.getElementById('suggestHost'); if(host) host.innerHTML = ''; }
+
+function shouldShowIssuePhoto(step, value){
+  if(!step || step.type !== 'yntextphoto') return false;
+  if(step.k === 'B1') return value === 'NE';
+  if(isGeneralCheckKey(step.k)) return value === 'NE';
+  return value === 'NE';
+}
+function getPhotoSrc(photo){ return photo ? (photo.url || photo.dataUrl || '') : ''; }
+let lightboxImages = [];
+let lightboxIndex = 0;
+let lightboxTouchStartX = 0;
+let lightboxTouchStartY = 0;
+let lightboxTouchStartTime = 0;
+let lightboxTouchIsMulti = false;
+
+function collectLightboxImages(){
+  const list = Array.from(document.querySelectorAll('img[data-full-src]'))
+    .map(img => img.dataset.fullSrc || img.src)
+    .filter(Boolean);
+  return [...new Set(list)];
+}
+function updateLightbox(){
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const counter = document.getElementById('lightboxCounter');
+  if(!lb || !img) return;
+  const src = lightboxImages[lightboxIndex];
+  if(!src) return;
+  img.src = src;
+  if(counter) counter.textContent = `${lightboxIndex + 1} / ${lightboxImages.length}`;
+}
+function openLightbox(src){
+  if(!src) return;
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  if(!lb || !img){ window.open(src,'_blank'); return; }
+  lightboxImages = collectLightboxImages();
+  if(!lightboxImages.includes(src)) lightboxImages.unshift(src);
+  lightboxIndex = Math.max(0, lightboxImages.indexOf(src));
+  updateLightbox();
+  lb.classList.add('show');
+}
+function closeLightbox(){
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  if(img) img.src = '';
+  if(lb) lb.classList.remove('show');
+}
+function nextLightboxPhoto(){
+  if(!lightboxImages.length) return;
+  lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+  updateLightbox();
+}
+function prevLightboxPhoto(){
+  if(!lightboxImages.length) return;
+  lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+  updateLightbox();
+}
+window.addEventListener('keydown', (e) => {
+  const lb = document.getElementById('lightbox');
+  if(!lb || !lb.classList.contains('show')) return;
+  if(e.key === 'ArrowRight') nextLightboxPhoto();
+  if(e.key === 'ArrowLeft') prevLightboxPhoto();
+  if(e.key === 'Escape') closeLightbox();
+});
+window.addEventListener('touchstart', (e) => {
+  const lb = document.getElementById('lightbox');
+  if(!lb || !lb.classList.contains('show')) return;
+  lightboxTouchIsMulti = e.touches && e.touches.length > 1;
+  const t = e.changedTouches[0];
+  lightboxTouchStartX = t.clientX;
+  lightboxTouchStartY = t.clientY;
+  lightboxTouchStartTime = Date.now();
+}, {passive:true});
+window.addEventListener('touchend', (e) => {
+  const lb = document.getElementById('lightbox');
+  if(!lb || !lb.classList.contains('show')) return;
+  if(lightboxTouchIsMulti) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - lightboxTouchStartX;
+  const dy = t.clientY - lightboxTouchStartY;
+  const dt = Date.now() - lightboxTouchStartTime;
+
+  // Přejetí na další fotku je záměrně méně citlivé:
+  // musí jít o krátký vodorovný flick, ne o delší posouvání přiblížené fotky.
+  if(dt <= 450 && Math.abs(dx) > 80 && Math.abs(dy) < 60){
+    dx < 0 ? nextLightboxPhoto() : prevLightboxPhoto();
+  }
+}, {passive:true});
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
+window.nextLightboxPhoto = nextLightboxPhoto;
+window.prevLightboxPhoto = prevLightboxPhoto;
+
+async function nextStep(){
+  const activeSteps = getStepsForRecord(rec);
+  const s = activeSteps[stepIndex];
+  if(s.type === 'yntext' || s.type === 'yntextphoto'){
+    const needsNote = s.k === 'B1' ? rec[s.k] === 'NE' : (isGeneralCheckKey(s.k) ? rec[s.k] === 'NE' : rec[s.k] === 'NE');
+    if(needsNote) rec[s.textKey] = document.getElementById('descInput')?.value || rec[s.textKey] || '';
+  }
+  if(['text','textarea','branchSelect','technikSelect','yearInput','date','modelSelect','number'].includes(s.type)) addSuggestion(s.k, rec[s.k]);
+  if(s.k === 'typ' && rec.typ){
+    const pref = getModelPref(rec.typ);
+    if(pref && ['ANO','BEZ','ZAVADA'].includes(pref.chargerPresent)) rec.chargerPresent = pref.chargerPresent;
+  }
+  if(stepIndex < activeSteps.length-1){
+    if(s.k === 'datum'){
+      if(!rec.datum) rec.datum = todayLocal();
+      if(!rec.dalsiKontrola) rec.dalsiKontrola = addMonthsToDate(rec.datum,3);
+    }
+    stepIndex++;
+    showStep();
+    return;
+  }
+  syncRevizeIssue(rec);
+  syncModelPreferences(rec);
+  const okSave = confirm('Chceš protokol uložit?');
+  if(!okSave) return;
+  rec.savedAt = new Date().toISOString();
+  await saveProtocol(rec);
+  closeWizard();
+  render();
+  alert('Protokol uložen.');
+}
+
+function openPreviewById(id){
+  const record = data.find(r => r.id === id);
+  if(!record) return;
+  syncRevizeIssue(record);
+  currentPreview = record;
+  els.previewBody.innerHTML = renderPaper(record);
+  els.previewBadges.innerHTML = `<span class="badge ${hasIssue(record)?'badge-warn':'badge-ok'}">${hasIssue(record)?'Se závadou':'Bez závad'}</span>`;
+  openModal(els.preview);
+}
+function closePreview(){
+  closeModal(els.preview);
+}
+async function savePreviewRecord(){
+  if(!currentPreview){
+    alert('Není otevřený žádný protokol k uložení.');
+    return;
+  }
+  await saveProtocol(currentPreview);
+  alert('Protokol byl uložen.');
+  closePreview();
+}
+function printCurrent(){
+  console.log('TISK kliknuto');
+  if(!currentPreview){
+    alert('Není otevřený protokol.');
+    return;
+  }
+  els.previewBody.innerHTML = renderPaper(currentPreview);
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  // vynutit překreslení a spustit tisk přímo z kliknutí uživatele
+  void els.previewBody.offsetHeight;
+  try {
+    window.print();
+  } catch (e) {
+    console.error('Print error', e);
+    alert('Nepodařilo se otevřít tisk.');
+  }
+}
+window._printNow = printCurrent;
+
+function downloadById(id){
+  const record = data.find(r => r.id === id);
+  if(!record) return;
+  currentPreview = record;
+  els.previewBody.innerHTML = renderPaper(record);
+  openModal(els.preview);
+}
+
+async function delById(id){
+  if(!confirm('Opravdu smazat uložený protokol?')) return;
+  await deleteProtocol(id);
+}
+async function clearAllData(){
+  if(!data.length) return;
+  if(!confirm('Opravdu smazat všechny uložené protokoly?')) return;
+  const pass = prompt('Pro smazání všech protokolů zadej heslo:');
+  if(pass !== '1985'){
+    alert('Špatné heslo. Protokoly nebyly smazány.');
+    return;
+  }
+  await deleteAllProtocols();
+  alert('Všechny protokoly byly smazány.');
+}
+
+function openHistoryModal(serial){
+  const rows = findProtocolsByMachine(serial);
+  els.historySubtitle.textContent = serial ? 'Výrobní číslo: ' + serial : '';
+  els.historyBody.innerHTML = !rows.length
+    ? '<div class="empty">Pro tuto plošinu zatím není uložený žádný protokol.</div>'
+    : rows.map(r => `<div class="history-item"><strong>${escapeHtml(r.datum||'Bez data')} · ${escapeHtml(r.typ||'')}</strong><div>${escapeHtml(r.umisteni||'Bez umístění')}</div><div>${hasIssue(r)?'Se závadou':'Bez závad'}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="secondary mini" data-open-id="${r.id}">Otevřít protokol</button></div></div>`).join('');
+  els.historyBody.querySelectorAll('[data-open-id]').forEach(btn => btn.addEventListener('click', () => openPreviewById(btn.dataset.openId)));
+  openModal(els.historyModal);
+}
+function closeHistoryModal(){ closeModal(els.historyModal); }
+
+function resetQr(){
+  document.getElementById('qrFileInput').value = '';
+  els.qrReader.textContent = 'Vyfoť QR kód nebo vyber fotku z galerie.';
+  els.qrStatus.textContent = 'Na mobilu se otevře foťák nebo galerie.';
+  qrPickerActive = false;
+}
+function triggerQrPicker(){
+  const picker = document.getElementById('qrFileInput');
+  if(!picker) return;
+  qrPickerActive = true;
+  picker.click();
+}
+
+function openQrModal(){
+  openModal(els.qrModal);
+  resetQr();
+  setTimeout(() => triggerQrPicker(), 80);
+}
+window._openQr = openQrModal;
+
+function closeQrModal(){
+  resetQr();
+  closeModal(els.qrModal);
+}
+
+async function processQrFile(file){
+  qrPickerActive = false;
+  if(!file){
+    els.qrStatus.textContent = 'Nebyla vybrána fotka.';
+    return;
+  }
+  if(!window.Html5Qrcode){
+    els.qrStatus.textContent = 'QR knihovna se nenačetla.';
+    return;
+  }
+
+  els.qrStatus.textContent = 'Načítám QR z fotky...';
+
+  try{
+    const reader = new Html5Qrcode('qrReader');
+    const text = await reader.scanFile(file, false);
+    await reader.clear();
+    await handleQrDecoded(text);
+  }catch(e){
+    els.qrStatus.textContent = 'QR nerozeznán. Zkus to znovu.';
+    if(typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([200,100,200]);
+    const picker = document.getElementById('qrFileInput');
+    if(picker){
+      picker.value = '';
+      setTimeout(() => {
+        if(els.qrModal.classList.contains('show')) triggerQrPicker();
+      }, 700);
+    }
+  }
+}
+
+async function handleQrDecoded(decodedText){
+  const parsed = parseQrPayload(decodedText);
+  const hasAnyMatch = !!(parsed.typ || parsed.vc);
+
+  if(!hasAnyMatch){
+    els.qrStatus.textContent = 'QR nerozeznán. Zkus to znovu.';
+    if(typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([200,100,200]);
+    const picker = document.getElementById('qrFileInput');
+    if(picker){
+      picker.value = '';
+      setTimeout(() => {
+        if(els.qrModal.classList.contains('show')) picker.click();
+      }, 700);
+    }
+    return;
+  }
+
+  els.qrStatus.textContent = 'Načteno: ' + (parsed.typ || 'neznámý typ') + ' / ' + (parsed.vc || 'neznámé výrobní číslo');
+  if(typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);
+
+  const prefill = {};
+  if(parsed.typ) prefill.typ = parsed.typ;
+  if(parsed.vc) prefill.vc = parsed.vc;
+
+  let historyRecord = null;
+  if(parsed.vc){
+    const history = findProtocolsByMachine(parsed.vc);
+    if(history.length) historyRecord = history[0];
+  }
+
+  closeQrModal();
+
+  if(historyRecord){
+    const mergedPrefill = Object.assign({}, prefill, {
+      typ: prefill.typ || historyRecord.typ || '',
+      vc: prefill.vc || historyRecord.vc || '',
+      rok: historyRecord.rok || '',
+      umisteni: historyRecord.umisteni || '',
+      chargerPresent: historyRecord.chargerPresent || ''
+    });
+    openWizard(null, mergedPrefill);
+    return;
+  }
+
+  openWizard(null, prefill);
+}
+
+function rowsHtml(items,r, opts={}){
+  const numbered = !!opts.numbered;
+  return items.map((it, idx) => {
+    const ch = getKnownChargerPresence(r);
+    const sock = getKnownSocket230Presence(r);
+    const note = r[it.k+'_p'] || '';
+    const val = r[it.k];
+    const marks = yn(val);
+    let noteText = note;
+    if(it.chargerCheck && ch === 'BEZ'){ noteText = 'Bez nabíječe – není závada'; }
+    if(it.socketCheck && sock === 'BEZ'){ noteText = 'Bez zásuvky v koši 230 V – není závada'; }
+    const cls = isProblemAnswer(it.k, val) ? 'status-bad' : '';
+    return `<tr class="${cls}">${numbered?`<td class="num-col">${idx+1}</td>`:''}<td class="item-col">${escapeHtml(it.printLabel||it.l)}</td><td class="yn-col"><span class="box">${marks.ano}</span></td><td class="yn-col"><span class="box">${marks.ne}</span></td><td class="note-col">${escapeHtml(noteText)}</td></tr>`;
+  }).join('');
+}
+function renderConclusion(r){
+  const servis = yn(r.zaverServis); const oprava = yn(r.zaverOprava); const safe = yn(r.zaverBezpecny);
+  return `<table class="proto-table"><thead><tr><th class="item-col">Výsledek kontroly</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>
+  <tr><td>Nutná běžná servisní kontrola</td><td class="yn-col"><span class="box">${servis.ano}</span></td><td class="yn-col"><span class="box">${servis.ne}</span></td><td></td></tr>
+  <tr><td>Nutná oprava</td><td class="yn-col"><span class="box">${oprava.ano}</span></td><td class="yn-col"><span class="box">${oprava.ne}</span></td><td></td></tr>
+  <tr><td>Zařízení vyhovuje provozu</td><td class="yn-col"><span class="box">${safe.ano}</span></td><td class="yn-col"><span class="box">${safe.ne}</span></td><td>${r.zaverBezpecny==='NE'?'Zařízení není způsobilé k bezpečnému provozu.':''}</td></tr>
+  </tbody></table>`;
+}
+function renderPhotoSection(r){
+  const photos = r.photos || {};
+  const cells = PHOTO_STEPS.map((s, i) => {
+    const p = photos[s.photoKey] || {};
+    const src = p.url || p.dataUrl || '';
+    return `<div class="photo-mini">${src ? `<img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)">` : '<div style="height:70px;border:1px dashed #bdbdbd;margin-bottom:5px;background:#fafafa"></div>'}<div>${i+1}. ${escapeHtml(PHOTO_LABELS[s.photoKey])}</div></div>`;
+  }).join('');
+  return `<div class="photo-section"><div class="section-head">Fotodokumentace</div><div style="padding:6px 8px;font-size:11px;font-weight:600">Přehledové fotografie zařízení (6 ks)</div><div class="photo-strip">${cells}</div></div>`;
+}
+function renderIssuePhotosSection(r){
+  const issuePhotos = r.issuePhotos || {};
+  const flat = [];
+  Object.entries(issuePhotos).forEach(([k,p]) => {
+    const list = Array.isArray(p) ? p : (p ? [p] : []);
+    list.forEach(item => {
+      const src = item ? (item.url || item.dataUrl || '') : '';
+      if(src) flat.push({src, q:item.question || k});
+    });
+  });
+  const entries = flat.slice(0,4);
+  const boxes = [0,1,2,3].map(i => {
+    const entry = entries[i];
+    if(!entry) return `<div class="issue-mini"><div style="height:56px;border:1px dashed #bdbdbd;background:#fafafa;margin-bottom:4px"></div><div>vložit foto</div></div>`;
+    return `<div class="issue-mini"><img src="${escapeHtml(entry.src)}" data-full-src="${escapeHtml(entry.src)}" onclick="openLightbox(this.dataset.fullSrc)"><div>${escapeHtml(entry.q)}</div></div>`;
+  }).join('');
+  return `<div class="photo-section" style="border-top:none"><div style="padding:6px 8px;font-size:11px;font-weight:600;border-top:1px solid #707070">Fotografie závad (dle potřeby)</div><div class="issue-strip" style="grid-template-columns:repeat(4,1fr)">${boxes}</div></div>`;
+}
+function renderPaper(r){
+  const sections = getSectionsForRecord(r);
+  const b1 = yn(r.B1);
+  return `
+  <div class="paper">
+    <div class="paper-doc">
+      <section class="paper-page">
+        <div class="paper-header">
+          <h2>LiftCheck CZ</h2>
+          <div class="subhead">Záznam o běžné prohlídce pracovní plošiny dle NV č. 193/2022 Sb., příloha č. 2, čl. 3.2</div>
+        </div>
+        <table class="proto-meta">
+          <tr><td class="label">Typ zařízení:</td><td class="value">${escapeHtml(r.typ||'')}</td><td class="label">Kontrolu provedl:</td><td class="value">${escapeHtml(r.technik||'')}</td></tr>
+          <tr><td class="label">Výrobní číslo:</td><td class="value mono">${escapeHtml(r.vc||'')}</td><td class="label">Platnost revize do:</td><td class="value ${isRevizeExpired(r)?'status-bad':''}">${escapeHtml(formatMonthYear(r.revizeDo))}</td></tr>
+          <tr><td class="label">Datum kontroly:</td><td class="value">${escapeHtml(r.datum||'')}</td><td class="label">Následná kontrola do:</td><td class="value">${escapeHtml(r.dalsiKontrola||'')}</td></tr>
+          <tr><td class="label">Rok výroby:</td><td class="value">${escapeHtml(r.rok||'')}</td><td class="label">Druh kontroly:</td><td class="value">Běžná čtvrtletní</td></tr>
+          <tr><td class="label">Stav motohodin:</td><td class="value">${escapeHtml(r.mh||'')} h</td><td class="label">Interval:</td><td class="value">3 měsíce</td></tr>
+          <tr><td class="label">Umístění:</td><td class="value" colspan="3">${r.umisteni ? 'půjčovna ' + escapeHtml(r.umisteni) : ''}</td></tr>
+        </table>
+        <div class="paper-row-2">
+          <div class="section-card">
+            <div class="section-head">A. Průvodní dokumentace a vybavení</div>
+            <table class="proto-table"><thead><tr><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.A,r)}</tbody></table>
+          </div>
+          <div class="section-card">
+            <div class="section-head">B. Stav zařízení</div>
+            <table class="proto-table"><thead><tr><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>
+              <tr><td>Bez závad</td><td class="yn-col"><span class="box">${b1.ano}</span></td><td class="yn-col"><span class="box">${b1.ne}</span></td><td></td></tr>
+              <tr><td>Závady</td><td class="yn-col"><span class="box">${r.B1==='NE' ? '☒':'☐'}</span></td><td class="yn-col"><span class="box">${r.B1==='ANO' ? '☒':'☐'}</span></td><td>${escapeHtml(r.B1_p||'')}</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-head">C. Všeobecná kontrola zařízení <span class="section-note">ANO = bez závad &nbsp;&nbsp; NE = závada</span></div>
+          <table class="proto-table"><thead><tr><th class="num-col">Č.</th><th class="item-col">Kontrolovaná položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.C,r,{numbered:true})}</tbody></table>
+        </div>
+        <div class="page-number">Strana 1 z 2</div>
+      </section>
+      <section class="paper-page">
+        <div class="section-card">
+          <div class="section-head">D. Kontrola provozních náplní</div>
+          <table class="proto-table"><thead><tr><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.D,r)}</tbody></table>
+        </div>
+        <div class="section-card">
+          <div class="section-head">E. Kontrola funkcí</div>
+          <table class="proto-table"><thead><tr><th class="num-col">Č.</th><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.E,r,{numbered:true})}</tbody></table>
+        </div>
+        <div class="section-card">
+          <div class="section-head">Zjištěné závady / doporučení</div>
+          <div class="findings-box">${escapeHtml(r.poznamka||'')}<div class="findings-lines"><div></div><div></div><div></div></div></div>
+        </div>
+        ${renderPhotoSection(r)}
+        ${renderIssuePhotosSection(r)}
+        <div class="section-card">
+          <div class="section-head">Závěr kontroly</div>
+          <div class="conclusion-grid">
+            <div>${renderConclusion(r)}</div>
+            <div class="findings-box"><div style="font-weight:700;margin-bottom:6px">Poznámka / omezení provozu:</div>${escapeHtml(r.B1_p||'')}<div class="findings-lines"><div></div><div></div></div></div>
+          </div>
+          <div class="signature-grid">
+            <div><strong>Datum kontroly:</strong><br><br>${escapeHtml(r.datum||'')}</div>
+            <div><strong>Jméno kontrolního technika:</strong><br><br>${escapeHtml(r.technik||'')}</div>
+            <div><strong>Podpis:</strong><br><br></div>
+          </div>
+        </div>
+        <div class="page-number">Strana 2 z 2</div>
+      </section>
+    </div>
+  </div>`;
+}
+
+function waitForImages(container){
+  const imgs = Array.from(container.querySelectorAll('img'));
+  return Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res => { img.onload=res; img.onerror=res; })));
+}
+async function savePreviewRecord(){
+  if(!currentPreview){ alert('Není otevřený žádný protokol k uložení.'); return; }
+  els.previewBody.innerHTML = renderPaper(currentPreview);
+  const element = els.previewBody.querySelector('.paper');
+  if(!element){ alert('Nepodařilo se připravit PDF.'); return; }
+  await waitForImages(element);
+  const fileBase = (currentPreview.id || currentPreview.vc || 'protokol').replace(/[^a-z0-9_-]+/gi,'_');
+  if(window.html2pdf){
+    await window.html2pdf().set({ margin:[0,0,0,0], filename:`${fileBase}.pdf`, image:{type:'jpeg', quality:0.96}, html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff'}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'}, pagebreak:{mode:['css','legacy']} }).from(element).save();
+  } else {
+    alert('PDF knihovna se nenačetla.');
+  }
+}
+function printCurrent(){
+  if(!currentPreview){ alert('Není otevřený protokol.'); return; }
+  els.previewBody.innerHTML = renderPaper(currentPreview);
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  void els.previewBody.offsetHeight;
+  window.print();
+}
+
+function applyTheme(mode){
+  const dark = mode === 'dark';
+  document.body.classList.toggle('dark', dark);
+  const btn = document.getElementById('themeToggle');
+  if(btn) btn.textContent = dark ? 'Světlý režim' : 'Tmavý režim';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', dark ? '#020617' : '#0f172a');
+}
+function toggleTheme(){
+  const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+  localStorage.setItem('doctypeTheme', next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('doctypeTheme') || 'light');
+
+
+function parseLocalDate(value){
+  if(!value) return null;
+  const s = String(value).slice(0,10);
+  const d = new Date(s + 'T00:00:00');
+  return isNaN(d) ? null : d;
+}
+function daysUntilDate(value){
+  const d = parseLocalDate(value);
+  if(!d) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((d - today) / 86400000);
+}
+function upcomingStatus(days){
+  if(days === null) return {text:'Bez data', cls:'upcoming-ok'};
+  if(days < 0) return {text:`Po termínu ${Math.abs(days)} dnů`, cls:'upcoming-overdue'};
+  if(days === 0) return {text:'Dnes', cls:'upcoming-soon'};
+  if(days <= 14) return {text:`Do ${days} dnů`, cls:'upcoming-soon'};
+  if(days <= 30) return {text:`Do ${days} dnů`, cls:'upcoming-ok'};
+  return {text:`Za ${days} dnů`, cls:'upcoming-ok'};
+}
+function getUpcomingRows(){
+  return (data || [])
+    .map(r => {
+      const due = r.dalsiKontrola || '';
+      const days = daysUntilDate(due);
+      return {record:r, due, days};
+    })
+    .filter(x => x.due && x.days !== null && x.days <= 30)
+    .sort((a,b) => a.days - b.days);
+}
+function openUpcomingModal(){
+  const modal = document.getElementById('upcomingModal');
+  const body = document.getElementById('upcomingBody');
+  const rows = getUpcomingRows();
+
+  if(!rows.length){
+    body.innerHTML = '<div class="upcoming-empty">Žádná uložená kontrola nemá termín do 30 dnů.</div>';
+  } else {
+    body.innerHTML = `<div class="upcoming-list">${rows.map(x => {
+      const r = x.record;
+      const st = upcomingStatus(x.days);
+      return `<div class="upcoming-item">
+        <div class="upcoming-main">
+          <div class="upcoming-title">${escapeHtml(r.typ || 'Bez typu')} · ${escapeHtml(r.vc || 'Bez výrobního čísla')}</div>
+          <div class="upcoming-sub">${escapeHtml(r.umisteni || 'Bez umístění')} · poslední kontrola ${escapeHtml(formatDate(r.datum))} · technik ${escapeHtml(r.technik || '—')}</div>
+          <span class="upcoming-badge ${st.cls}">${escapeHtml(st.text)}</span>
+        </div>
+        <div class="upcoming-date">
+          <div>${escapeHtml(formatDate(x.due))}</div>
+          <button class="secondary mini" type="button" data-upcoming-preview="${r.id}" style="margin-top:8px">Náhled</button>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+    body.querySelectorAll('[data-upcoming-preview]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        closeModal(modal);
+        openPreviewById(btn.dataset.upcomingPreview);
+      });
+    });
+  }
+
+  openModal(modal);
+}
+function closeUpcomingModal(){
+  closeModal(document.getElementById('upcomingModal'));
+}
+
+// events
+document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+els.searchInput.addEventListener('input', render);
+els.statusFilter.addEventListener('change', render);
+const sideToggleBtn = document.getElementById('sideToggleBtn');
+const sidePanel = document.getElementById('sidePanel');
+const sideOverlay = document.getElementById('sideOverlay');
+function toggleSidePanel(){
+  if(window.matchMedia('(max-width:920px)').matches){
+    document.body.classList.toggle('side-open');
+  } else {
+    document.body.classList.toggle('side-collapsed');
+  }
+}
+function closeSidePanel(){
+  document.body.classList.remove('side-open');
+}
+sideToggleBtn?.addEventListener('click', toggleSidePanel);
+sideOverlay?.addEventListener('click', closeSidePanel);
+document.getElementById('sideSettingsBtn')?.addEventListener('click', () => { closeSidePanel(); openModal(document.getElementById('settingsModal')); });
+document.getElementById('sideThemeBtn')?.addEventListener('click', toggleTheme);
+document.querySelector('[data-side-action="protocols"]')?.addEventListener('click', () => { closeSidePanel(); document.querySelector('.toolbar')?.scrollIntoView({behavior:'smooth'}); });
+document.querySelector('[data-side-action="overview"]')?.addEventListener('click', () => { closeSidePanel(); window.scrollTo({top:0,behavior:'smooth'}); });
+document.getElementById('closeSettingsBtn')?.addEventListener('click', () => closeModal(document.getElementById('settingsModal')));
+document.getElementById('upcomingBtn')?.addEventListener('click', () => { closeSidePanel?.(); openUpcomingModal(); });
+document.getElementById('closeUpcomingBtn')?.addEventListener('click', closeUpcomingModal);
+document.getElementById('newProtocolBtn').addEventListener('click', () => openWizard());
+document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
+document.getElementById('importBackupBtn')?.addEventListener('click', () => document.getElementById('importBackupInput')?.click());
+document.getElementById('sideImportBtn')?.addEventListener('click', () => { closeSidePanel?.(); document.getElementById('importBackupInput')?.click(); });
+document.getElementById('importBackupInput')?.addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  importBackupFile(file);
+  e.target.value = '';
+});
+
+document.getElementById('closeWizardBtn').addEventListener('click', closeWizard);
+document.getElementById('prevStepBtn').addEventListener('click', prevStep);
+document.getElementById('nextBtn').addEventListener('click', nextStep);
+document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+document.getElementById('savePreviewBtn').addEventListener('click', savePreviewRecord);
+document.getElementById('printPreviewBtn').addEventListener('click', printCurrent);
+document.addEventListener('keydown', (e) => {
+  if(e.key !== 'Escape') return;
+
+  const lb = document.getElementById('lightbox');
+  if(lb && lb.classList.contains('show')){
+    closeLightbox();
+    return;
+  }
+
+  if(els.preview && els.preview.classList.contains('show')){
+    closePreview();
+    return;
+  }
+
+  if(els.wizard && els.wizard.classList.contains('show')){
+    closeWizard();
+    return;
+  }
+
+  const settingsModal = document.getElementById('settingsModal');
+  if(settingsModal && settingsModal.classList.contains('show')){
+    closeModal(settingsModal);
+    return;
+  }
+
+  if(els.qrModal && els.qrModal.classList.contains('show')){
+    closeQrModal();
+    return;
+  }
+
+  if(els.historyModal && els.historyModal.classList.contains('show')){
+    closeHistoryModal();
+    return;
+  }
+
+  const upcomingModal = document.getElementById('upcomingModal');
+  if(upcomingModal && upcomingModal.classList.contains('show')){
+    closeUpcomingModal();
+    return;
+  }
+
+  document.body.classList.remove('side-open');
+});
+document.getElementById('closeQrBtn').addEventListener('click', () => closeQrModal());
+document.getElementById('clearQrBtn').addEventListener('click', () => {
+  resetQr();
+  triggerQrPicker();
+});
+if(document.getElementById('qrBtn')) document.getElementById('qrBtn').addEventListener('click', openQrModal);
+document.getElementById('qrFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  processQrFile(file);
+});
+window.addEventListener('focus', () => {
+  if(!els.qrModal.classList.contains('show')) return;
+  if(!qrPickerActive) return;
+
+  const picker = document.getElementById('qrFileInput');
+
+  setTimeout(() => {
+    if(!els.qrModal.classList.contains('show')) return;
+    if(!qrPickerActive) return;
+
+    // 👉 pokud uživatel zrušil focení (žádný soubor)
+    if(picker && !picker.files.length){
+      qrPickerActive = false; // 🔥 důležité – zabrání znovuotevření foťáku
+      closeQrModal();
+    }
+  }, 250);
+});
+document.getElementById('closeHistoryBtn').addEventListener('click', closeHistoryModal);
+els.list.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  if(action === 'preview') openPreviewById(btn.dataset.id);
+  if(action === 'edit') openWizard(btn.dataset.id);
+  if(action === 'pdf') downloadById(btn.dataset.id);
+  if(action === 'delete') delById(btn.dataset.id);
+  if(action === 'history') openHistoryModal(btn.dataset.vc);
+});
+
+try {
+  qrEnabled = false;
+  if(els.qrBtn){ els.qrBtn.style.display = 'none'; els.qrBtn.classList.add('hidden'); }
+} catch(e) {}
+
+
+if(firebaseAvailable && db){
+  db.collection(COLLECTION_NAME).onSnapshot(
+    snap => { data = snap.docs.map(d => ({...d.data(), id:d.id})); render(); },
+    err => {
+      console.error('Firebase sync error:', err);
+      els.list.innerHTML = '<div class="empty"><span class="badge badge-warn">Sdílení nejde</span><div style="margin-top:10px">Zkontroluj internet, Firebase pravidla nebo spuštění přes webový odkaz.</div></div>';
+      startLocalMode();
+    }
+  );
+} else {
+  startLocalMode();
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
