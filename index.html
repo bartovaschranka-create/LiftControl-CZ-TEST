@@ -1459,7 +1459,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.98</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.99</div>
   </div>
 </aside>
 
@@ -2426,7 +2426,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.98',
+      appVersion: '1.6 / 5.99',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -2874,10 +2874,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.98'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.99'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.98';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.99';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3294,7 +3294,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.98';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.99';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3325,7 +3325,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.98: tisk protokolu vrácen na původní funkční mechanismus. */
+/* v1.6 / 5.99: tisk protokolu vrácen na původní funkční mechanismus. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3360,7 +3360,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.98'
+      appVersion: '1.6 / 5.99'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -3994,11 +3994,52 @@ async function savePreviewRecord(){
 }
 function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
-  els.previewBody.innerHTML = renderPaper(currentPreview);
-  if(!els.preview.classList.contains('show')) openModal(els.preview);
-  // v1.6 / 5.98: návrat k původnímu funkčnímu tisku přes náhled protokolu.
-  void els.previewBody.offsetHeight;
-  window.print();
+
+  // v1.6 / 5.99: nouzově stabilní tisk bez modalu.
+  // Při tisku se dočasně nahradí tělo stránky jen protokolem ve stejné struktuře #preview,
+  // kterou používají tisková CSS pravidla. Po zavření tisku se aplikace načte znovu.
+  const paperHtml = renderPaper(currentPreview);
+  const originalTitle = document.title;
+  const scrollY = window.scrollY || 0;
+  document.title = 'LiftControl CZ - tisk protokolu';
+
+  const printHtml = `
+    <div id="preview" class="modal show" style="display:block;position:static;inset:auto;background:#fff;padding:0;margin:0;overflow:visible;">
+      <div class="modal-content" style="width:100%;max-height:none;overflow:visible;border-radius:0;box-shadow:none;background:#fff;">
+        <div class="preview-shell" style="padding:0;background:#fff;overflow:visible;">
+          <div class="paper-wrap print-root" style="padding:0;background:#fff;overflow:visible;">
+            <div id="previewBody">${paperHtml}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const restore = () => {
+    try { document.title = originalTitle; } catch(e) {}
+    setTimeout(() => {
+      // Po dočasné výměně DOM je nejbezpečnější tvrdý reload aplikace, aby se obnovily event listenery.
+      window.location.reload();
+    }, 250);
+  };
+
+  window.addEventListener('afterprint', restore, {once:true});
+  document.body.innerHTML = printHtml;
+  window.scrollTo(0, 0);
+
+  setTimeout(() => {
+    try {
+      window.print();
+    } catch(e) {
+      console.error('Print error', e);
+      alert('Nepodařilo se otevřít tisk.');
+      restore();
+    }
+  }, 350);
+
+  // záloha pro prohlížeče, kde afterprint nespustí reload po zrušení dialogu
+  setTimeout(() => {
+    try { if(document.body && document.body.querySelector('#previewBody')) window.scrollTo(0, scrollY); } catch(e) {}
+  }, 1500);
 }
 window._printNow = printCurrent;
 
@@ -4389,7 +4430,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.98'
+      appVersion:'1.6 / 5.99'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -4992,7 +5033,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.98'
+      appVersion:'1.6 / 5.99'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5715,7 +5756,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.98'
+      appVersion:'1.6 / 5.99'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
