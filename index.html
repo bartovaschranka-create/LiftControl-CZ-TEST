@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="LiftControl CZ">
 <title>LiftControl CZ</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef4fb;--panel:#ffffff;--panel2:#f8fbff;--text:#0f172a;--muted:#64748b;--line:#dbe6f2;--primary:#2563eb;--primary2:#1d4ed8;--danger:#dc2626;--ok:#16a34a;--shadow:0 10px 30px rgba(15,23,42,.08);--radius:18px}
@@ -51,7 +51,7 @@ body.dark .paper *{color:inherit}
 .list{display:grid;gap:14px}.card{padding:16px 18px}.card-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.card-title{font-size:1.06rem;font-weight:700}.card-sub{font-size:.88rem;color:var(--muted);margin-top:4px}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.badge{padding:6px 10px;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid transparent}.badge-ok{background:#ecfdf3;color:#166534;border-color:#bbf7d0}.badge-warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}.badge-info{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
 .meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.meta{background:#f8fbff;border:1px solid var(--line);padding:12px;border-radius:14px}.meta-label{font-size:.75rem;color:var(--muted);margin-bottom:4px}.meta-value{font-weight:600;font-size:.92rem}
 .actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weight:600;font-size:.94rem}button:disabled{opacity:.6;cursor:not-allowed}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#e8eef6;color:#0f172a}.ghost{background:#fff;border:1px solid var(--line);color:#0f172a}.danger{background:var(--danger);color:#fff}.success{background:var(--ok);color:#fff}.success:hover{filter:brightness(.95)}.mini{padding:9px 12px;font-size:.86rem;border-radius:12px}
+button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weight:600;font-size:.94rem}button:disabled{opacity:.6;cursor:not-allowed}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#e8eef6;color:#0f172a}.ghost{background:#fff;border:1px solid var(--line);color:#0f172a}.danger{background:var(--danger);color:#fff}.mini{padding:9px 12px;font-size:.86rem;border-radius:12px}
 .empty{padding:28px;border:2px dashed var(--line);border-radius:18px;background:#fbfdff;text-align:center;color:var(--muted)}
 .modal{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;align-items:center;justify-content:center;padding:18px;z-index:40}.modal.show{display:flex}.modal-content{width:min(100%,760px);max-height:92vh;overflow:auto;background:#fff;border-radius:24px;box-shadow:0 24px 60px rgba(15,23,42,.28)}
 .wizard-shell{padding:22px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}.preview-shell{padding:18px;background:#f8fbff}
@@ -61,9 +61,6 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 .field{margin-top:12px} label{display:block;font-size:.86rem;color:var(--muted);margin-bottom:7px;font-weight:600} input,textarea,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-size:1rem;background:#fff;color:var(--text);outline:none}
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
-.smart-suggest-wrap{position:relative}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.14);z-index:90}.smart-suggest-box.show{display:block}.smart-suggest-item{padding:9px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.90 – iOS klávesnice: neschovávat/podsvěcovat spodní akční tlačítka pod klávesnicí */
-@media(max-width:920px){body.mobile-keyboard-open .wizard-actions,body.mobile-keyboard-open #partsFormWrap .preview-actions,body.mobile-keyboard-open #faultFormWrap .preview-actions,body.mobile-keyboard-open #workPlanFormWrap .preview-actions{position:static!important;display:none!important}}
 .wizard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 20%);padding-top:16px}
 .preview-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.preview-title{font-size:1.05rem;font-weight:700}.preview-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}.preview-actions-left,.preview-actions-right{display:flex;gap:10px;flex-wrap:wrap}
 .paper-wrap{background:#fff;padding:12px;border-radius:18px;overflow:auto}.paper{background:#fff;color:#000;padding:9mm 8mm 8mm 8mm;font-size:10.9px;line-height:1.24;border:none;box-shadow:none;width:210mm;max-width:100%;margin:0 auto}.paper h2{margin:0 0 6px;text-align:center;font-size:18px;letter-spacing:.6px;font-weight:700}.paper .subhead{margin:0 0 9px;text-align:center;font-size:10.2px;color:#000}.paper table{width:100%;border-collapse:collapse;margin-bottom:6px;table-layout:auto}
@@ -642,7 +639,7 @@ header .header-sub{
 }
 
 
-/* v1.6 / 5.64 plan práce */
+/* v1.6 / 5.63 plan práce */
 .work-plan-modal{width:min(96vw,1180px)!important}
 .work-plan-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .work-plan-title{font-weight:800;margin:8px 0 12px;color:var(--text)}
@@ -668,7 +665,7 @@ body.dark .work-plan-form{background:var(--panel2)}
 @media print{#workPlanModal{display:none!important}}
 
 
-/* v1.6 / 5.64 main dashboard + náhradní díly */
+/* v1.6 / 5.63 main dashboard + náhradní díly */
 .main-overview{margin-bottom:18px}
 .overview-head{background:var(--panel);border:1px solid rgba(219,230,242,.8);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
 .overview-head h1{margin:0 0 5px;font-size:1.35rem}
@@ -696,23 +693,19 @@ body.dark .part-card{background:var(--panel2)}
 .part-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .part-meta{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:9px}
 .part-meta-label{font-size:.72rem;color:var(--muted);margin-bottom:3px}
-.part-meta-value{font-weight:700;font-size:.86rem}.part-meta-value small{font-weight:600;color:var(--muted);font-size:.75rem}
+.part-meta-value{font-weight:700;font-size:.86rem}
 .part-photo{display:flex;gap:10px;align-items:flex-start}
 .part-photo img{width:86px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
-.part-photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.part-photo-item{position:relative;display:inline-flex;flex-direction:column;gap:5px;align-items:flex-start}
-.part-photo-item img{width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
 .part-actions{display:flex;gap:8px;flex-wrap:wrap}
 .status-pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:.74rem;font-weight:750;border:1px solid transparent}
 .status-open{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
 .status-ordered{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
 .status-sent{background:#ecfdf5;color:#166534;border-color:#bbf7d0}
-.status-resolved{background:#ecfdf5;color:#166534;border-color:#bbf7d0}
 @media(max-width:980px){.module-grid{grid-template-columns:1fr}.parts-form-grid,.part-grid{grid-template-columns:1fr}.part-head{flex-direction:column}.parts-toolbar .search{width:100%}}
 @media print{#partsModal{display:none!important}.main-overview{display:none!important}}
 
 
-/* v1.6 / 5.64 koncept 5 */
+/* v1.6 / 5.63 koncept 5 */
 .page-section{display:none}
 .page-section.active{display:block}
 .page-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin:6px 0 16px}
@@ -775,7 +768,7 @@ body .main-overview,body .dashboard{display:none!important}
 @media print{.page-section{display:block!important}.home-page,.plan-page,.parts-page{display:none!important}}
 
 
-/* v1.6 / 5.64 sjednocení písma ve všech formulářích */
+/* v1.6 / 5.63 sjednocení písma ve všech formulářích */
 input,
 select,
 textarea,
@@ -808,7 +801,7 @@ datalist {
 }
 
 
-/* v1.6 / 5.64 – sjednocení písma u datumových polí */
+/* v1.6 / 5.63 – sjednocení písma u datumových polí */
 input[type="date"],
 input[type="datetime-local"],
 input[type="time"]{
@@ -833,7 +826,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator{
 }
 
 
-/* v1.6 / 5.64 – hlášení poruch */
+/* v1.6 / 5.63 – hlášení poruch */
 .home-summary-grid{grid-template-columns:repeat(4,1fr)}
 .summary-box.summary-faults{border-top:4px solid #dc2626}
 .faults-page .inline-page-shell{padding:18px}
@@ -862,7 +855,7 @@ body.dark .fault-card{background:var(--panel2)}
 @media print{#section-faults{display:none!important}}
 
 
-/* v1.6 / 5.64 – stav stroje, karta stroje, pozornost */
+/* v1.6 / 5.63 – stav stroje, karta stroje, pozornost */
 .attention-panel{margin-top:16px;background:var(--panel);border:1px solid rgba(219,230,242,.85);border-radius:22px;box-shadow:var(--shadow);padding:18px}
 .attention-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
 .attention-list{display:grid;gap:8px}
@@ -878,98 +871,9 @@ body.dark .fault-card{background:var(--panel2)}
 .machine-card-list{display:grid;gap:8px}
 .machine-card-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
 .machine-card-row:first-child{border-top:none;padding-top:0}
-.home-machine-search{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel2);display:grid;gap:8px}
-.home-machine-search-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
-.home-machine-search .helper{margin-top:0}
-.fault-category-pill{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:5px 9px;font-size:.75rem;font-weight:800;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
-.fault-category-customer{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
-.fault-category-warranty{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
-.fault-category-normal{background:#f1f5f9;color:#334155;border-color:#cbd5e1}
-/* v1.6 / 5.65 – karta stroje na hlavní stránce bez překrývání */
-.home-machine-search{
-  width:100%;
-  overflow:hidden;
-}
-.home-machine-search-row{
-  grid-template-columns:1fr!important;
-  width:100%;
-}
-.home-machine-search-row input{
-  min-width:0!important;
-  width:100%!important;
-}
-.home-machine-search-row button{
-  width:100%;
-  white-space:normal;
-}
-@media(max-width:640px){.home-machine-search-row{grid-template-columns:1fr}.home-machine-search-row button{width:100%}}
 
 
-
-
-/* v1.6 / 5.66 – karta stroje: modal nad hlavičkou a bez usekávání */
-/* v1.6 / 5.90 – plán práce: stabilní barvy techniků */
-.modal{z-index:140!important}
-#historyModal{
-  align-items:flex-start!important;
-  justify-content:center!important;
-  padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 12px!important;
-  overflow:auto!important;
-}
-#historyModal .history-modal-content{
-  width:min(96vw,920px)!important;
-  max-height:calc(100dvh - env(safe-area-inset-top,0px) - 24px)!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-#historyModal .preview-shell{
-  overflow:visible!important;
-}
-#historyModal .machine-card-row{
-  align-items:flex-start!important;
-  flex-wrap:wrap!important;
-}
-#historyModal .machine-card-row > span:first-child,
-#historyModal .machine-card-row > strong{
-  min-width:0!important;
-  overflow-wrap:anywhere!important;
-}
-#historyModal .machine-card-row button{
-  flex:0 0 auto;
-}
-@media(max-width:640px){
-  #historyModal{padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 8px!important}
-  #historyModal .history-modal-content{
-    width:100%!important;
-    max-height:calc(100dvh - env(safe-area-inset-top,0px) - 16px)!important;
-    border-radius:18px!important;
-  }
-  #historyModal .machine-card-row{
-    display:grid!important;
-    grid-template-columns:1fr!important;
-    gap:8px!important;
-  }
-  #historyModal .machine-card-row button{
-    width:100%;
-  }
-}
-
-
-/* v1.6 / 5.90 – tmavý režim: výraznější barvy techniků v plánu práce */
-.work-event{border-left-color:var(--tech-color,#2563eb)!important;background:var(--tech-bg,rgba(37,99,235,.10))!important}
-.work-event .work-event-tech{color:var(--tech-color,#2563eb)!important}
-.day-row{border-left-color:var(--tech-color,#2563eb)!important;background:linear-gradient(90deg,var(--tech-bg,rgba(37,99,235,.12)) 0%,var(--panel2) 72%)!important}
-.day-row .tech-dot{background:var(--tech-color,#2563eb)!important}
-.day-row .place-pill{border-color:var(--tech-border,rgba(37,99,235,.38))!important}
-body.dark .work-event{background:var(--tech-bg-dark,rgba(96,165,250,.24))!important;border-color:var(--tech-border-dark,rgba(147,197,253,.62))!important;border-left-color:var(--tech-color-dark,#60a5fa)!important}
-body.dark .work-event .work-event-tech{color:var(--tech-color-dark,#93c5fd)!important}
-body.dark .work-event-place{color:#e5e7eb!important}
-body.dark .day-row{background:linear-gradient(90deg,var(--tech-bg-dark,rgba(96,165,250,.24)) 0%,rgba(15,23,42,.96) 78%)!important;border-color:var(--tech-border-dark,rgba(147,197,253,.62))!important;border-left-color:var(--tech-color-dark,#60a5fa)!important}
-body.dark .day-tech{color:#f8fafc!important}
-body.dark .day-row .tech-dot{background:var(--tech-color-dark,#93c5fd)!important;box-shadow:0 0 0 4px var(--tech-bg-dark,rgba(96,165,250,.24))}
-body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fafc!important;border-color:var(--tech-border-dark,rgba(147,197,253,.62))!important}
-
-/* v1.6 / 5.64 – svátky a jmeniny na hlavní stránce */
+/* v1.6 / 5.63 – svátky a jmeniny na hlavní stránce */
 .top-date-stack{
   display:grid;
   gap:8px;
@@ -996,7 +900,7 @@ body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fa
 }
 
 
-/* v1.6 / 5.64 – více stavů poruchy a protokol po opravě */
+/* v1.6 / 5.63 – více stavů poruchy a protokol po opravě */
 .fault-status-row{
   display:flex;
   gap:6px;
@@ -1054,7 +958,7 @@ body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fa
 }
 
 
-/* v1.6 / 5.64 – protokol po opravě bez automatického tisku */
+/* v1.6 / 5.63 – protokol po opravě bez automatického tisku */
 .repair-protocol-toolbar{
   position:sticky;
   top:0;
@@ -1076,7 +980,7 @@ body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fa
 }
 
 
-/* v1.6 / 5.64 – fonty, plán práce více míst, menu */
+/* v1.6 / 5.63 – fonty, plán práce více míst, menu */
 html, body, input, select, textarea, button, option {
   font-family: Inter, "Segoe UI", Arial, sans-serif !important;
 }
@@ -1115,7 +1019,7 @@ body.dark .work-extra-add{background:#0f172a;color:var(--text);border-color:var(
 }
 
 
-/* v1.6 / 5.64 – Vyžaduje pozornost / 48 hodin bez víkendu */
+/* v1.6 / 5.63 – Vyžaduje pozornost / 48 hodin bez víkendu */
 .attention-board{
   margin-top:18px;
   background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
@@ -1274,7 +1178,7 @@ html[data-theme="dark"] .attention-rich-sub, body.dark .attention-rich-sub{
 }
 
 
-/* v1.6 / 5.64 – provozní doladění */
+/* v1.6 / 5.63 – provozní doladění */
 .backup-row{
   padding:12px;
   border:1px solid #bfdbfe;
@@ -1324,7 +1228,7 @@ body.dark .mobile-tech-panel{
 }
 
 
-/* v1.6 / 5.64 – jasné označení čtvrtletních kontrol */
+/* v1.6 / 5.63 – jasné označení čtvrtletních kontrol */
 .module-kicker{
   display:inline-flex;
   width:max-content;
@@ -1349,168 +1253,6 @@ body.dark .module-kicker{
   border-color:#1d4ed8;
 }
 
-
-
-/* v1.6 / 5.90 – externí zákazník */
-.external-customer-card{
-  border-color:#7c3aed!important;
-  box-shadow:0 0 0 2px rgba(124,58,237,.10), var(--shadow)!important;
-  background:linear-gradient(180deg,#faf5ff 0%,#ffffff 100%)!important;
-}
-body.dark .external-customer-card{
-  background:linear-gradient(180deg,rgba(124,58,237,.18) 0%,var(--panel) 100%)!important;
-  border-color:#a78bfa!important;
-}
-.badge-external,.status-external{
-  background:#f3e8ff!important;
-  color:#6d28d9!important;
-  border-color:#d8b4fe!important;
-}
-body.dark .badge-external,body.dark .status-external{
-  background:rgba(124,58,237,.22)!important;
-  color:#ddd6fe!important;
-  border-color:#a78bfa!important;
-}
-.external-check{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:var(--panel2);
-}
-.external-check input{width:auto;min-width:20px;height:20px}
-.external-check strong{display:block}
-.external-check span{display:block;color:var(--muted);font-size:.83rem;margin-top:2px}
-.customer-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.customer-extra-note{font-size:.78rem;color:var(--muted);margin-top:6px}
-.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:720px){.customer-extra-grid,.operator-mini-row{grid-template-columns:1fr}}
-
-/* v5.76 read-only ND cards + audit history */
-.part-note-display{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:11px 12px;display:grid;gap:4px}
-.part-note-display strong{font-size:.78rem;color:var(--muted)}
-.part-note-display div{font-weight:650;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
-.part-card.focus-flash{outline:3px solid #2563eb;outline-offset:3px}
-/* v1.6 / 5.90 – zvýraznění záznamu po prokliku z Vyžaduje pozornost */
-.card.focus-flash,.fault-card.focus-flash,.part-card.focus-flash{outline:3px solid #2563eb!important;outline-offset:3px;box-shadow:0 0 0 6px rgba(37,99,235,.14)!important}
-body.dark .card.focus-flash,body.dark .fault-card.focus-flash,body.dark .part-card.focus-flash{outline-color:#60a5fa!important;box-shadow:0 0 0 6px rgba(96,165,250,.22)!important}
-.attention-count{cursor:pointer}
-.attention-count:hover{filter:brightness(.98);transform:translateY(-1px)}
-
-.audit-list{display:grid;gap:10px;margin-top:12px}
-.audit-item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px;display:grid;gap:5px}
-body.dark .audit-item{background:var(--panel2)}
-.audit-title{font-weight:850}.audit-sub{font-size:.84rem;color:var(--muted);line-height:1.35}.audit-action{display:inline-flex;width:max-content;border-radius:999px;padding:4px 8px;background:#eff6ff;color:#1d4ed8;font-size:.75rem;font-weight:800}
-.audit-action.delete{background:#fef2f2;color:#b91c1c}.audit-action.update{background:#fff7ed;color:#9a3412}.audit-action.create{background:#ecfdf5;color:#166534}
-
-
-/* v1.6 / 5.90 – opravy vrstev, našeptávače karty stroje a ND stavů */
-.lightbox{z-index:2147483000!important;position:fixed!important}
-.lightbox.show{display:flex!important}
-.lightbox img{max-width:96vw!important;max-height:88dvh!important;object-fit:contain!important}
-.home-machine-search{overflow:visible!important}
-.home-machine-search-row{position:relative!important;overflow:visible!important}
-.home-machine-search-row .smart-suggest-box{z-index:2147482000!important;left:0!important;right:0!important;top:calc(100% + 6px)!important}
-
-/* v1.6 / 5.90 – spolehlivý našeptávač karty stroje na hlavní stránce */
-.home-machine-search-row{overflow:visible!important}
-.home-machine-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:220px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 30px rgba(15,23,42,.18);z-index:2147483000!important}
-.home-machine-suggest-box.show{display:block}
-.home-machine-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;line-height:1.25}
-.home-machine-suggest-item:last-child{border-bottom:none}
-.home-machine-suggest-item:hover{background:#f8fbff}
-.home-machine-suggest-main{font-weight:800;color:var(--text)}
-.home-machine-suggest-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
-body.dark .home-machine-suggest-box{background:#0f172a;border-color:var(--line)}
-body.dark .home-machine-suggest-item{border-bottom-color:#243244}
-body.dark .home-machine-suggest-item:hover{background:#172033}
-.part-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-
-.part-handler-note-display{border-color:#bfdbfe;background:#eff6ff}.part-handler-note-display small{display:block;margin-top:6px;color:var(--muted);font-size:.78rem}
-body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
-
-
-/* v1.6 / 5.92 – tisk protokolu: poslední print override proti prázdné stránce */
-@media print{
-  html,body{
-    width:210mm!important;
-    min-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-    overflow:visible!important;
-    -webkit-print-color-adjust:exact!important;
-    print-color-adjust:exact!important;
-  }
-  body *{visibility:hidden!important;}
-  body > *{display:none!important;}
-  body > #preview{
-    display:block!important;
-    visibility:visible!important;
-    position:static!important;
-    inset:auto!important;
-    width:210mm!important;
-    min-width:210mm!important;
-    max-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-    overflow:visible!important;
-  }
-  #preview, #preview *{visibility:visible!important;}
-  #preview .modal-content,
-  #preview .preview-shell,
-  #preview .paper-wrap,
-  #previewBody,
-  #preview .paper,
-  #preview .paper-doc{
-    display:block!important;
-    position:static!important;
-    width:210mm!important;
-    min-width:0!important;
-    max-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    margin:0!important;
-    padding:0!important;
-    border:0!important;
-    border-radius:0!important;
-    box-shadow:none!important;
-    overflow:visible!important;
-    background:#fff!important;
-  }
-  #preview .preview-header,
-  #preview .preview-actions{display:none!important;}
-  #preview .paper-page{
-    display:flex!important;
-    flex-direction:column!important;
-    width:210mm!important;
-    max-width:210mm!important;
-    min-height:296.5mm!important;
-    height:296.5mm!important;
-    max-height:296.5mm!important;
-    margin:0!important;
-    padding:10mm 8mm 8mm 8mm!important;
-    box-sizing:border-box!important;
-    overflow:hidden!important;
-    background:#fff!important;
-    page-break-after:always!important;
-    break-after:page!important;
-  }
-  #preview .paper-page:last-child{
-    page-break-after:auto!important;
-    break-after:auto!important;
-  }
-  @page{size:A4 portrait;margin:0;}
-}
-
 </style>
 </head>
 <body>
@@ -1530,6 +1272,10 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   </div>
   <nav class="side-nav">
     <button type="button" class="side-link active" data-view="home">Přehled dne</button>
+    <button type="button" class="side-link" data-view="plan">Plán práce</button>
+    <button type="button" class="side-link" data-view="archive">Čtvrtletní kontroly</button>
+    <button type="button" class="side-link" data-view="parts">Náhradní díly</button>
+    <button type="button" class="side-link" data-view="faults">Hlášení poruch</button>
     <button type="button" class="side-link" id="upcomingBtn">Blížící se kontroly</button>
     <button type="button" class="side-link" id="sideSettingsBtn">Nastavení</button>
   </nav>
@@ -1537,8 +1283,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" id="sideThemeBtn">Tmavý / světlý režim</button>
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
-    <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.96</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.63</div>
   </div>
 </aside>
 
@@ -1560,15 +1305,6 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
           <button type="button" class="ghost small" id="homePlanBtn">Plán práce</button>
           <button type="button" class="ghost small" id="homePartsBtn">Náhradní díly</button>
           <button type="button" class="ghost small" id="homeFaultsBtn">Hlášení poruch</button>
-          <button type="button" class="ghost small" id="homeMachineCardBtn">Karta stroje</button>
-        </div>
-        <div id="homeMachineSearchWrap" class="home-machine-search hidden">
-          <div class="helper">Vyhledej plošinu podle výrobního čísla.</div>
-          <div class="home-machine-search-row">
-            <input id="homeMachineSearch" class="search" type="text" placeholder="Zadej nebo vyber výrobní číslo" autocomplete="off">
-            <button id="homeMachineOpenBtn" class="primary mini" type="button">Otevřít kartu</button>
-          </div>
-          <datalist id="homeMachineList"></datalist>
         </div>
       </div>
       <div class="day-calendar-card">
@@ -1651,11 +1387,6 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
             <option value="issues">Jen se závadou</option>
             <option value="ok">Jen bez závad</option>
           </select>
-          <select id="protocolCustomerFilter" class="filter">
-            <option value="all">Všechny zakázky</option>
-            <option value="internal">Půjčovna / interní</option>
-            <option value="external">Externí zákazník</option>
-          </select>
           <select id="protocolTechFilter" class="filter">
             <option value="all">Všichni technici</option>
           </select>
@@ -1680,17 +1411,6 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <div class="settings-note">Mazání je chráněné heslem. Před většími úpravami vždy nejdřív proveď export zálohy. Import starší zálohy automaticky převede logiku sekce C na aktuální verzi.</div>
   </div>
   <div class="wizard-actions"><button id="closeSettingsBtn" class="secondary" type="button">Zavřít</button></div>
-</div></div></div>
-
-
-<div class="modal" id="auditModal"><div class="modal-content"><div class="wizard-shell">
-  <div class="preview-header">
-    <div><div class="preview-title">Historie změn</div><div class="card-sub">Přehled posledních změn, mazání a stavů v aplikaci.</div></div>
-    <button id="closeAuditTopBtn" class="secondary mini" type="button">Zavřít</button>
-  </div>
-  <div class="toolbar-right" style="margin-bottom:10px"><button id="refreshAuditBtn" class="secondary mini" type="button">Obnovit</button></div>
-  <div id="auditList" class="audit-list"></div>
-  <div class="preview-actions"><div class="preview-actions-left"><button id="closeAuditBtn" class="secondary" type="button">Zavřít</button></div></div>
 </div></div></div>
 
 <div class="modal" id="upcomingModal"><div class="modal-content"><div class="preview-shell">
@@ -1745,7 +1465,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
       </div>
       <div class="field hidden" id="workPlanCustomWrap">
         <label>Jiné místo</label>
-        <input id="workPlanCustomPlace" type="text" autocomplete="off" placeholder="Zákazník, stavba, servis mimo pobočku...">
+        <input id="workPlanCustomPlace" type="text" list="workPlanPlaceList" placeholder="Zákazník, stavba, servis mimo pobočku...">
       </div>
       <div class="field work-plan-extra">
         <label>Další místa práce</label>
@@ -1787,11 +1507,6 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   <div class="parts-toolbar">
     <button id="addPartBtn" class="primary mini" type="button">Přidat požadavek</button>
 <input id="partsSearch" class="search" placeholder="Hledat PN, výrobní číslo, typ nebo místo">
-    <select id="partsCustomerFilter" class="filter">
-      <option value="all">Všechny zakázky</option>
-      <option value="internal">Půjčovna / interní</option>
-      <option value="external">Externí zákazník</option>
-    </select>
   </div>
 
   <div id="partsFormWrap" class="parts-form hidden">
@@ -1799,17 +1514,13 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <div class="parts-form-grid">
       <div class="field">
         <label>Typ zařízení *</label>
-        <input id="partType" type="text" autocomplete="off">
+        <input id="partType" list="partTypeList" type="text" autocomplete="off">
         <datalist id="partTypeList"></datalist>
       </div>
       <div class="field">
         <label>Výrobní číslo *</label>
-        <input id="partSerial" type="text" autocomplete="off">
+        <input id="partSerial" list="partSerialList" type="text" autocomplete="off">
         <datalist id="partSerialList"></datalist>
-      </div>
-      <div class="field">
-        <label>Zadal</label>
-        <select id="partEnteredBy"></select>
       </div>
       <div class="field">
         <label>Místo / pobočka</label>
@@ -1817,7 +1528,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
       </div>
       <div class="field hidden" id="partCustomPlaceWrap">
         <label>Jiné místo</label>
-        <input id="partCustomPlace" type="text" autocomplete="off">
+        <input id="partCustomPlace" type="text">
       </div>
       <div class="field">
         <label>PN dílu</label>
@@ -1828,39 +1539,13 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
         <input id="partName" type="text">
       </div>
       <div class="field">
-        <label>Fotky dílu / štítku</label>
-        <input id="partPhotoInput" type="file" accept="image/*" capture="environment" class="hidden">
-        <button id="addPartPhotoBtn" class="secondary mini" type="button">＋ Přidat fotku</button>
-        <div class="helper">Každým kliknutím přidáš další fotku. Nová fotka už nepřemaže původní.</div>
+        <label>Fotka dílu / štítku</label>
+        <input id="partPhotoInput" type="file" accept="image/*" capture="environment">
         <div id="partPhotoPreview" class="helper"></div>
       </div>
       <div class="field parts-note">
-        <label>Typ zakázky</label>
-        <label class="external-check"><input id="partExternalCustomer" type="checkbox"><div><strong>Externí zákazník</strong><span>Jen u zakázek mimo půjčovnu. Po zaškrtnutí se zobrazí firma a adresa.</span></div></label>
-      </div>
-      <div id="partExternalDetails" class="field parts-note hidden">
-        <div class="customer-extra-grid">
-          <div class="field"><label>Název firmy</label><input id="partCustomerName" type="text" autocomplete="off" placeholder="Název externí firmy"></div>
-          <div class="field"><label>Adresa firmy</label><input id="partCustomerAddress" type="text" autocomplete="off" placeholder="Adresa / město"></div>
-        </div>
-      </div>
-      <div class="field parts-note">
-        <label>Poznámka / popis závady</label>
+        <label>Poznámka</label>
         <textarea id="partNote" placeholder="Volitelné upřesnění"></textarea>
-      </div>
-      <div class="field parts-note part-handler-only hidden" id="partHandlerNoteWrap">
-        <label>Poznámka řešitele</label>
-        <textarea id="partHandlerNote" placeholder="Volitelné doplnění pro řešitele při objednání / odeslání / vyřešení"></textarea>
-        <div class="helper">Pro řešitele požadavku. V detailu zůstane vidět jako servisní poznámka.</div>
-      </div>
-      <div class="field part-handler-only hidden" id="partStatusWrap">
-        <label>Stav požadavku</label>
-        <select id="partStatusSelect">
-          <option value="open">Požadavek</option>
-          <option value="ordered">Objednáno</option>
-          <option value="sent">Odesláno</option>
-          <option value="resolved">Vyřešeno</option>
-        </select>
       </div>
     </div>
     <div class="preview-actions">
@@ -1902,17 +1587,13 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <div class="fault-form-grid">
       <div class="field">
         <label>Typ zařízení *</label>
-        <input id="faultType" type="text" autocomplete="off">
+        <input id="faultType" list="faultTypeList" type="text" autocomplete="off">
         <datalist id="faultTypeList"></datalist>
       </div>
       <div class="field">
         <label>Výrobní číslo *</label>
-        <input id="faultSerial" type="text" autocomplete="off">
+        <input id="faultSerial" list="faultSerialList" type="text" autocomplete="off">
         <datalist id="faultSerialList"></datalist>
-      </div>
-      <div class="field">
-        <label>Zadal</label>
-        <select id="faultEnteredBy"></select>
       </div>
       <div class="field">
         <label>Datum *</label>
@@ -1928,29 +1609,11 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
       </div>
       <div class="field hidden" id="faultCustomPlaceWrap">
         <label>Jiné místo</label>
-        <input id="faultCustomPlace" type="text" autocomplete="off"><datalist id="faultPlaceList"></datalist>
-      </div>
-      <div class="field">
-        <label>Druh závady</label>
-        <select id="faultCategory">
-          <option value="normal">Běžná závada</option>
-          <option value="customer">Způsobeno zákazníkem</option>
-          <option value="warranty">Lze uplatnit záruku</option>
-        </select>
-      </div>
-      <div class="field fault-note">
-        <label>Typ zakázky</label>
-        <label class="external-check"><input id="faultExternalCustomer" type="checkbox"><div><strong>Externí zákazník</strong><span>Jen u zakázek mimo půjčovnu. Po zaškrtnutí se zobrazí firma a adresa.</span></div></label>
-      </div>
-      <div id="faultExternalDetails" class="field fault-note hidden">
-        <div class="customer-extra-grid">
-          <div class="field"><label>Název firmy</label><input id="faultCustomerName" type="text" autocomplete="off" placeholder="Název externí firmy"></div>
-          <div class="field"><label>Adresa firmy</label><input id="faultCustomerAddress" type="text" autocomplete="off" placeholder="Adresa / město"></div>
-        </div>
+        <input id="faultCustomPlace" type="text" list="faultPlaceList"><datalist id="faultPlaceList"></datalist>
       </div>
       <div class="field fault-note">
         <label>Popis závady *</label>
-        <textarea id="faultDesc" placeholder="Co je na stroji za problém" autocomplete="off"></textarea><datalist id="faultDescList"></datalist>
+        <textarea id="faultDesc" placeholder="Co je na stroji za problém" list="faultDescList"></textarea><datalist id="faultDescList"></datalist>
       </div>
       <div class="field">
         <label>Fotky závady</label>
@@ -1964,7 +1627,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
           <option value="open">Nahlášeno</option>
           <option value="service">Stroj do servisu</option>
           <option value="waiting_parts">Čeká na ND</option>
-          <option value="repaired">Vyřešeno / opraveno</option>
+          <option value="repaired">Opraveno / schopné provozu</option>
         </select>
       </div>
     </div>
@@ -2040,7 +1703,6 @@ const COLLECTION_NAME = 'protokoly_test';
 const SCHEDULE_COLLECTION_NAME = 'plan_prace';
 const PARTS_COLLECTION_NAME = 'nahradni_dily';
 const FAULTS_COLLECTION_NAME = 'hlaseni_poruch';
-const AUDIT_COLLECTION_NAME = 'historie_zmen';
 const STORAGE_PREFIX = 'ctvrtletni-test';
 const MAX_PHOTOS = 6;
 const MAX_PHOTO_BYTES = 500 * 1024;
@@ -2256,9 +1918,7 @@ const introSteps = [
   {k:'dalsiKontrola',t:'Následná kontrola nejpozději do',type:'date',section:'Úvodní údaje'},
   {k:'rok',t:'Rok výroby',type:'yearInput',section:'Úvodní údaje'},
   {k:'umisteni',t:'Umístění / pobočka',type:'branchSelect',section:'Úvodní údaje'},
-  {k:'externalCustomer',t:'Externí zákazník',type:'externalCustomer',section:'Úvodní údaje'},
   {k:'technik',t:'Kontrolu provedl',type:'technikSelect',section:'Úvodní údaje'},
-  {k:'enteredBy',t:'Zadal záznam',type:'enteredBySelect',section:'Úvodní údaje'},
   {k:'poznamka',t:'Poznámka k protokolu',type:'textarea',section:'Úvodní údaje'}
 ];
 
@@ -2319,60 +1979,6 @@ function loadLocalData(){
 function saveLocalData(rows){
   try { localStorage.setItem('ctvrtletni_protokoly_local', JSON.stringify(rows)); } catch(e) {}
 }
-
-function getLastEnteredBy(){ try { return localStorage.getItem('liftcontrol_last_entered_by') || ''; } catch(e) { return ''; } }
-function setLastEnteredBy(name){ try { if(name) localStorage.setItem('liftcontrol_last_entered_by', name); } catch(e) {} }
-function getEnteredByDefault(){ return getLastEnteredBy() || 'Jan Bartoš'; }
-function getLastHandlerBy(){ try { return localStorage.getItem('liftcontrol_last_handler_by') || ''; } catch(e) { return ''; } }
-function setLastHandlerBy(name){ try { if(name) localStorage.setItem('liftcontrol_last_handler_by', name); } catch(e) {} }
-function askHandlerBy(question='Kdo to řešil / doplnil?'){
-  const answer = prompt(question, getLastHandlerBy() || getEnteredByDefault());
-  if(answer === null) return '';
-  const clean = String(answer || '').trim();
-  if(clean) setLastHandlerBy(clean);
-  return clean;
-}
-function operatorOptionsHtml(selected=''){
-  const names = uniqueNonEmpty([selected, getLastEnteredBy(), ...(TECHNICI || [])]);
-  return names.map(n => `<option value="${escapeHtml(n)}" ${n===selected?'selected':''}>${escapeHtml(n)}</option>`).join('');
-}
-function externalDetailsHtml(prefix, obj={}){
-  const on = !!(obj && obj.externalCustomer);
-  return `<div class="field ${prefix==='protocol'?'':'parts-note'} ${on ? '' : 'hidden'}" id="${prefix}ExternalDetails">
-    <div class="customer-extra-grid">
-      <div class="field"><label>Název firmy</label><input id="${prefix}CustomerName" type="text" value="${escapeHtml((obj && (obj.customerName || obj.companyName)) || '')}" autocomplete="off" placeholder="Jen u externí zakázky"></div>
-      <div class="field"><label>Adresa firmy</label><input id="${prefix}CustomerAddress" type="text" value="${escapeHtml((obj && (obj.customerAddress || obj.companyAddress)) || '')}" autocomplete="off" placeholder="Volitelné"></div>
-    </div>
-    <div class="customer-extra-note">U interní půjčovny nech prázdné. Pole se ukládají jen když je zaškrtnutý externí zákazník.</div>
-  </div>`;
-}
-function wireExternalDetails(prefix, targetObj=null){
-  const chk = document.getElementById(prefix + 'ExternalCustomer') || document.getElementById('externalCustomerInput');
-  const details = document.getElementById(prefix + 'ExternalDetails');
-  const name = document.getElementById(prefix + 'CustomerName');
-  const addr = document.getElementById(prefix + 'CustomerAddress');
-  const sync = () => {
-    const on = !!(chk && chk.checked);
-    details?.classList.toggle('hidden', !on);
-    if(targetObj){
-      targetObj.externalCustomer = on;
-      targetObj.customerName = on ? (name?.value || '').trim() : '';
-      targetObj.customerAddress = on ? (addr?.value || '').trim() : '';
-    }
-  };
-  chk?.addEventListener('change', sync);
-  name?.addEventListener('input', sync);
-  addr?.addEventListener('input', sync);
-  sync();
-}
-function customerDisplayText(r){
-  if(!r || !r.externalCustomer) return 'Půjčovna / interní';
-  const name = r.customerName || r.companyName || 'Externí zákazník';
-  const addr = r.customerAddress || r.companyAddress || '';
-  return addr ? `${name}, ${addr}` : name;
-}
-function getCompanyNameSuggestionsAll(){ return uniqueNonEmpty([...(data||[]).map(r=>r.customerName||r.companyName), ...(faultsData||[]).map(r=>r.customerName||r.companyName), ...(partsData||[]).map(r=>r.customerName||r.companyName)]); }
-function getCompanyAddressSuggestionsAll(){ return uniqueNonEmpty([...(data||[]).map(r=>r.customerAddress||r.companyAddress), ...(faultsData||[]).map(r=>r.customerAddress||r.companyAddress), ...(partsData||[]).map(r=>r.customerAddress||r.companyAddress)]); }
 
 function dataUrlBytes(dataUrl){
   if(!dataUrl || !dataUrl.includes(',')) return 0;
@@ -2477,47 +2083,27 @@ async function deleteAllProtocols(){
   }
 }
 
-async function getBackupRows(collectionName, localLoader){
-  if(firebaseAvailable && db){
-    const snap = await db.collection(collectionName).get();
-    return snap.docs.map(d => ({id:d.id, ...d.data()}));
-  }
-  return localLoader();
-}
-function backupCollectionsDef(){
-  return [
-    {key:'protokoly', collection:COLLECTION_NAME, label:'Čtvrtletní kontroly', loadLocal:loadLocalData, saveLocal:saveLocalData, setMemory:(rows)=>{data=rows;}},
-    {key:'planPrace', collection:SCHEDULE_COLLECTION_NAME, label:'Plán práce', loadLocal:loadLocalSchedule, saveLocal:saveLocalSchedule, setMemory:(rows)=>{scheduleData=rows;}},
-    {key:'nahradniDily', collection:PARTS_COLLECTION_NAME, label:'Náhradní díly', loadLocal:loadLocalParts, saveLocal:saveLocalParts, setMemory:(rows)=>{partsData=rows;}},
-    {key:'hlaseniPoruch', collection:FAULTS_COLLECTION_NAME, label:'Hlášení poruch', loadLocal:loadLocalFaults, saveLocal:saveLocalFaults, setMemory:(rows)=>{faultsData=rows;}},
-    {key:'historieZmen', collection:AUDIT_COLLECTION_NAME, label:'Historie změn', loadLocal:loadLocalAudit, saveLocal:saveLocalAudit, setMemory:(rows)=>{auditData=rows;}}
-  ];
-}
 async function exportBackup(){
   try{
-    const collections = {};
-    const counts = {};
-    for(const def of backupCollectionsDef()){
-      const rows = await getBackupRows(def.collection, def.loadLocal);
-      collections[def.collection] = rows;
-      collections[def.key] = rows;
-      counts[def.collection] = rows.length;
+    let rows = [];
+    if(firebaseAvailable && db){
+      const snap = await db.collection(COLLECTION_NAME).get();
+      rows = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    } else {
+      rows = loadLocalData();
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.96',
-      backupType: 'complete',
-      schemaVersion: 2,
+      collection: COLLECTION_NAME,
       exportedAt: new Date().toISOString(),
-      firebaseProject: firebaseConfig.projectId || '',
-      collections,
-      counts
+      count: rows.length,
+      data: rows
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
     const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
     a.href = URL.createObjectURL(blob);
-    a.download = `liftcontrol_cz_kompletni_zaloha_${stamp}.json`;
+    a.download = `liftcontrol_cz_backup_${stamp}.json`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -2562,70 +2148,6 @@ function migrateImportedRecord(record){
   if(!r.savedAt) r.savedAt = new Date().toISOString();
   return r;
 }
-function getRowsFromParsedBackup(parsed, def){
-  const collections = parsed && parsed.collections ? parsed.collections : null;
-  if(collections){
-    const rows = collections[def.collection] || collections[def.key] || [];
-    return Array.isArray(rows) ? rows : [];
-  }
-  // Starší zálohy obsahovaly jen pole protokolů nebo {data:[...]}
-  if(def.collection === COLLECTION_NAME){
-    if(Array.isArray(parsed)) return parsed;
-    if(Array.isArray(parsed.data)) return parsed.data;
-  }
-  return [];
-}
-function normalizeImportedRow(row, def, legacyProtocolBackup=false){
-  const r = Object.assign({}, row || {});
-  if(!r.id) r.id = uid();
-  if(def.collection === COLLECTION_NAME && legacyProtocolBackup){
-    return migrateImportedRecord(r);
-  }
-  if(!r.savedAt && def.collection === COLLECTION_NAME) r.savedAt = new Date().toISOString();
-  if(!r.createdAt && def.collection !== COLLECTION_NAME) r.createdAt = new Date().toISOString();
-  r.importedAt = r.importedAt || new Date().toISOString();
-  return r;
-}
-async function importRowsIntoCollection(def, rows, legacyProtocolBackup=false){
-  if(!rows.length) return {imported:0, skipped:0};
-  let imported = 0;
-  let skipped = 0;
-  if(firebaseAvailable && db){
-    const snap = await db.collection(def.collection).get();
-    const existing = new Set(snap.docs.map(d => d.id));
-    for(const row of rows){
-      if(!row) continue;
-      const candidateId = row.id || uid();
-      if(existing.has(candidateId)){
-        skipped++;
-        continue;
-      }
-      const normalized = normalizeImportedRow({...row, id:candidateId}, def, legacyProtocolBackup);
-      await db.collection(def.collection).doc(normalized.id).set(normalized);
-      existing.add(normalized.id);
-      imported++;
-    }
-  } else {
-    const current = def.loadLocal();
-    const existing = new Set(current.map(r => r.id));
-    const merged = [...current];
-    for(const row of rows){
-      if(!row) continue;
-      const candidateId = row.id || uid();
-      if(existing.has(candidateId)){
-        skipped++;
-        continue;
-      }
-      const normalized = normalizeImportedRow({...row, id:candidateId}, def, legacyProtocolBackup);
-      merged.unshift(normalized);
-      existing.add(normalized.id);
-      imported++;
-    }
-    def.saveLocal(merged);
-    def.setMemory(merged);
-  }
-  return {imported, skipped};
-}
 async function importBackupFile(file){
   if(!file) return;
   let parsed;
@@ -2637,34 +2159,30 @@ async function importBackupFile(file){
     alert('Soubor se nepodařilo načíst jako JSON zálohu.');
     return;
   }
-
-  const defs = backupCollectionsDef();
-  const hasCompleteCollections = !!(parsed && parsed.collections);
-  const legacyProtocolBackup = !hasCompleteCollections;
-  const available = defs.map(def => ({def, rows:getRowsFromParsedBackup(parsed, def)})).filter(x => x.rows.length);
-  const totalRows = available.reduce((sum, x) => sum + x.rows.length, 0);
-
-  if(!totalRows){
-    alert('V souboru nejsou nalezená žádná data pro import.');
+  const rows = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.data) ? parsed.data : []);
+  if(!rows.length){
+    alert('V souboru nejsou nalezené žádné protokoly.');
     return;
   }
 
-  const summary = available.map(x => `${x.def.label}: ${x.rows.length}`).join('\n');
-  const ok = confirm(`Načíst zálohu LiftControl CZ?\n\n${summary}\n\nImport pouze doplní chybějící záznamy. Existující stejné ID se přeskočí.`);
+  const ok = confirm(`Načíst ${rows.length} protokolů ze zálohy?\n\nImport pouze doplní chybějící protokoly. Existující stejné ID se přeskočí.`);
   if(!ok) return;
 
-  const results = [];
-  for(const item of available){
-    const res = await importRowsIntoCollection(item.def, item.rows, legacyProtocolBackup && item.def.collection === COLLECTION_NAME);
-    results.push(`${item.def.label}: načteno ${res.imported}, přeskočeno ${res.skipped}`);
+  const existing = new Set((data || []).map(r => r.id));
+  let imported = 0;
+  let skipped = 0;
+  for(const row of rows){
+    if(row && row.id && existing.has(row.id)){
+      skipped++;
+      continue;
+    }
+    const migrated = migrateImportedRecord(row);
+    await saveProtocol(migrated);
+    existing.add(migrated.id);
+    imported++;
   }
-
   render();
-  renderWorkPlan?.();
-  renderParts?.();
-  renderFaults?.();
-  updateMainOverview?.();
-  alert(`Import hotový.\n\n${results.join('\n')}`);
+  alert(`Import hotový.\nNačteno: ${imported}\nPřeskočeno duplicit: ${skipped}`);
 }
 window.importBackupFile = importBackupFile;
 
@@ -2684,17 +2202,13 @@ let partsData = [];
 let faultsData = [];
 let currentFaultPhotos = [];
 let editingFaultId = null;
-let currentPartPhotos = [];
+let currentPartPhoto = null;
 let editingPartId = null;
 let currentWorkWeekStart = null;
 let currentHomeDate = new Date();
 let editingWorkPlanId = null;
 let qrEnabled = false;
 let qrPickerActive = false;
-let protocolSaveInProgress = false;
-let workPlanSaveInProgress = false;
-let faultSaveInProgress = false;
-let partSaveInProgress = false;
 
 const els = {
   list: document.getElementById('list'),
@@ -2788,7 +2302,7 @@ function filterSuggestions(items,q){
 
     seen.add(rawCompact);
     out.push(item);
-    if(out.length >= 8) break;
+    if(out.length >= 12) break;
   }
 
   return out;
@@ -2843,19 +2357,7 @@ function hasIssue(r){ return countIssues(r) > 0 || r.zaverOprava === 'ANO' || r.
 function yn(v){ return { ano: v==='ANO' ? '☒' : '☐', ne: v==='NE' ? '☒' : '☐' }; }
 function isGeneralCheckKey(key){ return /^C[0-9]+$/.test(String(key||'')) || /^C_/.test(String(key||'')); }
 function sectionLabel(key){ return ({A:'A. Průvodní dokumentace a vybavení',B:'B. Stav zařízení',C:'C. Všeobecná kontrola zařízení',D:'D. Kontrola provozních náplní',E:'E. Kontrola funkcí','Úvodní údaje':'Úvodní údaje','Fotky':'Fotodokumentace','Závěr':'Závěr'})[key] || key; }
-function normalizeSerial(value){ return String(value || '').replace(/\s+/g,'').trim().toLowerCase(); }
-function findProtocolsByMachine(serial){ const s = normalizeSerial(serial); return data.filter(r => normalizeSerial(r.vc) === s).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))); }
-function applyProtocolDefaultsFromSerial(serial){
-  const history = findProtocolsByMachine(serial);
-  if(!history.length) return;
-  const last = history[0];
-  if(!rec.typ && last.typ) rec.typ = last.typ;
-  if(!rec.rok && last.rok) rec.rok = last.rok;
-  if(!rec.umisteni && last.umisteni) rec.umisteni = last.umisteni;
-  if(!rec.chargerPresent && ['ANO','BEZ','ZAVADA'].includes(last.chargerPresent)) rec.chargerPresent = last.chargerPresent;
-  if(!rec.socket230Present && ['ANO','BEZ'].includes(last.socket230Present)) rec.socket230Present = last.socket230Present;
-}
-
+function findProtocolsByMachine(serial){ return data.filter(r => String(r.vc||'').trim().toLowerCase() === String(serial||'').trim().toLowerCase()).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))); }
 function parseQrPayload(raw){ const text = String(raw||'').replace(/\s+/g,' ').trim(); const upper = text.toUpperCase(); let typ = ''; for(const model of MODELS){ if(upper.includes(model.toUpperCase())){ typ = model; break; } } const serial = (upper.match(/([A-Z]{2}\d{2}[A-Z]-\d{4,}|GS\d{2}[A-Z]-\d{4,})/) || [])[1] || ''; return { typ, vc: serial, raw: text }; }
 function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
 function updateStats(rows){
@@ -2894,10 +2396,6 @@ function createProtocolFromFault(id){
     typ: f.type || '',
     vc: f.serial || '',
     umisteni: f.place || '',
-    externalCustomer: !!f.externalCustomer,
-    customerName: f.customerName || f.companyName || '',
-    customerAddress: f.customerAddress || f.companyAddress || '',
-    enteredBy: getEnteredByDefault(),
     datum: todayLocal(),
     poznamka: f.description ? ('Navazuje na hlášení poruchy: ' + f.description) : ''
   });
@@ -2908,24 +2406,20 @@ function render(){
   const query = els.searchInput.value.trim().toLowerCase();
   const filter = els.statusFilter.value;
   const techFilter = document.getElementById('protocolTechFilter')?.value || 'all';
-  const customerFilter = document.getElementById('protocolCustomerFilter')?.value || 'all';
-  if(query) rows = rows.filter(r => [r.vc,r.typ,r.umisteni,r.technik,r.enteredBy,r.customerName,r.customerAddress].some(v => String(v||'').toLowerCase().includes(query)));
+  if(query) rows = rows.filter(r => [r.vc,r.typ,r.umisteni,r.technik].some(v => String(v||'').toLowerCase().includes(query)));
   if(techFilter !== 'all') rows = rows.filter(r => String(r.technik || '') === techFilter);
-  if(customerFilter === 'external') rows = rows.filter(r => !!r.externalCustomer);
-  if(customerFilter === 'internal') rows = rows.filter(r => !r.externalCustomer);
   if(filter === 'issues') rows = rows.filter(hasIssue);
   if(filter === 'ok') rows = rows.filter(r => !hasIssue(r));
   rows.sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||'')));
   if(!rows.length){ els.list.innerHTML = '<div class="empty"><div>Zatím tu nic není.</div></div>'; updateStats([]); return; }
   els.list.innerHTML = rows.map(r => `
-    <div class="card ${r.externalCustomer ? 'external-customer-card' : ''}" id="protocol-card-${escapeHtml(r.id || '')}">
+    <div class="card">
       <div class="card-head">
         <div>
           <div class="card-title">${escapeHtml(r.vc||'')}</div>
           <div class="card-sub">${escapeHtml(r.typ||'')} ${r.umisteni ? '· '+escapeHtml(r.umisteni) : ''}</div><div class="card-sub">Uloženo: ${escapeHtml(formatDateTime(r.savedAt || r.datum))}</div>
           <div class="badges">
             <span class="badge ${hasIssue(r)?'badge-warn':'badge-ok'}">${hasIssue(r)?'Se závadou':'Bez závad'}</span>
-            ${r.externalCustomer ? '<span class="badge badge-external">Externí zákazník</span>' : ''}
             ${firebaseAvailable ? '' : '<span class="badge badge-warn">Sdílení vypnuté</span>'}
           </div>
         </div>
@@ -2933,8 +2427,6 @@ function render(){
       </div>
       <div class="meta-grid">
         <div class="meta"><div class="meta-label">Technik</div><div class="meta-value">${escapeHtml(r.technik||'—')}</div></div>
-        <div class="meta"><div class="meta-label">Zadal</div><div class="meta-value">${escapeHtml(r.enteredBy || r.zadal || r.technik || '—')}</div></div>
-        <div class="meta"><div class="meta-label">Firma</div><div class="meta-value">${escapeHtml(customerDisplayText(r))}</div></div>
         <div class="meta"><div class="meta-label">Rok výroby</div><div class="meta-value">${escapeHtml(r.rok||'—')}</div></div>
         <div class="meta"><div class="meta-label">Následná kontrola</div><div class="meta-value">${escapeHtml(formatDate(r.dalsiKontrola))}</div></div>
         <div class="meta"><div class="meta-label">Bezpečný provoz</div><div class="meta-value">${escapeHtml(r.zaverBezpecny||'—')}</div></div>
@@ -2953,10 +2445,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.96'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.63'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.96';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.63';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3021,18 +2513,15 @@ function showStep(){
   } else if(s.type === 'yntext' || s.type === 'yntextphoto'){
     const needsNote = s.k === 'B1' ? rec[s.k]==='NE' : (isGeneralCheckKey(s.k) ? isProblemAnswer(s.k, rec[s.k], rec) : rec[s.k]==='NE');
     const label = s.k === 'B1' ? 'Závady' : 'Popis závady';
-    const issuePhotoList = getIssuePhotoList(rec.issuePhotos || {}, s.k);
-    const issuePreviewHtml = issuePhotoList.map((p, idx) => {
-      const src = getPhotoSrc(p);
-      const size = p && p.bytes ? ` · ${Math.round(p.bytes/1024)} kB` : '';
-      return src ? `<div class="photo-thumb"><img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)" alt="Fotka závady"><div class="helper">Fotka závady ${idx+1}${size}</div><div class="photo-tools"><button class="danger mini delete-issue-photo-btn" type="button" data-issue-index="${idx}">Smazat fotku</button></div></div>` : '';
-    }).join('');
+    const issuePhoto = (rec.issuePhotos || {})[s.k] || {};
+    const issueSrc = getPhotoSrc(issuePhoto);
+    const issueSize = issuePhoto.bytes ? ` · ${Math.round(issuePhoto.bytes/1024)} kB` : '';
     const issuePhotoHtml = (s.type === 'yntextphoto' && needsNote) ? `
       <div class="field" id="issuePhotoWrap">
         <label>Fotka k závadě / poškození</label>
         <input id="issuePhotoInput" type="file" accept="image/*" capture="environment">
-        <div class="helper">Volitelné. Aplikace fotku automaticky zmenší na max. cca 500 kB. K jedné závadě lze uložit až 4 fotky.</div>
-        ${issuePreviewHtml}
+        <div class="helper">Volitelné. Aplikace fotku automaticky zmenší na max. cca 500 kB.</div>
+        ${issueSrc ? `<div class="photo-thumb"><img src="${escapeHtml(issueSrc)}" data-full-src="${escapeHtml(issueSrc)}" onclick="openLightbox(this.dataset.fullSrc)" alt="Fotka závady"></div><div class="helper">Fotka uložena${issueSize}</div><div class="photo-tools"><button class="danger mini" type="button" id="deleteIssuePhotoBtn">Smazat fotku závady</button></div>` : ''}
       </div>` : '';
     html = `<div class="yesno"><button class="yn-btn ${yesClass}" data-answer-text="ANO">✔ ANO</button><button class="yn-btn ${noClass}" data-answer-text="NE">✖ NE</button></div><div class="field ${needsNote ? '' : 'hidden'}" id="descWrap"><label>${label}</label><textarea id="descInput">${escapeHtml(rec[s.textKey]||'')}</textarea></div>${issuePhotoHtml}`;
   } else if(s.type === 'photo'){
@@ -3041,12 +2530,6 @@ function showStep(){
     const src = p.dataUrl || p.url || '';
     const size = p.bytes ? ` · ${Math.round(p.bytes/1024)} kB` : '';
     html = `<div class="field"><label>${s.t}</label><input id="photoInput" type="file" accept="image/*" capture="environment"><div class="helper">Max. 500 kB po automatické kompresi. Fotku můžeš přeskočit tlačítkem Další.</div>${src ? `<div class="photo-preview"><img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)" alt="${escapeHtml(s.t)}"></div><div class="helper">Uloženo v kroku${size}</div><div class="photo-tools"><button class="danger mini" type="button" id="deleteMainPhotoBtn">Smazat tuto fotku</button></div>` : ''}</div>`;
-  } else if(s.type === 'externalCustomer'){
-    html = `<label class="external-check"><input id="externalCustomerInput" type="checkbox" ${rec.externalCustomer ? 'checked' : ''}><div><strong>Externí zákazník</strong><span>Zaškrtni jen u zakázek mimo běžnou půjčovnu. Údaje firmy se vyplní jen tady a v protokolu budou vidět.</span></div></label>${externalDetailsHtml('protocol', rec)}`;
-  } else if(s.type === 'enteredBySelect'){
-    const val = rec.enteredBy || rec.zadal || rec.technik || getEnteredByDefault();
-    rec.enteredBy = val;
-    html = `<div class="field"><label>Zadal záznam</label><select id="enteredBySelect">${operatorOptionsHtml(val)}</select><div class="helper">Předvyplní se poslední použitý člověk. Slouží jen pro dohledání, kdo záznam založil.</div></div>`;
   } else if(s.type === 'textarea'){
     html = `<div class="field suggest-wrap"><textarea id="mainTextarea">${escapeHtml(rec[s.k]||'')}</textarea><div id="suggestHost"></div></div>`;
   } else if(s.type === 'date'){
@@ -3062,24 +2545,13 @@ function showStep(){
   const mainInput = document.getElementById('mainInput');
   const mainTextarea = document.getElementById('mainTextarea');
   const descInput = document.getElementById('descInput');
-  const externalCustomerInput = document.getElementById('externalCustomerInput');
-  if(externalCustomerInput){
-    wireExternalDetails('protocol', rec);
-  }
-  const enteredBySelect = document.getElementById('enteredBySelect');
-  if(enteredBySelect){
-    enteredBySelect.addEventListener('change', () => { rec.enteredBy = enteredBySelect.value; setLastEnteredBy(rec.enteredBy); });
-    rec.enteredBy = enteredBySelect.value;
-  }
 
   if(mainInput){
     mainInput.addEventListener('input', () => { rec[s.k] = mainInput.value; refreshSuggestions(); });
-    mainInput.addEventListener('focus', refreshSuggestions);
-    mainInput.addEventListener('blur', () => { if(s.k === 'vc') applyProtocolDefaultsFromSerial(mainInput.value); setTimeout(hideSuggestions, 120); });
+    mainInput.addEventListener('blur', () => setTimeout(hideSuggestions, 120));
   }
   if(mainTextarea){
     mainTextarea.addEventListener('input', () => { rec[s.k] = mainTextarea.value; refreshSuggestions(); });
-    mainTextarea.addEventListener('focus', refreshSuggestions);
     mainTextarea.addEventListener('blur', () => setTimeout(hideSuggestions, 120));
   }
   if(descInput){
@@ -3210,10 +2682,9 @@ function refreshSuggestions(){
   if(!host) return;
   const val = rec[s.k] || '';
   let source = [];
-  if(s.k === 'vc') source = getSuggestions(s.k, getSerialSuggestionsAll());
-  else if(s.k === 'typ' || s.type === 'modelSelect') source = getSuggestions(s.k, getModelSuggestionsAll());
-  else if(s.k === 'umisteni' || s.type === 'branchSelect') source = getSuggestions(s.k, getPlaceSuggestionsAll());
-  else if(s.type === 'technikSelect' || s.type === 'enteredBySelect') source = getSuggestions(s.k, TECHNICI);
+  if(s.type === 'modelSelect') source = getSuggestions(s.k, MODELS);
+  else if(s.type === 'branchSelect') source = getSuggestions(s.k, BRANCHES);
+  else if(s.type === 'technikSelect') source = getSuggestions(s.k, TECHNICI);
   else if(s.type === 'yearInput') source = yearOptions(rec.datum);
   else source = getSuggestions(s.k);
   host.innerHTML = renderSuggestBox(filterSuggestions(source, val), s.k, s.type === 'textarea');
@@ -3225,7 +2696,6 @@ function refreshSuggestions(){
     const mainTextarea = document.getElementById('mainTextarea');
     if(mainInput) mainInput.value = value;
     if(mainTextarea) mainTextarea.value = value;
-    if(key === 'vc') applyProtocolDefaultsFromSerial(value);
     hideSuggestions();
   }));
 }
@@ -3237,25 +2707,7 @@ function shouldShowIssuePhoto(step, value){
   if(isGeneralCheckKey(step.k)) return isProblemAnswer(step.k, value, rec);
   return value === 'NE';
 }
-function getIssuePhotoList(store, key){
-  if(!store) return [];
-  const raw = store[key];
-  if(!raw) return [];
-  return Array.isArray(raw) ? raw.filter(Boolean) : [raw].filter(Boolean);
-}
-function setIssuePhotoList(store, key, list){
-  if(!store) return;
-  const cleaned = (list || []).filter(Boolean);
-  if(!cleaned.length){ delete store[key]; return; }
-  store[key] = cleaned;
-}
-function getPhotoSrc(photo){
-  if(Array.isArray(photo)){
-    const first = photo.find(Boolean);
-    return first ? (first.url || first.dataUrl || '') : '';
-  }
-  return photo ? (photo.url || photo.dataUrl || '') : '';
-}
+function getPhotoSrc(photo){ return photo ? (photo.url || photo.dataUrl || '') : ''; }
 let lightboxImages = [];
 let lightboxIndex = 0;
 let lightboxTouchStartX = 0;
@@ -3343,17 +2795,13 @@ window.nextLightboxPhoto = nextLightboxPhoto;
 window.prevLightboxPhoto = prevLightboxPhoto;
 
 async function nextStep(){
-  if(protocolSaveInProgress) return;
   const activeSteps = getStepsForRecord(rec);
   const s = activeSteps[stepIndex];
   if(s.type === 'yntext' || s.type === 'yntextphoto'){
     const needsNote = s.k === 'B1' ? rec[s.k] === 'NE' : (isGeneralCheckKey(s.k) ? isProblemAnswer(s.k, rec[s.k], rec) : rec[s.k] === 'NE');
     if(needsNote) rec[s.textKey] = document.getElementById('descInput')?.value || rec[s.textKey] || '';
   }
-  if(['text','textarea','branchSelect','technikSelect','enteredBySelect','yearInput','date','modelSelect','number'].includes(s.type)) addSuggestion(s.k, rec[s.k]);
-  if(s.k === 'vc' && rec.vc){
-    applyProtocolDefaultsFromSerial(rec.vc);
-  }
+  if(['text','textarea','branchSelect','technikSelect','yearInput','date','modelSelect','number'].includes(s.type)) addSuggestion(s.k, rec[s.k]);
   if(s.k === 'typ' && rec.typ){
     const pref = getModelPref(rec.typ);
     if(pref && ['ANO','BEZ','ZAVADA'].includes(pref.chargerPresent)) rec.chargerPresent = pref.chargerPresent;
@@ -3367,29 +2815,17 @@ async function nextStep(){
     showStep();
     return;
   }
-  protocolSaveInProgress = true;
-  if(els.nextBtn) els.nextBtn.disabled = true;
-  try{
-    syncRevizeIssue(rec);
-    syncModelPreferences(rec);
-    if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.96';
-    if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
-    setLastEnteredBy(rec.enteredBy);
-    rec.savedAt = new Date().toISOString();
-    const wasExistingProtocol = data.some(x => x.id === rec.id);
-    await saveProtocol(rec);
-    await logAuditAction(wasExistingProtocol ? 'update' : 'create','protocol',rec,rec.enteredBy || rec.technik);
-    closeWizard();
-    render();
-    alert('Protokol uložen.');
-  }catch(err){
-    console.error(err);
-    alert('Uložení protokolu se nepodařilo. Zkontroluj připojení a zkus to znovu.');
-  }finally{
-    protocolSaveInProgress = false;
-    if(els.nextBtn) els.nextBtn.disabled = false;
-  }
+  syncRevizeIssue(rec);
+  syncModelPreferences(rec);
+  const okSave = confirm('Chceš protokol uložit?');
+  if(!okSave) return;
+  if(!rec.cLogic) rec.cLogic = 'legacy';
+  if(!rec.appVersion) rec.appVersion = '1.6 / 5.63';
+  rec.savedAt = new Date().toISOString();
+  await saveProtocol(rec);
+  closeWizard();
+  render();
+  alert('Protokol uložen.');
 }
 
 function openPreviewById(id){
@@ -3404,7 +2840,33 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.96: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+async function savePreviewRecord(){
+  if(!currentPreview){
+    alert('Není otevřený žádný protokol k uložení.');
+    return;
+  }
+  await saveProtocol(currentPreview);
+  alert('Protokol byl uložen.');
+  closePreview();
+}
+function printCurrent(){
+  console.log('TISK kliknuto');
+  if(!currentPreview){
+    alert('Není otevřený protokol.');
+    return;
+  }
+  els.previewBody.innerHTML = renderPaper(currentPreview);
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  // vynutit překreslení a spustit tisk přímo z kliknutí uživatele
+  void els.previewBody.offsetHeight;
+  try {
+    window.print();
+  } catch (e) {
+    console.error('Print error', e);
+    alert('Nepodařilo se otevřít tisk.');
+  }
+}
+window._printNow = printCurrent;
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3412,59 +2874,6 @@ function downloadById(id){
   currentPreview = record;
   els.previewBody.innerHTML = renderPaper(record);
   openModal(els.preview);
-}
-
-
-let auditData = [];
-function loadLocalAudit(){ try { return JSON.parse(localStorage.getItem('liftcontrol_audit_local') || '[]'); } catch(e) { return []; } }
-function saveLocalAudit(rows){ try { localStorage.setItem('liftcontrol_audit_local', JSON.stringify(rows)); } catch(e) {} }
-function auditUid(){ return 'audit_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
-function summarizeRecordForAudit(record){
-  record = record || {};
-  return [record.typ || record.type, record.vc || record.serial, record.partNumber, record.partName, record.place || record.umisteni].filter(Boolean).join(' · ') || 'Bez detailu';
-}
-function auditEntityLabel(entity){
-  return ({protocol:'Čtvrtletní kontrola', part:'Náhradní díl', fault:'Hlášení poruchy', plan:'Plán práce'})[entity] || entity || 'Záznam';
-}
-function auditActionLabel(action){
-  return ({create:'Vytvořeno', update:'Upraveno', delete:'Smazáno', status:'Změna stavu'})[action] || action || 'Změna';
-}
-async function logAuditAction(action, entity, record, by, detail){
-  try{
-    const item = {
-      id: auditUid(), action, entity,
-      entityId: record?.id || '',
-      by: String(by || getEnteredByDefault() || '').trim() || 'Neuvedeno',
-      detail: detail || summarizeRecordForAudit(record),
-      serial: record?.vc || record?.serial || '',
-      type: record?.typ || record?.type || '',
-      createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.96'
-    };
-    if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
-    else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
-  }catch(e){ console.warn('Nepodařilo se zapsat historii změn:', e); }
-}
-function promptDeleteActor(recordLabel){
-  const who = prompt(`Opravdu chceš smazat záznam${recordLabel ? ' - ' + recordLabel : ''}?\n\nZadej, kdo záznam maže:` , getEnteredByDefault() || '');
-  if(who === null) return '';
-  const out = String(who || '').trim();
-  if(!out){ alert('Mazání zrušeno. Je potřeba zadat, kdo záznam maže.'); return ''; }
-  return out;
-}
-function renderAuditHistory(){
-  const box = document.getElementById('auditList');
-  if(!box) return;
-  const rows = [...(auditData || loadLocalAudit() || [])].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,80);
-  if(!rows.length){ box.innerHTML = '<div class="empty">Zatím není žádná historie změn.</div>'; return; }
-  box.innerHTML = rows.map(r => `<div class="audit-item"><span class="audit-action ${escapeHtml(r.action||'')}">${escapeHtml(auditActionLabel(r.action))}</span><div class="audit-title">${escapeHtml(auditEntityLabel(r.entity))}</div><div class="audit-sub">${escapeHtml(r.detail || '')}</div><div class="audit-sub">${escapeHtml(formatDateTime(r.createdAt))} · provedl: <strong>${escapeHtml(r.by || 'Neuvedeno')}</strong></div></div>`).join('');
-}
-function openAuditModal(){ renderAuditHistory(); openModal(document.getElementById('auditModal')); }
-async function refreshAuditHistory(){
-  if(firebaseAvailable && db){
-    try{ const snap = await db.collection(AUDIT_COLLECTION_NAME).orderBy('createdAt','desc').limit(80).get(); auditData = snap.docs.map(d => ({id:d.id, ...d.data()})); }catch(e){ console.warn(e); }
-  } else auditData = loadLocalAudit();
-  renderAuditHistory();
 }
 
 function requireDeletePassword(message){
@@ -3477,11 +2886,9 @@ function requireDeletePassword(message){
 }
 
 async function delById(id){
-  const record = data.find(r => r.id === id);
-  const who = promptDeleteActor(summarizeRecordForAudit(record));
-  if(!who) return;
+  if(!confirm('Opravdu smazat uložený protokol?')) return;
+  if(!requireDeletePassword('Pro smazání uloženého protokolu zadej heslo:')) return;
   await deleteProtocol(id);
-  await logAuditAction('delete','protocol',record,who);
 }
 async function clearAllData(){
   if(!data.length) return;
@@ -3495,9 +2902,9 @@ async function clearAllData(){
 function getMachineRows(serial){
   const s = String(serial || '').trim();
   return {
-    protocols: (data || []).filter(r => normalizeSerial(r.vc) === normalizeSerial(s)).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))),
-    faults: (faultsData || []).filter(r => normalizeSerial(r.serial) === normalizeSerial(s)).sort((a,b)=>String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''))),
-    parts: (partsData || []).filter(r => normalizeSerial(r.serial) === normalizeSerial(s)).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')))
+    protocols: (data || []).filter(r => String(r.vc || '').trim() === s).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))),
+    faults: (faultsData || []).filter(r => String(r.serial || '').trim() === s).sort((a,b)=>String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''))),
+    parts: (partsData || []).filter(r => String(r.serial || '').trim() === s).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')))
   };
 }
 function getMachineState(serial){
@@ -3509,7 +2916,7 @@ function getMachineState(serial){
     if(faultInService(openFault)) return {txt:'Stroj do servisu', cls:'status-machine-bad'};
     return {txt:'Hlášená porucha', cls:'status-machine-bad'};
   }
-  const openPart = rows.parts.find(p => !p.sent && !p.resolved);
+  const openPart = rows.parts.find(p => !p.sent);
   if(openPart) return {txt:'Čeká na ND', cls:'status-machine-warn'};
   const issueProtocol = rows.protocols.find(r => hasIssue(r));
   if(issueProtocol) return {txt:'Závada v protokolu', cls:'status-machine-warn'};
@@ -3611,7 +3018,7 @@ function renderAttentionList(){
       serial:f.serial || '',
       title: repaired ? 'Opravená porucha' : 'Nahlášená porucha',
       subtitle:`${f.type || 'Zařízení bez typu'} · ${f.place || 'Bez místa'}`,
-      status: repaired ? 'Vyřešeno / opraveno' : (getFaultStatus(f).txt || 'Otevřená porucha'),
+      status: repaired ? 'Opraveno / schopné provozu' : (getFaultStatus(f).txt || 'Otevřená porucha'),
       when:stamp,
       whenText:`Před ${attentionAgeLabel(stamp)}`,
       extra:(f.description || '').trim() || 'Bez popisu závady',
@@ -3623,7 +3030,7 @@ function renderAttentionList(){
   (partsData || []).forEach(p => {
     const stamp = p.createdAt || p.updatedAt || p.date;
     if(!withinLast48BusinessHours(stamp)) return;
-    if(p.resolved || p.vyreseno || p.sent || p.odeslano) return;
+    if(p.sent || p.odeslano) return;
     counters.parts++;
     const status = (p.ordered || p.objednano) ? 'Objednáno' : 'Nový požadavek';
     items.push({
@@ -3663,7 +3070,7 @@ function renderAttentionList(){
   const kickerMap = {protocol:'Kontrola', fault:'Porucha', 'fault-repaired':'Porucha opraveno', part:'Náhradní díly'};
 
   box.innerHTML = items.map((x, i) => {
-    const openAttr = x.type === 'part' ? `data-attention-part-open="${escapeHtml(x.id || '')}"` : ((x.type === 'fault' || x.type === 'fault-repaired') ? `data-attention-fault-open="${escapeHtml(x.id || '')}" data-attention-fault-filter="${x.type === 'fault-repaired' ? 'repaired' : 'open'}"` : (x.type === 'protocol' ? `data-attention-protocol-open="${escapeHtml(x.id || '')}"` : ''));
+    const openAttr = x.type === 'part' ? `data-attention-part-open="${escapeHtml(x.id || '')}"` : ((x.type === 'fault' || x.type === 'fault-repaired') ? `data-attention-fault-open="${escapeHtml(x.id || '')}"` : '');
     return `
     <div class="attention-rich-item ${x.type}" ${openAttr} role="button" tabindex="0">
       <div class="attention-top">
@@ -3681,92 +3088,28 @@ function renderAttentionList(){
       </div>
       <div class="attention-rich-actions">
         ${x.serial ? `<button class="secondary mini" type="button" data-machine-card="${escapeHtml(x.serial)}">Karta stroje</button>` : ''}
-        ${(x.type === 'fault' || x.type === 'fault-repaired') ? `<button class="secondary mini" type="button" data-open-fault-id="${escapeHtml(x.id || '')}" data-fault-list-filter="${x.type === 'fault-repaired' ? 'repaired' : 'open'}">Otevřít v seznamu</button>` : ''}
-        ${x.type === 'part' ? `<button class="secondary mini" type="button" data-open-part-id="${escapeHtml(x.id || '')}">Otevřít v seznamu</button>` : ''}
-        ${x.type === 'protocol' ? `<button class="secondary mini" type="button" data-open-protocol-id="${escapeHtml(x.id || '')}">Otevřít v seznamu</button>` : ''}
+        ${(x.type === 'fault' || x.type === 'fault-repaired') ? `<button class="secondary mini" type="button" data-open-fault-id="${escapeHtml(x.id || '')}">Otevřít poruchu</button>` : ''}
+        ${x.type === 'part' ? `<button class="secondary mini" type="button" data-open-part-id="${escapeHtml(x.id || '')}">Otevřít ND</button>` : ''}
+        ${x.type === 'protocol' ? `<button class="secondary mini" type="button" data-jump-archive="1">Otevřít protokoly</button>` : ''}
       </div>
     </div>
   `;
   }).join('');
 
   box.querySelectorAll('[data-machine-card]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openMachineCard(btn.dataset.machineCard); }));
-  box.querySelectorAll('[data-open-fault-id]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openFaultsList(btn.dataset.openFaultId, btn.dataset.faultListFilter || 'all'); }));
-  box.querySelectorAll('[data-open-part-id]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openPartsList(btn.dataset.openPartId); }));
-  box.querySelectorAll('[data-open-protocol-id]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openProtocolsList(btn.dataset.openProtocolId); }));
-  box.querySelectorAll('[data-attention-protocol-open]').forEach(card => {
-    const open = () => { const id = card.dataset.attentionProtocolOpen; openProtocolsList(id || null); };
-    card.addEventListener('click', (ev) => { if(ev.target.closest('button')) return; open(); });
-    card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); open(); } });
-  });
+  box.querySelectorAll('[data-open-fault-id]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openFaultsModal(); openFaultForm(btn.dataset.openFaultId); }));
+  box.querySelectorAll('[data-open-part-id]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); openPartsModal(); openPartForm(btn.dataset.openPartId); }));
   box.querySelectorAll('[data-attention-fault-open]').forEach(card => {
-    const open = () => { const id = card.dataset.attentionFaultOpen; openFaultsList(id || null, card.dataset.attentionFaultFilter || 'all'); };
+    const open = () => { const id = card.dataset.attentionFaultOpen; if(id){ openFaultsModal(); openFaultForm(id); } };
     card.addEventListener('click', (ev) => { if(ev.target.closest('button')) return; open(); });
     card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); open(); } });
   });
   box.querySelectorAll('[data-attention-part-open]').forEach(card => {
-    const open = () => { const id = card.dataset.attentionPartOpen; openPartsList(id || null); };
+    const open = () => { const id = card.dataset.attentionPartOpen; if(id){ openPartsModal(); openPartForm(id); } };
     card.addEventListener('click', (ev) => { if(ev.target.closest('button')) return; open(); });
     card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); open(); } });
   });
-}
-
-function flashAndScrollToElement(el){
-  if(!el) return;
-  el.scrollIntoView({behavior:'smooth', block:'center'});
-  el.classList.add('focus-flash');
-  setTimeout(() => el.classList.remove('focus-flash'), 2200);
-}
-function scrollToProtocolCard(id){
-  if(!id) return;
-  setTimeout(() => {
-    const el = document.getElementById('protocol-card-' + CSS.escape(String(id || '')));
-    flashAndScrollToElement(el);
-  }, 160);
-}
-function scrollToFaultCard(id){
-  if(!id) return;
-  setTimeout(() => {
-    const el = document.getElementById('fault-card-' + CSS.escape(String(id || '')));
-    flashAndScrollToElement(el);
-  }, 160);
-}
-function openProtocolsList(id=null){
-  const filter = document.getElementById('statusFilter');
-  if(filter) filter.value = 'all';
-  const search = document.getElementById('searchInput');
-  if(search) search.value = '';
-  showSection('archive');
-  render();
-  scrollToProtocolCard(id);
-}
-function openFaultsList(id=null, status='all'){
-  const filter = document.getElementById('faultStatusFilter');
-  if(filter) filter.value = status || 'all';
-  const search = document.getElementById('faultsSearch');
-  if(search) search.value = '';
-  fillFaultSelects();
-  renderFaults();
-  showSection('faults');
-  closeFaultForm();
-  scrollToFaultCard(id);
-}
-function openPartsList(id=null){
-  const search = document.getElementById('partsSearch');
-  if(search) search.value = '';
-  const customerFilter = document.getElementById('partsCustomerFilter');
-  if(customerFilter) customerFilter.value = 'all';
-  fillPartSelects();
-  renderParts();
-  showSection('parts');
-  closePartForm();
-  scrollToPartCard(id);
-}
-
-function bindAttentionCounterClicks(){
-  document.querySelector('.attention-count-protocols')?.addEventListener('click', () => openProtocolsList());
-  document.querySelector('.attention-count-faults')?.addEventListener('click', () => openFaultsList(null, 'open'));
-  document.querySelector('.attention-count-repaired')?.addEventListener('click', () => openFaultsList(null, 'repaired'));
-  document.querySelector('.attention-count-parts')?.addEventListener('click', () => openPartsList());
+  box.querySelectorAll('[data-jump-archive]').forEach(btn => btn.addEventListener('click', (ev) => { ev.stopPropagation(); showSection('archive'); }));
 }
 
 function openMachineCard(serial){
@@ -3804,7 +3147,7 @@ function openHistoryModal(serial){
     <div class="machine-card-block">
       <h4>Poruchy</h4>
       <div class="machine-card-list">
-        ${rows.faults.length ? rows.faults.slice(0,8).map(f => `<div class="machine-card-row"><span>${escapeHtml(f.date||'Bez data')} · ${escapeHtml(getFaultStatus(f).txt)} · ${escapeHtml(getFaultCategoryLabel(f))} · ${escapeHtml(f.description||'')}</span><span style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary mini" data-fault-open="${f.id}">Upravit</button>${faultIsRepaired(f) ? `<button class="primary mini" data-fault-protocol="${f.id}">Protokol</button><button class="secondary mini" data-fault-create-protocol="${f.id}">Kontrolní protokol</button>` : ''}</span></div>`).join('') : '<div class="part-sub">Bez hlášených poruch.</div>'}
+        ${rows.faults.length ? rows.faults.slice(0,8).map(f => `<div class="machine-card-row"><span>${escapeHtml(f.date||'Bez data')} · ${escapeHtml(getFaultStatus(f).txt)} · ${escapeHtml(f.description||'')}</span><span style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary mini" data-fault-open="${f.id}">Upravit</button>${faultIsRepaired(f) ? `<button class="primary mini" data-fault-protocol="${f.id}">Protokol</button><button class="secondary mini" data-fault-create-protocol="${f.id}">Kontrolní protokol</button>` : ''}</span></div>`).join('') : '<div class="part-sub">Bez hlášených poruch.</div>'}
       </div>
     </div>
 
@@ -3819,7 +3162,7 @@ function openHistoryModal(serial){
   els.historyBody.querySelectorAll('[data-fault-open]').forEach(btn => btn.addEventListener('click', () => { closeHistoryModal(); openFaultsModal(); openFaultForm(btn.dataset.faultOpen); }));
   els.historyBody.querySelectorAll('[data-fault-protocol]').forEach(btn => btn.addEventListener('click', () => printRepairProtocol(btn.dataset.faultProtocol)));
   els.historyBody.querySelectorAll('[data-fault-create-protocol]').forEach(btn => btn.addEventListener('click', () => { closeHistoryModal(); createProtocolFromFault(btn.dataset.faultCreateProtocol); }));
-  els.historyBody.querySelectorAll('[data-part-open]').forEach(btn => btn.addEventListener('click', () => { closeHistoryModal(); openPartsModal(); closePartForm(); scrollToPartCard(btn.dataset.partOpen); }));
+  els.historyBody.querySelectorAll('[data-part-open]').forEach(btn => btn.addEventListener('click', () => { closeHistoryModal(); openPartsModal(); openPartForm(btn.dataset.partOpen); }));
   openModal(els.historyModal);
   requestAnimationFrame(() => {
     const scroller = els.historyModal?.querySelector('.history-modal-content');
@@ -3998,9 +3341,7 @@ function renderPaper(r){
           <tr><td class="label">Datum kontroly:</td><td class="value">${escapeHtml(r.datum||'')}</td><td class="label">Následná kontrola do:</td><td class="value">${escapeHtml(r.dalsiKontrola||'')}</td></tr>
           <tr><td class="label">Rok výroby:</td><td class="value">${escapeHtml(r.rok||'')}</td><td class="label">Druh kontroly:</td><td class="value">Běžná čtvrtletní</td></tr>
           <tr><td class="label">Stav motohodin:</td><td class="value">${escapeHtml(r.mh||'')} h</td><td class="label">Interval:</td><td class="value">3 měsíce</td></tr>
-          <tr><td class="label">Umístění:</td><td class="value" colspan="3">${r.externalCustomer ? 'externí zákazník' + (r.umisteni ? ' – ' + escapeHtml(r.umisteni) : '') : (r.umisteni ? 'půjčovna ' + escapeHtml(r.umisteni) : '')}</td></tr>
-          <tr><td class="label">Firma:</td><td class="value" colspan="3">${escapeHtml(customerDisplayText(r))}</td></tr>
-          <tr><td class="label">Záznam zadal:</td><td class="value" colspan="3">${escapeHtml(r.enteredBy || r.zadal || r.technik || '')}</td></tr>
+          <tr><td class="label">Umístění:</td><td class="value" colspan="3">${r.umisteni ? 'půjčovna ' + escapeHtml(r.umisteni) : ''}</td></tr>
         </table>
         <div class="paper-row-2">
           <div class="section-card">
@@ -4071,69 +3412,13 @@ async function savePreviewRecord(){
     alert('PDF knihovna se nenačetla.');
   }
 }
-function getPrintStyles(){
-  return `
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.paper{width:210mm;margin:0 auto;background:#fff;color:#111}
-.paper-doc{display:block;width:210mm;margin:0;padding:0;background:#fff}
-.paper-page{width:210mm;min-height:297mm;height:297mm;margin:0;padding:10mm 8mm 8mm 8mm;display:flex;flex-direction:column;gap:8px;overflow:hidden;background:#fff;page-break-after:always;break-after:page}
-.paper-page:last-child{page-break-after:auto;break-after:auto}
-.paper-header{text-align:center;margin-bottom:4px}.paper-header h2{margin:0 0 4px;font-size:20px;letter-spacing:.2px}.paper-header .subhead{font-size:10.5px;margin:0;color:#333}
-table{width:100%;border-collapse:collapse;table-layout:fixed}.proto-meta{font-size:10.5px;margin-bottom:6px}.proto-meta td,.proto-meta th,.proto-table td,.proto-table th{border:1px solid #707070;padding:3.5px 4.5px;vertical-align:top}.proto-meta td.label{width:16%;font-weight:700;background:#f2f2f2}.proto-meta td.value{width:34%}.proto-table{font-size:9.7px;line-height:1.15}.proto-table th{background:#f3f4f6;font-weight:700}.proto-table .num-col{width:30px;text-align:center}.proto-table .item-col{width:auto}.proto-table .yn-col{width:42px;text-align:center}.proto-table .note-col{width:38%}.box{font-size:13px;line-height:1;display:inline-block}
-.paper-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.section-card{display:flex;flex-direction:column;gap:0;page-break-inside:avoid;break-inside:avoid}.section-head{border:1px solid #707070;background:#ededed;padding:4.5px 6px;font-weight:700;font-size:10.8px}.section-note{float:right;font-weight:600;font-size:9px;color:#333}.status-bad{background:#fee2e2!important}.status-bad td,.status-bad th{background:#fee2e2!important;border-color:#dc2626!important}.muted-note{color:#555;font-size:9px}
-.findings-box{border:1px solid #707070;min-height:58px;padding:5px;font-size:10px}.findings-lines{display:grid;gap:7px;margin-top:5px}.findings-lines div{border-bottom:1px solid #999;height:13px}.photo-section{border:1px solid #707070}.photo-section .section-head{border:0;border-bottom:1px solid #707070}.photo-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:0}.photo-mini{border-right:1px solid #707070;padding:4px;font-size:7.8px;text-align:center;min-height:86px}.photo-mini:last-child{border-right:none}.photo-mini img{width:100%;height:54px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}.issue-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #707070}.issue-mini{padding:4px;border-right:1px solid #707070;min-height:62px;font-size:8px;text-align:center}.issue-mini:last-child{border-right:none}.issue-mini img{width:100%;height:44px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}
-.conclusion-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:8px}.signature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.signature-grid>div{border:1px solid #707070;border-top:none;padding:6px;min-height:54px;font-size:10px}.page-number{text-align:right;font-size:9px;color:#333;margin-top:auto}
-.print-toolbar{position:sticky;top:0;z-index:10;background:#0f172a;color:#fff;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;font-family:Arial,Helvetica,sans-serif}.print-toolbar button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#2563eb;color:#fff;cursor:pointer}.print-toolbar .secondary{background:#e5e7eb;color:#111827}.print-toolbar small{color:#cbd5e1}
-@page{size:A4 portrait;margin:0}
-@media print{.print-toolbar{display:none!important}html,body{width:210mm;background:#fff}.paper{width:210mm;margin:0}.paper-doc{width:210mm}.paper-page{width:210mm;height:297mm;min-height:297mm;max-height:297mm}}
-`;
-}
-
-async function printCurrent(){
+function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
-
-  // v1.6 / 5.96: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
-  // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
-  const element = els.previewBody.querySelector('.paper');
-  if(!element){ alert('Nepodařilo se připravit protokol pro tisk.'); return; }
-  await waitForImages(element);
-
-  const fileBase = (currentPreview.id || currentPreview.vc || 'protokol').replace(/[^a-z0-9_-]+/gi,'_');
-  const html = `<!DOCTYPE html>
-<html lang="cs">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(fileBase)} - tisk protokolu</title>
-<style>${getPrintStyles()}</style>
-</head>
-<body>
-  <div class="print-toolbar">
-    <div><strong>LiftControl CZ – tisk protokolu</strong><br><small>Nejdřív zkontroluj náhled. Potom klikni na Tisk / PDF.</small></div>
-    <div><button type="button" onclick="window.print()">Tisk / PDF</button> <button type="button" class="secondary" onclick="window.close()">Zavřít</button></div>
-  </div>
-  ${element.outerHTML}
-</body>
-</html>`;
-
-  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const opened = window.open(url, '_blank');
-  if(!opened){
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${fileBase}_tisk.html`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    alert('Prohlížeč zablokoval novou záložku. Stáhl jsem tiskový HTML soubor. Otevři ho a dej Tisk / PDF.');
-  } else {
-    setTimeout(()=>URL.revokeObjectURL(url), 120000);
-  }
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  void els.previewBody.offsetHeight;
+  window.print();
 }
-window._printNow = printCurrent;
 
 function applyTheme(mode){
   const dark = mode === 'dark';
@@ -4245,9 +3530,8 @@ async function saveWorkPlan(record){
   }
 }
 async function deleteWorkPlan(id){
-  const record = (scheduleData || []).find(x => x.id === id);
-  const who = promptDeleteActor(summarizeRecordForAudit(record));
-  if(!who) return;
+  if(!confirm('Smazat tento záznam plánu práce?')) return;
+  if(!requireDeletePassword('Pro smazání záznamu z kalendáře zadej heslo:')) return;
   if(firebaseAvailable && db){
     await db.collection(SCHEDULE_COLLECTION_NAME).doc(id).delete();
   } else {
@@ -4287,8 +3571,6 @@ async function deleteAllPartRecords(){
   alert('Historie náhradních dílů byla smazána.');
 }
 
-const TECH_COLOR_PALETTE = ['#2563eb','#16a34a','#f97316','#7c3aed','#dc2626','#0891b2','#be123c','#65a30d','#ca8a04','#0f766e','#9333ea','#ea580c'];
-const TECH_COLOR_PALETTE_DARK = ['#93c5fd','#86efac','#fdba74','#c4b5fd','#fca5a5','#67e8f9','#fda4af','#bef264','#fde68a','#5eead4','#d8b4fe','#fed7aa'];
 const TECH_COLORS = {
   'Jan Bartoš':'#2563eb',
   'Petr Čáp':'#16a34a',
@@ -4296,7 +3578,7 @@ const TECH_COLORS = {
   'Vít Procházka':'#7c3aed',
   'Ondřej Lakva':'#dc2626'
 };
-function techColor(name){ return colorForTechnician(name); }
+function techColor(name){ return TECH_COLORS[name] || '#64748b'; }
 function ymd(date){
   const d = new Date(date);
   const pad = n => String(n).padStart(2,'0');
@@ -4364,13 +3646,12 @@ function addWorkExtraPlaceRow(value=''){
   if(!list) return;
   const row = document.createElement('div');
   row.className = 'work-extra-row';
-  row.innerHTML = `<input type="text" data-work-extra-input autocomplete="off" placeholder="Další místo práce" value="${escapeHtml(value || '')}"><button type="button" class="danger mini work-extra-remove" title="Odebrat místo">×</button>`;
+  row.innerHTML = `<input type="text" data-work-extra-input list="workPlanPlaceList" placeholder="Další místo práce" value="${escapeHtml(value || '')}"><button type="button" class="danger mini work-extra-remove" title="Odebrat místo">×</button>`;
   const input = row.querySelector('[data-work-extra-input]');
   const remove = row.querySelector('.work-extra-remove');
   input.addEventListener('input', syncWorkExtraPlacesFromRows);
   remove.addEventListener('click', () => { row.remove(); syncWorkExtraPlacesFromRows(); });
   list.appendChild(row);
-  attachSmartSuggest(input, getPlaceSuggestionsAll, syncWorkExtraPlacesFromRows);
   input.focus();
   syncWorkExtraPlacesFromRows();
 }
@@ -4440,9 +3721,8 @@ function renderWorkPlan(){
     const rows = getWorkPlanRowsForDate(ds);
     const events = rows.length ? rows.map(r => {
       const c = techColor(r.technician);
-      const cd = techColorDark(r.technician);
-      return `<div class="work-event" style="--tech-color:${c};--tech-color-dark:${cd};--tech-bg:${hexToRgba(c,.10)};--tech-bg-dark:${hexToRgba(cd,.24)};--tech-border:${hexToRgba(c,.38)};--tech-border-dark:${hexToRgba(cd,.62)}">
-        <div class="work-event-tech">${escapeHtml(r.technician || '')}</div>
+      return `<div class="work-event" style="border-left-color:${c};background:color-mix(in srgb, ${c} 10%, white)">
+        <div class="work-event-tech" style="color:${c}">${escapeHtml(r.technician || '')}</div>
         <div class="work-event-place">${getWorkPlanPlaces(r).map(p => `<span class="work-event-place-line">${escapeHtml(p)}</span>`).join('')}</div>
         ${r.note ? `<div class="work-event-note">${escapeHtml(r.note)}</div>` : ''}
         <div class="work-event-actions">
@@ -4489,7 +3769,6 @@ function openWorkPlanForm(id=null, dateStr=null){
   setWorkExtraPlacesRows((row && Array.isArray(row.extraPlaces)) ? row.extraPlaces : []);
   document.getElementById('workPlanNote').value = (row && row.note) || '';
   document.getElementById('workPlanFormWrap').classList.remove('hidden');
-  attachWorkSmartSuggests();
   document.getElementById('workPlanFormWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 function closeWorkPlanForm(){
@@ -4509,34 +3788,21 @@ async function saveWorkPlanFromForm(){
   if(!date){ alert('Vyplň datum ve formátu DD.MM.RRRR.'); return; }
   if(!technician){ alert('Vyber technika.'); return; }
   if(!place && !extraPlaces.length){ alert('Vyplň alespoň jedno místo práce.'); return; }
-  if(workPlanSaveInProgress) return;
-  workPlanSaveInProgress = true;
-  const saveBtn = document.getElementById('saveWorkPlanBtn');
-  if(saveBtn) saveBtn.disabled = true;
-  try{
-    const existing = editingWorkPlanId ? (scheduleData || []).find(x => x.id === editingWorkPlanId) : null;
-    const record = Object.assign({}, existing || {}, {
-      id: editingWorkPlanId || scheduleUid(),
-      date,
-      technician,
-      place,
-      extraPlaces,
-      note,
-      appVersion:'1.6 / 5.96'
-    });
-    if(!record.createdAt) record.createdAt = new Date().toISOString();
-    await saveWorkPlan(record);
-    await logAuditAction(existing ? 'update' : 'create','plan',record,record.technician);
-    closeWorkPlanForm();
-    currentWorkWeekStart = startOfWeek(new Date(date + 'T00:00:00'));
-    renderWorkPlan();
-  }catch(err){
-    console.error(err);
-    alert('Uložení plánu práce se nepodařilo. Zkontroluj připojení a zkus to znovu.');
-  }finally{
-    workPlanSaveInProgress = false;
-    if(saveBtn) saveBtn.disabled = false;
-  }
+  const existing = editingWorkPlanId ? (scheduleData || []).find(x => x.id === editingWorkPlanId) : null;
+  const record = Object.assign({}, existing || {}, {
+    id: editingWorkPlanId || scheduleUid(),
+    date,
+    technician,
+    place,
+    extraPlaces,
+    note,
+    appVersion:'1.6 / 5.63'
+  });
+  if(!record.createdAt) record.createdAt = new Date().toISOString();
+  await saveWorkPlan(record);
+  closeWorkPlanForm();
+  currentWorkWeekStart = startOfWeek(new Date(date + 'T00:00:00'));
+  renderWorkPlan();
 }
 
 
@@ -4561,29 +3827,9 @@ function formatHumanDate(d){
   return dt.toLocaleDateString('cs-CZ',{day:'numeric', month:'long', year:'numeric', weekday:'long'});
 }
 function colorForTechnician(name){
-  const key = String(name || '').trim();
-  if(!key) return '#64748b';
-  if(TECH_COLORS[key]) return TECH_COLORS[key];
-  const known = uniqueNonEmpty([
-    ...(TECHNICI || []),
-    ...(scheduleData || []).map(r => r.technician)
-  ]);
-  const idx = known.indexOf(key);
-  if(idx >= 0) return TECH_COLOR_PALETTE[idx % TECH_COLOR_PALETTE.length];
-  const hash = Math.abs(key.split('').reduce((a,c)=>a + c.charCodeAt(0),0));
-  return TECH_COLOR_PALETTE[hash % TECH_COLOR_PALETTE.length];
-}
-function techColorDark(name){
-  const key = String(name || '').trim();
-  if(!key) return '#cbd5e1';
-  const known = uniqueNonEmpty([
-    ...(TECHNICI || []),
-    ...(scheduleData || []).map(r => r.technician)
-  ]);
-  const idx = known.indexOf(key);
-  if(idx >= 0) return TECH_COLOR_PALETTE_DARK[idx % TECH_COLOR_PALETTE_DARK.length];
-  const hash = Math.abs(key.split('').reduce((a,c)=>a + c.charCodeAt(0),0));
-  return TECH_COLOR_PALETTE_DARK[hash % TECH_COLOR_PALETTE_DARK.length];
+  const colors = ['#2563eb','#16a34a','#7c3aed','#f59e0b','#06b6d4','#ef4444','#84cc16','#ec4899'];
+  const idx = Math.abs(String(name||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % colors.length;
+  return colors[idx];
 }
 
 function hexToRgba(hex, alpha){
@@ -4684,10 +3930,9 @@ function renderHomeOverview(){
   } else {
     list.innerHTML = activeRows.map(row => {
       const color = colorForTechnician(row.name);
-      const darkColor = techColorDark(row.name);
       const places = row.items.flatMap(it => getWorkPlanPlaces(it)).filter(Boolean);
       const notes = row.items.map(it => it.note).filter(Boolean);
-      return `<div class="day-row today-focus" style="--tech-color:${color};--tech-color-dark:${darkColor};--tech-bg:${hexToRgba(color,.12)};--tech-bg-dark:${hexToRgba(darkColor,.26)};--tech-border:${hexToRgba(color,.38)};--tech-border-dark:${hexToRgba(darkColor,.66)};"><div class="day-tech"><span class="tech-dot"></span>${escapeHtml(row.name)}</div><div class="day-place"><div class="day-place-main">${places.map(p => `<span class="place-pill">${escapeHtml(p)}</span>`).join('')}</div>${notes.length ? `<div class="day-place-muted">${notes.map(n => escapeHtml(n)).join(' · ')}</div>` : ''}</div></div>`;
+      return `<div class="day-row today-focus" style="--tech-color:${color};border-left-color:${color};background:linear-gradient(90deg, ${hexToRgba(color,.12)} 0%, var(--panel2) 72%);"><div class="day-tech"><span class="tech-dot" style="background:${color}"></span>${escapeHtml(row.name)}</div><div class="day-place"><div class="day-place-main">${places.map(p => `<span class="place-pill" style="border-color:${hexToRgba(color,.38)}">${escapeHtml(p)}</span>`).join('')}</div>${notes.length ? `<div class="day-place-muted">${notes.map(n => escapeHtml(n)).join(' · ')}</div>` : ''}</div></div>`;
     }).join('');
   }
 }
@@ -4707,7 +3952,7 @@ function faultWaitingParts(f){
   return f && (f.waitingParts === true || f.status === 'waiting_parts');
 }
 function getFaultStatusList(f){
-  if(faultIsRepaired(f)) return [{txt:'Vyřešeno / opraveno', cls:'status-repaired'}];
+  if(faultIsRepaired(f)) return [{txt:'Opraveno / schopné provozu', cls:'status-repaired'}];
   const list = [];
   if(faultInService(f)) list.push({txt:'Stroj do servisu', cls:'status-service'});
   if(faultWaitingParts(f)) list.push({txt:'Čeká na ND', cls:'status-waiting'});
@@ -4750,9 +3995,8 @@ async function saveFaultRecord(record){
   }
 }
 async function deleteFaultRecord(id){
-  const record = (faultsData || []).find(x => x.id === id);
-  const who = promptDeleteActor(summarizeRecordForAudit(record));
-  if(!who) return;
+  if(!confirm('Smazat toto hlášení poruchy?')) return;
+  if(!requireDeletePassword('Pro smazání hlášení poruchy zadej heslo:')) return;
   if(firebaseAvailable && db){
     await db.collection(FAULTS_COLLECTION_NAME).doc(id).delete();
   } else {
@@ -4761,7 +4005,6 @@ async function deleteFaultRecord(id){
     renderFaults();
     updateMainOverview();
   }
-  await logAuditAction('delete','fault',record,who);
 }
 async function deleteAllFaultRecords(){
   if(!confirm('Opravdu smazat celou historii hlášení poruch?')) return;
@@ -4792,98 +4035,6 @@ function fillDatalist(id, values){
   if(!el) return;
   el.innerHTML = uniqueNonEmpty(values).map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
 }
-
-function getModelSuggestionsAll(){
-  return uniqueNonEmpty([...(MODELS || []), ...(data || []).map(r => r.typ), ...(faultsData || []).map(r => r.type), ...(partsData || []).map(r => r.type)]).sort((a,b)=>String(a).localeCompare(String(b),'cs'));
-}
-function getSerialSuggestionsAll(){
-  return uniqueNonEmpty([...(data || []).map(r => r.vc), ...(faultsData || []).map(r => r.serial), ...(partsData || []).map(r => r.serial)]).sort((a,b)=>String(a).localeCompare(String(b),'cs'));
-}
-function getPlaceSuggestionsAll(){
-  return uniqueNonEmpty([...(BRANCHES || []), ...(data || []).map(r => r.umisteni), ...(faultsData || []).map(r => r.place), ...(partsData || []).map(r => r.place), ...(scheduleData || []).map(r => r.place), ...(scheduleData || []).flatMap(r => Array.isArray(r.extraPlaces) ? r.extraPlaces : parseExtraPlaces(r.extraPlaces))]).sort((a,b)=>String(a).localeCompare(String(b),'cs'));
-}
-function getPartNumberSuggestionsAll(){ return uniqueNonEmpty((partsData || []).map(r => r.partNumber)).sort((a,b)=>String(a).localeCompare(String(b),'cs')); }
-function getPartNameSuggestionsAll(){ return uniqueNonEmpty((partsData || []).map(r => r.partName)).sort((a,b)=>String(a).localeCompare(String(b),'cs')); }
-function getPartNoteSuggestionsAll(){ return uniqueNonEmpty((partsData || []).map(r => r.note)).sort((a,b)=>String(a).localeCompare(String(b),'cs')); }
-function getFaultDescSuggestionsAll(){
-  return uniqueNonEmpty([...(faultsData || []).map(r => r.description), ...(data || []).flatMap(r => Object.keys(r || {}).filter(k => k.endsWith('_p')).map(k => r[k]))]).sort((a,b)=>String(a).localeCompare(String(b),'cs'));
-}
-function attachSmartSuggest(input, getItems, onPick){
-  if(!input || input.dataset.smartSuggestReady === '1') return;
-  input.dataset.smartSuggestReady = '1';
-  input.setAttribute('autocomplete','off');
-  input.removeAttribute('list');
-  const wrap = input.parentElement;
-  if(!wrap) return;
-  wrap.classList.add('smart-suggest-wrap');
-  const box = document.createElement('div');
-  box.className = 'smart-suggest-box';
-  input.insertAdjacentElement('afterend', box);
-
-  const close = () => { box.classList.remove('show'); box.innerHTML = ''; };
-  const open = () => {
-    const q = String(input.value || '').trim();
-    if(q.length < 1){ close(); return; }
-    const items = filterSuggestions(uniqueNonEmpty(getItems ? getItems() : []), q).slice(0,6);
-    if(!items.length){ close(); return; }
-    box.innerHTML = items.map(v => `<div class="smart-suggest-item" data-value="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('');
-    box.classList.add('show');
-    box.querySelectorAll('.smart-suggest-item').forEach(item => item.addEventListener('pointerdown', (ev) => {
-      ev.preventDefault();
-      input.value = item.dataset.value || '';
-      input.dispatchEvent(new Event('input', {bubbles:true}));
-      input.dispatchEvent(new Event('change', {bubbles:true}));
-      close();
-      if(typeof onPick === 'function') onPick(input.value);
-    }));
-  };
-
-  input.addEventListener('input', open);
-  input.addEventListener('focus', open);
-  input.addEventListener('blur', () => setTimeout(close, 140));
-}
-function applyMachineInfoToPart(serial){
-  const info = lastMachineInfo(serial);
-  if(!info) return;
-  const typeEl = document.getElementById('partType');
-  const placeEl = document.getElementById('partPlace');
-  const customWrap = document.getElementById('partCustomPlaceWrap');
-  const customEl = document.getElementById('partCustomPlace');
-  if(typeEl && !typeEl.value && info.type) typeEl.value = info.type;
-  if(placeEl && info.place && !placeEl.value){
-    if(BRANCHES.includes(info.place)){
-      placeEl.value = info.place;
-      customWrap?.classList.add('hidden');
-      if(customEl) customEl.value = '';
-    } else {
-      placeEl.value = '__custom__';
-      customWrap?.classList.remove('hidden');
-      if(customEl) customEl.value = info.place;
-    }
-  }
-}
-function attachPartSmartSuggests(){
-  attachSmartSuggest(document.getElementById('partType'), getModelSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partSerial'), getSerialSuggestionsAll, applyMachineInfoToPart);
-  attachSmartSuggest(document.getElementById('partCustomPlace'), getPlaceSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partNumber'), getPartNumberSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partName'), getPartNameSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partNote'), getPartNoteSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partCustomerName'), getCompanyNameSuggestionsAll);
-  attachSmartSuggest(document.getElementById('partCustomerAddress'), getCompanyAddressSuggestionsAll);
-}
-function attachFaultSmartSuggests(){
-  attachSmartSuggest(document.getElementById('faultType'), getModelSuggestionsAll);
-  attachSmartSuggest(document.getElementById('faultSerial'), getSerialSuggestionsAll, () => document.getElementById('faultSerial')?.dispatchEvent(new Event('change', {bubbles:true})));
-  attachSmartSuggest(document.getElementById('faultCustomPlace'), getPlaceSuggestionsAll);
-  attachSmartSuggest(document.getElementById('faultDesc'), getFaultDescSuggestionsAll);
-  attachSmartSuggest(document.getElementById('faultCustomerName'), getCompanyNameSuggestionsAll);
-  attachSmartSuggest(document.getElementById('faultCustomerAddress'), getCompanyAddressSuggestionsAll);
-}
-function attachWorkSmartSuggests(){
-  attachSmartSuggest(document.getElementById('workPlanCustomPlace'), getPlaceSuggestionsAll);
-  document.querySelectorAll('[data-work-extra-input]').forEach(input => attachSmartSuggest(input, getPlaceSuggestionsAll, syncWorkExtraPlacesFromRows));
-}
 function lastMachineInfo(serial){
   const s = String(serial || '').trim();
   if(!s) return null;
@@ -4891,98 +4042,9 @@ function lastMachineInfo(serial){
     ...(data || []).map(r => ({source:'protocol', created:r.savedAt || r.datum || '', type:r.typ, serial:r.vc, place:r.umisteni, mh:r.mh})),
     ...(faultsData || []).map(r => ({source:'fault', created:r.updatedAt || r.createdAt || r.date || '', type:r.type, serial:r.serial, place:r.place, mh:r.mh})),
     ...(partsData || []).map(r => ({source:'part', created:r.updatedAt || r.createdAt || '', type:r.type, serial:r.serial, place:r.place, mh:''}))
-  ].filter(r => normalizeSerial(r.serial) === normalizeSerial(s));
+  ].filter(r => String(r.serial || '').trim() === s);
   rows.sort((a,b) => String(b.created || '').localeCompare(String(a.created || '')));
   return rows[0] || null;
-}
-function getFaultCategoryLabel(f){
-  const c = String((f && (f.faultCategory || f.category)) || 'normal');
-  if(c === 'customer') return 'Způsobeno zákazníkem';
-  if(c === 'warranty') return 'Lze uplatnit záruku';
-  return 'Běžná závada';
-}
-function getFaultCategoryClass(f){
-  const c = String((f && (f.faultCategory || f.category)) || 'normal');
-  if(c === 'customer') return 'fault-category-customer';
-  if(c === 'warranty') return 'fault-category-warranty';
-  return 'fault-category-normal';
-}
-function getMachineSearchItems(){
-  const map = new Map();
-  const add = (serial, type='', place='') => {
-    const s = String(serial || '').trim();
-    if(!s) return;
-    const key = normalizeSerial(s);
-    const prev = map.get(key) || {serial:s, type:'', place:''};
-    if(type && !prev.type) prev.type = String(type || '').trim();
-    if(place && !prev.place) prev.place = String(place || '').trim();
-    map.set(key, prev);
-  };
-  (data || []).forEach(r => add(r.vc, r.typ, r.umisteni));
-  (faultsData || []).forEach(r => add(r.serial, r.type, r.place));
-  (partsData || []).forEach(r => add(r.serial, r.type, r.place));
-  return Array.from(map.values()).sort((a,b)=>String(a.serial).localeCompare(String(b.serial),'cs'));
-}
-function filterMachineSearchItems(q){
-  const norm = String(q || '').toLowerCase().replace(/\s+/g,'');
-  if(!norm) return [];
-  return getMachineSearchItems().filter(x => {
-    const hay = `${x.serial || ''} ${x.type || ''} ${x.place || ''}`.toLowerCase().replace(/\s+/g,'');
-    return hay.includes(norm);
-  }).slice(0,8);
-}
-function attachHomeMachineSuggest(){
-  const input = document.getElementById('homeMachineSearch');
-  const row = input?.closest('.home-machine-search-row');
-  if(!input || !row || input.dataset.homeMachineSuggestReady === '1') return;
-  input.dataset.homeMachineSuggestReady = '1';
-  input.setAttribute('autocomplete','off');
-  input.removeAttribute('list');
-  let box = row.querySelector('.home-machine-suggest-box');
-  if(!box){
-    box = document.createElement('div');
-    box.className = 'home-machine-suggest-box';
-    row.appendChild(box);
-  }
-  const close = () => { box.classList.remove('show'); box.innerHTML = ''; };
-  const open = () => {
-    const q = String(input.value || '').trim();
-    const items = filterMachineSearchItems(q);
-    if(!items.length){ close(); return; }
-    box.innerHTML = items.map(x => `
-      <div class="home-machine-suggest-item" data-serial="${escapeHtml(x.serial)}">
-        <div class="home-machine-suggest-main">${escapeHtml(x.serial)}</div>
-        <div class="home-machine-suggest-sub">${escapeHtml([x.type, x.place].filter(Boolean).join(' · ') || 'Záznam stroje')}</div>
-      </div>`).join('');
-    box.classList.add('show');
-    box.querySelectorAll('.home-machine-suggest-item').forEach(item => item.addEventListener('pointerdown', ev => {
-      ev.preventDefault();
-      input.value = item.dataset.serial || '';
-      input.dispatchEvent(new Event('input', {bubbles:true}));
-      input.dispatchEvent(new Event('change', {bubbles:true}));
-      close();
-    }));
-  };
-  input.addEventListener('input', open);
-  input.addEventListener('focus', open);
-  input.addEventListener('blur', () => setTimeout(close, 160));
-}
-function updateHomeMachineDatalist(){
-  const dl = document.getElementById('homeMachineList');
-  const machines = getMachineSearchItems().map(x => x.serial);
-  if(dl) dl.innerHTML = machines.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
-  attachHomeMachineSuggest();
-}
-function openSelectedHomeMachine(){
-  const input = document.getElementById('homeMachineSearch');
-  const serial = String(input?.value || '').trim();
-  if(!serial){ alert('Vyber nebo zadej výrobní číslo stroje.'); return; }
-  const known = getMachineSearchItems().map(x => x.serial);
-  const exact = known.find(v => normalizeSerial(v) === normalizeSerial(serial));
-  if(!exact){
-    if(!confirm('Toto výrobní číslo zatím není v záznamech. Otevřít prázdnou kartu?')) return;
-  }
-  openMachineCard(exact || serial);
 }
 function fillFaultSelects(){
   const place = document.getElementById('faultPlace');
@@ -5045,12 +4107,6 @@ function openFaultForm(id=null){
   currentFaultPhotos = f && Array.isArray(f.photos) ? JSON.parse(JSON.stringify(f.photos)) : [];
   document.getElementById('faultType').value = (f && f.type) || '';
   document.getElementById('faultSerial').value = (f && f.serial) || '';
-  const faultEntered = document.getElementById('faultEnteredBy');
-  if(faultEntered){
-    const val = (f && (f.enteredBy || f.zadal)) || getEnteredByDefault();
-    faultEntered.innerHTML = operatorOptionsHtml(val);
-    faultEntered.value = val;
-  }
   document.getElementById('faultDate').value = (f && f.date) || todayLocal();
   document.getElementById('faultMh').value = (f && f.mh) || '';
   const placeSelect = document.getElementById('faultPlace');
@@ -5071,17 +4127,9 @@ function openFaultForm(id=null){
     customInput.value = '';
   }
   document.getElementById('faultDesc').value = (f && f.description) || '';
-  const catEl = document.getElementById('faultCategory');
-  if(catEl) catEl.value = (f && (f.faultCategory || f.category)) || 'normal';
-  const faultExt = document.getElementById('faultExternalCustomer');
-  if(faultExt) faultExt.checked = !!(f && f.externalCustomer);
-  document.getElementById('faultCustomerName').value = (f && (f.customerName || f.companyName)) || '';
-  document.getElementById('faultCustomerAddress').value = (f && (f.customerAddress || f.companyAddress)) || '';
-  wireExternalDetails('fault');
   document.getElementById('faultInitialStatus').value = f ? (faultIsRepaired(f) ? 'repaired' : (faultInService(f) ? 'service' : (faultWaitingParts(f) ? 'waiting_parts' : 'open'))) : 'open';
   renderFaultPhotoPreview();
   document.getElementById('faultFormWrap').classList.remove('hidden');
-  attachFaultSmartSuggests();
   document.getElementById('faultFormWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 function closeFaultForm(){
@@ -5100,52 +4148,32 @@ async function saveFaultFromForm(){
   if(!serial){ alert('Vyplň výrobní číslo.'); return; }
   if(!date){ alert('Vyplň datum.'); return; }
   if(!description){ alert('Vyplň popis závady.'); return; }
-  if(faultSaveInProgress) return;
-  faultSaveInProgress = true;
-  const saveBtn = document.getElementById('saveFaultBtn');
-  if(saveBtn) saveBtn.disabled = true;
-  try{
-    const existing = editingFaultId ? (faultsData || []).find(x => x.id === editingFaultId) : null;
-    const status = document.getElementById('faultInitialStatus').value;
-    const faultCategory = document.getElementById('faultCategory')?.value || 'normal';
-    const record = Object.assign({}, existing || {}, {
-      id: editingFaultId || faultUid(),
-      type,
-      serial,
-      date,
-      mh: document.getElementById('faultMh').value.trim(),
-      place,
-      description,
-      faultCategory,
-      enteredBy: document.getElementById('faultEnteredBy')?.value || getEnteredByDefault(),
-      externalCustomer: !!document.getElementById('faultExternalCustomer')?.checked,
-      customerName: !!document.getElementById('faultExternalCustomer')?.checked ? document.getElementById('faultCustomerName').value.trim() : '',
-      customerAddress: !!document.getElementById('faultExternalCustomer')?.checked ? document.getElementById('faultCustomerAddress').value.trim() : '',
-      status: status === 'repaired' ? 'repaired' : 'open',
-      inService: status === 'service' ? true : (existing ? !!existing.inService : false),
-      waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
-      photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.96'
-    });
-    if(!record.createdAt) record.createdAt = new Date().toISOString();
-    setLastEnteredBy(record.enteredBy);
-    if(status === 'repaired'){
-      record.repaired = true;
-      record.inService = false;
-      record.waitingParts = false;
-      if(!record.repairedAt) record.repairedAt = new Date().toISOString();
-    }
-    await saveFaultRecord(record);
-    await logAuditAction(existing ? 'update' : 'create','fault',record,record.enteredBy);
-    closeFaultForm();
-    renderFaults();
-  }catch(err){
-    console.error(err);
-    alert('Uložení poruchy se nepodařilo. Zkontroluj připojení a zkus to znovu.');
-  }finally{
-    faultSaveInProgress = false;
-    if(saveBtn) saveBtn.disabled = false;
+  const existing = editingFaultId ? (faultsData || []).find(x => x.id === editingFaultId) : null;
+  const status = document.getElementById('faultInitialStatus').value;
+  const record = Object.assign({}, existing || {}, {
+    id: editingFaultId || faultUid(),
+    type,
+    serial,
+    date,
+    mh: document.getElementById('faultMh').value.trim(),
+    place,
+    description,
+    status: status === 'repaired' ? 'repaired' : 'open',
+    inService: status === 'service' ? true : (existing ? !!existing.inService : false),
+    waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
+    photos: currentFaultPhotos,
+    appVersion:'1.6 / 5.63'
+  });
+  if(!record.createdAt) record.createdAt = new Date().toISOString();
+  if(status === 'repaired'){
+    record.repaired = true;
+    record.inService = false;
+    record.waitingParts = false;
+    if(!record.repairedAt) record.repairedAt = new Date().toISOString();
   }
+  await saveFaultRecord(record);
+  closeFaultForm();
+  renderFaults();
 }
 function renderFaults(){
   updateMainOverview();
@@ -5156,7 +4184,7 @@ function renderFaults(){
   let rows = [...(faultsData || [])];
   if(statusFilter === 'open') rows = rows.filter(f => !faultIsRepaired(f));
   if(statusFilter === 'repaired') rows = rows.filter(f => faultIsRepaired(f));
-  if(query) rows = rows.filter(f => [f.type,f.serial,f.place,f.description,f.mh,getFaultCategoryLabel(f),f.enteredBy,f.customerName,f.customerAddress].some(v => String(v||'').toLowerCase().includes(query)));
+  if(query) rows = rows.filter(f => [f.type,f.serial,f.place,f.description,f.mh].some(v => String(v||'').toLowerCase().includes(query)));
   rows.sort((a,b) => String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||'')));
   if(!rows.length){ list.innerHTML = '<div class="empty">Žádná hlášení poruch.</div>'; return; }
   list.innerHTML = rows.map(f => {
@@ -5166,7 +4194,7 @@ function renderFaults(){
       const src = p.url || p.dataUrl || '';
       return src ? `<img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)">` : '';
     }).join('')}</div>` : '';
-    return `<div class="fault-card ${f.externalCustomer ? 'external-customer-card' : ''}" id="fault-card-${escapeHtml(f.id || '')}">
+    return `<div class="fault-card">
       <div class="fault-head">
         <div>
           <div class="fault-title">${escapeHtml(f.type || 'Bez typu')} · v.č. ${escapeHtml(f.serial || '—')}</div>
@@ -5175,9 +4203,6 @@ function renderFaults(){
         <div class="fault-status-row">${getFaultStatusList(f).map(s => `<span class="status-pill ${s.cls}">${s.txt}</span>`).join('')}</div>
       </div>
       <div class="fault-grid">
-        <div class="fault-meta"><div class="fault-meta-label">Druh závady</div><div class="fault-meta-value"><span class="fault-category-pill ${getFaultCategoryClass(f)}">${escapeHtml(getFaultCategoryLabel(f))}</span></div></div>
-        <div class="fault-meta"><div class="fault-meta-label">Zadal</div><div class="fault-meta-value">${escapeHtml(f.enteredBy || f.zadal || '—')}</div></div>
-        <div class="fault-meta"><div class="fault-meta-label">Firma</div><div class="fault-meta-value">${escapeHtml(customerDisplayText(f))}</div></div>
         <div class="fault-meta"><div class="fault-meta-label">Motohodiny</div><div class="fault-meta-value">${escapeHtml(f.mh || '—')}</div></div>
         <div class="fault-meta"><div class="fault-meta-label">Zadáno</div><div class="fault-meta-value">${escapeHtml(formatDateTime(f.createdAt))}</div></div>
         <div class="fault-meta"><div class="fault-meta-label">Opraveno</div><div class="fault-meta-value">${faultIsRepaired(f) ? escapeHtml(formatDateTime(f.repairedAt || f.updatedAt)) : 'Ne'}</div></div>
@@ -5189,9 +4214,9 @@ function renderFaults(){
         <button class="secondary mini" type="button" data-fault-machine="${escapeHtml(f.serial || '')}">Karta stroje</button>
         <button class="secondary mini" type="button" data-fault-edit="${f.id}">Upravit</button>
         <button class="secondary mini" type="button" data-fault-create-part="${f.id}">Objednej ND</button>
-        ${!faultInService(f) && !faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-service="${f.id}">Stroj do servisu</button>` : ''}
-        ${!faultWaitingParts(f) && !faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-waiting="${f.id}">Čeká na ND</button>` : ''}
-        ${!faultIsRepaired(f) ? `<button class="success mini" type="button" data-fault-repaired="${f.id}">Vyřešeno / opraveno</button>` : ''}
+        ${!faultInService(f) && !faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-service="${f.id}">Stroj do servisu</button>` : ''}
+        ${!faultWaitingParts(f) && !faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-waiting="${f.id}">Čeká na ND</button>` : ''}
+        ${!faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-repaired="${f.id}">Opraveno / schopné provozu</button>` : ''}
         ${faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-repair-protocol="${f.id}">Protokol po opravě</button>` : ''}
         ${faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-create-protocol="${f.id}">Vytvořit kontrolní protokol</button>` : ''}
         <button class="danger mini" type="button" data-fault-delete="${f.id}">Smazat</button>
@@ -5250,7 +4275,7 @@ function printRepairProtocol(id){
   const style = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML).join('\n');
   w.document.open();
   w.document.write(html.replace('</head>', `<style>${style}
-/* v1.6 / 5.64 – fonty, plán práce více míst, menu */
+/* v1.6 / 5.63 – fonty, plán práce více míst, menu */
 html, body, input, select, textarea, button, option {
   font-family: Inter, "Segoe UI", Arial, sans-serif !important;
 }
@@ -5277,7 +4302,7 @@ input, select, textarea, button,
 }
 
 
-/* v1.6 / 5.64 – provozní doladění */
+/* v1.6 / 5.63 – provozní doladění */
 .backup-row{
   padding:12px;
   border:1px solid #bfdbfe;
@@ -5327,7 +4352,7 @@ body.dark .mobile-tech-panel{
 }
 
 
-/* v1.6 / 5.64 – jasné označení čtvrtletních kontrol */
+/* v1.6 / 5.63 – jasné označení čtvrtletních kontrol */
 .module-kicker{
   display:inline-flex;
   width:max-content;
@@ -5352,58 +4377,6 @@ body.dark .module-kicker{
   border-color:#1d4ed8;
 }
 
-
-/* v1.6 / 5.90 – externí zákazník */
-.external-customer-card{
-  border-color:#7c3aed!important;
-  box-shadow:0 0 0 2px rgba(124,58,237,.10), var(--shadow)!important;
-  background:linear-gradient(180deg,#faf5ff 0%,#ffffff 100%)!important;
-}
-body.dark .external-customer-card{
-  background:linear-gradient(180deg,rgba(124,58,237,.18) 0%,var(--panel) 100%)!important;
-  border-color:#a78bfa!important;
-}
-.badge-external,.status-external{
-  background:#f3e8ff!important;
-  color:#6d28d9!important;
-  border-color:#d8b4fe!important;
-}
-body.dark .badge-external,body.dark .status-external{
-  background:rgba(124,58,237,.22)!important;
-  color:#ddd6fe!important;
-  border-color:#a78bfa!important;
-}
-.external-check{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:var(--panel2);
-}
-.external-check input{width:auto;min-width:20px;height:20px}
-.external-check strong{display:block}
-.external-check span{display:block;color:var(--muted);font-size:.83rem;margin-top:2px}
-.customer-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.customer-extra-note{font-size:.78rem;color:var(--muted);margin-top:6px}
-.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:720px){.customer-extra-grid,.operator-mini-row{grid-template-columns:1fr}}
-
-
-/* v5.76 read-only ND cards + audit history */
-.part-note-display{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:11px 12px;display:grid;gap:4px}
-.part-note-display strong{font-size:.78rem;color:var(--muted)}
-.part-note-display div{font-weight:650;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
-.part-card.focus-flash{outline:3px solid #2563eb;outline-offset:3px}
-.audit-list{display:grid;gap:10px;margin-top:12px}
-.audit-item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px;display:grid;gap:5px}
-body.dark .audit-item{background:var(--panel2)}
-.audit-title{font-weight:850}.audit-sub{font-size:.84rem;color:var(--muted);line-height:1.35}.audit-action{display:inline-flex;width:max-content;border-radius:999px;padding:4px 8px;background:#eff6ff;color:#1d4ed8;font-size:.75rem;font-weight:800}
-.audit-action.delete{background:#fef2f2;color:#b91c1c}.audit-action.update{background:#fff7ed;color:#9a3412}.audit-action.create{background:#ecfdf5;color:#166534}
-
-.part-handler-note-display{border-color:#bfdbfe;background:#eff6ff}.part-handler-note-display small{display:block;margin-top:6px;color:var(--muted);font-size:.78rem}
-body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 </style></head>`));
   w.document.close();
   try { w.focus(); } catch(e){}
@@ -5426,16 +4399,15 @@ function createPartFromFault(id){
     document.getElementById('partType').value = f.type || '';
     document.getElementById('partSerial').value = f.serial || '';
     document.getElementById('partNote').value = f.description ? ('Z poruchy: ' + f.description) : '';
-    const extChk = document.getElementById('partExternalCustomer');
-    if(extChk) extChk.checked = !!f.externalCustomer;
-    document.getElementById('partCustomerName').value = f.customerName || f.companyName || '';
-    document.getElementById('partCustomerAddress').value = f.customerAddress || f.companyAddress || '';
-    wireExternalDetails('part');
 
-    const faultPhotos = Array.isArray(f.photos) ? f.photos.filter(p => p && (p.url || p.dataUrl)) : [];
-    if(faultPhotos.length){
-      currentPartPhotos = JSON.parse(JSON.stringify(faultPhotos));
-      renderPartPhotoPreview('Fotky převzaty z hlášení poruchy.');
+    const firstFaultPhoto = Array.isArray(f.photos) ? f.photos.find(p => p && (p.url || p.dataUrl)) : null;
+    if(firstFaultPhoto){
+      currentPartPhoto = JSON.parse(JSON.stringify(firstFaultPhoto));
+      const src = currentPartPhoto.url || currentPartPhoto.dataUrl || '';
+      const preview = document.getElementById('partPhotoPreview');
+      if(preview && src){
+        preview.innerHTML = `<img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)" style="width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-top:6px"><div class="helper">Fotka převzata z hlášení poruchy.</div>`;
+      }
     }
 
     if(f.place){
@@ -5479,7 +4451,6 @@ async function markFaultRepaired(id){
   await saveFaultRecord(f);
 }
 function updateMainOverview(){
-  updateHomeMachineDatalist();
   populateTechnicianFilters();
   renderHomeOverview();
   const set = (id,val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
@@ -5497,9 +4468,9 @@ function updateMainOverview(){
   set('dashWorkToday', (scheduleData || []).filter(r => r.date === today).length);
   set('dashWorkTomorrow', (scheduleData || []).filter(r => r.date === tomorrow).length);
   set('dashWorkWeek', (scheduleData || []).filter(r => r.date >= ymd(weekStart) && r.date <= weekEnd).length);
-  set('dashPartsOpen', (partsData || []).filter(p => !p.resolved && !p.ordered && !p.sent).length);
-  set('dashPartsOrdered', (partsData || []).filter(p => !p.resolved && p.ordered && !p.sent).length);
-  set('dashPartsSent', (partsData || []).filter(p => !p.resolved && p.sent).length);
+  set('dashPartsOpen', (partsData || []).filter(p => !p.ordered && !p.sent).length);
+  set('dashPartsOrdered', (partsData || []).filter(p => p.ordered && !p.sent).length);
+  set('dashPartsSent', (partsData || []).filter(p => p.sent).length);
   set('dashFaultsOpen', (faultsData || []).filter(f => !faultIsRepaired(f) && !faultInService(f) && !faultWaitingParts(f)).length);
   set('dashFaultsService', (faultsData || []).filter(f => faultInService(f) || faultWaitingParts(f)).length);
   set('dashFaultsRepaired', (faultsData || []).filter(f => faultIsRepaired(f)).length);
@@ -5512,50 +4483,12 @@ function partUid(){ return 'nd_' + Date.now() + '_' + Math.random().toString(36)
 function loadLocalParts(){ try { return JSON.parse(localStorage.getItem('liftcheck_parts_local') || '[]'); } catch(e) { return []; } }
 function saveLocalParts(rows){ try { localStorage.setItem('liftcheck_parts_local', JSON.stringify(rows)); } catch(e) {} }
 function startLocalPartsMode(){ partsData = loadLocalParts(); renderParts(); updateMainOverview(); }
-function getPartPhotoList(p){
-  if(!p) return [];
-  if(Array.isArray(p.photos)) return p.photos.filter(Boolean);
-  if(p.photo) return [p.photo];
-  return [];
-}
-function renderPartPhotoPreview(note=''){
-  const box = document.getElementById('partPhotoPreview');
-  if(!box) return;
-  const list = Array.isArray(currentPartPhotos) ? currentPartPhotos : [];
-  const btn = document.getElementById('addPartPhotoBtn');
-  if(btn) btn.textContent = list.length ? '＋ Přidat další fotku' : '＋ Přidat fotku';
-  if(!list.length){
-    box.innerHTML = note ? `<div class="helper">${escapeHtml(note)}</div>` : '';
-    return;
-  }
-  box.innerHTML = (note ? `<div class="helper">${escapeHtml(note)}</div>` : '') + `<div class="part-photo-grid">${list.map((ph, idx) => {
-    const src = ph ? (ph.url || ph.dataUrl || '') : '';
-    if(!src) return '';
-    return `<span class="part-photo-item"><img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)"><button class="danger mini" type="button" data-part-photo-del="${idx}">Smazat</button></span>`;
-  }).join('')}</div>`;
-  box.querySelectorAll('[data-part-photo-del]').forEach(btn => btn.addEventListener('click', () => {
-    const idx = Number(btn.dataset.partPhotoDel);
-    if(confirm('Smazat tuto fotku z požadavku na ND?')){
-      currentPartPhotos.splice(idx, 1);
-      renderPartPhotoPreview();
-    }
-  }));
-}
 async function preparePartForSave(record){
-  const photos = getPartPhotoList(record);
-  const out = [];
-  for(let i=0;i<photos.length;i++){
-    const p = photos[i];
-    if(p && p.dataUrl && firebaseAvailable && storageAvailable && storage){
-      const path = `nahradni-dily/${record.id}/photo_${i+1}.jpg`;
-      const url = await uploadDataUrl(path, p.dataUrl);
-      out.push({url, path, bytes:p.bytes||0, width:p.width, height:p.height, updatedAt:new Date().toISOString()});
-    } else if(p) {
-      out.push(p);
-    }
+  if(record.photo && record.photo.dataUrl && firebaseAvailable && storageAvailable && storage){
+    const path = `nahradni-dily/${record.id}/photo.jpg`;
+    const url = await uploadDataUrl(path, record.photo.dataUrl);
+    record.photo = {url, path, bytes:record.photo.bytes||0, updatedAt:new Date().toISOString()};
   }
-  record.photos = out;
-  record.photo = out[0] || null; // kompatibilita se staršími záznamy
   return record;
 }
 async function savePartRecord(record){
@@ -5574,9 +4507,8 @@ async function savePartRecord(record){
   }
 }
 async function deletePartRecord(id){
-  const record = (partsData || []).find(x => x.id === id);
-  const who = promptDeleteActor(summarizeRecordForAudit(record));
-  if(!who) return;
+  if(!confirm('Smazat tento požadavek na náhradní díl?')) return;
+  if(!requireDeletePassword('Pro smazání požadavku na náhradní díl zadej heslo:')) return;
   if(firebaseAvailable && db){
     await db.collection(PARTS_COLLECTION_NAME).doc(id).delete();
   } else {
@@ -5585,18 +4517,16 @@ async function deletePartRecord(id){
     renderParts();
     updateMainOverview();
   }
-  await logAuditAction('delete','part',record,who);
 }
 function fillPartSelects(){
   const place = document.getElementById('partPlace');
   const typeList = document.getElementById('partTypeList');
   const serialList = document.getElementById('partSerialList');
   if(place) place.innerHTML = '<option value="">Nevyplněno</option>' + BRANCHES.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('') + '<option value="__custom__">Jiné místo</option>';
-  if(typeList) typeList.innerHTML = getModelSuggestionsAll().map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
-  if(serialList) serialList.innerHTML = getSerialSuggestionsAll().map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
+  if(typeList) typeList.innerHTML = [...new Set([...(MODELS || []), ...(data || []).map(r => r.typ).filter(Boolean)])].map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
+  if(serialList) serialList.innerHTML = [...new Set((data || []).map(r => r.vc).filter(Boolean))].map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
 }
 function getPartStatus(p){
-  if(p.resolved || p.vyreseno) return {txt:'Vyřešeno', cls:'status-resolved'};
   if(p.sent) return {txt:'Odesláno', cls:'status-sent'};
   if(p.ordered) return {txt:'Objednáno', cls:'status-ordered'};
   return {txt:'Požadavek', cls:'status-open'};
@@ -5610,78 +4540,54 @@ function closePartsModal(){
   closePartForm();
   showSection('home');
 }
-function scrollToPartCard(id){
-  if(!id) return;
-  setTimeout(() => {
-    const el = document.getElementById('part-card-' + CSS.escape(String(id || '')));
-    flashAndScrollToElement(el);
-  }, 160);
-}
 function renderParts(){
   updateMainOverview();
   const list = document.getElementById('partsList');
   if(!list) return;
   const query = (document.getElementById('partsSearch')?.value || '').toLowerCase().trim();
-  const customerFilter = document.getElementById('partsCustomerFilter')?.value || 'all';
   let rows = [...(partsData || [])];
-  if(query) rows = rows.filter(p => [p.type,p.serial,p.place,p.partNumber,p.partName,p.note,p.handlerNote,p.enteredBy,p.customerName,p.customerAddress].some(v => String(v||'').toLowerCase().includes(query)));
-  if(customerFilter === 'external') rows = rows.filter(p => !!p.externalCustomer);
-  if(customerFilter === 'internal') rows = rows.filter(p => !p.externalCustomer);
+  if(query) rows = rows.filter(p => [p.type,p.serial,p.place,p.partNumber,p.partName,p.note].some(v => String(v||'').toLowerCase().includes(query)));
   rows.sort((a,b) => String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
   if(!rows.length){ list.innerHTML = '<div class="empty">Žádné záznamy náhradních dílů.</div>'; return; }
   list.innerHTML = rows.map(p => {
     const st = getPartStatus(p);
-    const partPhotos = getPartPhotoList(p);
-    const photoHtml = partPhotos.length ? `<div class="part-photo-grid">${partPhotos.map(ph => { const src = ph ? (ph.url || ph.dataUrl || '') : ''; return src ? `<span class="part-photo-item"><img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)"></span>` : ''; }).join('')}</div>` : '';
-    return `<div class="part-card ${p.externalCustomer ? 'external-customer-card' : ''}" id="part-card-${escapeHtml(p.id || '')}">
+    const src = p.photo ? (p.photo.url || p.photo.dataUrl || '') : '';
+    return `<div class="part-card">
       <div class="part-head">
         <div>
           <div class="part-title">${escapeHtml(p.partNumber || 'Bez PN')} · ${escapeHtml(p.partName || 'Bez popisu')}</div>
           <div class="part-sub">${escapeHtml(p.type || 'Bez typu')} · v.č. ${escapeHtml(p.serial || '—')} · ${escapeHtml(p.place || '—')}</div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">${st.txt !== 'Požadavek' ? `<span class="status-pill ${st.cls}">${st.txt}</span>` : ''}${p.externalCustomer ? '<span class="status-pill status-external">Externí zákazník</span>' : ''}</div>
+        <span class="status-pill ${st.cls}">${st.txt}</span>
       </div>
       <div class="part-grid">
         <div class="part-meta"><div class="part-meta-label">Vytvořeno</div><div class="part-meta-value">${escapeHtml(formatDateTime(p.createdAt))}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Zadal</div><div class="part-meta-value">${escapeHtml(p.enteredBy || p.zadal || '—')}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Firma</div><div class="part-meta-value">${escapeHtml(customerDisplayText(p))}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Objednáno</div><div class="part-meta-value">${p.ordered ? escapeHtml(formatDateTime(p.orderedAt)) + (p.orderedBy ? '<br><small>' + escapeHtml(p.orderedBy) + '</small>' : '') : 'Ne'}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Odesláno</div><div class="part-meta-value">${p.sent ? escapeHtml(formatDateTime(p.sentAt)) + (p.sentBy ? '<br><small>' + escapeHtml(p.sentBy) + '</small>' : '') : 'Ne'}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Vyřešeno</div><div class="part-meta-value">${(p.resolved || p.vyreseno) ? escapeHtml(formatDateTime(p.resolvedAt || p.vyresenoAt || p.updatedAt)) + (p.resolvedBy ? '<br><small>' + escapeHtml(p.resolvedBy) + '</small>' : '') : 'Ne'}</div></div>
+        <div class="part-meta"><div class="part-meta-label">Objednáno</div><div class="part-meta-value">${p.ordered ? escapeHtml(formatDateTime(p.orderedAt)) : 'Ne'}</div></div>
+        <div class="part-meta"><div class="part-meta-label">Odesláno</div><div class="part-meta-value">${p.sent ? escapeHtml(formatDateTime(p.sentAt)) : 'Ne'}</div></div>
       </div>
-      ${p.note ? `<div class="part-note-display"><strong>Popis závady / poznámka</strong><div>${escapeHtml(p.note)}</div></div>` : ''}
-      ${p.handlerNote ? `<div class="part-note-display part-handler-note-display"><strong>Poznámka řešitele</strong><div>${escapeHtml(p.handlerNote)}</div>${(p.handlerNoteBy || p.handlerNoteAt) ? `<small>${escapeHtml(p.handlerNoteBy || '')}${p.handlerNoteAt ? ' · ' + escapeHtml(formatDateTime(p.handlerNoteAt)) : ''}</small>` : ''}</div>` : ''}
-      ${photoHtml ? `<div class="part-photo">${photoHtml}</div>` : ''}
+      ${src || p.note ? `<div class="part-photo">${src ? `<img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)">` : ''}${p.note ? `<div class="part-sub">${escapeHtml(p.note)}</div>` : ''}</div>` : ''}
       <div class="part-actions">
-        ${!(p.resolved || p.vyreseno) ? `<button class="secondary mini" type="button" data-part-note="${p.id}">Poznámka</button>` : ''}
+        <button class="secondary mini" type="button" data-part-machine="${escapeHtml(p.serial || '')}">Karta stroje</button>
         <button class="secondary mini" type="button" data-part-edit="${p.id}">Upravit</button>
-        ${!(p.resolved || p.vyreseno) && !p.ordered ? `<button class="secondary mini" type="button" data-part-ordered="${p.id}">Objednáno</button>` : ''}
-        ${!(p.resolved || p.vyreseno) && !p.sent ? `<button class="secondary mini" type="button" data-part-sent="${p.id}">Odesláno</button>` : ''}
-        ${!(p.resolved || p.vyreseno) ? `<button class="success mini" type="button" data-part-resolved="${p.id}">Vyřešeno</button>` : ''}
+        ${!p.ordered ? `<button class="primary mini" type="button" data-part-ordered="${p.id}">Objednáno</button>` : ''}
+        ${!p.sent ? `<button class="primary mini" type="button" data-part-sent="${p.id}">Odesláno</button>` : ''}
         <button class="danger mini" type="button" data-part-delete="${p.id}">Smazat</button>
       </div>
     </div>`;
   }).join('');
-  list.querySelectorAll('[data-part-note]').forEach(btn => btn.addEventListener('click', () => addPartHandlerNote(btn.dataset.partNote)));
+  list.querySelectorAll('[data-part-machine]').forEach(btn => btn.addEventListener('click', () => openMachineCard(btn.dataset.partMachine)));
   list.querySelectorAll('[data-part-edit]').forEach(btn => btn.addEventListener('click', () => openPartForm(btn.dataset.partEdit)));
   list.querySelectorAll('[data-part-delete]').forEach(btn => btn.addEventListener('click', () => deletePartRecord(btn.dataset.partDelete)));
   list.querySelectorAll('[data-part-ordered]').forEach(btn => btn.addEventListener('click', () => markPartOrdered(btn.dataset.partOrdered)));
   list.querySelectorAll('[data-part-sent]').forEach(btn => btn.addEventListener('click', () => markPartSent(btn.dataset.partSent)));
-  list.querySelectorAll('[data-part-resolved]').forEach(btn => btn.addEventListener('click', () => markPartResolved(btn.dataset.partResolved)));
 }
 function openPartForm(id=null){
   fillPartSelects();
   editingPartId = id;
-  currentPartPhotos = [];
+  currentPartPhoto = null;
   const p = id ? (partsData || []).find(x => x.id === id) : null;
   document.getElementById('partType').value = (p && p.type) || '';
   document.getElementById('partSerial').value = (p && p.serial) || '';
-  const partEntered = document.getElementById('partEnteredBy');
-  if(partEntered){
-    const val = (p && (p.enteredBy || p.zadal)) || getEnteredByDefault();
-    partEntered.innerHTML = operatorOptionsHtml(val);
-    partEntered.value = val;
-  }
   const placeSelect = document.getElementById('partPlace');
   const customWrap = document.getElementById('partCustomPlaceWrap');
   const customInput = document.getElementById('partCustomPlace');
@@ -5697,105 +4603,16 @@ function openPartForm(id=null){
   }
   document.getElementById('partNumber').value = (p && p.partNumber) || '';
   document.getElementById('partName').value = (p && p.partName) || '';
-  const extChk = document.getElementById('partExternalCustomer');
-  if(extChk) extChk.checked = !!(p && p.externalCustomer);
-  document.getElementById('partCustomerName').value = (p && (p.customerName || p.companyName)) || '';
-  document.getElementById('partCustomerAddress').value = (p && (p.customerAddress || p.companyAddress)) || '';
-  wireExternalDetails('part');
   document.getElementById('partNote').value = (p && p.note) || '';
-  const handlerNoteWrap = document.getElementById('partHandlerNoteWrap');
-  const partStatusWrap = document.getElementById('partStatusWrap');
-  const showHandlerFields = !!p;
-  if(handlerNoteWrap) handlerNoteWrap.classList.toggle('hidden', !showHandlerFields);
-  if(partStatusWrap) partStatusWrap.classList.toggle('hidden', !showHandlerFields);
-  const handlerNoteEl = document.getElementById('partHandlerNote');
-  if(handlerNoteEl) handlerNoteEl.value = showHandlerFields ? ((p && (p.handlerNote || p.resolveNote || p.processingNote)) || '') : '';
-  const partStatusSel = document.getElementById('partStatusSelect');
-  if(partStatusSel) partStatusSel.value = showHandlerFields ? ((p.resolved || p.vyreseno) ? 'resolved' : (p.sent ? 'sent' : (p.ordered ? 'ordered' : 'open'))) : 'open';
-  currentPartPhotos = p ? JSON.parse(JSON.stringify(getPartPhotoList(p))) : [];
-  renderPartPhotoPreview();
+  const src = p && p.photo ? (p.photo.url || p.photo.dataUrl || '') : '';
+  document.getElementById('partPhotoPreview').innerHTML = src ? `<img src="${escapeHtml(src)}" data-full-src="${escapeHtml(src)}" onclick="openLightbox(this.dataset.fullSrc)" style="width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-top:6px">` : '';
   document.getElementById('partsFormWrap').classList.remove('hidden');
-  attachPartSmartSuggests();
   document.getElementById('partsFormWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 function closePartForm(){
   editingPartId = null;
-  currentPartPhotos = [];
+  currentPartPhoto = null;
   document.getElementById('partsFormWrap')?.classList.add('hidden');
-}
-
-
-
-/* v5.81 – mobilní gesto zpět zleva doprava */
-function getActivePageView(){
-  const active = document.querySelector('.page-section.active');
-  if(!active) return 'home';
-  if(active.id === 'section-archive') return 'archive';
-  if(active.id === 'section-plan') return 'plan';
-  if(active.id === 'section-parts') return 'parts';
-  if(active.id === 'section-faults') return 'faults';
-  return 'home';
-}
-function isShown(el){ return !!(el && el.classList && el.classList.contains('show')); }
-function handleMobileSwipeBack(){
-  if(window.innerWidth > 920) return false;
-  if(document.body.classList.contains('side-open')){ closeSidePanel(); return true; }
-  if(document.querySelector('.lightbox.show')){ document.querySelector('.lightbox.show')?.classList.remove('show'); return true; }
-  if(isShown(els.preview)){ closeModal(els.preview); return true; }
-  if(isShown(els.historyModal)){ closeHistoryModal(); return true; }
-  if(isShown(els.qrModal)){ closeQrModal(); return true; }
-  const settingsModal = document.getElementById('settingsModal');
-  if(isShown(settingsModal)){ closeModal(settingsModal); return true; }
-  const auditModal = document.getElementById('auditModal');
-  if(isShown(auditModal)){ closeModal(auditModal); return true; }
-  const upcomingModal = document.getElementById('upcomingModal');
-  if(isShown(upcomingModal)){ closeUpcomingModal(); return true; }
-  if(isShown(els.wizard)){
-    if(typeof stepIndex !== 'undefined' && stepIndex > 0){ prevStep(); return true; }
-    closeWizard();
-    return true;
-  }
-  const view = getActivePageView();
-  if(view === 'plan'){
-    if(!document.getElementById('workPlanFormWrap')?.classList.contains('hidden')){ closeWorkPlanForm(); return true; }
-    closeWorkPlanModal();
-    return true;
-  }
-  if(view === 'parts'){
-    if(!document.getElementById('partsFormWrap')?.classList.contains('hidden')){ closePartForm(); return true; }
-    closePartsModal();
-    return true;
-  }
-  if(view === 'faults'){
-    if(!document.getElementById('faultFormWrap')?.classList.contains('hidden')){ closeFaultForm(); return true; }
-    closeFaultsModal();
-    return true;
-  }
-  if(view === 'archive'){
-    showSection('home');
-    return true;
-  }
-  return false;
-}
-function installMobileSwipeBack(){
-  let startX = 0, startY = 0, startTarget = null, tracking = false;
-  document.addEventListener('touchstart', ev => {
-    if(!ev.touches || ev.touches.length !== 1) return;
-    const t = ev.touches[0];
-    startX = t.clientX; startY = t.clientY; startTarget = ev.target; tracking = startX <= 32;
-  }, {passive:true});
-  document.addEventListener('touchend', ev => {
-    if(!tracking || !ev.changedTouches || ev.changedTouches.length !== 1) return;
-    const tag = String(startTarget?.tagName || '').toLowerCase();
-    const t = ev.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dy = Math.abs(t.clientY - startY);
-    tracking = false;
-    if(dx < 85 || dy > 70) return;
-    if(['input','textarea','select'].includes(tag) && dx < 125) return;
-    ev.preventDefault?.();
-    handleMobileSwipeBack();
-  }, {passive:false});
 }
 
 async function savePartFromForm(){
@@ -5806,132 +4623,36 @@ async function savePartFromForm(){
   const serial = document.getElementById('partSerial').value.trim();
   if(!type){ alert('Vyplň typ zařízení.'); return; }
   if(!serial){ alert('Vyplň výrobní číslo.'); return; }
-  if(partSaveInProgress) return;
-  partSaveInProgress = true;
-  const saveBtn = document.getElementById('savePartBtn');
-  if(saveBtn) saveBtn.disabled = true;
-  try{
-    const existing = editingPartId ? (partsData || []).find(x => x.id === editingPartId) : null;
-    const statusVal = document.getElementById('partStatusSelect')?.value || 'open';
-    const newHandlerNote = document.getElementById('partHandlerNote')?.value.trim() || '';
-    const oldHandlerNote = existing ? (existing.handlerNote || existing.resolveNote || existing.processingNote || '') : '';
-    let handlerNoteBy = (existing && existing.handlerNoteBy) || '';
-    let handlerNoteAt = (existing && existing.handlerNoteAt) || '';
-    if(newHandlerNote){
-      if(newHandlerNote !== oldHandlerNote){
-        handlerNoteBy = askHandlerBy('Kdo doplnil poznámku řešitele?');
-        if(!handlerNoteBy) return;
-        handlerNoteAt = new Date().toISOString();
-      }
-    } else {
-      handlerNoteBy = '';
-      handlerNoteAt = '';
-    }
-    const record = Object.assign({}, existing || {}, {
-      id: editingPartId || partUid(),
-      type,
-      serial,
-      place,
-      partNumber,
-      partName: document.getElementById('partName').value.trim(),
-      enteredBy: document.getElementById('partEnteredBy')?.value || getEnteredByDefault(),
-      externalCustomer: !!document.getElementById('partExternalCustomer')?.checked,
-      customerName: !!document.getElementById('partExternalCustomer')?.checked ? document.getElementById('partCustomerName').value.trim() : '',
-      customerAddress: !!document.getElementById('partExternalCustomer')?.checked ? document.getElementById('partCustomerAddress').value.trim() : '',
-      note: document.getElementById('partNote').value.trim(),
-      handlerNote: newHandlerNote,
-      handlerNoteBy,
-      handlerNoteAt,
-      ordered: statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved',
-      sent: statusVal === 'sent' || statusVal === 'resolved',
-      resolved: statusVal === 'resolved',
-      orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
-      sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
-      resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.96'
-    });
-    record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
-    record.photo = record.photos[0] || null;
-    if(!record.createdAt) record.createdAt = new Date().toISOString();
-    setLastEnteredBy(record.enteredBy);
-    await savePartRecord(record);
-    await logAuditAction(existing ? 'update' : 'create','part',record,record.enteredBy);
-    closePartForm();
-    renderParts();
-  }catch(err){
-    console.error(err);
-    alert('Uložení požadavku na ND se nepodařilo. Zkontroluj připojení a zkus to znovu.');
-  }finally{
-    partSaveInProgress = false;
-    if(saveBtn) saveBtn.disabled = false;
-  }
-}
-async function addPartHandlerNote(id){
-  const p = (partsData || []).find(x => x.id === id);
-  if(!p) return;
-  const oldNote = p.handlerNote || p.resolveNote || p.processingNote || '';
-  const note = prompt('Poznámka řešitele k ND:', oldNote);
-  if(note === null) return;
-  const cleaned = String(note || '').trim();
-  if(!cleaned && oldNote && !confirm('Smazat stávající poznámku řešitele?')) return;
-  const actor = cleaned ? askHandlerBy('Kdo doplnil poznámku řešitele?') : getEnteredByDefault();
-  if(cleaned && !actor) return;
-  p.handlerNote = cleaned;
-  p.handlerNoteBy = cleaned ? actor : '';
-  p.handlerNoteAt = cleaned ? new Date().toISOString() : '';
-  await savePartRecord(p);
-  await logAuditAction('update','part',p,actor || getEnteredByDefault(), cleaned ? ('Doplněna poznámka řešitele · ' + summarizeRecordForAudit(p)) : ('Smazána poznámka řešitele · ' + summarizeRecordForAudit(p)));
+  const existing = editingPartId ? (partsData || []).find(x => x.id === editingPartId) : null;
+  const record = Object.assign({}, existing || {}, {
+    id: editingPartId || partUid(),
+    type,
+    serial,
+    place,
+    partNumber,
+    partName: document.getElementById('partName').value.trim(),
+    note: document.getElementById('partNote').value.trim(),
+    appVersion:'1.6 / 5.63'
+  });
+  if(currentPartPhoto) record.photo = currentPartPhoto;
+  if(!record.createdAt) record.createdAt = new Date().toISOString();
+  await savePartRecord(record);
+  closePartForm();
   renderParts();
 }
 async function markPartOrdered(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
-  const actor = askHandlerBy('Kdo označil ND jako objednáno?');
-  if(!actor) return;
   p.ordered = true;
   p.orderedAt = new Date().toISOString();
-  p.orderedBy = actor;
   await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako objednáno · ' + summarizeRecordForAudit(p));
 }
 async function markPartSent(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
-  const actor = askHandlerBy('Kdo označil ND jako odesláno?');
-  if(!actor) return;
-  const now = new Date().toISOString();
-  if(!p.ordered){
-    p.ordered = true;
-    p.orderedAt = p.orderedAt || now;
-    p.orderedBy = p.orderedBy || actor;
-  }
   p.sent = true;
-  p.sentAt = now;
-  p.sentBy = actor;
+  p.sentAt = new Date().toISOString();
   await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako odesláno · ' + summarizeRecordForAudit(p));
-}
-async function markPartResolved(id){
-  const p = (partsData || []).find(x => x.id === id);
-  if(!p) return;
-  const now = new Date().toISOString();
-  if(!confirm('Označit požadavek na ND jako vyřešený? Zůstane v historii, ale nebude svítit jako aktivní požadavek.')) return;
-  const actor = askHandlerBy('Kdo označil ND jako vyřešené?');
-  if(!actor) return;
-  const resolveNote = prompt('Poznámka k vyřešení / řešení ND (volitelné):', p.handlerNote || '');
-  if(resolveNote === null) return;
-  if(String(resolveNote || '').trim()){
-    p.handlerNote = String(resolveNote || '').trim();
-    p.handlerNoteBy = actor;
-    p.handlerNoteAt = now;
-  }
-  if(!p.ordered){ p.ordered = true; p.orderedAt = p.orderedAt || now; p.orderedBy = p.orderedBy || actor; }
-  if(!p.sent){ p.sent = true; p.sentAt = p.sentAt || now; p.sentBy = p.sentBy || actor; }
-  p.resolved = true;
-  p.resolvedAt = now;
-  p.resolvedBy = actor;
-  await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako vyřešeno · ' + summarizeRecordForAudit(p));
 }
 
 // events
@@ -5973,19 +4694,9 @@ document.getElementById('homePlanBtn')?.addEventListener('click', openWorkPlanMo
 document.getElementById('homeOpenWeekPlanBtn')?.addEventListener('click', openWorkPlanModal);
 document.getElementById('homePartsBtn')?.addEventListener('click', openPartsModal);
 document.getElementById('homeFaultsBtn')?.addEventListener('click', openFaultsModal);
-document.getElementById('homeMachineCardBtn')?.addEventListener('click', () => {
-  updateHomeMachineDatalist();
-  const wrap = document.getElementById('homeMachineSearchWrap');
-  wrap?.classList.toggle('hidden');
-  if(wrap && !wrap.classList.contains('hidden')) setTimeout(() => document.getElementById('homeMachineSearch')?.focus(), 0);
-});
-document.getElementById('homeMachineOpenBtn')?.addEventListener('click', openSelectedHomeMachine);
-document.getElementById('homeMachineSearch')?.addEventListener('keydown', (ev) => { if(ev.key === 'Enter'){ ev.preventDefault(); openSelectedHomeMachine(); } });
-document.getElementById('homeMachineSearch')?.addEventListener('change', () => { const v = document.getElementById('homeMachineSearch')?.value || ''; if(v && allKnownMachines().some(x => normalizeSerial(x) === normalizeSerial(v))) openSelectedHomeMachine(); });
 document.getElementById('homeOpenPlanCard')?.addEventListener('click', openWorkPlanModal);
 document.getElementById('homeOpenPartsCard')?.addEventListener('click', openPartsModal);
 document.getElementById('homeOpenFaultsCard')?.addEventListener('click', openFaultsModal);
-bindAttentionCounterClicks();
 
 document.getElementById('mobileNewProtocolBtn')?.addEventListener('click', () => window._openWizard());
 document.getElementById('mobileFaultBtn')?.addEventListener('click', () => { openFaultsModal(); openFaultForm(); });
@@ -6006,9 +4717,6 @@ document.getElementById('addPartBtn')?.addEventListener('click', () => openPartF
 document.getElementById('cancelPartBtn')?.addEventListener('click', closePartForm);
 document.getElementById('savePartBtn')?.addEventListener('click', savePartFromForm);
 document.getElementById('partsSearch')?.addEventListener('input', renderParts);
-document.getElementById('partsCustomerFilter')?.addEventListener('change', renderParts);
-document.getElementById('protocolCustomerFilter')?.addEventListener('change', render);
-document.getElementById('partSerial')?.addEventListener('change', () => applyMachineInfoToPart(document.getElementById('partSerial')?.value));
 
 document.getElementById('closeFaultsBtn')?.addEventListener('click', closeFaultsModal);
 document.getElementById('closeFaultsTopBtn')?.addEventListener('click', closeFaultsModal);
@@ -6074,16 +4782,13 @@ document.getElementById('partPlace')?.addEventListener('change', (e) => {
 });
 showSection('home');
 
-document.getElementById('addPartPhotoBtn')?.addEventListener('click', () => document.getElementById('partPhotoInput')?.click());
 document.getElementById('partPhotoInput')?.addEventListener('change', async (e) => {
   const file = e.target.files && e.target.files[0];
   if(!file) return;
   try{
     const out = await compressPhoto(file, MAX_PHOTO_BYTES);
-    currentPartPhotos = Array.isArray(currentPartPhotos) ? currentPartPhotos : [];
-    currentPartPhotos.push({dataUrl:out.dataUrl, bytes:out.bytes, width:out.width, height:out.height});
-    renderPartPhotoPreview();
-    e.target.value = '';
+    currentPartPhoto = {dataUrl:out.dataUrl, bytes:out.bytes, width:out.width, height:out.height};
+    document.getElementById('partPhotoPreview').innerHTML = `<img src="${escapeHtml(out.dataUrl)}" data-full-src="${escapeHtml(out.dataUrl)}" onclick="openLightbox(this.dataset.fullSrc)" style="width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-top:6px">`;
   }catch(err){
     console.error(err);
     alert('Fotku se nepodařilo zpracovat.');
@@ -6112,10 +4817,6 @@ document.getElementById('newProtocolBtn')?.addEventListener('click', () => openW
 document.getElementById('clearAllBtn')?.addEventListener('click', clearAllData);
 document.getElementById('importBackupBtn')?.addEventListener('click', () => document.getElementById('importBackupInput')?.click());
 document.getElementById('sideImportBtn')?.addEventListener('click', () => { closeSidePanel?.(); document.getElementById('importBackupInput')?.click(); });
-document.getElementById('sideAuditBtn')?.addEventListener('click', () => { closeSidePanel?.(); openAuditModal(); refreshAuditHistory(); });
-document.getElementById('closeAuditBtn')?.addEventListener('click', () => closeModal(document.getElementById('auditModal')));
-document.getElementById('closeAuditTopBtn')?.addEventListener('click', () => closeModal(document.getElementById('auditModal')));
-document.getElementById('refreshAuditBtn')?.addEventListener('click', refreshAuditHistory);
 document.getElementById('importBackupInput')?.addEventListener('change', (e) => {
   const file = e.target.files && e.target.files[0];
   importBackupFile(file);
@@ -6178,7 +4879,6 @@ document.getElementById('clearQrBtn')?.addEventListener('click', () => {
   resetQr();
   triggerQrPicker();
 });
-installMobileSwipeBack();
 if(document.getElementById('qrBtn')) document.getElementById('qrBtn').addEventListener('click', openQrModal);
 document.getElementById('qrFileInput')?.addEventListener('change', (e)=>{
   const file = e.target.files[0];
@@ -6213,26 +4913,6 @@ els.list.addEventListener('click', (e) => {
   if(action === 'delete') delById(btn.dataset.id);
   if(action === 'history') openHistoryModal(btn.dataset.vc);
 });
-
-
-/* v1.6 / 5.90 – mobilní klávesnice: při psaní skrýt spodní akční lištu, aby neprosvítala pod iOS klávesnicí */
-function installMobileKeyboardGuard(){
-  const selector = 'input, textarea, select';
-  document.addEventListener('focusin', ev => {
-    if(window.innerWidth <= 920 && ev.target && ev.target.matches && ev.target.matches(selector)){
-      document.body.classList.add('mobile-keyboard-open');
-    }
-  });
-  document.addEventListener('focusout', () => {
-    setTimeout(() => {
-      const a = document.activeElement;
-      if(!(a && a.matches && a.matches(selector))){
-        document.body.classList.remove('mobile-keyboard-open');
-      }
-    }, 120);
-  });
-}
-installMobileKeyboardGuard();
 
 try {
   qrEnabled = false;
@@ -6270,16 +4950,11 @@ if(firebaseAvailable && db){
       startLocalFaultsMode();
     }
   );
-  db.collection(AUDIT_COLLECTION_NAME).orderBy('createdAt','desc').limit(80).onSnapshot(
-    snap => { auditData = snap.docs.map(d => ({...d.data(), id:d.id})); renderAuditHistory(); },
-    err => { console.error('Firebase historie změn sync error:', err); auditData = loadLocalAudit(); }
-  );
 } else {
   startLocalMode();
   startLocalScheduleMode();
   startLocalPartsMode();
   startLocalFaultsMode();
-  auditData = loadLocalAudit();
 }
 </script>
 <script>
