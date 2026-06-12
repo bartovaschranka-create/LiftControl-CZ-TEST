@@ -1,6 +1,6 @@
 {
-  "name": "LiftControl CZ",
-  "short_name": "LiftControl",
+  "name": "Čtvrtletní kontroly TEST",
+  "short_name": "Kontroly TEST",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
