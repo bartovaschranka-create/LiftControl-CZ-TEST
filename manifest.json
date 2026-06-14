@@ -1,6 +1,6 @@
 {
-  "name": "Kontrolní protokoly TEST",
-  "short_name": "Protokoly TEST",
+  "name": "Čtvrtletní kontroly TEST",
+  "short_name": "Kontroly TEST",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
