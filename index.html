@@ -57,12 +57,12 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 .wizard-shell{padding:22px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}.preview-shell{padding:18px;background:#f8fbff}
 .progress-wrap{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.progress-label{font-size:.84rem;color:var(--muted)}.progress{height:10px;background:#e8eef6;border-radius:999px;overflow:hidden;margin-bottom:16px}.progress-bar{height:100%;background:linear-gradient(90deg,#3b82f6 0%,#1d4ed8 100%);width:0%}
 .step-chip{display:inline-flex;align-items:center;gap:8px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:8px 12px;font-size:.8rem;font-weight:700;margin-bottom:14px}.step-title{margin:0 0 8px;font-size:1.3rem}.step-desc{margin:0 0 16px;color:var(--muted);line-height:1.5}
-.yesno{display:grid;grid-template-columns:1fr 1fr;gap:12px}.yn-btn{min-height:72px;font-size:1.15rem;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:8px}.yes{background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);color:#fff}.no{background:linear-gradient(180deg,#ef4444 0%,#dc2626 100%);color:#fff}
+.yesno{display:grid;grid-template-columns:1fr 1fr;gap:12px}.yn-btn{min-height:72px;font-size:1.15rem;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:10px}.yes{background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);color:#fff}.no{background:linear-gradient(180deg,#ef4444 0%,#dc2626 100%);color:#fff}
 .field{margin-top:12px} label{display:block;font-size:.86rem;color:var(--muted);margin-bottom:7px;font-weight:600} input,textarea,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-size:1rem;background:#fff;color:var(--text);outline:none}
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.14);z-index:90}.smart-suggest-box.show{display:block}.smart-suggest-item{padding:9px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.90 – iOS klávesnice: neschovávat/podsvěcovat spodní akční tlačítka pod klávesnicí */
+/* v1.6 / 5.85 – iOS klávesnice: neschovávat/podsvěcovat spodní akční tlačítka pod klávesnicí */
 @media(max-width:920px){body.mobile-keyboard-open .wizard-actions,body.mobile-keyboard-open #partsFormWrap .preview-actions,body.mobile-keyboard-open #faultFormWrap .preview-actions,body.mobile-keyboard-open #workPlanFormWrap .preview-actions{position:static!important;display:none!important}}
 .wizard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 20%);padding-top:16px}
 .preview-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.preview-title{font-size:1.05rem;font-weight:700}.preview-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}.preview-actions-left,.preview-actions-right{display:flex;gap:10px;flex-wrap:wrap}
@@ -70,7 +70,7 @@ input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-siz
 .paper table tr{page-break-inside:avoid;break-inside:avoid}
 .paper table thead,.paper table tbody{page-break-inside:avoid;break-inside:avoid}.paper td,.paper th{border:1px solid #000;padding:5px 6px;vertical-align:top}.paper th{font-weight:700;text-align:left;background:#fff}.paper .top-table td{padding:4px 5px}.paper .section-block{margin-bottom:7px}
 .paper .section-block{page-break-before:auto}.paper .section-title{font-weight:700;margin:9px 0 4px;font-size:11.1px;background:#fff;color:#000;border-top:2px solid #000;border-bottom:2px solid #000;border-left:1px solid #000;border-right:1px solid #000;padding:4px 7px;letter-spacing:.1px}.paper .check-col{width:18%;font-weight:600;white-space:nowrap}.paper .desc-col{width:22%}.paper .status-ok{background:#fff}.paper tr.status-bad td,.paper tr.status-bad th{background:#fee2e2!important;border:2px solid #dc2626!important}.issue-label{display:inline-block;margin-right:4px;padding:2px 5px;border:1px solid #dc2626;color:#991b1b;font-weight:700;font-size:8px;background:#fff1f2}.paper .crossed-out td{color:#666;text-decoration:line-through}.paper .expired{background:#fff;color:#000;font-weight:700}.paper .notes{min-height:34px}.paper .footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;page-break-inside:avoid;break-inside:avoid}.paper .sign-box{border:1px solid #000;padding:12px;min-height:80px}.paper .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400;letter-spacing:.2px}.paper .evaluation-text{font-weight:700}
-.qr-reader{width:100%;min-height:280px;border:1px dashed var(--line);border-radius:18px;overflow:hidden;background:#0f172a}.qr-help{margin-top:10px;padding:12px 14px;border-radius:14px;background:#f8fbff;border:1px solid var(--line);font-size:.9rem;color:var(--muted)}.history-list{display:grid;gap:8px}.history-item{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.qr-reader{width:100%;min-height:280px;border:1px dashed var(--line);border-radius:18px;overflow:hidden;background:#0f172a}.qr-help{margin-top:10px;padding:12px 14px;border-radius:14px;background:#f8fbff;border:1px solid var(--line);font-size:.9rem;color:var(--muted)}.history-list{display:grid;gap:10px}.history-item{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
 .history-modal-content{max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .history-top-close{margin-left:auto}
 @media(max-width:640px){.history-modal-content{width:100%!important;max-height:100dvh;border-radius:18px}.history-modal-content .preview-shell{padding:14px}.history-modal-content .preview-header{position:sticky;top:0;z-index:2;background:var(--panel);padding:0 0 10px;margin-bottom:10px}.history-top-close{display:inline-flex}}
@@ -102,11 +102,11 @@ body.dark .summary-card .summary-grid .stat.stat-ok{background:#16a34a!important
 #preview .paper-wrap{background:#edf1f5;padding:10px;border-radius:18px}
 .paper{width:100%!important;max-width:none!important;margin:0 auto;padding:0!important;border:none;box-shadow:none;background:transparent!important;color:#111}
 .paper-doc{display:grid;gap:14px}
-.paper-page{background:#fff;border:1px solid #d1d5db;border-radius:6px;box-shadow:0 2px 12px rgba(15,23,42,.06);width:100%;min-height:1120px;padding:18mm 14mm 14mm 14mm;display:flex;flex-direction:column;gap:8px}
+.paper-page{background:#fff;border:1px solid #d1d5db;border-radius:6px;box-shadow:0 2px 12px rgba(15,23,42,.06);width:100%;min-height:1120px;padding:18mm 14mm 14mm 14mm;display:flex;flex-direction:column;gap:10px}
 .paper-header{text-align:center;margin-bottom:4px}.paper-header h2{margin:0 0 4px!important;font-size:24px!important;letter-spacing:.2px}.paper-header .subhead{font-size:13px!important;margin:0!important;color:#333!important}
 .proto-meta{width:100%;border-collapse:collapse;font-size:12.5px}.proto-meta td,.proto-meta th,.proto-table td,.proto-table th{border:1px solid #707070;padding:6px 7px;vertical-align:top}
 .proto-meta td.label{width:16%;font-weight:700;background:#f2f2f2}.proto-meta td.value{width:34%}
-.paper-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.paper-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .section-card{display:flex;flex-direction:column;gap:0}
 .section-head{border:1px solid #707070;background:#ededed;padding:6px 8px;font-weight:700;font-size:12.8px}
 .section-note{float:right;font-weight:600;font-size:11px;color:#333}
@@ -116,7 +116,7 @@ body.dark .summary-card .summary-grid .stat.stat-ok{background:#16a34a!important
 .findings-box{border:1px solid #707070;min-height:92px;padding:8px}.findings-lines{display:grid;gap:10px;margin-top:8px}.findings-lines div{border-bottom:1px solid #999;height:20px}
 .photo-section{border:1px solid #707070}.photo-section .section-head{border:0;border-bottom:1px solid #707070}.photo-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:0}.photo-mini{border-right:1px solid #707070;padding:6px;font-size:9px;text-align:center;min-height:112px}.photo-mini:last-child{border-right:none}.photo-mini img{width:100%;height:70px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:5px}
 .issue-strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #707070}.issue-mini{padding:6px;border-right:1px solid #707070;min-height:84px;font-size:10px;text-align:center}.issue-mini:last-child{border-right:none}.issue-mini img{width:100%;height:56px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}
-.conclusion-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:8px}.signature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.signature-grid > div{border:1px solid #707070;border-top:none;padding:8px;min-height:74px}
+.conclusion-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:10px}.signature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.signature-grid > div{border:1px solid #707070;border-top:none;padding:8px;min-height:74px}
 .page-number{text-align:right;font-size:11px;color:#333;margin-top:auto}
 @media print{
   #preview .paper-wrap{padding:0!important;background:#fff!important}
@@ -217,7 +217,7 @@ body.dark .summary-card .summary-grid .stat.stat-ok{background:#16a34a!important
     min-height:297mm !important;
     height:297mm !important;
     margin:0 !important;
-    padding:8mm 7mm 7mm 7mm !important;
+    padding:11mm 9mm 9mm 9mm !important;
     box-sizing:border-box !important;
     display:flex !important;
     flex-direction:column !important;
@@ -457,7 +457,7 @@ header{
 
 
 /* v56 upcoming controls */
-.upcoming-list{display:grid;gap:8px}
+.upcoming-list{display:grid;gap:10px}
 .upcoming-item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:13px 14px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
 body.dark .upcoming-item{background:var(--panel2);border-color:var(--line)}
 .upcoming-main{min-width:0}
@@ -646,7 +646,7 @@ header .header-sub{
 .work-plan-modal{width:min(96vw,1180px)!important}
 .work-plan-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .work-plan-title{font-weight:800;margin:8px 0 12px;color:var(--text)}
-.work-plan-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.work-plan-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
 .work-day{min-height:190px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px}
 body.dark .work-day{background:var(--panel2);border-color:var(--line)}
 .work-day-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:7px}
@@ -661,7 +661,7 @@ body.dark .work-event{background:rgba(255,255,255,.06)}
 .work-event-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .work-plan-form{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
 body.dark .work-plan-form{background:var(--panel2)}
-.work-plan-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.work-plan-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .work-plan-note{grid-column:1/-1}
 .work-plan-note textarea{min-height:80px}
 @media(max-width:980px){.work-plan-calendar{grid-template-columns:1fr}.work-day{min-height:auto}.work-plan-form-grid{grid-template-columns:1fr}}
@@ -684,11 +684,11 @@ body.dark .work-plan-form{background:var(--panel2)}
 .parts-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
 .parts-form{margin:12px 0 14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
 body.dark .parts-form{background:var(--panel2)}
-.parts-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.parts-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .parts-note{grid-column:1/-1}
 .parts-note textarea{min-height:80px}
 .parts-list{display:grid;gap:12px}
-.part-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;display:grid;gap:8px}
+.part-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;display:grid;gap:10px}
 body.dark .part-card{background:var(--panel2)}
 .part-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .part-title{font-weight:850;font-size:1rem}
@@ -696,7 +696,7 @@ body.dark .part-card{background:var(--panel2)}
 .part-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .part-meta{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:9px}
 .part-meta-label{font-size:.72rem;color:var(--muted);margin-bottom:3px}
-.part-meta-value{font-weight:700;font-size:.86rem}.part-meta-value small{font-weight:600;color:var(--muted);font-size:.75rem}
+.part-meta-value{font-weight:700;font-size:.86rem}
 .part-photo{display:flex;gap:10px;align-items:flex-start}
 .part-photo img{width:86px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
 .part-photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -734,7 +734,7 @@ body.dark .week-pill.active{background:rgba(37,99,235,.18);color:#bfdbfe}
 .calendar-mini-list{display:grid;gap:9px}
 .today-only-wrap{display:grid;gap:12px}
 .today-plan-note{padding:10px 12px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);font-size:.86rem;color:var(--muted)}
-.today-tech-list{display:grid;gap:8px}
+.today-tech-list{display:grid;gap:10px}
 .day-row{border-left-width:7px!important}
 .day-row{display:grid;grid-template-columns:210px 1fr;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
 .day-tech{display:flex;align-items:center;gap:10px;font-weight:700}
@@ -840,11 +840,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator{
 .faults-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
 .fault-form{margin:12px 0 14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
 body.dark .fault-form{background:var(--panel2)}
-.fault-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.fault-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .fault-note{grid-column:1/-1}
 .fault-note textarea{min-height:90px}
 .faults-list{display:grid;gap:12px}
-.fault-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;display:grid;gap:8px}
+.fault-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;display:grid;gap:10px}
 body.dark .fault-card{background:var(--panel2)}
 .fault-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .fault-title{font-weight:850;font-size:1rem}
@@ -908,7 +908,7 @@ body.dark .fault-card{background:var(--panel2)}
 
 
 /* v1.6 / 5.66 – karta stroje: modal nad hlavičkou a bez usekávání */
-/* v1.6 / 5.90 – plán práce: stabilní barvy techniků */
+/* v1.6 / 5.85 – plán práce: stabilní barvy techniků */
 .modal{z-index:140!important}
 #historyModal{
   align-items:flex-start!important;
@@ -955,7 +955,7 @@ body.dark .fault-card{background:var(--panel2)}
 }
 
 
-/* v1.6 / 5.90 – tmavý režim: výraznější barvy techniků v plánu práce */
+/* v1.6 / 5.85 – tmavý režim: výraznější barvy techniků v plánu práce */
 .work-event{border-left-color:var(--tech-color,#2563eb)!important;background:var(--tech-bg,rgba(37,99,235,.10))!important}
 .work-event .work-event-tech{color:var(--tech-color,#2563eb)!important}
 .day-row{border-left-color:var(--tech-color,#2563eb)!important;background:linear-gradient(90deg,var(--tech-bg,rgba(37,99,235,.12)) 0%,var(--panel2) 72%)!important}
@@ -1351,7 +1351,7 @@ body.dark .module-kicker{
 
 
 
-/* v1.6 / 5.90 – externí zákazník */
+/* v1.6 / 5.85 – externí zákazník */
 .external-customer-card{
   border-color:#7c3aed!important;
   box-shadow:0 0 0 2px rgba(124,58,237,.10), var(--shadow)!important;
@@ -1385,7 +1385,7 @@ body.dark .badge-external,body.dark .status-external{
 .external-check span{display:block;color:var(--muted);font-size:.83rem;margin-top:2px}
 .customer-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .customer-extra-note{font-size:.78rem;color:var(--muted);margin-top:6px}
-.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:720px){.customer-extra-grid,.operator-mini-row{grid-template-columns:1fr}}
 
 /* v5.76 read-only ND cards + audit history */
@@ -1393,7 +1393,7 @@ body.dark .badge-external,body.dark .status-external{
 .part-note-display strong{font-size:.78rem;color:var(--muted)}
 .part-note-display div{font-weight:650;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
 .part-card.focus-flash{outline:3px solid #2563eb;outline-offset:3px}
-/* v1.6 / 5.90 – zvýraznění záznamu po prokliku z Vyžaduje pozornost */
+/* v1.6 / 5.85 – zvýraznění záznamu po prokliku z Vyžaduje pozornost */
 .card.focus-flash,.fault-card.focus-flash,.part-card.focus-flash{outline:3px solid #2563eb!important;outline-offset:3px;box-shadow:0 0 0 6px rgba(37,99,235,.14)!important}
 body.dark .card.focus-flash,body.dark .fault-card.focus-flash,body.dark .part-card.focus-flash{outline-color:#60a5fa!important;box-shadow:0 0 0 6px rgba(96,165,250,.22)!important}
 .attention-count{cursor:pointer}
@@ -1406,7 +1406,7 @@ body.dark .audit-item{background:var(--panel2)}
 .audit-action.delete{background:#fef2f2;color:#b91c1c}.audit-action.update{background:#fff7ed;color:#9a3412}.audit-action.create{background:#ecfdf5;color:#166534}
 
 
-/* v1.6 / 5.90 – opravy vrstev, našeptávače karty stroje a ND stavů */
+/* v1.6 / 5.85 – opravy vrstev, našeptávače karty stroje a ND stavů */
 .lightbox{z-index:2147483000!important;position:fixed!important}
 .lightbox.show{display:flex!important}
 .lightbox img{max-width:96vw!important;max-height:88dvh!important;object-fit:contain!important}
@@ -1414,7 +1414,7 @@ body.dark .audit-item{background:var(--panel2)}
 .home-machine-search-row{position:relative!important;overflow:visible!important}
 .home-machine-search-row .smart-suggest-box{z-index:2147482000!important;left:0!important;right:0!important;top:calc(100% + 6px)!important}
 
-/* v1.6 / 5.90 – spolehlivý našeptávač karty stroje na hlavní stránce */
+/* v1.6 / 5.85 – spolehlivý našeptávač karty stroje na hlavní stránce */
 .home-machine-search-row{overflow:visible!important}
 .home-machine-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:220px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 30px rgba(15,23,42,.18);z-index:2147483000!important}
 .home-machine-suggest-box.show{display:block}
@@ -1430,214 +1430,6 @@ body.dark .home-machine-suggest-item:hover{background:#172033}
 
 .part-handler-note-display{border-color:#bfdbfe;background:#eff6ff}.part-handler-note-display small{display:block;margin-top:6px;color:var(--muted);font-size:.78rem}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
-
-
-/* v1.6 / 5.92 – tisk protokolu: poslední print override proti prázdné stránce */
-@media print{
-  html,body{
-    width:210mm!important;
-    min-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-    overflow:visible!important;
-    -webkit-print-color-adjust:exact!important;
-    print-color-adjust:exact!important;
-  }
-  body *{visibility:hidden!important;}
-  body > *{display:none!important;}
-  body > #preview{
-    display:block!important;
-    visibility:visible!important;
-    position:static!important;
-    inset:auto!important;
-    width:210mm!important;
-    min-width:210mm!important;
-    max-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-    overflow:visible!important;
-  }
-  #preview, #preview *{visibility:visible!important;}
-  #preview .modal-content,
-  #preview .preview-shell,
-  #preview .paper-wrap,
-  #previewBody,
-  #preview .paper,
-  #preview .paper-doc{
-    display:block!important;
-    position:static!important;
-    width:210mm!important;
-    min-width:0!important;
-    max-width:210mm!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:none!important;
-    margin:0!important;
-    padding:0!important;
-    border:0!important;
-    border-radius:0!important;
-    box-shadow:none!important;
-    overflow:visible!important;
-    background:#fff!important;
-  }
-  #preview .preview-header,
-  #preview .preview-actions{display:none!important;}
-  #preview .paper-page{
-    display:flex!important;
-    flex-direction:column!important;
-    width:210mm!important;
-    max-width:210mm!important;
-    min-height:296.5mm!important;
-    height:296.5mm!important;
-    max-height:296.5mm!important;
-    margin:0!important;
-    padding:10mm 8mm 8mm 8mm!important;
-    box-sizing:border-box!important;
-    overflow:hidden!important;
-    background:#fff!important;
-    page-break-after:always!important;
-    break-after:page!important;
-  }
-  #preview .paper-page:last-child{
-    page-break-after:auto!important;
-    break-after:auto!important;
-  }
-  @page{size:A4 portrait;margin:0;}
-}
-
-
-
-/* v1.6 / 5.101: mobilní náhled protokolu bez vodorovného posouvání */
-@media (max-width: 700px){
-  #preview .modal-content{
-    width:100vw!important;
-    max-width:100vw!important;
-    height:100vh!important;
-    max-height:100vh!important;
-    border-radius:0!important;
-  }
-  #preview .preview-shell{
-    padding:8px!important;
-  }
-  #preview .paper-wrap{
-    padding:0!important;
-    overflow-x:hidden!important;
-    border-radius:14px!important;
-  }
-  #preview .paper,
-  #preview .paper-doc,
-  #preview .paper-page{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-  }
-  #preview .paper-page{
-    min-height:0!important;
-    height:auto!important;
-    padding:8px 6px 10px 6px!important;
-    gap:5px!important;
-    overflow:hidden!important;
-  }
-  #preview .paper-header h2{
-    font-size:16px!important;
-    line-height:1.1!important;
-  }
-  #preview .paper-header .subhead{
-    font-size:8.5px!important;
-  }
-  #preview .proto-meta,
-  #preview .proto-table{
-    width:100%!important;
-    table-layout:fixed!important;
-    font-size:8px!important;
-    line-height:1.1!important;
-  }
-  #preview .proto-meta td,
-  #preview .proto-meta th,
-  #preview .proto-table td,
-  #preview .proto-table th{
-    padding:2.5px 3px!important;
-    word-break:break-word!important;
-    overflow-wrap:anywhere!important;
-  }
-  #preview .proto-meta td.label{
-    width:23%!important;
-  }
-  #preview .proto-meta td.value{
-    width:27%!important;
-  }
-  #preview .proto-table .num-col{width:18px!important}
-  #preview .proto-table .yn-col{width:28px!important}
-  #preview .proto-table .note-col{width:30%!important}
-  #preview .section-head{
-    font-size:9px!important;
-    padding:3px 4px!important;
-  }
-  #preview .section-note{
-    font-size:7px!important;
-  }
-  #preview .paper-row-2,
-  #preview .conclusion-grid{
-    grid-template-columns:1fr!important;
-    gap:5px!important;
-  }
-  #preview .photo-strip{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  }
-  #preview .photo-mini{
-    min-width:0!important;
-    min-height:70px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-    line-height:1.05!important;
-  }
-  #preview .photo-mini img{
-    height:42px!important;
-    margin-bottom:3px!important;
-  }
-  #preview .issue-strip{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-  #preview .issue-mini{
-    min-width:0!important;
-    min-height:55px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-  }
-  #preview .issue-mini img{
-    height:36px!important;
-  }
-  #preview .findings-box{
-    min-height:45px!important;
-    padding:4px!important;
-  }
-  #preview .findings-lines{
-    gap:5px!important;
-  }
-  #preview .findings-lines div{
-    height:12px!important;
-  }
-  #preview .signature-grid{
-    grid-template-columns:1fr 1fr 1fr!important;
-  }
-  #preview .signature-grid > div{
-    min-height:48px!important;
-    padding:4px!important;
-    font-size:8px!important;
-    word-break:break-word!important;
-  }
-  #preview .page-number{
-    font-size:8px!important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -1657,6 +1449,10 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   </div>
   <nav class="side-nav">
     <button type="button" class="side-link active" data-view="home">Přehled dne</button>
+    <button type="button" class="side-link" data-view="plan">Plán práce</button>
+    <button type="button" class="side-link" data-view="archive">Čtvrtletní kontroly</button>
+    <button type="button" class="side-link" data-view="parts">Náhradní díly</button>
+    <button type="button" class="side-link" data-view="faults">Hlášení poruch</button>
     <button type="button" class="side-link" id="upcomingBtn">Blížící se kontroly</button>
     <button type="button" class="side-link" id="sideSettingsBtn">Nastavení</button>
   </nav>
@@ -1665,7 +1461,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.101</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.85</div>
   </div>
 </aside>
 
@@ -1975,12 +1771,12 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
         <label>Poznámka / popis závady</label>
         <textarea id="partNote" placeholder="Volitelné upřesnění"></textarea>
       </div>
-      <div class="field parts-note part-handler-only hidden" id="partHandlerNoteWrap">
-        <label>Poznámka řešitele</label>
-        <textarea id="partHandlerNote" placeholder="Volitelné doplnění pro řešitele při objednání / odeslání / vyřešení"></textarea>
-        <div class="helper">Pro řešitele požadavku. V detailu zůstane vidět jako servisní poznámka.</div>
+      <div class="field parts-note">
+        <label>Poznámka vyřizujícího</label>
+        <textarea id="partHandlerNote" placeholder="Volitelné doplnění při objednání / odeslání / vyřešení"></textarea>
+        <div class="helper">Pro toho, kdo požadavek vyřizuje. V detailu zůstane vidět jako servisní poznámka.</div>
       </div>
-      <div class="field part-handler-only hidden" id="partStatusWrap">
+      <div class="field">
         <label>Stav požadavku</label>
         <select id="partStatusSelect">
           <option value="open">Požadavek</option>
@@ -2091,7 +1887,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
           <option value="open">Nahlášeno</option>
           <option value="service">Stroj do servisu</option>
           <option value="waiting_parts">Čeká na ND</option>
-          <option value="repaired">Vyřešeno / opraveno</option>
+          <option value="repaired">Opraveno / schopné provozu</option>
         </select>
       </div>
     </div>
@@ -2450,15 +2246,6 @@ function saveLocalData(rows){
 function getLastEnteredBy(){ try { return localStorage.getItem('liftcontrol_last_entered_by') || ''; } catch(e) { return ''; } }
 function setLastEnteredBy(name){ try { if(name) localStorage.setItem('liftcontrol_last_entered_by', name); } catch(e) {} }
 function getEnteredByDefault(){ return getLastEnteredBy() || 'Jan Bartoš'; }
-function getLastHandlerBy(){ try { return localStorage.getItem('liftcontrol_last_handler_by') || ''; } catch(e) { return ''; } }
-function setLastHandlerBy(name){ try { if(name) localStorage.setItem('liftcontrol_last_handler_by', name); } catch(e) {} }
-function askHandlerBy(question='Kdo to řešil / doplnil?'){
-  const answer = prompt(question, getLastHandlerBy() || getEnteredByDefault());
-  if(answer === null) return '';
-  const clean = String(answer || '').trim();
-  if(clean) setLastHandlerBy(clean);
-  return clean;
-}
 function operatorOptionsHtml(selected=''){
   const names = uniqueNonEmpty([selected, getLastEnteredBy(), ...(TECHNICI || [])]);
   return names.map(n => `<option value="${escapeHtml(n)}" ${n===selected?'selected':''}>${escapeHtml(n)}</option>`).join('');
@@ -2632,7 +2419,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.101',
+      appVersion: '1.6 / 5.85',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3080,10 +2867,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.101'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.85'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.101';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.85';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3500,7 +3287,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.101';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.85';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3531,7 +3318,25 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.101: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.85: odstraněná duplicitní funkce savePreviewRecord; tlačítko Uložit PDF používá finální definici níže. */
+function printCurrent(){
+  console.log('TISK kliknuto');
+  if(!currentPreview){
+    alert('Není otevřený protokol.');
+    return;
+  }
+  els.previewBody.innerHTML = renderPaper(currentPreview);
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  // vynutit překreslení a spustit tisk přímo z kliknutí uživatele
+  void els.previewBody.offsetHeight;
+  try {
+    window.print();
+  } catch (e) {
+    console.error('Print error', e);
+    alert('Nepodařilo se otevřít tisk.');
+  }
+}
+window._printNow = printCurrent;
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3566,7 +3371,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.101'
+      appVersion: '1.6 / 5.85'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -3738,7 +3543,7 @@ function renderAttentionList(){
       serial:f.serial || '',
       title: repaired ? 'Opravená porucha' : 'Nahlášená porucha',
       subtitle:`${f.type || 'Zařízení bez typu'} · ${f.place || 'Bez místa'}`,
-      status: repaired ? 'Vyřešeno / opraveno' : (getFaultStatus(f).txt || 'Otevřená porucha'),
+      status: repaired ? 'Opraveno / schopné provozu' : (getFaultStatus(f).txt || 'Otevřená porucha'),
       when:stamp,
       whenText:`Před ${attentionAgeLabel(stamp)}`,
       extra:(f.description || '').trim() || 'Bez popisu závady',
@@ -4146,13 +3951,13 @@ function renderPaper(r){
           <div class="section-head">C. Všeobecná kontrola zařízení <span class="section-note">${cLogicLabelHtml(r)}</span></div>
           <table class="proto-table"><thead><tr><th class="num-col">Č.</th><th class="item-col">Kontrolovaná položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.C,r,{numbered:true})}</tbody></table>
         </div>
+        <div class="page-number">Strana 1 z 2</div>
+      </section>
+      <section class="paper-page">
         <div class="section-card">
           <div class="section-head">D. Kontrola provozních náplní</div>
           <table class="proto-table"><thead><tr><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.D,r)}</tbody></table>
         </div>
-        <div class="page-number">Strana 1 z 2</div>
-      </section>
-      <section class="paper-page">
         <div class="section-card">
           <div class="section-head">E. Kontrola funkcí</div>
           <table class="proto-table"><thead><tr><th class="num-col">Č.</th><th class="item-col">Položka</th><th class="yn-col">ANO</th><th class="yn-col">NE</th><th class="note-col">Poznámka</th></tr></thead><tbody>${rowsHtml(sections.E,r,{numbered:true})}</tbody></table>
@@ -4198,196 +4003,13 @@ async function savePreviewRecord(){
     alert('PDF knihovna se nenačetla.');
   }
 }
-function getPrintStyles(){
-  return `
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.paper{width:210mm;margin:0 auto;background:#fff;color:#111}
-.paper-doc{display:block;width:210mm;margin:0;padding:0;background:#fff}
-.paper-page{width:210mm;min-height:297mm;height:297mm;margin:0;padding:8mm 7mm 7mm 7mm;display:flex;flex-direction:column;gap:6px;overflow:hidden;background:#fff;page-break-after:always;break-after:page}
-.paper-page:last-child{page-break-after:auto;break-after:auto}
-.paper-header{text-align:center;margin-bottom:4px}.paper-header h2{margin:0 0 4px;font-size:20px;letter-spacing:.2px}.paper-header .subhead{font-size:10.5px;margin:0;color:#333}
-table{width:100%;border-collapse:collapse;table-layout:fixed}.proto-meta{font-size:10px;margin-bottom:4px}.proto-meta td,.proto-meta th,.proto-table td,.proto-table th{border:1px solid #707070;padding:3px 4px;vertical-align:top}.proto-meta td.label{width:16%;font-weight:700;background:#f2f2f2}.proto-meta td.value{width:34%}.proto-table{font-size:9.4px;line-height:1.12}.proto-table th{background:#f3f4f6;font-weight:700}.proto-table .num-col{width:30px;text-align:center}.proto-table .item-col{width:auto}.proto-table .yn-col{width:42px;text-align:center}.proto-table .note-col{width:38%}.box{font-size:13px;line-height:1;display:inline-block}
-.paper-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.section-card{display:flex;flex-direction:column;gap:0;page-break-inside:avoid;break-inside:avoid}.section-head{border:1px solid #707070;background:#ededed;padding:4px 6px;font-weight:700;font-size:10.4px}.section-note{float:right;font-weight:600;font-size:9px;color:#333}.status-bad{background:#fee2e2!important}.status-bad td,.status-bad th{background:#fee2e2!important;border-color:#dc2626!important}.muted-note{color:#555;font-size:9px}
-.findings-box{border:1px solid #707070;min-height:58px;padding:5px;font-size:10px}.findings-lines{display:grid;gap:7px;margin-top:5px}.findings-lines div{border-bottom:1px solid #999;height:13px}.photo-section{border:1px solid #707070}.photo-section .section-head{border:0;border-bottom:1px solid #707070}.photo-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:0}.photo-mini{border-right:1px solid #707070;padding:4px;font-size:7.8px;text-align:center;min-height:86px}.photo-mini:last-child{border-right:none}.photo-mini img{width:100%;height:54px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}.issue-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #707070}.issue-mini{padding:4px;border-right:1px solid #707070;min-height:62px;font-size:8px;text-align:center}.issue-mini:last-child{border-right:none}.issue-mini img{width:100%;height:44px;object-fit:cover;border:1px solid #bdbdbd;margin-bottom:4px}
-.conclusion-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:8px}.signature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.signature-grid>div{border:1px solid #707070;border-top:none;padding:6px;min-height:54px;font-size:10px}.page-number{text-align:right;font-size:9px;color:#333;margin-top:auto}
-.print-toolbar{position:sticky;top:0;z-index:10;background:#0f172a;color:#fff;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;font-family:Arial,Helvetica,sans-serif}.print-toolbar button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#2563eb;color:#fff;cursor:pointer}.print-toolbar .secondary{background:#e5e7eb;color:#111827}.print-toolbar small{color:#cbd5e1}
-@page{size:A4 portrait;margin:0}
-@media print{.print-toolbar{display:none!important}html,body{width:210mm;background:#fff}.paper{width:210mm;margin:0}.paper-doc{width:210mm}.paper-page{width:210mm;height:297mm;min-height:297mm;max-height:297mm}}
-`;
-}
-
-async function printCurrent(){
+function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
-
-  // v1.6 / 5.101: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
-  // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
-  const element = els.previewBody.querySelector('.paper');
-  if(!element){ alert('Nepodařilo se připravit protokol pro tisk.'); return; }
-  await waitForImages(element);
-
-  const fileBase = (currentPreview.id || currentPreview.vc || 'protokol').replace(/[^a-z0-9_-]+/gi,'_');
-  const html = `<!DOCTYPE html>
-<html lang="cs">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(fileBase)} - tisk protokolu</title>
-<style>${getPrintStyles()}
-
-/* v1.6 / 5.101: mobilní náhled protokolu bez vodorovného posouvání */
-@media (max-width: 700px){
-  #preview .modal-content{
-    width:100vw!important;
-    max-width:100vw!important;
-    height:100vh!important;
-    max-height:100vh!important;
-    border-radius:0!important;
-  }
-  #preview .preview-shell{
-    padding:8px!important;
-  }
-  #preview .paper-wrap{
-    padding:0!important;
-    overflow-x:hidden!important;
-    border-radius:14px!important;
-  }
-  #preview .paper,
-  #preview .paper-doc,
-  #preview .paper-page{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-  }
-  #preview .paper-page{
-    min-height:0!important;
-    height:auto!important;
-    padding:8px 6px 10px 6px!important;
-    gap:5px!important;
-    overflow:hidden!important;
-  }
-  #preview .paper-header h2{
-    font-size:16px!important;
-    line-height:1.1!important;
-  }
-  #preview .paper-header .subhead{
-    font-size:8.5px!important;
-  }
-  #preview .proto-meta,
-  #preview .proto-table{
-    width:100%!important;
-    table-layout:fixed!important;
-    font-size:8px!important;
-    line-height:1.1!important;
-  }
-  #preview .proto-meta td,
-  #preview .proto-meta th,
-  #preview .proto-table td,
-  #preview .proto-table th{
-    padding:2.5px 3px!important;
-    word-break:break-word!important;
-    overflow-wrap:anywhere!important;
-  }
-  #preview .proto-meta td.label{
-    width:23%!important;
-  }
-  #preview .proto-meta td.value{
-    width:27%!important;
-  }
-  #preview .proto-table .num-col{width:18px!important}
-  #preview .proto-table .yn-col{width:28px!important}
-  #preview .proto-table .note-col{width:30%!important}
-  #preview .section-head{
-    font-size:9px!important;
-    padding:3px 4px!important;
-  }
-  #preview .section-note{
-    font-size:7px!important;
-  }
-  #preview .paper-row-2,
-  #preview .conclusion-grid{
-    grid-template-columns:1fr!important;
-    gap:5px!important;
-  }
-  #preview .photo-strip{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  }
-  #preview .photo-mini{
-    min-width:0!important;
-    min-height:70px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-    line-height:1.05!important;
-  }
-  #preview .photo-mini img{
-    height:42px!important;
-    margin-bottom:3px!important;
-  }
-  #preview .issue-strip{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-  #preview .issue-mini{
-    min-width:0!important;
-    min-height:55px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-  }
-  #preview .issue-mini img{
-    height:36px!important;
-  }
-  #preview .findings-box{
-    min-height:45px!important;
-    padding:4px!important;
-  }
-  #preview .findings-lines{
-    gap:5px!important;
-  }
-  #preview .findings-lines div{
-    height:12px!important;
-  }
-  #preview .signature-grid{
-    grid-template-columns:1fr 1fr 1fr!important;
-  }
-  #preview .signature-grid > div{
-    min-height:48px!important;
-    padding:4px!important;
-    font-size:8px!important;
-    word-break:break-word!important;
-  }
-  #preview .page-number{
-    font-size:8px!important;
-  }
+  if(!els.preview.classList.contains('show')) openModal(els.preview);
+  void els.previewBody.offsetHeight;
+  window.print();
 }
-
-</style>
-</head>
-<body>
-  <div class="print-toolbar">
-    <div><strong>LiftControl CZ – tisk protokolu</strong><br><small>Nejdřív zkontroluj náhled. Potom klikni na Tisk / PDF.</small></div>
-    <div><button type="button" onclick="window.print()">Tisk / PDF</button> <button type="button" class="secondary" onclick="window.close()">Zavřít</button></div>
-  </div>
-  ${element.outerHTML}
-</body>
-</html>`;
-
-  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const opened = window.open(url, '_blank');
-  if(!opened){
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${fileBase}_tisk.html`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    alert('Prohlížeč zablokoval novou záložku. Stáhl jsem tiskový HTML soubor. Otevři ho a dej Tisk / PDF.');
-  } else {
-    setTimeout(()=>URL.revokeObjectURL(url), 120000);
-  }
-}
-window._printNow = printCurrent;
 
 function applyTheme(mode){
   const dark = mode === 'dark';
@@ -4776,7 +4398,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.101'
+      appVersion:'1.6 / 5.85'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -4961,7 +4583,7 @@ function faultWaitingParts(f){
   return f && (f.waitingParts === true || f.status === 'waiting_parts');
 }
 function getFaultStatusList(f){
-  if(faultIsRepaired(f)) return [{txt:'Vyřešeno / opraveno', cls:'status-repaired'}];
+  if(faultIsRepaired(f)) return [{txt:'Opraveno / schopné provozu', cls:'status-repaired'}];
   const list = [];
   if(faultInService(f)) list.push({txt:'Stroj do servisu', cls:'status-service'});
   if(faultWaitingParts(f)) list.push({txt:'Čeká na ND', cls:'status-waiting'});
@@ -5379,7 +5001,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.101'
+      appVersion:'1.6 / 5.85'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5443,9 +5065,9 @@ function renderFaults(){
         <button class="secondary mini" type="button" data-fault-machine="${escapeHtml(f.serial || '')}">Karta stroje</button>
         <button class="secondary mini" type="button" data-fault-edit="${f.id}">Upravit</button>
         <button class="secondary mini" type="button" data-fault-create-part="${f.id}">Objednej ND</button>
-        ${!faultInService(f) && !faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-service="${f.id}">Stroj do servisu</button>` : ''}
-        ${!faultWaitingParts(f) && !faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-waiting="${f.id}">Čeká na ND</button>` : ''}
-        ${!faultIsRepaired(f) ? `<button class="success mini" type="button" data-fault-repaired="${f.id}">Vyřešeno / opraveno</button>` : ''}
+        ${!faultInService(f) && !faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-service="${f.id}">Stroj do servisu</button>` : ''}
+        ${!faultWaitingParts(f) && !faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-waiting="${f.id}">Čeká na ND</button>` : ''}
+        ${!faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-repaired="${f.id}">Opraveno / schopné provozu</button>` : ''}
         ${faultIsRepaired(f) ? `<button class="primary mini" type="button" data-fault-repair-protocol="${f.id}">Protokol po opravě</button>` : ''}
         ${faultIsRepaired(f) ? `<button class="secondary mini" type="button" data-fault-create-protocol="${f.id}">Vytvořit kontrolní protokol</button>` : ''}
         <button class="danger mini" type="button" data-fault-delete="${f.id}">Smazat</button>
@@ -5607,7 +5229,7 @@ body.dark .module-kicker{
 }
 
 
-/* v1.6 / 5.90 – externí zákazník */
+/* v1.6 / 5.85 – externí zákazník */
 .external-customer-card{
   border-color:#7c3aed!important;
   box-shadow:0 0 0 2px rgba(124,58,237,.10), var(--shadow)!important;
@@ -5641,7 +5263,7 @@ body.dark .badge-external,body.dark .status-external{
 .external-check span{display:block;color:var(--muted);font-size:.83rem;margin-top:2px}
 .customer-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .customer-extra-note{font-size:.78rem;color:var(--muted);margin-top:6px}
-.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:720px){.customer-extra-grid,.operator-mini-row{grid-template-columns:1fr}}
 
 
@@ -5658,133 +5280,6 @@ body.dark .audit-item{background:var(--panel2)}
 
 .part-handler-note-display{border-color:#bfdbfe;background:#eff6ff}.part-handler-note-display small{display:block;margin-top:6px;color:var(--muted);font-size:.78rem}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
-
-
-/* v1.6 / 5.101: mobilní náhled protokolu bez vodorovného posouvání */
-@media (max-width: 700px){
-  #preview .modal-content{
-    width:100vw!important;
-    max-width:100vw!important;
-    height:100vh!important;
-    max-height:100vh!important;
-    border-radius:0!important;
-  }
-  #preview .preview-shell{
-    padding:8px!important;
-  }
-  #preview .paper-wrap{
-    padding:0!important;
-    overflow-x:hidden!important;
-    border-radius:14px!important;
-  }
-  #preview .paper,
-  #preview .paper-doc,
-  #preview .paper-page{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-  }
-  #preview .paper-page{
-    min-height:0!important;
-    height:auto!important;
-    padding:8px 6px 10px 6px!important;
-    gap:5px!important;
-    overflow:hidden!important;
-  }
-  #preview .paper-header h2{
-    font-size:16px!important;
-    line-height:1.1!important;
-  }
-  #preview .paper-header .subhead{
-    font-size:8.5px!important;
-  }
-  #preview .proto-meta,
-  #preview .proto-table{
-    width:100%!important;
-    table-layout:fixed!important;
-    font-size:8px!important;
-    line-height:1.1!important;
-  }
-  #preview .proto-meta td,
-  #preview .proto-meta th,
-  #preview .proto-table td,
-  #preview .proto-table th{
-    padding:2.5px 3px!important;
-    word-break:break-word!important;
-    overflow-wrap:anywhere!important;
-  }
-  #preview .proto-meta td.label{
-    width:23%!important;
-  }
-  #preview .proto-meta td.value{
-    width:27%!important;
-  }
-  #preview .proto-table .num-col{width:18px!important}
-  #preview .proto-table .yn-col{width:28px!important}
-  #preview .proto-table .note-col{width:30%!important}
-  #preview .section-head{
-    font-size:9px!important;
-    padding:3px 4px!important;
-  }
-  #preview .section-note{
-    font-size:7px!important;
-  }
-  #preview .paper-row-2,
-  #preview .conclusion-grid{
-    grid-template-columns:1fr!important;
-    gap:5px!important;
-  }
-  #preview .photo-strip{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  }
-  #preview .photo-mini{
-    min-width:0!important;
-    min-height:70px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-    line-height:1.05!important;
-  }
-  #preview .photo-mini img{
-    height:42px!important;
-    margin-bottom:3px!important;
-  }
-  #preview .issue-strip{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-  #preview .issue-mini{
-    min-width:0!important;
-    min-height:55px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-  }
-  #preview .issue-mini img{
-    height:36px!important;
-  }
-  #preview .findings-box{
-    min-height:45px!important;
-    padding:4px!important;
-  }
-  #preview .findings-lines{
-    gap:5px!important;
-  }
-  #preview .findings-lines div{
-    height:12px!important;
-  }
-  #preview .signature-grid{
-    grid-template-columns:1fr 1fr 1fr!important;
-  }
-  #preview .signature-grid > div{
-    min-height:48px!important;
-    padding:4px!important;
-    font-size:8px!important;
-    word-break:break-word!important;
-  }
-  #preview .page-number{
-    font-size:8px!important;
-  }
-}
-
 </style></head>`));
   w.document.close();
   try { w.focus(); } catch(e){}
@@ -6020,25 +5515,25 @@ function renderParts(){
           <div class="part-title">${escapeHtml(p.partNumber || 'Bez PN')} · ${escapeHtml(p.partName || 'Bez popisu')}</div>
           <div class="part-sub">${escapeHtml(p.type || 'Bez typu')} · v.č. ${escapeHtml(p.serial || '—')} · ${escapeHtml(p.place || '—')}</div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">${st.txt !== 'Požadavek' ? `<span class="status-pill ${st.cls}">${st.txt}</span>` : ''}${p.externalCustomer ? '<span class="status-pill status-external">Externí zákazník</span>' : ''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span class="status-pill ${st.cls}">${st.txt}</span>${p.externalCustomer ? '<span class="status-pill status-external">Externí zákazník</span>' : ''}</div>
       </div>
       <div class="part-grid">
         <div class="part-meta"><div class="part-meta-label">Vytvořeno</div><div class="part-meta-value">${escapeHtml(formatDateTime(p.createdAt))}</div></div>
         <div class="part-meta"><div class="part-meta-label">Zadal</div><div class="part-meta-value">${escapeHtml(p.enteredBy || p.zadal || '—')}</div></div>
         <div class="part-meta"><div class="part-meta-label">Firma</div><div class="part-meta-value">${escapeHtml(customerDisplayText(p))}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Objednáno</div><div class="part-meta-value">${p.ordered ? escapeHtml(formatDateTime(p.orderedAt)) + (p.orderedBy ? '<br><small>' + escapeHtml(p.orderedBy) + '</small>' : '') : 'Ne'}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Odesláno</div><div class="part-meta-value">${p.sent ? escapeHtml(formatDateTime(p.sentAt)) + (p.sentBy ? '<br><small>' + escapeHtml(p.sentBy) + '</small>' : '') : 'Ne'}</div></div>
-        <div class="part-meta"><div class="part-meta-label">Vyřešeno</div><div class="part-meta-value">${(p.resolved || p.vyreseno) ? escapeHtml(formatDateTime(p.resolvedAt || p.vyresenoAt || p.updatedAt)) + (p.resolvedBy ? '<br><small>' + escapeHtml(p.resolvedBy) + '</small>' : '') : 'Ne'}</div></div>
+        <div class="part-meta"><div class="part-meta-label">Objednáno</div><div class="part-meta-value">${p.ordered ? escapeHtml(formatDateTime(p.orderedAt)) : 'Ne'}</div></div>
+        <div class="part-meta"><div class="part-meta-label">Odesláno</div><div class="part-meta-value">${p.sent ? escapeHtml(formatDateTime(p.sentAt)) : 'Ne'}</div></div>
+        <div class="part-meta"><div class="part-meta-label">Vyřešeno</div><div class="part-meta-value">${(p.resolved || p.vyreseno) ? escapeHtml(formatDateTime(p.resolvedAt || p.vyresenoAt || p.updatedAt)) : 'Ne'}</div></div>
       </div>
       ${p.note ? `<div class="part-note-display"><strong>Popis závady / poznámka</strong><div>${escapeHtml(p.note)}</div></div>` : ''}
-      ${p.handlerNote ? `<div class="part-note-display part-handler-note-display"><strong>Poznámka řešitele</strong><div>${escapeHtml(p.handlerNote)}</div>${(p.handlerNoteBy || p.handlerNoteAt) ? `<small>${escapeHtml(p.handlerNoteBy || '')}${p.handlerNoteAt ? ' · ' + escapeHtml(formatDateTime(p.handlerNoteAt)) : ''}</small>` : ''}</div>` : ''}
+      ${p.handlerNote ? `<div class="part-note-display part-handler-note-display"><strong>Poznámka vyřizujícího</strong><div>${escapeHtml(p.handlerNote)}</div>${(p.handlerNoteBy || p.handlerNoteAt) ? `<small>${escapeHtml(p.handlerNoteBy || '')}${p.handlerNoteAt ? ' · ' + escapeHtml(formatDateTime(p.handlerNoteAt)) : ''}</small>` : ''}</div>` : ''}
       ${photoHtml ? `<div class="part-photo">${photoHtml}</div>` : ''}
       <div class="part-actions">
         ${!(p.resolved || p.vyreseno) ? `<button class="secondary mini" type="button" data-part-note="${p.id}">Poznámka</button>` : ''}
-        <button class="secondary mini" type="button" data-part-edit="${p.id}">Upravit</button>
         ${!(p.resolved || p.vyreseno) && !p.ordered ? `<button class="secondary mini" type="button" data-part-ordered="${p.id}">Objednáno</button>` : ''}
         ${!(p.resolved || p.vyreseno) && !p.sent ? `<button class="secondary mini" type="button" data-part-sent="${p.id}">Odesláno</button>` : ''}
         ${!(p.resolved || p.vyreseno) ? `<button class="success mini" type="button" data-part-resolved="${p.id}">Vyřešeno</button>` : ''}
+        <button class="secondary mini" type="button" data-part-edit="${p.id}">Upravit</button>
         <button class="danger mini" type="button" data-part-delete="${p.id}">Smazat</button>
       </div>
     </div>`;
@@ -6084,15 +5579,10 @@ function openPartForm(id=null){
   document.getElementById('partCustomerAddress').value = (p && (p.customerAddress || p.companyAddress)) || '';
   wireExternalDetails('part');
   document.getElementById('partNote').value = (p && p.note) || '';
-  const handlerNoteWrap = document.getElementById('partHandlerNoteWrap');
-  const partStatusWrap = document.getElementById('partStatusWrap');
-  const showHandlerFields = !!p;
-  if(handlerNoteWrap) handlerNoteWrap.classList.toggle('hidden', !showHandlerFields);
-  if(partStatusWrap) partStatusWrap.classList.toggle('hidden', !showHandlerFields);
   const handlerNoteEl = document.getElementById('partHandlerNote');
-  if(handlerNoteEl) handlerNoteEl.value = showHandlerFields ? ((p && (p.handlerNote || p.resolveNote || p.processingNote)) || '') : '';
+  if(handlerNoteEl) handlerNoteEl.value = (p && (p.handlerNote || p.resolveNote || p.processingNote)) || '';
   const partStatusSel = document.getElementById('partStatusSelect');
-  if(partStatusSel) partStatusSel.value = showHandlerFields ? ((p.resolved || p.vyreseno) ? 'resolved' : (p.sent ? 'sent' : (p.ordered ? 'ordered' : 'open'))) : 'open';
+  if(partStatusSel) partStatusSel.value = p ? ((p.resolved || p.vyreseno) ? 'resolved' : (p.sent ? 'sent' : (p.ordered ? 'ordered' : 'open'))) : 'open';
   currentPartPhotos = p ? JSON.parse(JSON.stringify(getPartPhotoList(p))) : [];
   renderPartPhotoPreview();
   document.getElementById('partsFormWrap').classList.remove('hidden');
@@ -6194,20 +5684,6 @@ async function savePartFromForm(){
   try{
     const existing = editingPartId ? (partsData || []).find(x => x.id === editingPartId) : null;
     const statusVal = document.getElementById('partStatusSelect')?.value || 'open';
-    const newHandlerNote = document.getElementById('partHandlerNote')?.value.trim() || '';
-    const oldHandlerNote = existing ? (existing.handlerNote || existing.resolveNote || existing.processingNote || '') : '';
-    let handlerNoteBy = (existing && existing.handlerNoteBy) || '';
-    let handlerNoteAt = (existing && existing.handlerNoteAt) || '';
-    if(newHandlerNote){
-      if(newHandlerNote !== oldHandlerNote){
-        handlerNoteBy = askHandlerBy('Kdo doplnil poznámku řešitele?');
-        if(!handlerNoteBy) return;
-        handlerNoteAt = new Date().toISOString();
-      }
-    } else {
-      handlerNoteBy = '';
-      handlerNoteAt = '';
-    }
     const record = Object.assign({}, existing || {}, {
       id: editingPartId || partUid(),
       type,
@@ -6220,16 +5696,16 @@ async function savePartFromForm(){
       customerName: !!document.getElementById('partExternalCustomer')?.checked ? document.getElementById('partCustomerName').value.trim() : '',
       customerAddress: !!document.getElementById('partExternalCustomer')?.checked ? document.getElementById('partCustomerAddress').value.trim() : '',
       note: document.getElementById('partNote').value.trim(),
-      handlerNote: newHandlerNote,
-      handlerNoteBy,
-      handlerNoteAt,
+      handlerNote: document.getElementById('partHandlerNote')?.value.trim() || '',
+      handlerNoteBy: document.getElementById('partHandlerNote')?.value.trim() ? (document.getElementById('partEnteredBy')?.value || getEnteredByDefault()) : ((existing && existing.handlerNoteBy) || ''),
+      handlerNoteAt: document.getElementById('partHandlerNote')?.value.trim() ? ((existing && existing.handlerNote === document.getElementById('partHandlerNote')?.value.trim()) ? (existing.handlerNoteAt || '') : new Date().toISOString()) : ((existing && existing.handlerNoteAt) || ''),
       ordered: statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved',
       sent: statusVal === 'sent' || statusVal === 'resolved',
       resolved: statusVal === 'resolved',
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.101'
+      appVersion:'1.6 / 5.85'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6251,68 +5727,56 @@ async function addPartHandlerNote(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
   const oldNote = p.handlerNote || p.resolveNote || p.processingNote || '';
-  const note = prompt('Poznámka řešitele k ND:', oldNote);
+  const note = prompt('Poznámka vyřizujícího k ND:', oldNote);
   if(note === null) return;
   const cleaned = String(note || '').trim();
-  if(!cleaned && oldNote && !confirm('Smazat stávající poznámku řešitele?')) return;
-  const actor = cleaned ? askHandlerBy('Kdo doplnil poznámku řešitele?') : getEnteredByDefault();
-  if(cleaned && !actor) return;
+  if(!cleaned && oldNote && !confirm('Smazat stávající poznámku vyřizujícího?')) return;
   p.handlerNote = cleaned;
-  p.handlerNoteBy = cleaned ? actor : '';
+  p.handlerNoteBy = cleaned ? getEnteredByDefault() : '';
   p.handlerNoteAt = cleaned ? new Date().toISOString() : '';
   await savePartRecord(p);
-  await logAuditAction('update','part',p,actor || getEnteredByDefault(), cleaned ? ('Doplněna poznámka řešitele · ' + summarizeRecordForAudit(p)) : ('Smazána poznámka řešitele · ' + summarizeRecordForAudit(p)));
+  await logAuditAction('update','part',p,getEnteredByDefault(), cleaned ? ('Doplněna poznámka vyřizujícího · ' + summarizeRecordForAudit(p)) : ('Smazána poznámka vyřizujícího · ' + summarizeRecordForAudit(p)));
   renderParts();
 }
 async function markPartOrdered(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
-  const actor = askHandlerBy('Kdo označil ND jako objednáno?');
-  if(!actor) return;
   p.ordered = true;
   p.orderedAt = new Date().toISOString();
-  p.orderedBy = actor;
   await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako objednáno · ' + summarizeRecordForAudit(p));
+  await logAuditAction('status','part',p,getEnteredByDefault(),'Označeno jako objednáno · ' + summarizeRecordForAudit(p));
 }
 async function markPartSent(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
-  const actor = askHandlerBy('Kdo označil ND jako odesláno?');
-  if(!actor) return;
   const now = new Date().toISOString();
   if(!p.ordered){
     p.ordered = true;
     p.orderedAt = p.orderedAt || now;
-    p.orderedBy = p.orderedBy || actor;
   }
   p.sent = true;
   p.sentAt = now;
-  p.sentBy = actor;
   await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako odesláno · ' + summarizeRecordForAudit(p));
+  await logAuditAction('status','part',p,getEnteredByDefault(),'Označeno jako odesláno · ' + summarizeRecordForAudit(p));
 }
 async function markPartResolved(id){
   const p = (partsData || []).find(x => x.id === id);
   if(!p) return;
   const now = new Date().toISOString();
   if(!confirm('Označit požadavek na ND jako vyřešený? Zůstane v historii, ale nebude svítit jako aktivní požadavek.')) return;
-  const actor = askHandlerBy('Kdo označil ND jako vyřešené?');
-  if(!actor) return;
-  const resolveNote = prompt('Poznámka k vyřešení / řešení ND (volitelné):', p.handlerNote || '');
+  const resolveNote = prompt('Poznámka k vyřešení / vyřízení ND (volitelné):', p.handlerNote || '');
   if(resolveNote === null) return;
   if(String(resolveNote || '').trim()){
     p.handlerNote = String(resolveNote || '').trim();
-    p.handlerNoteBy = actor;
+    p.handlerNoteBy = getEnteredByDefault();
     p.handlerNoteAt = now;
   }
-  if(!p.ordered){ p.ordered = true; p.orderedAt = p.orderedAt || now; p.orderedBy = p.orderedBy || actor; }
-  if(!p.sent){ p.sent = true; p.sentAt = p.sentAt || now; p.sentBy = p.sentBy || actor; }
+  if(!p.ordered){ p.ordered = true; p.orderedAt = p.orderedAt || now; }
+  if(!p.sent){ p.sent = true; p.sentAt = p.sentAt || now; }
   p.resolved = true;
   p.resolvedAt = now;
-  p.resolvedBy = actor;
   await savePartRecord(p);
-  await logAuditAction('status','part',p,actor,'Označeno jako vyřešeno · ' + summarizeRecordForAudit(p));
+  await logAuditAction('status','part',p,getEnteredByDefault(),'Označeno jako vyřešeno · ' + summarizeRecordForAudit(p));
 }
 
 // events
@@ -6596,7 +6060,7 @@ els.list.addEventListener('click', (e) => {
 });
 
 
-/* v1.6 / 5.90 – mobilní klávesnice: při psaní skrýt spodní akční lištu, aby neprosvítala pod iOS klávesnicí */
+/* v1.6 / 5.85 – mobilní klávesnice: při psaní skrýt spodní akční lištu, aby neprosvítala pod iOS klávesnicí */
 function installMobileKeyboardGuard(){
   const selector = 'input, textarea, select';
   document.addEventListener('focusin', ev => {
