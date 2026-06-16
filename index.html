@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.110 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.111 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -1524,7 +1524,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.110: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1676,15 +1676,15 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <div class="easter-title">Zeppelin nad Prahou</div>
     <div class="easter-stats">
       <span class="easter-pill" id="zeppelinScore">Skore 0</span>
-      <span class="easter-pill" id="zeppelinLives">Praha 8</span>
-      <span class="easter-pill" id="zeppelinTime">75 s</span>
+      <span class="easter-pill" id="zeppelinLives">Praha 10</span>
+      <span class="easter-pill" id="zeppelinTime">80 s</span>
     </div>
   </div>
   <button class="easter-close" type="button" id="zeppelinCloseBtn">Zpet do LiftControl</button>
   <div class="easter-start" id="zeppelinStartPane">
     <div class="easter-card">
       <h3>Praha vola o pomoc</h3>
-      <p>Zeppelin se blizi nad Prahu. Miris svetlometem, tapnutim sestrelis bomby driv, nez dopadnou.</p>
+      <p>Zeppelin se blizi nad Prahu. Tahni prstem nebo mysi a drz bomby ve svetelnem paprsku.</p>
       <button type="button" id="zeppelinStartBtn">Spustit obranu Prahy</button>
     </div>
   </div>
@@ -1708,7 +1708,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.110</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.111</div>
   </div>
 </aside>
 
@@ -2675,7 +2675,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.110',
+      appVersion: '1.6 / 5.111',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3123,10 +3123,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.110'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.111'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.110';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.111';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3543,7 +3543,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.110';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.111';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3574,7 +3574,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.110: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.111: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3609,7 +3609,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.110'
+      appVersion: '1.6 / 5.111'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -4261,7 +4261,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed}.proto-meta{font-si
 async function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
 
-  // v1.6 / 5.110: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.111: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4277,7 +4277,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.110: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -4834,7 +4834,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.110'
+      appVersion:'1.6 / 5.111'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5463,7 +5463,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.110'
+      appVersion:'1.6 / 5.111'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5748,7 +5748,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.110: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6334,7 +6334,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.110'
+      appVersion:'1.6 / 5.111'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6734,32 +6734,30 @@ function installZeppelinEasterEgg(){
 
   const ctx = canvas.getContext('2d');
   let taps = 0, tapTimer = 0, raf = 0, last = 0;
-  let running = false, score = 0, lives = 8, timeLeft = 75;
-  let bombs = [], shots = [], sparks = [], clouds = [];
-  let aimX = 0, zeppelinX = 0, zeppelinDir = 1, bombTimer = 0;
-  let w = 0, h = 0, dpr = 1;
+  let running = false, score = 0, lives = 10, timeLeft = 80;
+  let bombs = [], sparks = [], stars = [], zeppelinX = 0, zeppelinDir = 1, bombTimer = 1.8;
+  let aimX = 0, aimY = 0, w = 0, h = 0, dpr = 1;
 
   function resize(){
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = Math.max(320, window.innerWidth || 390);
-    h = Math.max(480, window.innerHeight || 720);
+    h = Math.max(520, window.innerHeight || 720);
     canvas.width = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
     aimX = aimX || w * .5;
-    clouds = [
-      {x:w*.18,y:h*.16,s:1.0},{x:w*.74,y:h*.12,s:.8},{x:w*.48,y:h*.24,s:.65}
-    ];
+    aimY = aimY || h * .34;
+    stars = Array.from({length:70}, (_,i)=>({x:(i*89+31)%w,y:34+((i*53)%Math.max(160,h*.43)),r:i%7===0?1.9:1.05,a:.45+(i%5)*.1}));
   }
   function resetGame(){
     resize();
-    running = true; score = 0; lives = 8; timeLeft = 75;
-    bombs = []; shots = []; sparks = [];
-    zeppelinX = w * .12; zeppelinDir = 1; bombTimer = 1.6; last = 0;
+    running = true; score = 0; lives = 10; timeLeft = 80;
+    bombs = []; sparks = []; zeppelinX = w * .16; zeppelinDir = 1; bombTimer = 1.7; last = 0;
+    aimX = w * .5; aimY = h * .34;
     startPane.querySelector('h3').textContent = 'Praha vola o pomoc';
-    startPane.querySelector('p').textContent = 'Miris svetlometem. Tapnutim / klikem sestrel bomby driv, nez dopadnou na Prahu.';
+    startPane.querySelector('p').textContent = 'Tahni prstem nebo mysi a drz svetlomet na bombach. Paprsek strili automaticky.';
     startBtn.textContent = 'Spustit obranu Prahy';
     wrap.classList.add('playing');
     updateHud();
@@ -6774,7 +6772,7 @@ function installZeppelinEasterEgg(){
     wrap.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
     resize();
-    drawIntro();
+    draw();
   }
   function closeGame(){
     running = false;
@@ -6783,173 +6781,91 @@ function installZeppelinEasterEgg(){
     wrap.setAttribute('aria-hidden','true');
     document.body.style.overflow = '';
   }
-  function fire(x){
-    if(!wrap.classList.contains('show')) return;
-    if(!running){ resetGame(); requestAnimationFrame(loop); return; }
-    shots.push({x:x || aimX, life:.32, width:54});
+  function cityY(){ return h - 104; }
+  function turret(){ return {x:w*.5,y:h-50}; }
+  function setAimFromEvent(ev){
+    const t = ev.touches && ev.touches[0];
+    aimX = Math.max(24, Math.min(w-24, (t ? t.clientX : ev.clientX) || aimX));
+    aimY = Math.max(74, Math.min(cityY()-70, (t ? t.clientY : ev.clientY) || aimY));
   }
-  function cityY(){ return h - 96; }
-  function addSpark(x,y,color,count=14){
-    for(let i=0;i<count;i++) sparks.push({x,y,vx:(Math.random()-.5)*130,vy:(Math.random()-.9)*120,life:.62,color});
+  function addSpark(x,y,color,count=18){
+    for(let i=0;i<count;i++) sparks.push({x,y,vx:(Math.random()-.5)*150,vy:(Math.random()-.8)*135,life:.7,color,size:2+Math.random()*2});
   }
-  function drawCloud(c){
-    ctx.save(); ctx.globalAlpha = .18; ctx.fillStyle = '#dff1ff';
-    ctx.beginPath();
-    ctx.ellipse(c.x,c.y,54*c.s,15*c.s,0,0,Math.PI*2);
-    ctx.ellipse(c.x-32*c.s,c.y+4*c.s,28*c.s,11*c.s,0,0,Math.PI*2);
-    ctx.ellipse(c.x+34*c.s,c.y+2*c.s,30*c.s,12*c.s,0,0,Math.PI*2);
-    ctx.fill(); ctx.restore();
+  function distToBeam(px,py){
+    const a = turret(), bx = aimX, by = aimY;
+    const vx = bx-a.x, vy = by-a.y, wx = px-a.x, wy = py-a.y;
+    const c = Math.max(0, Math.min(1, (wx*vx + wy*vy) / Math.max(1, vx*vx + vy*vy)));
+    const dx = px - (a.x + vx*c), dy = py - (a.y + vy*c);
+    return Math.sqrt(dx*dx + dy*dy);
   }
   function drawSky(){
     const g = ctx.createLinearGradient(0,0,0,h);
-    g.addColorStop(0,'#2b8ee8'); g.addColorStop(.42,'#0f2f5f'); g.addColorStop(1,'#030915');
+    g.addColorStop(0,'#59a8ff'); g.addColorStop(.38,'#123d75'); g.addColorStop(.76,'#081a34'); g.addColorStop(1,'#030814');
     ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle = '#f8fbff'; ctx.beginPath(); ctx.arc(w*.83,70,30,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#2b8ee8'; ctx.beginPath(); ctx.arc(w*.80,62,30,0,Math.PI*2); ctx.fill();
-    clouds.forEach(drawCloud);
-    ctx.fillStyle = 'rgba(255,255,255,.9)';
-    for(let i=0;i<55;i++){
-      const x = (i*83 + 17) % w;
-      const y = 42 + ((i*37) % Math.max(150,h*.44));
-      const s = i % 5 === 0 ? 2 : 1.2;
-      ctx.fillRect(x,y,s,s);
-    }
-  }
-  function drawBridge(y){
-    ctx.strokeStyle = '#dbeafe'; ctx.lineWidth = 5; ctx.globalAlpha = .45;
-    ctx.beginPath(); ctx.moveTo(w*.08,y-24);
-    ctx.quadraticCurveTo(w*.20,y-66,w*.33,y-24);
-    ctx.quadraticCurveTo(w*.47,y-68,w*.60,y-24);
-    ctx.quadraticCurveTo(w*.73,y-64,w*.88,y-24);
-    ctx.stroke(); ctx.globalAlpha = 1;
-    ctx.fillStyle = '#dbeafe';
-    for(let i=0;i<7;i++) ctx.fillRect(w*.12 + i*w*.115, y-33, 4, 20);
+    const moon = ctx.createRadialGradient(w*.78,72,2,w*.78,72,46);
+    moon.addColorStop(0,'#ffffff'); moon.addColorStop(.55,'#e8f4ff'); moon.addColorStop(1,'rgba(232,244,255,0)');
+    ctx.fillStyle = moon; ctx.beginPath(); ctx.arc(w*.78,72,46,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#123d75'; ctx.beginPath(); ctx.arc(w*.75,62,40,0,Math.PI*2); ctx.fill();
+    stars.forEach(s=>{ ctx.globalAlpha=s.a; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1;
+    [['#dff1ff',w*.20,h*.18,1],['#b9ddff',w*.66,h*.22,.7],['#dff1ff',w*.48,h*.12,.55]].forEach(c=>{
+      ctx.globalAlpha=.16; ctx.fillStyle=c[0]; ctx.beginPath(); ctx.ellipse(c[1],c[2],72*c[3],18*c[3],0,0,Math.PI*2); ctx.ellipse(c[1]-40*c[3],c[2]+3,34*c[3],12*c[3],0,0,Math.PI*2); ctx.ellipse(c[1]+45*c[3],c[2]+2,38*c[3],13*c[3],0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    });
   }
   function drawPrague(){
     const y = cityY();
-    const river = ctx.createLinearGradient(0,y-34,0,h);
-    river.addColorStop(0,'rgba(30,136,229,.62)'); river.addColorStop(1,'rgba(3,9,21,.9)');
-    ctx.fillStyle = river; ctx.fillRect(0,y-34,w,h-y+34);
-    drawBridge(y);
-
+    const river = ctx.createLinearGradient(0,y-44,0,h);
+    river.addColorStop(0,'rgba(69,154,235,.65)'); river.addColorStop(.45,'rgba(14,48,92,.88)'); river.addColorStop(1,'#040b16');
+    ctx.fillStyle = river; ctx.fillRect(0,y-44,w,h-y+44);
+    ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 5;
+    ctx.beginPath();
+    for(let i=0;i<4;i++){ const x0=w*(.08+i*.22), x1=w*(.22+i*.22); ctx.moveTo(x0,y-24); ctx.quadraticCurveTo((x0+x1)/2,y-68,x1,y-24); }
+    ctx.stroke();
     ctx.fillStyle = '#07101f'; ctx.fillRect(0,y,w,h-y);
-    ctx.fillStyle = '#0b1930';
-    const xs = [0,.05,.10,.16,.22,.30,.37,.44,.52,.59,.67,.75,.84,.92];
-    xs.forEach((p,i)=>{ const bw = 24 + (i%4)*12; const bh = 28 + (i%5)*10; ctx.fillRect(p*w,y-bh,bw,bh); });
-
-    ctx.fillStyle = '#12284a';
-    ctx.beginPath(); ctx.moveTo(0,y-58); ctx.quadraticCurveTo(w*.22,y-92,w*.44,y-58); ctx.lineTo(w*.44,y); ctx.lineTo(0,y); ctx.closePath(); ctx.fill();
-
-    ctx.fillStyle = '#eaf4ff';
-    ctx.fillRect(w*.12,y-108,86,20); ctx.fillRect(w*.13,y-130,16,24); ctx.fillRect(w*.27,y-130,16,24);
-    ctx.beginPath(); ctx.moveTo(w*.13,y-130); ctx.lineTo(w*.138,y-154); ctx.lineTo(w*.148,y-130); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(w*.27,y-130); ctx.lineTo(w*.278,y-154); ctx.lineTo(w*.288,y-130); ctx.fill();
-    ctx.fillRect(w*.18,y-140,46,12);
-
-    ctx.fillStyle = '#dbeafe'; ctx.fillRect(w*.72,y-112,9,112); ctx.beginPath(); ctx.arc(w*.724,y-128,19,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle = '#dbeafe'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(w*.724,y-112); ctx.lineTo(w*.68,y-52); ctx.moveTo(w*.724,y-112); ctx.lineTo(w*.77,y-48); ctx.stroke();
-
-    ctx.fillStyle = '#ffffff'; ctx.font = '800 13px Inter,Arial'; ctx.fillText('Praha', 18, y-16);
+    ctx.fillStyle = '#0c1e39';
+    for(let i=0;i<15;i++){ const x=i*w/14, bw=22+(i%4)*9, bh=28+(i%6)*8; ctx.fillRect(x,y-bh,bw,bh); }
+    ctx.fillStyle = '#152d52'; ctx.beginPath(); ctx.moveTo(0,y-58); ctx.quadraticCurveTo(w*.20,y-102,w*.43,y-62); ctx.lineTo(w*.43,y); ctx.lineTo(0,y); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#edf7ff';
+    ctx.fillRect(w*.11,y-112,98,22); ctx.fillRect(w*.13,y-143,18,32); ctx.fillRect(w*.30,y-143,18,32); ctx.fillRect(w*.18,y-154,54,14);
+    ctx.beginPath(); ctx.moveTo(w*.13,y-143); ctx.lineTo(w*.139,y-170); ctx.lineTo(w*.15,y-143); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(w*.30,y-143); ctx.lineTo(w*.309,y-170); ctx.lineTo(w*.32,y-143); ctx.fill();
+    ctx.fillStyle = '#dff1ff'; ctx.fillRect(w*.73,y-122,10,122); ctx.beginPath(); ctx.arc(w*.735,y-141,21,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#dff1ff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(w*.735,y-120); ctx.lineTo(w*.68,y-50); ctx.moveTo(w*.735,y-120); ctx.lineTo(w*.79,y-50); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = '800 13px Inter,Arial'; ctx.fillText('Praha',18,y-16);
   }
   function drawZeppelin(){
-    const zy = 118 + Math.sin(Date.now()/640)*9;
+    const zy = 124 + Math.sin(Date.now()/700)*7;
     ctx.save(); ctx.translate(zeppelinX,zy); ctx.scale(zeppelinDir,1);
-    const body = ctx.createLinearGradient(-128,-30,128,30);
-    body.addColorStop(0,'#cfe9ff'); body.addColorStop(.48,'#ffffff'); body.addColorStop(1,'#8ecbff');
-    ctx.fillStyle = body; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.ellipse(0,0,126,31,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = 'rgba(15,47,95,.35)'; ctx.lineWidth = 1.5;
-    for(let i=-80;i<=80;i+=32){ ctx.beginPath(); ctx.moveTo(i,-27); ctx.lineTo(i,27); ctx.stroke(); }
-    ctx.fillStyle = '#0f5fbf'; ctx.font = '800 17px Inter,Arial'; ctx.textAlign = 'center'; ctx.fillText('Zeppelin',0,6); ctx.textAlign = 'start';
-    ctx.fillStyle = '#dff1ff'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(-126,0); ctx.lineTo(-154,-21); ctx.lineTo(-146,16); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#0f2f5f'; ctx.fillRect(-30,26,62,17); ctx.fillStyle = '#dff1ff'; ctx.fillRect(-20,31,12,6); ctx.fillRect(0,31,12,6); ctx.fillRect(20,31,12,6);
+    const body = ctx.createLinearGradient(-135,-34,135,34); body.addColorStop(0,'#b8ddff'); body.addColorStop(.48,'#ffffff'); body.addColorStop(1,'#74b8f4');
+    ctx.fillStyle=body; ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.ellipse(0,0,136,36,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='rgba(15,47,95,.35)'; ctx.lineWidth=1.5; for(let x=-88;x<=88;x+=29){ ctx.beginPath(); ctx.moveTo(x,-31); ctx.lineTo(x,31); ctx.stroke(); }
+    ctx.fillStyle='#0f5fbf'; ctx.font='900 18px Inter,Arial'; ctx.textAlign='center'; ctx.fillText('Zeppelin',0,7); ctx.textAlign='start';
+    ctx.fillStyle='#dff1ff'; ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-132,0); ctx.lineTo(-168,-24); ctx.lineTo(-156,20); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#0f2f5f'; ctx.fillRect(-34,31,70,18); ctx.fillStyle='#dff1ff'; [-22,0,22].forEach(x=>ctx.fillRect(x,36,13,6));
     ctx.restore();
-    return {x:zeppelinX,y:zy};
   }
-  function drawIntro(){ drawSky(); drawPrague(); drawZeppelin(); }
+  function spawnBomb(){ bombs.push({x:zeppelinX+(Math.random()-.5)*88,y:164,vy:26+Math.random()*18,r:8,spin:0}); }
   function update(dt){
-    timeLeft -= dt;
-    zeppelinX += zeppelinDir * 36 * dt;
-    if(zeppelinX > w - 138){ zeppelinDir = -1; }
-    if(zeppelinX < 138){ zeppelinDir = 1; }
-    bombTimer -= dt;
-    if(bombTimer <= 0){
-      bombs.push({x:zeppelinX + (Math.random()-.5)*70, y:156, vy:34 + Math.random()*28, r:8});
-      bombTimer = Math.max(.82, 1.85 - score * .01);
-    }
-    bombs.forEach(b => { b.y += b.vy * dt; b.vy += 10 * dt; b.spin = (b.spin || 0) + dt*5; });
-    shots.forEach(s => s.life -= dt);
-    sparks.forEach(p => { p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 150*dt; p.life -= dt; });
-    shots = shots.filter(s => s.life > 0);
-    sparks = sparks.filter(p => p.life > 0);
-    for(const s of shots){
-      for(const b of bombs){
-        if(b.hit) continue;
-        if(Math.abs(b.x - s.x) < s.width && b.y > 54 && b.y < cityY() - 8){
-          b.hit = true; score++; addSpark(b.x,b.y,'#dff1ff',18);
-        }
-      }
-    }
-    bombs.forEach(b => { if(!b.hit && b.y > cityY()-8){ b.hit = true; lives--; addSpark(b.x,cityY()-14,'#ffdf7a',22); } });
-    bombs = bombs.filter(b => !b.hit && b.y < h + 30);
-    if(lives <= 0 || timeLeft <= 0){
-      running = false; wrap.classList.remove('playing');
-      startPane.querySelector('h3').textContent = lives > 0 ? 'Praha ubrana' : 'Praha potrebuje dalsi pokus';
-      startPane.querySelector('p').textContent = 'Skore: ' + score + '. Ted uz to jde lip - tapni a zkus dalsi obranu.';
-      startBtn.textContent = 'Hrat znovu';
-    }
+    timeLeft -= dt; zeppelinX += zeppelinDir*28*dt;
+    if(zeppelinX>w-150) zeppelinDir=-1; if(zeppelinX<150) zeppelinDir=1;
+    bombTimer -= dt; if(bombTimer<=0){ spawnBomb(); bombTimer=Math.max(1.05,2.15-score*.012); }
+    bombs.forEach(b=>{ b.y+=b.vy*dt; b.vy+=7*dt; b.spin+=dt*4; if(distToBeam(b.x,b.y)<34 && b.y<cityY()-5){ b.hit=true; score++; addSpark(b.x,b.y,'#dff1ff',22); } });
+    bombs.forEach(b=>{ if(!b.hit && b.y>cityY()-8){ b.hit=true; lives--; addSpark(b.x,cityY()-15,'#ffd36e',24); } });
+    bombs=bombs.filter(b=>!b.hit && b.y<h+40);
+    sparks.forEach(p=>{ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=150*dt; p.life-=dt; }); sparks=sparks.filter(p=>p.life>0);
+    if(lives<=0 || timeLeft<=0){ running=false; wrap.classList.remove('playing'); startPane.querySelector('h3').textContent = lives>0 ? 'Praha ubrana' : 'Zkusime dalsi noc'; startPane.querySelector('p').textContent = 'Skore: '+score+'. Ovladas jen svetlomet - drz bomby v paprsku.'; startBtn.textContent='Hrat znovu'; }
     updateHud();
   }
-  function drawBomb(b){
-    ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.spin || 0);
-    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.ellipse(0,0,7,11,0,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#0f2f5f'; ctx.fillRect(-3,-14,6,8); ctx.restore();
-  }
-  function draw(){
-    drawSky(); drawZeppelin();
-    bombs.forEach(drawBomb);
-    shots.forEach(s => {
-      const alpha = Math.max(0,s.life/.32);
-      const beam = ctx.createLinearGradient(s.x,70,w*.5,h-48);
-      beam.addColorStop(0,'rgba(223,241,255,' + (.05*alpha) + ')');
-      beam.addColorStop(1,'rgba(255,255,255,' + (.38*alpha) + ')');
-      ctx.strokeStyle = beam; ctx.lineWidth = 22; ctx.beginPath(); ctx.moveTo(w*.5,h-48); ctx.lineTo(s.x,72); ctx.stroke();
-      ctx.strokeStyle = 'rgba(255,255,255,' + (.9*alpha) + ')'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(w*.5,h-48); ctx.lineTo(s.x,72); ctx.stroke();
-    });
-    sparks.forEach(p => { ctx.globalAlpha = Math.max(0,p.life/.62); ctx.fillStyle = p.color; ctx.fillRect(p.x,p.y,3.5,3.5); ctx.globalAlpha = 1; });
-    drawPrague();
-    ctx.strokeStyle = 'rgba(255,255,255,.40)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(w*.5,h-48); ctx.lineTo(aimX,82); ctx.stroke();
-    ctx.fillStyle = '#dff1ff'; ctx.beginPath(); ctx.arc(w*.5,h-48,19,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#0f5fbf'; ctx.beginPath(); ctx.arc(w*.5,h-48,8,0,Math.PI*2); ctx.fill();
-    if(!running){ ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.font = '800 18px Inter,Arial'; ctx.textAlign = 'center'; ctx.fillText(lives > 0 ? 'Praha ubrana' : 'Zkus obranu znovu', w/2, h*.48); ctx.textAlign = 'start'; }
-  }
-  function loop(ts){
-    if(!wrap.classList.contains('show')) return;
-    const dt = Math.min(.033, ((ts || 0) - (last || ts || 0)) / 1000 || .016);
-    last = ts || 0;
-    if(running) update(dt);
-    draw();
-    raf = requestAnimationFrame(loop);
-  }
-  function pointerX(ev){
-    const t = ev.touches && ev.touches[0];
-    return Math.max(0, Math.min(w, (t ? t.clientX : ev.clientX) || aimX));
-  }
-  title.style.cursor = 'default';
-  title.addEventListener('click', () => {
-    clearTimeout(tapTimer); taps++;
-    if(taps >= 5){ taps = 0; openGame(); raf = requestAnimationFrame(loop); return; }
-    tapTimer = setTimeout(() => { taps = 0; }, 1400);
-  });
-  startBtn?.addEventListener('click', () => { resetGame(); raf = requestAnimationFrame(loop); });
-  closeBtn?.addEventListener('click', closeGame);
-  wrap.addEventListener('mousemove', ev => { aimX = pointerX(ev); });
-  wrap.addEventListener('touchmove', ev => { aimX = pointerX(ev); ev.preventDefault(); }, {passive:false});
-  wrap.addEventListener('click', ev => { if(ev.target.closest('button')) return; aimX = pointerX(ev); fire(aimX); });
-  wrap.addEventListener('touchstart', ev => { if(ev.target.closest('button')) return; aimX = pointerX(ev); fire(aimX); ev.preventDefault(); }, {passive:false});
-  window.addEventListener('resize', () => { if(wrap.classList.contains('show')) resize(); });
-  document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && wrap.classList.contains('show')) closeGame(); });
+  function drawBomb(b){ ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.spin); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(0,0,7,12,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#0f2f5f'; ctx.fillRect(-3,-15,6,9); ctx.restore(); }
+  function drawBeam(){ const t=turret(); const beam=ctx.createLinearGradient(t.x,t.y,aimX,aimY); beam.addColorStop(0,'rgba(255,255,255,.48)'); beam.addColorStop(.55,'rgba(125,195,255,.22)'); beam.addColorStop(1,'rgba(255,255,255,.58)'); ctx.strokeStyle=beam; ctx.lineWidth=30; ctx.beginPath(); ctx.moveTo(t.x,t.y); ctx.lineTo(aimX,aimY); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(t.x,t.y); ctx.lineTo(aimX,aimY); ctx.stroke(); ctx.fillStyle='rgba(255,255,255,.95)'; ctx.beginPath(); ctx.arc(aimX,aimY,10,0,Math.PI*2); ctx.fill(); }
+  function draw(){ drawSky(); drawZeppelin(); drawBeam(); bombs.forEach(drawBomb); sparks.forEach(p=>{ ctx.globalAlpha=Math.max(0,p.life/.7); ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size); ctx.globalAlpha=1; }); drawPrague(); const t=turret(); ctx.fillStyle='#dff1ff'; ctx.beginPath(); ctx.arc(t.x,t.y,21,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#0f5fbf'; ctx.beginPath(); ctx.arc(t.x,t.y,9,0,Math.PI*2); ctx.fill(); if(!running){ ctx.fillStyle='rgba(255,255,255,.94)'; ctx.font='900 18px Inter,Arial'; ctx.textAlign='center'; ctx.fillText(lives>0?'Praha ubrana':'Zkus obranu znovu',w/2,h*.48); ctx.textAlign='start'; } }
+  function loop(ts){ if(!wrap.classList.contains('show')) return; const dt=Math.min(.033,((ts||0)-(last||ts||0))/1000||.016); last=ts||0; if(running) update(dt); draw(); raf=requestAnimationFrame(loop); }
+  title.addEventListener('click',()=>{ clearTimeout(tapTimer); taps++; if(taps>=5){ taps=0; openGame(); raf=requestAnimationFrame(loop); return; } tapTimer=setTimeout(()=>{taps=0;},1400); });
+  startBtn?.addEventListener('click',()=>{ resetGame(); raf=requestAnimationFrame(loop); }); closeBtn?.addEventListener('click',closeGame);
+  wrap.addEventListener('mousemove',setAimFromEvent); wrap.addEventListener('click',ev=>{ if(!ev.target.closest('button')) setAimFromEvent(ev); });
+  wrap.addEventListener('touchstart',ev=>{ if(!ev.target.closest('button')){ setAimFromEvent(ev); ev.preventDefault(); } },{passive:false});
+  wrap.addEventListener('touchmove',ev=>{ setAimFromEvent(ev); ev.preventDefault(); },{passive:false});
+  window.addEventListener('resize',()=>{ if(wrap.classList.contains('show')) resize(); }); document.addEventListener('keydown',ev=>{ if(ev.key==='Escape'&&wrap.classList.contains('show')) closeGame(); });
 }
 installZeppelinEasterEgg();
 
