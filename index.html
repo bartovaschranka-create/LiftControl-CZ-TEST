@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#0f5fbf">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LiftControl CZ">
 <title>LiftControl CZ</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
+<link rel="apple-touch-icon" href="icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef4fb;--panel:#ffffff;--panel2:#f8fbff;--text:#0f172a;--muted:#64748b;--line:#dbe6f2;--primary:#2563eb;--primary2:#1d4ed8;--danger:#dc2626;--ok:#16a34a;--shadow:0 10px 30px rgba(15,23,42,.08);--radius:18px}
@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.106 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.107 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -70,7 +70,7 @@ input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-siz
 .smart-suggest-item:last-child{border-bottom:none!important}.smart-suggest-item:hover,.smart-suggest-item:active{background:#e2e8f0!important}
 body.dark .smart-suggest-box{background:#1e293b!important;border-color:#475569!important}body.dark .smart-suggest-item{background:#0f172a!important;color:#e5e7eb!important;border-bottom-color:#334155!important}body.dark .smart-suggest-item:hover,body.dark .smart-suggest-item:active{background:#243244!important}
 @media(max-width:920px){.smart-suggest-box{max-height:190px}.smart-suggest-item{padding:13px 14px!important;font-size:1rem!important}.modal-content,.wizard-shell,.field{overflow:visible!important}}
-@media(max-width:920px){body.mobile-keyboard-open .wizard-actions,body.mobile-keyboard-open #partsFormWrap .preview-actions,body.mobile-keyboard-open #faultFormWrap .preview-actions,body.mobile-keyboard-open #workPlanFormWrap .preview-actions{position:static!important;display:none!important}}
+@media(max-width:920px){body.mobile-keyboard-open .wizard-actions{position:static!important;display:none!important}#workPlanFormWrap .preview-actions,#partsFormWrap .preview-actions,#faultFormWrap .preview-actions{position:sticky!important;bottom:0!important;z-index:40!important;display:flex!important;background:var(--panel)!important;padding:12px 0 4px!important;margin-top:14px!important;border-top:1px solid var(--line)!important}#workPlanFormWrap .preview-actions-left,#workPlanFormWrap .preview-actions-right,#partsFormWrap .preview-actions-left,#partsFormWrap .preview-actions-right,#faultFormWrap .preview-actions-left,#faultFormWrap .preview-actions-right{display:flex!important;flex:1!important}#workPlanFormWrap .preview-actions button,#partsFormWrap .preview-actions button,#faultFormWrap .preview-actions button{width:100%!important;min-height:48px!important}}
 .wizard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 20%);padding-top:16px}
 .preview-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.preview-title{font-size:1.05rem;font-weight:700}.preview-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}.preview-actions-left,.preview-actions-right{display:flex;gap:10px;flex-wrap:wrap}
 .paper-wrap{background:#fff;padding:12px;border-radius:18px;overflow:auto}.paper{background:#fff;color:#000;padding:9mm 8mm 8mm 8mm;font-size:10.9px;line-height:1.24;border:none;box-shadow:none;width:210mm;max-width:100%;margin:0 auto}.paper h2{margin:0 0 6px;text-align:center;font-size:18px;letter-spacing:.6px;font-weight:700}.paper .subhead{margin:0 0 9px;text-align:center;font-size:10.2px;color:#000}.paper table{width:100%;border-collapse:collapse;margin-bottom:6px;table-layout:auto}
@@ -1314,9 +1314,13 @@ html[data-theme="dark"] .attention-rich-sub, body.dark .attention-rich-sub{
   min-height:54px;
   font-size:1rem;
 }
-@media(max-width:760px){
+@media(max-width:920px){
   .mobile-tech-panel{display:block}
+  .mobile-tech-grid button:first-child{grid-column:1/-1}
+}
+@media(max-width:760px){
   .mobile-tech-grid{grid-template-columns:1fr}
+  .mobile-tech-grid button:first-child{grid-column:auto}
 }
 .work-plan-toolbar select.filter.mini{
   width:auto;
@@ -1520,7 +1524,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.104: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.107: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1672,7 +1676,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.104</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.107</div>
   </div>
 </aside>
 
@@ -2639,7 +2643,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.104',
+      appVersion: '1.6 / 5.107',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3087,10 +3091,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.104'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.107'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.104';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.107';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3507,7 +3511,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.104';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.107';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3538,7 +3542,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.104: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.107: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3573,7 +3577,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.104'
+      appVersion: '1.6 / 5.107'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -4225,7 +4229,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed}.proto-meta{font-si
 async function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
 
-  // v1.6 / 5.104: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.107: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4241,7 +4245,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.104: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.107: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -4668,7 +4672,7 @@ function fillWorkPlanSelects(){
   const place = document.getElementById('workPlanPlace');
   const placeList = document.getElementById('workPlanPlaceList');
   const placeValues = getWorkPlaceSuggestions();
-  if(tech) tech.innerHTML = TECHNICI.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+  if(tech) tech.innerHTML = '<option value="">Vyber technika</option>' + TECHNICI.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
   if(place) place.innerHTML = '<option value="">Nevyplněno</option>' + BRANCHES.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('') + '<option value="__custom__">Jiné místo</option>';
   if(placeList) placeList.innerHTML = placeValues.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
   populateTechnicianFilters();
@@ -4731,12 +4735,16 @@ function openWorkPlanForm(id=null, dateStr=null){
   editingWorkPlanId = id;
   const row = id ? (scheduleData || []).find(x => x.id === id) : null;
   document.getElementById('workPlanDate').value = formatDateForInput((row && row.date) || dateStr || ymd(new Date()));
-  document.getElementById('workPlanTech').value = (row && row.technician) || TECHNICI[0] || '';
+  document.getElementById('workPlanTech').value = (row && row.technician) || '';
   const placeSelect = document.getElementById('workPlanPlace');
   const customWrap = document.getElementById('workPlanCustomWrap');
   const customInput = document.getElementById('workPlanCustomPlace');
-  const placeVal = (row && row.place) || BRANCHES[0] || '';
-  if(BRANCHES.includes(placeVal)){
+  const placeVal = (row && row.place) || '';
+  if(!placeVal){
+    placeSelect.value = '';
+    customWrap.classList.add('hidden');
+    customInput.value = '';
+  } else if(BRANCHES.includes(placeVal)){
     placeSelect.value = placeVal;
     customWrap.classList.add('hidden');
     customInput.value = '';
@@ -4781,7 +4789,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.104'
+      appVersion:'1.6 / 5.107'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5410,7 +5418,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.104'
+      appVersion:'1.6 / 5.107'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5595,9 +5603,13 @@ input, select, textarea, button,
   min-height:54px;
   font-size:1rem;
 }
-@media(max-width:760px){
+@media(max-width:920px){
   .mobile-tech-panel{display:block}
+  .mobile-tech-grid button:first-child{grid-column:1/-1}
+}
+@media(max-width:760px){
   .mobile-tech-grid{grid-template-columns:1fr}
+  .mobile-tech-grid button:first-child{grid-column:auto}
 }
 .work-plan-toolbar select.filter.mini{
   width:auto;
@@ -5691,7 +5703,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.104: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.107: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6098,7 +6110,11 @@ function openPartForm(id=null){
   const customWrap = document.getElementById('partCustomPlaceWrap');
   const customInput = document.getElementById('partCustomPlace');
   const placeVal = (p && p.place) || '';
-  if(BRANCHES.includes(placeVal)){
+  if(!placeVal){
+    placeSelect.value = '';
+    customWrap.classList.add('hidden');
+    customInput.value = '';
+  } else if(BRANCHES.includes(placeVal)){
     placeSelect.value = placeVal;
     customWrap.classList.add('hidden');
     customInput.value = '';
@@ -6260,7 +6276,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.104'
+      appVersion:'1.6 / 5.107'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
