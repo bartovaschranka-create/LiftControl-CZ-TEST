@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.111 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.112 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -1524,7 +1524,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.112: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1708,7 +1708,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.111</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.112</div>
   </div>
 </aside>
 
@@ -2675,7 +2675,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.111',
+      appVersion: '1.6 / 5.112',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3123,10 +3123,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.111'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.112'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.111';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.112';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3543,7 +3543,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.111';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.112';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3574,7 +3574,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.111: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.112: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3609,7 +3609,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.111'
+      appVersion: '1.6 / 5.112'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -4261,7 +4261,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed}.proto-meta{font-si
 async function printCurrent(){
   if(!currentPreview){ alert('Není otevřený protokol.'); return; }
 
-  // v1.6 / 5.111: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.112: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4277,7 +4277,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.112: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -4834,7 +4834,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.111'
+      appVersion:'1.6 / 5.112'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5463,7 +5463,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.111'
+      appVersion:'1.6 / 5.112'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5748,7 +5748,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.111: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.112: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6334,7 +6334,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.111'
+      appVersion:'1.6 / 5.112'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6813,35 +6813,116 @@ function installZeppelinEasterEgg(){
   }
   function drawPrague(){
     const y = cityY();
-    const river = ctx.createLinearGradient(0,y-44,0,h);
-    river.addColorStop(0,'rgba(69,154,235,.65)'); river.addColorStop(.45,'rgba(14,48,92,.88)'); river.addColorStop(1,'#040b16');
-    ctx.fillStyle = river; ctx.fillRect(0,y-44,w,h-y+44);
-    ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 5;
+    const river = ctx.createLinearGradient(0,y-58,0,h);
+    river.addColorStop(0,'rgba(86,171,247,.72)');
+    river.addColorStop(.42,'rgba(20,67,120,.92)');
+    river.addColorStop(1,'#030814');
+    ctx.fillStyle = river; ctx.fillRect(0,y-58,w,h-y+58);
+
+    // Charles Bridge arches over the Vltava.
+    ctx.save();
+    ctx.strokeStyle = 'rgba(238,247,255,.68)';
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    for(let i=0;i<4;i++){ const x0=w*(.08+i*.22), x1=w*(.22+i*.22); ctx.moveTo(x0,y-24); ctx.quadraticCurveTo((x0+x1)/2,y-68,x1,y-24); }
+    for(let i=0;i<5;i++){
+      const x0 = w*(.05+i*.18), x1 = w*(.18+i*.18);
+      ctx.moveTo(x0,y-30);
+      ctx.quadraticCurveTo((x0+x1)/2,y-78,x1,y-30);
+    }
     ctx.stroke();
+    ctx.fillStyle = 'rgba(238,247,255,.62)';
+    for(let i=0;i<11;i++) ctx.fillRect(w*.06+i*w*.085,y-42,4,26);
+    ctx.restore();
+
+    // Foreground river bank and old town roofs.
     ctx.fillStyle = '#07101f'; ctx.fillRect(0,y,w,h-y);
-    ctx.fillStyle = '#0c1e39';
-    for(let i=0;i<15;i++){ const x=i*w/14, bw=22+(i%4)*9, bh=28+(i%6)*8; ctx.fillRect(x,y-bh,bw,bh); }
-    ctx.fillStyle = '#152d52'; ctx.beginPath(); ctx.moveTo(0,y-58); ctx.quadraticCurveTo(w*.20,y-102,w*.43,y-62); ctx.lineTo(w*.43,y); ctx.lineTo(0,y); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#edf7ff';
-    ctx.fillRect(w*.11,y-112,98,22); ctx.fillRect(w*.13,y-143,18,32); ctx.fillRect(w*.30,y-143,18,32); ctx.fillRect(w*.18,y-154,54,14);
-    ctx.beginPath(); ctx.moveTo(w*.13,y-143); ctx.lineTo(w*.139,y-170); ctx.lineTo(w*.15,y-143); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(w*.30,y-143); ctx.lineTo(w*.309,y-170); ctx.lineTo(w*.32,y-143); ctx.fill();
-    ctx.fillStyle = '#dff1ff'; ctx.fillRect(w*.73,y-122,10,122); ctx.beginPath(); ctx.arc(w*.735,y-141,21,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle = '#dff1ff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(w*.735,y-120); ctx.lineTo(w*.68,y-50); ctx.moveTo(w*.735,y-120); ctx.lineTo(w*.79,y-50); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.font = '800 13px Inter,Arial'; ctx.fillText('Praha',18,y-16);
+    ctx.fillStyle = '#0d2342';
+    for(let i=0;i<18;i++){
+      const x = i*w/17, bw = 18 + (i%5)*7, bh = 24 + (i%7)*8;
+      ctx.fillRect(x,y-bh,bw,bh);
+      ctx.beginPath(); ctx.moveTo(x-2,y-bh); ctx.lineTo(x+bw/2,y-bh-12); ctx.lineTo(x+bw+2,y-bh); ctx.fill();
+    }
+
+    // Hradcany hill and Prague Castle silhouette.
+    ctx.fillStyle = '#17365f';
+    ctx.beginPath();
+    ctx.moveTo(0,y-62); ctx.quadraticCurveTo(w*.16,y-112,w*.35,y-74); ctx.quadraticCurveTo(w*.47,y-52,w*.58,y-72); ctx.lineTo(w*.58,y); ctx.lineTo(0,y); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#f4fbff';
+    const hx = w*.08;
+    ctx.fillRect(hx,y-118,126,23);
+    ctx.fillRect(hx+16,y-151,19,36);
+    ctx.fillRect(hx+90,y-151,19,36);
+    ctx.fillRect(hx+42,y-165,44,14);
+    ctx.fillRect(hx+54,y-187,19,24);
+    ctx.beginPath(); ctx.moveTo(hx+16,y-151); ctx.lineTo(hx+25,y-179); ctx.lineTo(hx+35,y-151); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(hx+90,y-151); ctx.lineTo(hx+99,y-179); ctx.lineTo(hx+109,y-151); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(hx+54,y-187); ctx.lineTo(hx+63,y-213); ctx.lineTo(hx+73,y-187); ctx.fill();
+
+    // Petrin lookout tower.
+    const px = w*.63;
+    ctx.strokeStyle = '#dff1ff'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(px,y); ctx.lineTo(px-18,y-118); ctx.moveTo(px,y); ctx.lineTo(px+18,y-118); ctx.moveTo(px-11,y-48); ctx.lineTo(px+11,y-48); ctx.moveTo(px-14,y-78); ctx.lineTo(px+14,y-78); ctx.stroke();
+    ctx.fillStyle = '#dff1ff'; ctx.fillRect(px-12,y-124,24,8);
+
+    // Zizkov TV tower with pods.
+    const zx = w*.82;
+    ctx.fillStyle = '#dff1ff'; ctx.fillRect(zx,y-132,9,132);
+    [[zx+4,y-150,23],[zx-12,y-108,13],[zx+20,y-88,12]].forEach(p=>{ ctx.beginPath(); ctx.arc(p[0],p[1],p[2],0,Math.PI*2); ctx.fill(); });
+    ctx.strokeStyle = '#dff1ff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(zx+4,y-126); ctx.lineTo(zx-28,y-42); ctx.moveTo(zx+4,y-126); ctx.lineTo(zx+42,y-38); ctx.stroke();
+
+    ctx.fillStyle = '#ffffff'; ctx.font = '900 14px Inter,Arial'; ctx.fillText('Praha',18,y-17);
   }
   function drawZeppelin(){
-    const zy = 124 + Math.sin(Date.now()/700)*7;
-    ctx.save(); ctx.translate(zeppelinX,zy); ctx.scale(zeppelinDir,1);
-    const body = ctx.createLinearGradient(-135,-34,135,34); body.addColorStop(0,'#b8ddff'); body.addColorStop(.48,'#ffffff'); body.addColorStop(1,'#74b8f4');
-    ctx.fillStyle=body; ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.lineWidth=4;
-    ctx.beginPath(); ctx.ellipse(0,0,136,36,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle='rgba(15,47,95,.35)'; ctx.lineWidth=1.5; for(let x=-88;x<=88;x+=29){ ctx.beginPath(); ctx.moveTo(x,-31); ctx.lineTo(x,31); ctx.stroke(); }
-    ctx.fillStyle='#0f5fbf'; ctx.font='900 18px Inter,Arial'; ctx.textAlign='center'; ctx.fillText('Zeppelin',0,7); ctx.textAlign='start';
-    ctx.fillStyle='#dff1ff'; ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-132,0); ctx.lineTo(-168,-24); ctx.lineTo(-156,20); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle='#0f2f5f'; ctx.fillRect(-34,31,70,18); ctx.fillStyle='#dff1ff'; [-22,0,22].forEach(x=>ctx.fillRect(x,36,13,6));
+    const zy = 122 + Math.sin(Date.now()/720)*6;
+    const dir = zeppelinDir >= 0 ? 1 : -1;
+
+    ctx.save();
+    ctx.translate(zeppelinX,zy);
+    ctx.scale(dir,1);
+
+    // Long rigid airship silhouette inspired by Graf Zeppelin: slim hull, tapered tail, gondola, fins.
+    const hull = ctx.createLinearGradient(-168,-34,168,34);
+    hull.addColorStop(0,'#9ecdf5'); hull.addColorStop(.22,'#e9f6ff'); hull.addColorStop(.55,'#ffffff'); hull.addColorStop(1,'#70b3ed');
+    ctx.fillStyle = hull;
+    ctx.strokeStyle = 'rgba(255,255,255,.98)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-170,0);
+    ctx.bezierCurveTo(-148,-35,-76,-42,18,-36);
+    ctx.bezierCurveTo(114,-30,168,-14,176,0);
+    ctx.bezierCurveTo(168,14,114,30,18,36);
+    ctx.bezierCurveTo(-76,42,-148,35,-170,0);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(15,47,95,.30)';
+    ctx.lineWidth = 1.4;
+    for(let x=-120;x<=122;x+=30){ ctx.beginPath(); ctx.moveTo(x,-32); ctx.lineTo(x,32); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(-134,0); ctx.lineTo(146,0); ctx.stroke();
+
+    // Tail fins.
+    ctx.fillStyle = '#cfe9ff'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-154,-8); ctx.lineTo(-200,-34); ctx.lineTo(-184,-2); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-154,8); ctx.lineTo(-198,34); ctx.lineTo(-182,2); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-166,0); ctx.lineTo(-206,-13); ctx.lineTo(-190,15); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // Gondola and small window lights.
+    ctx.fillStyle = '#0f2f5f'; ctx.fillRect(-28,33,76,20);
+    ctx.fillStyle = '#dff1ff'; [-15,4,23,42].forEach(x=>ctx.fillRect(x,39,11,6));
+    ctx.fillStyle = '#7dc3ff'; ctx.fillRect(-4,54,18,4); ctx.fillRect(30,54,18,4);
+    ctx.restore();
+
+    // Keep label readable regardless of flight direction: draw it after restoring scale.
+    ctx.save();
+    ctx.fillStyle = '#0f5fbf';
+    ctx.strokeStyle = 'rgba(255,255,255,.85)';
+    ctx.lineWidth = 4;
+    ctx.font = '900 18px Inter,Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.strokeText('Zeppelin', zeppelinX, zy+1);
+    ctx.fillText('Zeppelin', zeppelinX, zy+1);
     ctx.restore();
   }
   function spawnBomb(){ bombs.push({x:zeppelinX+(Math.random()-.5)*88,y:164,vy:26+Math.random()*18,r:8,spin:0}); }
