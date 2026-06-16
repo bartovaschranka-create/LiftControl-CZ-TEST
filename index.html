@@ -1649,6 +1649,19 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   }
 }
 
+
+/* LiftControl easter egg: Prague air defense mini game */
+.easter-game{position:fixed;inset:0;display:none;z-index:120;background:radial-gradient(circle at 50% 18%,#1e88e5 0%,#0f2f5f 42%,#061528 100%);color:#fff;overflow:hidden;touch-action:none}
+.easter-game.show{display:block}
+.easter-game canvas{display:block;width:100%;height:100%}
+.easter-hud{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.45)}
+.easter-title{font-size:.95rem;letter-spacing:.02em}.easter-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.easter-pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);backdrop-filter:blur(8px);border-radius:999px;padding:7px 10px;font-size:.82rem}
+.easter-close{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:10px 12px;font-weight:800}
+.easter-start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,10,24,.32);backdrop-filter:blur(3px)}
+.easter-card{width:min(92vw,420px);border:1px solid rgba(255,255,255,.25);background:rgba(6,21,40,.74);border-radius:22px;padding:20px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.38)}
+.easter-card h3{margin:0 0 8px;font-size:1.25rem}.easter-card p{margin:0 0 14px;color:#dbeafe;line-height:1.45}.easter-card button{background:#fff;color:#0f2f5f;border-radius:14px;min-height:48px;width:100%}
+.easter-game.playing .easter-start{display:none}
+@media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 </style>
 </head>
 <body>
@@ -1657,6 +1670,25 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   <div><div class="header-title">LiftControl CZ</div><div class="header-sub">Kontroly, poruchy, plán práce a stroje</div></div>
 </header>
 <div id="sideOverlay" class="side-overlay"></div>
+<div class="easter-game" id="zeppelinGame" aria-hidden="true">
+  <canvas id="zeppelinCanvas"></canvas>
+  <div class="easter-hud">
+    <div class="easter-title">Zeppelin nad Prahou</div>
+    <div class="easter-stats">
+      <span class="easter-pill" id="zeppelinScore">Skore 0</span>
+      <span class="easter-pill" id="zeppelinLives">Praha 3</span>
+      <span class="easter-pill" id="zeppelinTime">60 s</span>
+    </div>
+  </div>
+  <button class="easter-close" type="button" id="zeppelinCloseBtn">Zpet do LiftControl</button>
+  <div class="easter-start" id="zeppelinStartPane">
+    <div class="easter-card">
+      <h3>Praha vola o pomoc</h3>
+      <p>Graf Zeppelin leti nad mestem. Pohybem prstu nebo mysi miris svetlometem, tapnutim sestrelis bomby driv, nez dopadnou.</p>
+      <button type="button" id="zeppelinStartBtn">Spustit obranu Prahy</button>
+    </div>
+  </div>
+</div>
 <aside id="sidePanel" class="side-panel">
   <div class="side-brand">
     <div class="side-logo">✓</div>
@@ -4370,6 +4402,19 @@ async function printCurrent(){
   }
 }
 
+
+/* LiftControl easter egg: Prague air defense mini game */
+.easter-game{position:fixed;inset:0;display:none;z-index:120;background:radial-gradient(circle at 50% 18%,#1e88e5 0%,#0f2f5f 42%,#061528 100%);color:#fff;overflow:hidden;touch-action:none}
+.easter-game.show{display:block}
+.easter-game canvas{display:block;width:100%;height:100%}
+.easter-hud{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.45)}
+.easter-title{font-size:.95rem;letter-spacing:.02em}.easter-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.easter-pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);backdrop-filter:blur(8px);border-radius:999px;padding:7px 10px;font-size:.82rem}
+.easter-close{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:10px 12px;font-weight:800}
+.easter-start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,10,24,.32);backdrop-filter:blur(3px)}
+.easter-card{width:min(92vw,420px);border:1px solid rgba(255,255,255,.25);background:rgba(6,21,40,.74);border-radius:22px;padding:20px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.38)}
+.easter-card h3{margin:0 0 8px;font-size:1.25rem}.easter-card p{margin:0 0 14px;color:#dbeafe;line-height:1.45}.easter-card button{background:#fff;color:#0f2f5f;border-radius:14px;min-height:48px;width:100%}
+.easter-game.playing .easter-start{display:none}
+@media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 </style>
 </head>
 <body>
@@ -5828,6 +5873,19 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   }
 }
 
+
+/* LiftControl easter egg: Prague air defense mini game */
+.easter-game{position:fixed;inset:0;display:none;z-index:120;background:radial-gradient(circle at 50% 18%,#1e88e5 0%,#0f2f5f 42%,#061528 100%);color:#fff;overflow:hidden;touch-action:none}
+.easter-game.show{display:block}
+.easter-game canvas{display:block;width:100%;height:100%}
+.easter-hud{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.45)}
+.easter-title{font-size:.95rem;letter-spacing:.02em}.easter-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.easter-pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);backdrop-filter:blur(8px);border-radius:999px;padding:7px 10px;font-size:.82rem}
+.easter-close{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:10px 12px;font-weight:800}
+.easter-start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,10,24,.32);backdrop-filter:blur(3px)}
+.easter-card{width:min(92vw,420px);border:1px solid rgba(255,255,255,.25);background:rgba(6,21,40,.74);border-radius:22px;padding:20px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.38)}
+.easter-card h3{margin:0 0 8px;font-size:1.25rem}.easter-card p{margin:0 0 14px;color:#dbeafe;line-height:1.45}.easter-card button{background:#fff;color:#0f2f5f;border-radius:14px;min-height:48px;width:100%}
+.easter-game.playing .easter-start{display:none}
+@media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 </style></head>`));
   w.document.close();
   try { w.focus(); } catch(e){}
@@ -6661,6 +6719,180 @@ function installMobileKeyboardGuard(){
   });
 }
 installMobileKeyboardGuard();
+
+function installZeppelinEasterEgg(){
+  const title = document.querySelector('header .header-title');
+  const wrap = document.getElementById('zeppelinGame');
+  const canvas = document.getElementById('zeppelinCanvas');
+  const startPane = document.getElementById('zeppelinStartPane');
+  const startBtn = document.getElementById('zeppelinStartBtn');
+  const closeBtn = document.getElementById('zeppelinCloseBtn');
+  const scoreEl = document.getElementById('zeppelinScore');
+  const livesEl = document.getElementById('zeppelinLives');
+  const timeEl = document.getElementById('zeppelinTime');
+  if(!title || !wrap || !canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let taps = 0, tapTimer = 0, raf = 0, last = 0;
+  let running = false, score = 0, lives = 3, timeLeft = 60;
+  let bombs = [], shots = [], sparks = [];
+  let aimX = 0, zeppelinX = 0, zeppelinDir = 1, bombTimer = 0;
+  let w = 0, h = 0, dpr = 1;
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = Math.max(320, window.innerWidth || 390);
+    h = Math.max(480, window.innerHeight || 720);
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    aimX = aimX || w * .5;
+  }
+  function resetGame(){
+    resize();
+    running = true; score = 0; lives = 3; timeLeft = 60;
+    bombs = []; shots = []; sparks = [];
+    zeppelinX = w * .15; zeppelinDir = 1; bombTimer = 0; last = 0;
+    wrap.classList.add('playing');
+    updateHud();
+  }
+  function updateHud(){
+    scoreEl.textContent = 'Skore ' + score;
+    livesEl.textContent = 'Praha ' + Math.max(0,lives);
+    timeEl.textContent = Math.ceil(Math.max(0,timeLeft)) + ' s';
+  }
+  function openGame(){
+    wrap.classList.add('show');
+    wrap.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    resize();
+    drawIntro();
+  }
+  function closeGame(){
+    running = false;
+    cancelAnimationFrame(raf);
+    wrap.classList.remove('show','playing');
+    wrap.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+  function fire(x){
+    if(!wrap.classList.contains('show')) return;
+    if(!running){ resetGame(); requestAnimationFrame(loop); return; }
+    shots.push({x:x || aimX, y:h-72, life:.18});
+  }
+  function cityY(){ return h - 82; }
+  function addSpark(x,y,color){
+    for(let i=0;i<9;i++) sparks.push({x,y,vx:(Math.random()-.5)*90,vy:(Math.random()-.9)*95,life:.45,color});
+  }
+  function drawSky(){
+    const g = ctx.createLinearGradient(0,0,0,h);
+    g.addColorStop(0,'#0f5fbf'); g.addColorStop(.55,'#071a36'); g.addColorStop(1,'#030915');
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    for(let i=0;i<38;i++){
+      const x = (i*97 + 23) % w;
+      const y = 52 + ((i*47) % Math.max(120,h*.35));
+      ctx.fillRect(x,y,1.4,1.4);
+    }
+  }
+  function drawPrague(){
+    const y = cityY();
+    ctx.fillStyle = '#07101f'; ctx.fillRect(0,y,w,h-y);
+    ctx.fillStyle = '#0b1930';
+    const xs = [0,.06,.11,.16,.22,.29,.35,.42,.49,.56,.63,.71,.78,.86,.94];
+    xs.forEach((p,i)=>{ const bw = 28 + (i%4)*13; const bh = 26 + (i%5)*11; ctx.fillRect(p*w,y-bh,bw,bh); });
+    ctx.beginPath();
+    ctx.moveTo(w*.08,y-18); ctx.quadraticCurveTo(w*.22,y-62,w*.38,y-18); ctx.quadraticCurveTo(w*.52,y-58,w*.66,y-18); ctx.quadraticCurveTo(w*.78,y-52,w*.92,y-18);
+    ctx.lineWidth = 5; ctx.strokeStyle = '#dbeafe'; ctx.globalAlpha = .38; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = '#dbeafe'; ctx.fillRect(w*.70,y-92,8,92); ctx.beginPath(); ctx.arc(w*.704,y-104,18,0,Math.PI*2); ctx.fill();
+    ctx.fillRect(w*.16,y-90,70,14); ctx.fillRect(w*.18,y-118,14,28); ctx.fillRect(w*.27,y-118,14,28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 12px Inter,Arial'; ctx.fillText('Praha', 18, y-16);
+  }
+  function drawZeppelin(){
+    const zy = 112 + Math.sin(Date.now()/650)*8;
+    ctx.save(); ctx.translate(zeppelinX,zy);
+    ctx.fillStyle = '#dff1ff'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(0,0,88,24,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#0f5fbf'; ctx.fillRect(-20,18,42,15); ctx.fillStyle = '#ffffff'; ctx.font = '700 11px Inter,Arial'; ctx.fillText('GZ',-10,10);
+    ctx.beginPath(); ctx.moveTo(-88,0); ctx.lineTo(-110,-16); ctx.lineTo(-103,14); ctx.closePath(); ctx.fillStyle = '#b7dcff'; ctx.fill();
+    ctx.restore();
+    return {x:zeppelinX,y:zy};
+  }
+  function drawIntro(){ drawSky(); drawPrague(); drawZeppelin(); }
+  function update(dt){
+    timeLeft -= dt;
+    zeppelinX += zeppelinDir * 58 * dt;
+    if(zeppelinX > w - 95){ zeppelinDir = -1; }
+    if(zeppelinX < 95){ zeppelinDir = 1; }
+    bombTimer -= dt;
+    if(bombTimer <= 0){
+      bombs.push({x:zeppelinX + (Math.random()-.5)*55, y:145, vy:78 + Math.random()*72, r:8});
+      bombTimer = Math.max(.45, 1.25 - score * .012);
+    }
+    bombs.forEach(b => { b.y += b.vy * dt; b.vy += 22 * dt; });
+    shots.forEach(s => s.life -= dt);
+    sparks.forEach(p => { p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 160*dt; p.life -= dt; });
+    shots = shots.filter(s => s.life > 0);
+    sparks = sparks.filter(p => p.life > 0);
+    for(const s of shots){
+      for(const b of bombs){
+        if(b.hit) continue;
+        const dx = b.x - s.x, dy = b.y - (h-72);
+        if(Math.abs(dx) < 34 && dy < 0 && dy > -h*.85){ b.hit = true; score++; addSpark(b.x,b.y,'#dff1ff'); }
+      }
+    }
+    bombs.forEach(b => { if(!b.hit && b.y > cityY()-8){ b.hit = true; lives--; addSpark(b.x,cityY()-12,'#ffdf7a'); } });
+    bombs = bombs.filter(b => !b.hit && b.y < h + 30);
+    if(lives <= 0 || timeLeft <= 0){
+      running = false; wrap.classList.remove('playing');
+      startPane.querySelector('h3').textContent = lives > 0 ? 'Praha ubrana' : 'Praha potrebuje odvetu';
+      startPane.querySelector('p').textContent = 'Skore: ' + score + '. Tapni a zkus to znovu.';
+      startBtn.textContent = 'Hrat znovu';
+    }
+    updateHud();
+  }
+  function draw(){
+    drawSky(); drawZeppelin();
+    ctx.fillStyle = '#ffffff';
+    bombs.forEach(b => { ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.fillRect(b.x-2,b.y-14,4,9); });
+    ctx.strokeStyle = 'rgba(223,241,255,.72)'; ctx.lineWidth = 3;
+    shots.forEach(s => { ctx.beginPath(); ctx.moveTo(w*.5,h-42); ctx.lineTo(s.x,64); ctx.stroke(); });
+    sparks.forEach(p => { ctx.globalAlpha = Math.max(0,p.life/.45); ctx.fillStyle = p.color; ctx.fillRect(p.x,p.y,3,3); ctx.globalAlpha = 1; });
+    drawPrague();
+    ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(w*.5,h-42); ctx.lineTo(aimX,80); ctx.stroke();
+    ctx.fillStyle = '#dff1ff'; ctx.beginPath(); ctx.arc(w*.5,h-42,16,0,Math.PI*2); ctx.fill();
+    if(!running){ ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.font = '800 18px Inter,Arial'; ctx.textAlign = 'center'; ctx.fillText(lives > 0 ? 'Praha ubrana' : 'Zkus obranu znovu', w/2, h*.48); ctx.textAlign = 'start'; }
+  }
+  function loop(ts){
+    if(!wrap.classList.contains('show')) return;
+    const dt = Math.min(.033, ((ts || 0) - (last || ts || 0)) / 1000 || .016);
+    last = ts || 0;
+    if(running) update(dt);
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function pointerX(ev){
+    const t = ev.touches && ev.touches[0];
+    return Math.max(0, Math.min(w, (t ? t.clientX : ev.clientX) || aimX));
+  }
+  title.style.cursor = 'default';
+  title.addEventListener('click', () => {
+    clearTimeout(tapTimer); taps++;
+    if(taps >= 5){ taps = 0; openGame(); raf = requestAnimationFrame(loop); return; }
+    tapTimer = setTimeout(() => { taps = 0; }, 1400);
+  });
+  startBtn?.addEventListener('click', () => { resetGame(); raf = requestAnimationFrame(loop); });
+  closeBtn?.addEventListener('click', closeGame);
+  wrap.addEventListener('mousemove', ev => { aimX = pointerX(ev); });
+  wrap.addEventListener('touchmove', ev => { aimX = pointerX(ev); ev.preventDefault(); }, {passive:false});
+  wrap.addEventListener('click', ev => { if(ev.target.closest('button')) return; aimX = pointerX(ev); fire(aimX); });
+  wrap.addEventListener('touchstart', ev => { if(ev.target.closest('button')) return; aimX = pointerX(ev); fire(aimX); ev.preventDefault(); }, {passive:false});
+  window.addEventListener('resize', () => { if(wrap.classList.contains('show')) resize(); });
+  document.addEventListener('keydown', ev => { if(ev.key === 'Escape' && wrap.classList.contains('show')) closeGame(); });
+}
+installZeppelinEasterEgg();
 
 try {
   qrEnabled = false;
