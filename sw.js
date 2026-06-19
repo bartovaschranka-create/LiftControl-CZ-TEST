@@ -1,8 +1,9 @@
-﻿const CACHE_NAME = 'liftcontrol-cz-v1-6-5-136';
+﻿const CACHE_NAME = 'liftcontrol-cz-v1-6-5-137';
 const APP_SHELL = [
   './',
   './index.html',
   './revize-machine-db.js',
+  './liftcontrol-backup-data.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
@@ -44,6 +45,7 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
   );
 });
+
 
 
 
