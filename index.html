@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.132 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.134 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -1524,7 +1524,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.132: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.134: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1663,7 +1663,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 .easter-game.playing .easter-start{display:none}
 @media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 
-/* v1.6 / 5.132: Revize ZZ / PZP */
+/* v1.6 / 5.134: Revize ZZ / PZP */
 .revize-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}.revize-toolbar .search{min-width:min(100%,280px)}
 .revize-archive-head{border:1px solid var(--line);background:linear-gradient(180deg,#f8fbff,#eef6ff);border-radius:10px;padding:10px 12px;margin:12px 0 10px}.dark .revize-archive-head{background:#111827}.revize-archive-head .step-title{margin:2px 0 3px;font-size:1.02rem}
 .revize-stepbar{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#f8fbff;border-radius:10px;padding:9px 11px;margin:0 0 12px}.dark .revize-stepbar{background:#111827}.revize-stepbar strong{font-size:.95rem}.revize-stepbar span{color:var(--muted);font-size:.82rem}.revize-step-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.revize-step-progress{min-width:72px;text-align:center;color:var(--muted);font-size:.85rem}.rz-hidden-step{display:none!important}
@@ -1722,7 +1722,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.132</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.134</div>
   </div>
 </aside>
 
@@ -2186,7 +2186,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
     <div class="helper" style="margin-bottom:10px">Postup: podklady ke stroji, technické údaje, kontrolní body A/B, závěr. ANO = vyhovuje, NE = nevyhovuje.</div>
     <div id="revizeFormBody"></div>
     <div class="preview-actions">
-      <div class="preview-actions-left"><button id="cancelRevizeBtn" class="secondary" type="button">Zrušit</button></div>
+      <div class="preview-actions-left"><button id="cancelRevizeBtn" class="secondary" type="button">Zrušit</button><button id="homeRevizeWizardBtn" class="ghost" type="button">Zpět na hlavní panel</button></div>
       <div class="preview-actions-right revize-step-controls"><button id="prevRevizeStepBtn" class="secondary" type="button">Zpět</button><span id="revizeStepProgress" class="revize-step-progress">1/1</span><button id="nextRevizeStepBtn" class="secondary" type="button">Další</button><button id="saveRevizeBtn" class="primary" type="button">Uložit revizi</button></div>
     </div>
   </div>
@@ -2725,7 +2725,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.132',
+      appVersion: '1.6 / 5.134',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -2953,7 +2953,7 @@ const els = {
 };
 
 function uid(){ return Date.now() + '_' + Math.random().toString(36).slice(2,8); }
-function todayLocal(){ return new Date().toISOString().slice(0,10); }
+function todayLocal(){ const d=new Date(); const pad=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function formatDateTime(val){
   if(!val) return '—';
   try{
@@ -2992,7 +2992,7 @@ function parseRevizeDoEndDate(val){
   const d = new Date(s + (s.length === 10 ? 'T00:00:00' : ''));
   return isNaN(d) ? null : d;
 }
-function addMonthsToDate(dateStr, months=3){ const d = new Date(dateStr || todayLocal()); const day = d.getDate(); d.setMonth(d.getMonth() + months); if(d.getDate() < day) d.setDate(0); return d.toISOString().slice(0,10); }
+function addMonthsToDate(dateStr, months=3){ const [y,m,dayRaw]=String(dateStr || todayLocal()).split('-').map(Number); const d = y&&m ? new Date(y, m-1, dayRaw||1) : new Date(); const day = d.getDate(); d.setMonth(d.getMonth() + months); if(d.getDate() < day) d.setDate(0); const pad=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function escapeHtml(v=''){ return String(v).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 function addSuggestion(key,val){ const clean = String(val||'').trim(); if(!clean || clean.length < 2) return; suggestionsStore[key] = suggestionsStore[key] || []; if(!suggestionsStore[key].includes(clean)) suggestionsStore[key].unshift(clean); suggestionsStore[key] = suggestionsStore[key].slice(0,20); }
 function getSuggestions(key,fallback=[]){ return [...new Set([...(suggestionsStore[key]||[]), ...fallback])]; }
@@ -3180,10 +3180,10 @@ function openModal(el){ el.classList.add('show'); }
 function closeModal(el){ el.classList.remove('show'); }
 
 function openWizard(editId=null, prefill={}){
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.132'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.134'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.132';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.134';
 
   // 🔥 AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
   if(rec.vc){
@@ -3600,7 +3600,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.132';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.134';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3631,7 +3631,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.132: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.134: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3666,7 +3666,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.132'
+      appVersion: '1.6 / 5.134'
     };
     if(firebaseAvailable && db){ await db.collection(AUDIT_COLLECTION_NAME).doc(item.id).set(item); }
     else { const rows = loadLocalAudit(); rows.unshift(item); saveLocalAudit(rows.slice(0,300)); auditData = rows.slice(0,300); }
@@ -4337,7 +4337,7 @@ async function printCurrent(){
     return;
   }
 
-  // v1.6 / 5.132: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.134: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4353,7 +4353,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.132: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.134: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -4899,7 +4899,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.132'
+      appVersion:'1.6 / 5.134'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5528,7 +5528,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.132'
+      appVersion:'1.6 / 5.134'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -5813,7 +5813,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.132: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.134: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6387,7 +6387,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.132'
+      appVersion:'1.6 / 5.134'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6474,9 +6474,9 @@ async function markPartResolved(id){
 }
 
 
-/* v1.6 / 5.132: Revize ZZ / PZP */
+/* v1.6 / 5.134: Revize ZZ / PZP */
 const REVIZE_DEVICE_TYPES = {
-  scissor:{label:'Nůžková plošina', druh:'samohybná nůžková zdvihací pracovní plošina', skupina:'A/3', use:['rozmer_plosiny','deck','pothole'], skip:['bocni_dosah']},
+  scissor:{label:'Nůžková plošina', druh:'samohybná nůžková zdvihací pracovní plošina', skupina:'A/3', use:['rozmer_plosiny','deck'], skip:['bocni_dosah']},
   articulated:{label:'Kloubová plošina', druh:'samohybná kloubová zdvihací pracovní plošina', skupina:'B/3', use:['bocni_dosah','rameno','teleskop','rotace_kose','otoc']},
   telescopic:{label:'Teleskopická plošina', druh:'samohybná teleskopická zdvihací pracovní plošina', skupina:'B/3', use:['bocni_dosah','teleskop','otoc','rotace_kose']},
   trailer:{label:'Vlečná plošina', druh:'vlečná zdvihací pracovní plošina', skupina:'B/2', use:['tazne','brzdy_vleku','patky','stabilizatory','podlozky']},
@@ -6486,7 +6486,7 @@ const REVIZE_A_COMMON = [
   ['A_doc','Dokumentace, návod, štítky, CE/označení dle roku výroby'],['A_konstrukce','Konstrukce, rám, svary, koroze, deformace, kryty'],['A_podvozek','Podvozek, kola/pneumatiky, brzdy pojezdu, řízení'],['A_kos','Pracovní koš, podlaha, zábradlí, vstupní branka, kotevní body'],['A_hydraulika','Hydraulika: hadice, válce, čepy, úchyty, úniky, pojistky'],['A_ovladani','Ovládání dolní/horní stanoviště, návrat ovladačů, blokace'],['A_stop','Nouzové STOP, nouzové spouštění, pomocné ovládání'],['A_bezpecnost','Bezpečnostní prvky: náklon, přetížení, koncové spínače, ochrana proti sevření'],['A_signalizace','Signalizace, alarmy, maják/houkačka, výstražné štítky'],['A_elektrika','Elektrická část stroje, kabely, konektory, akumulátor/nabíječ'],['A_funkce','Funkční zkouška bez zatížení a provozních pohybů'],['A_staticka','Statická zkouška 125 % jmenovité nosnosti'],['A_dynamicka','Dynamická zkouška 110 % jmenovité nosnosti']
 ];
 const REVIZE_A_SPECIFIC = {
-  scissor:[['A_scissor','Nůžkový mechanismus, čepy, kluzáky, vedení, dorazy, zámky a pojistky'],['A_deck','Výsuv plošiny / deck, zámky, aretace, ochrana proti výmolům'],['A_pojezd','Pojezd ve zdvižené poloze, brzdy pojezdu, řízení']],
+  scissor:[['A_scissor','Nůžkový mechanismus, čepy, kluzáky, vedení, dorazy, zámky a pojistky'],['A_deck','Výsuv plošiny / deck, zámky a aretace'],['A_pojezd','Pojezd ve zdvižené poloze, brzdy pojezdu, řízení']],
   articulated:[['A_kloub','Kloubové rameno, čepy, ložiska, vedení a dorazy'],['A_teleskop','Teleskop, výsuv, vedení, vůle a dorazy'],['A_rotace','Otoč a rotace koše, blokace, koncové polohy']],
   telescopic:[['A_teleskop','Teleskopické rameno, výsuv, vedení, vůle a dorazy'],['A_otoc','Otoč, brzda otoče, koncové polohy'],['A_rotace','Rotace koše a vyrovnávání koše']],
   trailer:[['A_tazne','Tažné zařízení, nájezdová brzda, světla a kabeláž vleku'],['A_patky','Patky, stabilizátory, podložky, aretace a blokace'],['A_podlozky','Podložky, klíny, opěrné body a ustavení stroje']],
@@ -6511,13 +6511,13 @@ function syncNormaFromRokVyroby(force=false){
   const suggested=normaPodleRokuVyroby(rok.value); if(suggested && (force || !String(norma.value||'').trim() || norma.dataset.auto==='1')){ norma.value=suggested; norma.dataset.auto='1'; }
 }
 function revizeAllA(type){ return [...REVIZE_A_COMMON.slice(0,9), ...(REVIZE_A_SPECIFIC[type] || []), ...REVIZE_A_COMMON.slice(9)]; }
-function revizeAllB(type){ const spec = {scissor:['Nůžkový mechanismus, výsuv plošiny, ochrana proti výmolům a pojezd ověřeny'],articulated:['Kloubové rameno, teleskop, otoč a rotace koše ověřeny'],telescopic:['Teleskopické rameno, otoč a rotace koše ověřeny'],trailer:['Tažné zařízení, brzdy vleku, patky, stabilizátory a podložky ověřeny'],mast:['Sloupový zdvih, vedení sloupu a výsuvné segmenty ověřeny']}; return [...REVIZE_B_COMMON.slice(0,6), ['B_spec', spec[type]?.[0] || 'Specifické prvky zařízení ověřeny'], ...REVIZE_B_COMMON.slice(6)]; }
+function revizeAllB(type){ const spec = {scissor:['Nůžkový mechanismus, výsuv plošiny a pojezd ověřeny'],articulated:['Kloubové rameno, teleskop, otoč a rotace koše ověřeny'],telescopic:['Teleskopické rameno, otoč a rotace koše ověřeny'],trailer:['Tažné zařízení, brzdy vleku, patky, stabilizátory a podložky ověřeny'],mast:['Sloupový zdvih, vedení sloupu a výsuvné segmenty ověřeny']}; return [...REVIZE_B_COMMON.slice(0,6), ['B_spec', spec[type]?.[0] || 'Specifické prvky zařízení ověřeny'], ...REVIZE_B_COMMON.slice(6)]; }
 function loadLocalRevize(){ try { return JSON.parse(localStorage.getItem('revize_zz_local') || '[]'); } catch(e){ return []; } }
 function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JSON.stringify(rows)); } catch(e){} }
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',createdAt:new Date().toISOString(),appVersion:'1.6 / 5.132'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',createdAt:new Date().toISOString(),appVersion:'1.6 / 5.134'}; }
 function revizeResult(r){ const answers = Object.values(r.checks||{}); const electro = Object.values(r.electro||{}).map(x=>x?.ok).filter(Boolean); const hasNo = [...answers,...electro].includes('NE'); const overdue = r.platnost && daysUntilDate(r.platnost) < 0; return (hasNo || overdue || String(r.vysledek||'').toUpperCase()==='NEVYHOVUJE') ? 'NEVYHOVUJE' : 'VYHOVUJE'; }
 function setRevizeMode(mode){ revizeMode = mode === 'archive' ? 'archive' : 'new'; const title=document.getElementById('revizeListTitle'); const hint=document.getElementById('revizeListHint'); const kicker=document.getElementById('revizeModeKicker'); if(kicker) kicker.textContent = revizeMode === 'archive' ? 'HOTOVÉ RZ' : 'ARCHIV RZ'; if(title) title.textContent = revizeMode === 'archive' ? 'Hotové RZ - archiv revizních protokolů' : 'Hotové RZ - uložené revizní protokoly'; if(hint) hint.textContent = 'Uložené revizní protokoly ZZ jsou oddělené od čtvrtletních kontrol, hlášení poruch a hlavního přehledu.'; }
 function openRevizeModal(mode='new'){ setRevizeMode(mode); showSection(mode === 'archive' ? 'revizeArchive' : 'revize'); if(mode === 'archive') closeRevizeForm(); renderRevize(); }
@@ -6544,12 +6544,25 @@ function ensureRevizeWizardModal(){
 }
 function openRevizeForm(id){ setRevizeMode('new'); editingRevizeId = id || null; revizeStepIndex = 0; const row = id ? JSON.parse(JSON.stringify((revizeData||[]).find(r=>r.id===id)||revizeDefaultRecord())) : revizeDefaultRecord(); window.currentRevizeDraft = row; const modal=ensureRevizeWizardModal(); renderRevizeForm(row); document.getElementById('revizeFormWrap')?.classList.remove('hidden'); showSection('revize'); modal.classList.add('show'); setTimeout(()=>document.getElementById(id ? 'rz_protokol' : 'rz_vyrobni_cislo')?.focus(),0); }
 function closeRevizeForm(){ editingRevizeId=null; window.currentRevizeDraft=null; document.getElementById('revizeFormWrap')?.classList.add('hidden'); document.getElementById('revizeWizardModal')?.classList.remove('show'); }
+function closeRevizeToHome(){ closeRevizeForm(); showSection('home'); }
 function revizeMachineRows(){ const protocolRows = [...(data||[]), ...loadLocalData()]; const revizeRows = [...(revizeData||[]), ...loadLocalRevize()]; const excelRows = Array.isArray(window.REVIZE_MACHINE_DB) ? window.REVIZE_MACHINE_DB : []; return [
   ...(excelRows||[]).map(r=>({created:r.created||'', serial:r.serial, evidencni:r.evidencni||'', maker:r.maker, model:r.model, type:r.model, deviceType:r.deviceType, year:r.year, group:r.group, place:r.place, owner:r.owner||'Zeppelin CZ s.r.o.', norma:r.norma, weight:r.weight, capacity:r.capacity, workHeight:r.workHeight, floorHeight:r.floorHeight, platform:r.platform, reach:r.reach, drive:r.drive, power:r.power, stabilizers:r.stabilizers, deck:r.deck, pothole:r.pothole, charger:r.charger, socket:r.socket, rcd:r.rcd, source:r.source, file:r.file})),
   ...(revizeRows||[]).map(r=>({created:r.updatedAt||r.datum_kontroly||'', serial:r.vyrobni_cislo, evidencni:r.evidencni_cislo, maker:r.vyrobce, model:r.model, type:r.typ, deviceType:r.typ_zarizeni, year:r.rok_vyroby, group:r.skupina, place:r.umisteni, owner:r.provozovatel, norma:r.norma, weight:r.hmotnost, capacity:r.nosnost, workHeight:r.pracovni_vyska, floorHeight:r.vyska_podlahy, platform:r.rozmer_plosiny, reach:r.bocni_dosah, drive:r.pohon, power:r.napajeni, stabilizers:r.stabilizatory, deck:r.deck, pothole:r.pothole, charger:r.nabijec, socket:r.zasuvka_kos, rcd:r.rcd})),
   ...(protocolRows||[]).map(r=>({created:r.savedAt||r.datum||'', serial:r.vc, evidencni:r.evCislo||r.evidencni_cislo||r.ec||'', maker:r.vyrobce||'', model:r.typ, type:r.typ, year:r.rok, place:r.umisteni, owner:r.provozovatel||'Zeppelin CZ s.r.o.', charger:r.chargerPresent, socket:r.socket230Present}))
 ].filter(r=>r.serial); }
-function revizeLatestMachine(serial){ const s=normalizeSerial(serial); if(!s) return null; const all=revizeMachineRows(); let rows=all.filter(r=>normalizeSerial(r.serial)===s); if(!rows.length && s.length>=3) rows=all.filter(r=>normalizeSerial(r.serial).endsWith(s)); rows.sort((a,b)=>String(b.created||'').localeCompare(String(a.created||''))); return rows[0]||null; }
+function revizeLatestMachine(serial){
+  const s=normalizeSerial(serial);
+  if(!s) return null;
+  const all=revizeMachineRows();
+  let rows=all.filter(r=>normalizeSerial(r.serial)===s);
+  if(!rows.length && s.length>=3) rows=all.filter(r=>{ const rs=normalizeSerial(r.serial); return rs.endsWith(s) || (rs.length>=3 && s.endsWith(rs)); });
+  rows.sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));
+  if(!rows.length) return null;
+  const merged={};
+  rows.forEach(r=>Object.keys(r||{}).forEach(k=>{ if((merged[k]===undefined || merged[k]==='' || merged[k]===null) && r[k]!==undefined && r[k]!==null && String(r[k]).trim()) merged[k]=r[k]; }));
+  merged.serial = rows[0].serial || merged.serial;
+  return merged;
+}
 function revizeSuggestValues(field){ const rows=revizeMachineRows(); const values=[]; const add=v=>{ if(v!==undefined && v!==null && String(v).trim()) values.push(String(v).trim()); };
   const map={vyrobni_cislo:'serial',evidencni_cislo:'evidencni',vyrobce:'maker',model:'model',rok_vyroby:'year',skupina:'group',umisteni:'place',provozovatel:'owner',norma:'norma',hmotnost:'weight',nosnost:'capacity',pracovni_vyska:'workHeight',vyska_podlahy:'floorHeight',rozmer_plosiny:'platform',bocni_dosah:'reach',pohon:'drive',napajeni:'power',stabilizatory:'stabilizers',deck:'deck',nabijec:'charger',zasuvka_kos:'socket',rcd:'rcd'};
   rows.forEach(r=>{ const key=map[field]; if(key) add(r[key]); if(field==='model') add(r.type); });
@@ -6677,30 +6690,60 @@ function setupRevizeWizard(){ attachRevizeSuggests(); const date=document.getEle
   const moveStep=dir=>{ revizeStepIndex+=dir; while(skipStep(revizeStepIndex)) revizeStepIndex+=dir; };
   function paint(){ const total=Math.max(1,titles.length); revizeStepIndex=Math.max(0,Math.min(revizeStepIndex,total-1)); kids.forEach(el=>el.classList.toggle('rz-hidden-step', Number(el.dataset.rzStep)!==revizeStepIndex)); const label=titles[revizeStepIndex]?.textContent||'Revize ZZ'; bar.innerHTML=`<div><strong>${escapeHtml(label)}</strong><br><span>Postupné zadávání revize ZZ</span></div><span>Krok ${revizeStepIndex+1}/${total}</span>`; const prev=document.getElementById('prevRevizeStepBtn'), next=document.getElementById('nextRevizeStepBtn'), save=document.getElementById('saveRevizeBtn'), prog=document.getElementById('revizeStepProgress'); if(prev) prev.disabled=revizeStepIndex===0; if(next) next.classList.toggle('hidden', revizeStepIndex>=total-1); if(save) save.classList.toggle('hidden', revizeStepIndex<total-1); if(prog) prog.textContent=`${revizeStepIndex+1}/${total}`; }
   function focusCurrentStep(){ const nodes=kids.filter(el=>Number(el.dataset.rzStep)===revizeStepIndex); const target=nodes.map(el=>el.matches?.('input,select,textarea')?el:el.querySelector?.('input,select,textarea')).find(Boolean); setTimeout(()=>target?.focus(),0); }
-  const rokVyroby=document.getElementById('rz_rok_vyroby'), norma=document.getElementById('rz_norma'); rokVyroby?.addEventListener('change',()=>syncNormaFromRokVyroby(true)); rokVyroby?.addEventListener('input',()=>syncNormaFromRokVyroby(false)); norma?.addEventListener('input',()=>{ norma.dataset.auto='0'; }); syncNormaFromRokVyroby(false); const prevBtn=document.getElementById('prevRevizeStepBtn'), nextBtn=document.getElementById('nextRevizeStepBtn'); if(prevBtn) prevBtn.onclick=()=>{ collectRevizeDraft(); moveStep(-1); paint(); focusCurrentStep(); }; if(nextBtn) nextBtn.onclick=()=>{ if(revizeStepIndex===0) applyRevizeDefaultsFromSerial(document.getElementById('rz_vyrobni_cislo')?.value); const d=collectRevizeDraft(); moveStep(1); if(revizeStepIndex===2){ renderRevizeForm(d); setTimeout(()=>document.querySelector(`#revizeFormWrap .revize-form-grid [data-rz-step="${revizeStepIndex}"] input, #revizeFormWrap .revize-form-grid [data-rz-step="${revizeStepIndex}"] select, #revizeFormWrap .revize-form-grid [data-rz-step="${revizeStepIndex}"] textarea`)?.focus(),0); return; } paint(); focusCurrentStep(); }; paint();
+  const rokVyroby=document.getElementById('rz_rok_vyroby'), norma=document.getElementById('rz_norma'); rokVyroby?.addEventListener('change',()=>syncNormaFromRokVyroby(true)); rokVyroby?.addEventListener('input',()=>syncNormaFromRokVyroby(false)); norma?.addEventListener('input',()=>{ norma.dataset.auto='0'; }); syncNormaFromRokVyroby(false); const prevBtn=document.getElementById('prevRevizeStepBtn'), nextBtn=document.getElementById('nextRevizeStepBtn'); if(prevBtn) prevBtn.onclick=()=>{ collectRevizeDraft(); moveStep(-1); paint(); focusCurrentStep(); }; if(nextBtn) nextBtn.onclick=()=>{ if(revizeStepIndex===0) applyRevizeDefaultsFromSerial(document.getElementById('rz_vyrobni_cislo')?.value); collectRevizeDraft(); moveStep(1); paint(); focusCurrentStep(); }; paint();
 }
-async function syncQuarterlyAfterRevize(r){ const serial=normalizeSerial(r.vyrobni_cislo); if(!serial || !r.datum_kontroly) return; const rows=(data||[]).filter(x=>normalizeSerial(x.vc)===serial).sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||''))); const last=rows[0]; if(!last) return; last.datum=r.datum_kontroly; last.dalsiKontrola=addMonthsToDate(r.datum_kontroly,3); last.revizeZZLinkedAt=new Date().toISOString(); last.revizeZZProtokol=r.protokol||''; last.appVersion='1.6 / 5.132'; saveLocalData(data); render(); renderHomeOverview(); if(firebaseAvailable&&db){ db.collection(COLLECTION_NAME).doc(last.id).set(last).catch(e=>console.warn('Sync quarterly after Revize ZZ failed', e)); } }
+async function syncQuarterlyAfterRevize(r){
+  const serial=normalizeSerial(r.vyrobni_cislo);
+  if(!serial || !r.datum_kontroly) return;
+  const matchesSerial=x=>{ const s=normalizeSerial(x?.vc); return s===serial || (serial.length>=3 && s.endsWith(serial)) || (s.length>=3 && serial.endsWith(s)); };
+  const localRows=loadLocalData();
+  const rows=[...(data||[]), ...localRows]
+    .filter(matchesSerial)
+    .sort((a,b)=>String(b.datum||'').localeCompare(String(a.datum||'')));
+  const last=rows[0];
+  if(!last) return;
+  last.datum=r.datum_kontroly;
+  last.dalsiKontrola=addMonthsToDate(r.datum_kontroly,3);
+  last.revizeZZLinkedAt=new Date().toISOString();
+  last.revizeZZProtokol=r.protokol||'';
+  last.typ=last.typ||r.model||r.typ||'';
+  last.rok=last.rok||r.rok_vyroby||'';
+  last.umisteni=r.umisteni||last.umisteni||'';
+  last.appVersion='1.6 / 5.134';
+  const replaceByIdOrSerial=(arr, updated)=>{
+    const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
+    if(idx>=0) arr[idx]={...arr[idx],...updated};
+    else arr.unshift(updated);
+  };
+  replaceByIdOrSerial(data, last);
+  replaceByIdOrSerial(localRows, last);
+  saveLocalData(data);
+  saveLocalData(localRows);
+  render();
+  renderHomeOverview();
+  if(firebaseAvailable&&db&&last.id){ db.collection(COLLECTION_NAME).doc(last.id).set(last).catch(e=>console.warn('Sync quarterly after Revize ZZ failed', e)); }
+}
 function rzVal(k){ return escapeHtml(window.currentRevizeDraft?.[k] || ''); }
 function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const deviceOptions = Object.entries(REVIZE_DEVICE_TYPES).map(([k,v])=>`<option value="${k}" ${type===k?'selected':''}>${escapeHtml(v.label)}</option>`).join(''); const techOptions = ['','Jan Bartoš','Petr Čáp','Lukáš Machačka','Vít Procházka','Ondřej Lakva'].map(x=>`<option value="${escapeHtml(x)}" ${r.rt_jmeno===x?'selected':''}>${escapeHtml(x||'Vyber technika')}</option>`).join('');
   document.getElementById('revizeFormBody').innerHTML = `<div class="revize-form-grid">
     <div class="revize-section-title">Protokol</div><div class="field"><label>Protokol č.</label><input id="rz_protokol" value="${rzVal('protokol')}"></div><div class="field"><label>Datum kontroly</label><input id="rz_datum_kontroly" type="date" value="${rzVal('datum_kontroly')}"></div><div class="field"><label>Platnost do</label><input id="rz_platnost" type="date" value="${rzVal('platnost')}"></div><div class="field"><label>Druh kontroly</label><input id="rz_druh_kontroly" value="${rzVal('druh_kontroly')}"></div>
     <div class="revize-section-title">Provozovatel a zařízení</div><div class="field wide"><label>Provozovatel</label><input id="rz_provozovatel" value="${rzVal('provozovatel')}"></div><div class="field wide"><label>Umístění / pobočka</label><input id="rz_umisteni" value="${rzVal('umisteni')}"></div><div class="field"><label>Typ zařízení</label><select id="rz_typ_zarizeni">${deviceOptions}</select></div><div class="field"><label>Výrobce</label><input id="rz_vyrobce" value="${rzVal('vyrobce')}"></div><div class="field"><label>Model</label><input id="rz_model" value="${rzVal('model')}"></div><div class="field"><label>Výrobní číslo</label><input id="rz_vyrobni_cislo" value="${rzVal('vyrobni_cislo')}"></div><div class="field"><label>Evidenční číslo</label><input id="rz_evidencni_cislo" value="${rzVal('evidencni_cislo')}"></div><div class="field"><label>Rok výroby</label><input id="rz_rok_vyroby" value="${rzVal('rok_vyroby')}"></div><div class="field"><label>Použitá norma</label><input id="rz_norma" value="${rzVal('norma')}" placeholder="Automaticky podle roku výroby"></div><div class="field"><label>Skupina / typ</label><input id="rz_skupina" value="${rzVal('skupina')}"></div>
-    <div class="revize-section-title">Technické údaje</div>${['hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','typ_kol','stabilizatory','deck','pothole','nabijec','zasuvka_kos','rcd'].map(k=>`<div class="field"><label>${escapeHtml(revizeFieldLabel(k))}</label><input id="rz_${k}" value="${rzVal(k)}"></div>`).join('')}
-    <div class="revize-section-title">Revizní technik a měřicí přístroje</div><div class="field"><label>Revizní technik</label><select id="rz_rt_jmeno">${techOptions}</select></div><div class="field"><label>ZZ osvědčení</label><input id="rz_rt_zz_osvedceni" value="${rzVal('rt_zz_osvedceni')}"></div><div class="field"><label>ZZ oprávnění</label><input id="rz_rt_zz_opravneni" value="${rzVal('rt_zz_opravneni')}"></div><div class="field"><label>EZ</label><input id="rz_rt_ez" value="${rzVal('rt_ez')}"></div><div class="field"><label>EZ osvědčení</label><input id="rz_rt_ez_osvedceni" value="${rzVal('rt_ez_osvedceni')}"></div><div class="field"><label>Měřicí přístroj</label><input id="rz_pristroj" value="${rzVal('pristroj')}"></div><div class="field"><label>Ev. číslo</label><input id="rz_pristroj_ev" value="${rzVal('pristroj_ev')}"></div><div class="field"><label>Kalibrace platná do</label><input id="rz_kalibrace" value="${rzVal('kalibrace')}"></div>
+    <div class="revize-section-title">Technické údaje</div>${['hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd'].map(k=>`<div class="field"><label>${escapeHtml(revizeFieldLabel(k))}</label><input id="rz_${k}" value="${rzVal(k)}"></div>`).join('')}
+    <div class="revize-section-title">Revizní technik a měřicí přístroje</div><div class="field"><label>Revizní technik</label><select id="rz_rt_jmeno">${techOptions}</select></div><div class="field"><label>ZZ osvědčení</label><input id="rz_rt_zz_osvedceni" value="${rzVal('rt_zz_osvedceni')}"></div><div class="field"><label>ZZ oprávnění</label><input id="rz_rt_zz_opravneni" value="${rzVal('rt_zz_opravneni')}"></div><div class="field"><label>EZ osvědčení</label><input id="rz_rt_ez_osvedceni" value="${rzVal('rt_ez_osvedceni')}"></div><div class="field"><label>Měřicí přístroj</label><input id="rz_pristroj" value="${rzVal('pristroj')}"></div><div class="field"><label>Ev. číslo</label><input id="rz_pristroj_ev" value="${rzVal('pristroj_ev')}"></div><div class="field"><label>Kalibrace platná do</label><input id="rz_kalibrace" value="${rzVal('kalibrace')}"></div>
     <div class="revize-section-title">Kontrolní body - Strana A</div><div class="full"><div class="revize-check-grid">${revizeCheckRows(revizeAllA(type),r,'A')}</div></div>
     <div class="revize-section-title">Elektro měření</div><div class="full">${revizeElectroTable(r)}</div>
     <div class="revize-section-title">Kontrolní body - Strana B / NV 378/2001 Sb.</div><div class="full"><div class="revize-check-grid">${revizeCheckRows(revizeAllB(type),r,'B')}</div></div>
-    <div class="revize-section-title">Závady a podpisy</div><div class="field full"><label>Zjištěné závady / opatření</label><textarea id="rz_zavady">${rzVal('zavady')}</textarea></div><div class="field"><label>Termín odstranění</label><input id="rz_termin_odstraneni" value="${rzVal('termin_odstraneni')}"></div><div class="field"><label>Předal</label><input id="rz_predal" value="${rzVal('predal')}"></div><div class="field"><label>Převzal</label><input id="rz_prevzal" value="${rzVal('prevzal')}"></div>
-  </div>`; ['stabilizatory','deck','nabijec','zasuvka_kos','rcd'].forEach(configureRevizeYesNoField); lockRevizeFixedFields(); arrangeRevizeDeviceFirst(); document.getElementById('rz_typ_zarizeni')?.addEventListener('change',()=>{ collectRevizeDraft(); const d=window.currentRevizeDraft; const cfg=REVIZE_DEVICE_TYPES[d.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; d.typ=cfg.label; d.skupina=d.skupina||cfg.skupina; renderRevizeForm(d); }); setupRevizeWizard(); }
-function revizeFieldLabel(k){ return ({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',rozmer_plosiny:'Rozměr plošiny',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',typ_kol:'Typ kol',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',pothole:'Ochrana proti výmolům',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; }
+    <div class="revize-section-title">Závady a podpisy</div><div class="field full"><label>Zjištěné závady / opatření</label><textarea id="rz_zavady">${rzVal('zavady')}</textarea></div><div class="field"><label>Předal</label><input id="rz_predal" value="${rzVal('predal')}"></div><div class="field"><label>Převzal</label><input id="rz_prevzal" value="${rzVal('prevzal')}"></div>
+  </div>`; ['stabilizatory','deck','nabijec','zasuvka_kos','rcd'].forEach(configureRevizeYesNoField); lockRevizeFixedFields(); arrangeRevizeDeviceFirst(); document.getElementById('rz_typ_zarizeni')?.addEventListener('change',()=>{ const d=collectRevizeDraft(); const cfg=REVIZE_DEVICE_TYPES[d.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; d.typ=cfg.label; if(!d.skupina) d.skupina=cfg.skupina; window.currentRevizeDraft=d; }); setupRevizeWizard(); }
+function revizeFieldLabel(k){ return ({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',rozmer_plosiny:'Rozměr plošiny',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','typ_kol','stabilizatory','deck','pothole','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','termin_odstraneni','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.132'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.134'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){ if(revizeSaveInProgress) return; const r=collectRevizeDraft(); if(!r.protokol || !r.datum_kontroly || !r.vyrobni_cislo){ alert('Vyplň minimálně protokol č., datum kontroly a výrobní číslo.'); return; } revizeSaveInProgress=true; try{ const wasEdit = !!editingRevizeId; await saveRevizeRecord(r); await syncQuarterlyAfterRevize(r); closeRevizeForm(); renderRevize(); await logAuditAction(wasEdit?'update':'create','revize_zz',r,r.rt_jmeno||'','Revize ZZ · '+(r.protokol||'')); }catch(e){ console.error(e); alert('Uložení revize ZZ se nepodařilo.'); } finally{ revizeSaveInProgress=false; } }
 async function saveRevizeRecord(r){ r.id=r.id||uid(); const idx=(revizeData||[]).findIndex(x=>x.id===r.id); if(idx>=0) revizeData[idx]=r; else revizeData.unshift(r); saveLocalRevize(revizeData); if(firebaseAvailable&&db) db.collection(REVIZE_ZZ_COLLECTION_NAME).doc(r.id).set(r).catch(e=>console.warn('Revize ZZ Firebase save failed', e)); }
 async function deleteRevize(id){ const r=(revizeData||[]).find(x=>x.id===id); if(!r || !confirm('Smazat revizi ZZ '+(r.protokol||'')+'?')) return; revizeData=revizeData.filter(x=>x.id!==id); saveLocalRevize(revizeData); if(firebaseAvailable&&db) await db.collection(REVIZE_ZZ_COLLECTION_NAME).doc(id).delete(); renderRevize(); }
 function renderRevize(){ const list=document.getElementById('revizeList'); if(!list) return; const q=(document.getElementById('revizeSearch')?.value||'').toLowerCase(); const tf=document.getElementById('revizeTypeFilter')?.value||'all'; const rf=document.getElementById('revizeResultFilter')?.value||'all'; let rows=[...(revizeData||[])].sort((a,b)=>String(b.datum_kontroly||'').localeCompare(String(a.datum_kontroly||''))); rows=rows.filter(r=>(tf==='all'||r.typ_zarizeni===tf)&&(rf==='all'||(rf==='ok'?revizeResult(r)==='VYHOVUJE':revizeResult(r)==='NEVYHOVUJE'))&&(!q||[r.protokol,r.vyrobni_cislo,r.evidencni_cislo,r.model,r.vyrobce,r.provozovatel,r.umisteni].join(' ').toLowerCase().includes(q))); list.innerHTML=rows.length?rows.map(r=>`<div class="card revize-card ${revizeResult(r)==='VYHOVUJE'?'ok':'bad'}"><div class="card-head"><div><strong>${escapeHtml(r.protokol||'Bez čísla')}</strong><div class="meta">${escapeHtml(r.typ||'')} · ${escapeHtml(r.vyrobce||'')} ${escapeHtml(r.model||'')} · v.č. ${escapeHtml(r.vyrobni_cislo||'')}</div></div><span class="badge ${revizeResult(r)==='VYHOVUJE'?'badge-ok':'badge-warn'}">${revizeResult(r)}</span></div><div class="meta-grid"><div class="meta"><div class="meta-label">Datum</div><div class="meta-value">${escapeHtml(formatDate(r.datum_kontroly))}</div></div><div class="meta"><div class="meta-label">Platnost</div><div class="meta-value">${escapeHtml(formatDate(r.platnost))}</div></div><div class="meta"><div class="meta-label">Provozovatel</div><div class="meta-value">${escapeHtml(r.provozovatel||'')}</div></div><div class="meta"><div class="meta-label">RT</div><div class="meta-value">${escapeHtml(r.rt_jmeno||'')}</div></div></div><div class="card-actions"><button class="secondary mini" data-rz-edit="${r.id}">Upravit</button><button class="secondary mini" data-rz-print="${r.id}">Tisk/PDF</button><button class="secondary mini" data-rz-docx="${r.id}">DOCX</button><button class="danger mini" data-rz-del="${r.id}">Smazat</button></div></div>`).join(''):'<div class="empty">Zatím není uložená žádná revize ZZ.</div>'; list.querySelectorAll('[data-rz-edit]').forEach(b=>b.addEventListener('click',()=>openRevizeForm(b.dataset.rzEdit))); list.querySelectorAll('[data-rz-print]').forEach(b=>b.addEventListener('click',()=>printRevizeById(b.dataset.rzPrint))); list.querySelectorAll('[data-rz-docx]').forEach(b=>b.addEventListener('click',()=>downloadRevizeDocx(b.dataset.rzDocx))); list.querySelectorAll('[data-rz-del]').forEach(b=>b.addEventListener('click',()=>deleteRevize(b.dataset.rzDel))); }
-function revizePaperHtml(r){ const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; const yn=(v,want)=>v===want?'X':''; const rows=(items)=>items.map(([k,l])=>`<tr><td>${escapeHtml(l)}</td><td class="yn">${yn((r.checks||{})[k]||'ANO','ANO')}</td><td class="yn">${yn((r.checks||{})[k]||'ANO','NE')}</td><td class="note">${escapeHtml((r.notes||{})[k]||'')}</td></tr>`).join(''); const kv=(arr)=>`<table class="kv">${arr.map(row=>`<tr>${row.map(c=>`<td>${escapeHtml(c||'')}</td>`).join('')}</tr>`).join('')}</table>`; const result=revizeResult(r); const electro=REVIZE_ELECTRO.map(([k,l,u])=>{const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td>${escapeHtml(e.value||'')}</td><td>${escapeHtml(u)}</td><td class="yn">${yn(e.ok||'ANO','ANO')}</td><td class="yn">${yn(e.ok||'ANO','NE')}</td><td>${escapeHtml(e.note||'')}</td></tr>`;}).join(''); return `<div class="revize-paper"><h1>PROTOKOL - ${escapeHtml((r.typ||cfg.label).toUpperCase())}</h1><h1>STRANA A - REVIZE / OVĚŘENÍ VYHRAZENÉHO ZDVIHACÍHO ZAŘÍZENÍ</h1><div class="legal">Základ provedení: NV č. 193/2022 Sb.; ČSN EN 280 / ČSN EN 280-1; ČSN ISO 18878 / ČSN ISO 18893; ČSN EN 60204-1 ed. 3; ČSN EN 50699 dle výbavy. Zkouška el. části stroje není revizí elektroinstalace objektu.</div>${kv([['Protokol č.',r.protokol,'Druh zařízení',cfg.druh],['Výrobce / model',[r.vyrobce,r.model].filter(Boolean).join(' / '),'Skupina / typ',r.skupina],['Výrobní / evid. č.',[r.vyrobni_cislo,r.evidencni_cislo].filter(Boolean).join(' / '),'Rok výroby / norma',[r.rok_vyroby,r.norma].filter(Boolean).join(' / ')],['Provozovatel',r.provozovatel,'Umístění / pobočka',r.umisteni],['Datum kontroly',formatDate(r.datum_kontroly),'Platnost do',formatDate(r.platnost)],['Revizní technik',r.rt_jmeno,'Pověřená osoba',r.predal]])}<table><tr><td class="section" colspan="4">Technické údaje</td></tr>${[['Hmotnost',r.hmotnost,'Nosnost',r.nosnost],['Prac. výška',r.pracovni_vyska,'Výška podlahy',r.vyska_podlahy],['Rozměr koše',r.rozmer_plosiny,'Boční dosah',r.bocni_dosah],['Statická zkouška 125 %',r.staticka_zatez,'Dynamická zkouška 110 %',r.dynamicka_zatez],['Pohon',r.pohon,'Napájení / el. výbava',r.napajeni],['Stabilizátory',r.stabilizatory,'Deck / pothole',[r.deck,r.pothole].filter(Boolean).join(' / ')],['Zásuvka v koši / RCD',[r.zasuvka_kos,r.rcd].filter(Boolean).join(' / '),'Nabíječ',r.nabijec]].map(x=>`<tr><td><b>${escapeHtml(x[0])}</b></td><td>${escapeHtml(x[1]||'')}</td><td><b>${escapeHtml(x[2])}</b></td><td>${escapeHtml(x[3]||'')}</td></tr>`).join('')}</table><table><thead><tr><th>Kontrolovaný bod revize ZZ / ověření stavu</th><th class="yn">ANO</th><th class="yn">NE</th><th class="note">Poznámka / opatření</th></tr></thead><tbody>${rows(revizeAllA(r.typ_zarizeni))}</tbody></table><table><thead><tr><th>Měřená část dle výbavy</th><th>Hodnota</th><th>Metoda / jednotka</th><th>ANO</th><th>NE</th><th>Poznámka</th></tr></thead><tbody>${electro}</tbody></table><table><tr><td><b>Zjištěné závady</b><br>${escapeHtml(r.zavady||'')}</td><td><b>Termín odstranění</b><br>${escapeHtml(r.termin_odstraneni||'')}</td><td><b>Vyhodnocení revize</b><br><span class="${result==='VYHOVUJE'?'revize-result-ok':'revize-result-bad'}">${result}</span></td></tr></table></div><div class="revize-paper page-break"><h1>PROTOKOL - ${escapeHtml((r.typ||cfg.label).toUpperCase())}</h1><h1>STRANA B - KONTROLA BEZPEČNOSTI PROVOZU DLE NV Č. 378/2001 Sb.</h1><div class="legal">Kontrola bezpečnosti provozu dle NV č. 378/2001 Sb. Posouzen stav zařízení při kontrole/předání půjčovny. Kontrola nenahrazuje revizi vyhrazeného zdvihacího zařízení ani revizi elektroinstalace objektu.</div>${kv([['Protokol č.',r.protokol,'Zařízení',cfg.druh],['Výrobce / model',[r.vyrobce,r.model].filter(Boolean).join(' / '),'Výrobní / evid. č.',[r.vyrobni_cislo,r.evidencni_cislo].filter(Boolean).join(' / ')],['Provozovatel / pracoviště',[r.provozovatel,r.umisteni].filter(Boolean).join(' / '),'Datum',formatDate(r.datum_kontroly)],['Pohon / napájení / stabilizátory',[r.pohon,r.napajeni,r.stabilizatory].filter(Boolean).join(' / '),'Převzal',r.prevzal]])}<table><thead><tr><th>Kontrolovaný bod dle NV č. 378/2001 Sb. a provozních podmínek půjčovny</th><th class="yn">ANO</th><th class="yn">NE</th><th class="note">Opatření / poznámka</th></tr></thead><tbody>${rows(revizeAllB(r.typ_zarizeni))}</tbody></table><table><tr><td><b>Závady / opatření</b><br>${escapeHtml(r.zavady||'')}</td><td><b>Termín následné kontroly</b><br>${escapeHtml(formatDate(r.platnost))}</td></tr></table><table><tr><th>Revizní technik</th><th>Převzal za provozovatele</th></tr><tr><td>Jméno/funkce: ${escapeHtml(r.rt_jmeno||'')}</td><td>Jméno/funkce: ${escapeHtml(r.prevzal||'')}</td></tr><tr><td class="sign">Datum:<br>Podpis:</td><td class="sign">Datum:<br>Podpis:</td></tr></table><p><b>ZÁVĚREČNÉ VYHODNOCENÍ:</b> Zařízení ${result==='VYHOVUJE'?'je':'není'} z hlediska bezpečnosti schopné provozu.</p><p>Rozdělovník: 1x provozovatel / 1x revizní technik</p></div>`; }
+function revizePaperHtml(r){ const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; const yn=(v,want)=>v===want?'X':''; const rows=(items)=>items.map(([k,l])=>`<tr><td>${escapeHtml(l)}</td><td class="yn">${yn((r.checks||{})[k]||'ANO','ANO')}</td><td class="yn">${yn((r.checks||{})[k]||'ANO','NE')}</td><td class="note">${escapeHtml((r.notes||{})[k]||'')}</td></tr>`).join(''); const kv=(arr)=>`<table class="kv">${arr.map(row=>`<tr>${row.map(c=>`<td>${escapeHtml(c||'')}</td>`).join('')}</tr>`).join('')}</table>`; const result=revizeResult(r); const electro=REVIZE_ELECTRO.map(([k,l,u])=>{const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td>${escapeHtml(e.value||'')}</td><td>${escapeHtml(u)}</td><td class="yn">${yn(e.ok||'ANO','ANO')}</td><td class="yn">${yn(e.ok||'ANO','NE')}</td><td>${escapeHtml(e.note||'')}</td></tr>`;}).join(''); return `<div class="revize-paper"><h1>PROTOKOL - ${escapeHtml((r.typ||cfg.label).toUpperCase())}</h1><h1>STRANA A - REVIZE / OVĚŘENÍ VYHRAZENÉHO ZDVIHACÍHO ZAŘÍZENÍ</h1><div class="legal">Základ provedení: NV č. 193/2022 Sb.; ČSN EN 280 / ČSN EN 280-1; ČSN ISO 18878 / ČSN ISO 18893; ČSN EN 60204-1 ed. 3; ČSN EN 50699 dle výbavy. Zkouška el. části stroje není revizí elektroinstalace objektu.</div>${kv([['Protokol č.',r.protokol,'Druh zařízení',cfg.druh],['Výrobce / model',[r.vyrobce,r.model].filter(Boolean).join(' / '),'Skupina / typ',r.skupina],['Výrobní / evid. č.',[r.vyrobni_cislo,r.evidencni_cislo].filter(Boolean).join(' / '),'Rok výroby / norma',[r.rok_vyroby,r.norma].filter(Boolean).join(' / ')],['Provozovatel',r.provozovatel,'Umístění / pobočka',r.umisteni],['Datum kontroly',formatDate(r.datum_kontroly),'Platnost do',formatDate(r.platnost)],['Revizní technik',r.rt_jmeno,'Pověřená osoba',r.predal]])}<table><tr><td class="section" colspan="4">Technické údaje</td></tr>${[['Hmotnost',r.hmotnost,'Nosnost',r.nosnost],['Prac. výška',r.pracovni_vyska,'Výška podlahy',r.vyska_podlahy],['Rozměr koše',r.rozmer_plosiny,'Boční dosah',r.bocni_dosah],['Statická zkouška 125 %',r.staticka_zatez,'Dynamická zkouška 110 %',r.dynamicka_zatez],['Pohon',r.pohon,'Napájení / el. výbava',r.napajeni],['Stabilizátory',r.stabilizatory,'Výsuvný deck',r.deck],['Zásuvka v koši / RCD',[r.zasuvka_kos,r.rcd].filter(Boolean).join(' / '),'Nabíječ',r.nabijec]].map(x=>`<tr><td><b>${escapeHtml(x[0])}</b></td><td>${escapeHtml(x[1]||'')}</td><td><b>${escapeHtml(x[2])}</b></td><td>${escapeHtml(x[3]||'')}</td></tr>`).join('')}</table><table><thead><tr><th>Kontrolovaný bod revize ZZ / ověření stavu</th><th class="yn">ANO</th><th class="yn">NE</th><th class="note">Poznámka / opatření</th></tr></thead><tbody>${rows(revizeAllA(r.typ_zarizeni))}</tbody></table><table><thead><tr><th>Měřená část dle výbavy</th><th>Hodnota</th><th>Metoda / jednotka</th><th>ANO</th><th>NE</th><th>Poznámka</th></tr></thead><tbody>${electro}</tbody></table><table><tr><td><b>Zjištěné závady / opatření</b><br>${escapeHtml(r.zavady||'')}</td><td><b>Vyhodnocení revize</b><br><span class="${result==='VYHOVUJE'?'revize-result-ok':'revize-result-bad'}">${result}</span></td></tr></table></div><div class="revize-paper page-break"><h1>PROTOKOL - ${escapeHtml((r.typ||cfg.label).toUpperCase())}</h1><h1>STRANA B - KONTROLA BEZPEČNOSTI PROVOZU DLE NV Č. 378/2001 Sb.</h1><div class="legal">Kontrola bezpečnosti provozu dle NV č. 378/2001 Sb. Posouzen stav zařízení při kontrole/předání půjčovny. Kontrola nenahrazuje revizi vyhrazeného zdvihacího zařízení ani revizi elektroinstalace objektu.</div>${kv([['Protokol č.',r.protokol,'Zařízení',cfg.druh],['Výrobce / model',[r.vyrobce,r.model].filter(Boolean).join(' / '),'Výrobní / evid. č.',[r.vyrobni_cislo,r.evidencni_cislo].filter(Boolean).join(' / ')],['Provozovatel / pracoviště',[r.provozovatel,r.umisteni].filter(Boolean).join(' / '),'Datum',formatDate(r.datum_kontroly)],['Pohon / napájení / stabilizátory',[r.pohon,r.napajeni,r.stabilizatory].filter(Boolean).join(' / '),'Převzal',r.prevzal]])}<table><thead><tr><th>Kontrolovaný bod dle NV č. 378/2001 Sb. a provozních podmínek půjčovny</th><th class="yn">ANO</th><th class="yn">NE</th><th class="note">Opatření / poznámka</th></tr></thead><tbody>${rows(revizeAllB(r.typ_zarizeni))}</tbody></table><table><tr><td><b>Závady / opatření</b><br>${escapeHtml(r.zavady||'')}</td><td><b>Termín následné kontroly</b><br>${escapeHtml(formatDate(r.platnost))}</td></tr></table><table><tr><th>Revizní technik</th><th>Převzal za provozovatele</th></tr><tr><td>Jméno/funkce: ${escapeHtml(r.rt_jmeno||'')}</td><td>Jméno/funkce: ${escapeHtml(r.prevzal||'')}</td></tr><tr><td class="sign">Datum:<br>Podpis:</td><td class="sign">Datum:<br>Podpis:</td></tr></table><p><b>ZÁVĚREČNÉ VYHODNOCENÍ:</b> Zařízení ${result==='VYHOVUJE'?'je':'není'} z hlediska bezpečnosti schopné provozu.</p><p>Rozdělovník: 1x provozovatel / 1x revizní technik</p></div>`; }
 function printRevizeById(id){
   const r=(revizeData||[]).find(x=>x.id===id);
   if(!r) return;
@@ -6775,6 +6818,7 @@ document.getElementById('closeRevizeBtn')?.addEventListener('click', closeRevize
 document.getElementById('closeRevizeTopBtn')?.addEventListener('click', closeRevizeModal);
 document.getElementById('addRevizeBtn')?.addEventListener('click', () => openRevizeForm());
 document.getElementById('cancelRevizeBtn')?.addEventListener('click', closeRevizeForm);
+document.getElementById('homeRevizeWizardBtn')?.addEventListener('click', closeRevizeToHome);
 document.getElementById('saveRevizeBtn')?.addEventListener('click', saveRevizeFromForm);
 document.getElementById('revizeSearch')?.addEventListener('input', renderRevize);
 document.getElementById('revizeTypeFilter')?.addEventListener('change', renderRevize);
@@ -7348,6 +7392,8 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
+
 
 
 
