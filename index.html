@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.157 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.158 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -1536,7 +1536,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.157: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.158: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1675,11 +1675,12 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 .easter-game.playing .easter-start{display:none}
 @media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 
-/* v1.6 / 5.157: Revize ZZ / PZP */
+/* v1.6 / 5.158: Revize ZZ / PZP */
 .revize-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}.revize-toolbar .search{min-width:min(100%,280px)}
 .revize-archive-head{border:1px solid var(--line);background:linear-gradient(180deg,#f8fbff,#eef6ff);border-radius:10px;padding:10px 12px;margin:12px 0 10px}.dark .revize-archive-head{background:#111827}.revize-archive-head .step-title{margin:2px 0 3px;font-size:1.02rem}
 .revize-stepbar{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#f8fbff;border-radius:10px;padding:9px 11px;margin:0 0 12px}.dark .revize-stepbar{background:#111827}.revize-stepbar strong{font-size:.95rem}.revize-stepbar span{color:var(--muted);font-size:.82rem}.revize-step-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.revize-step-progress{min-width:72px;text-align:center;color:var(--muted);font-size:.85rem}.rz-hidden-step{display:none!important}
-.revize-wizard-modal .modal-content{width:min(100%,760px)}.revize-wizard-modal .revize-form{display:block;border:0;box-shadow:none;border-radius:0;margin:0;padding:22px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}.dark .revize-wizard-modal .revize-form{background:linear-gradient(180deg,#111827 0%,#0f172a 100%)}.revize-wizard-modal #revizeFormWrap>h3,.revize-wizard-modal #revizeFormWrap>.helper{display:none}.revize-wizard-modal .revize-form-grid{grid-template-columns:1fr}.revize-wizard-modal .revize-section-title{margin:0 0 10px;padding:0;border:0;background:transparent;color:var(--text);font-size:1.28rem;text-transform:none;letter-spacing:0}.dark .revize-wizard-modal .revize-section-title{background:transparent;color:var(--text)}.revize-wizard-modal .field{margin-top:0}.revize-wizard-modal .field label{display:none}.revize-wizard-modal .preview-actions{margin-top:18px}.revize-wizard-modal .revize-stepbar{margin-bottom:14px}.revize-wizard-placeholder{display:none}
+.revize-wizard-modal .modal-content{width:min(96vw,860px);max-height:min(94dvh,820px)}.revize-wizard-modal .revize-form{display:block;border:0;box-shadow:none;border-radius:0;margin:0;padding:22px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}.dark .revize-wizard-modal .revize-form{background:linear-gradient(180deg,#111827 0%,#0f172a 100%)}.revize-wizard-modal #revizeFormWrap>h3,.revize-wizard-modal #revizeFormWrap>.helper{display:none}.revize-wizard-modal .revize-form-grid{grid-template-columns:1fr}.revize-wizard-modal .revize-section-title{margin:0 0 10px;padding:0;border:0;background:transparent;color:var(--text);font-size:1.28rem;text-transform:none;letter-spacing:0}.dark .revize-wizard-modal .revize-section-title{background:transparent;color:var(--text)}.revize-wizard-modal .field{margin-top:0}.revize-wizard-modal .field label{display:none}.revize-wizard-modal .preview-actions{margin-top:18px}.revize-wizard-modal .revize-stepbar{margin-bottom:14px}.revize-wizard-placeholder{display:none}
+@media(max-width:640px){.revize-wizard-modal{padding:8px!important}.revize-wizard-modal .modal-content{width:100%;max-height:calc(100dvh - 16px)}.revize-wizard-modal .revize-form{padding:16px}.revize-wizard-modal .preview-actions-right{display:grid;grid-template-columns:1fr 1fr;width:100%}.revize-wizard-modal .preview-actions-right button{width:100%}}
 .revize-form{border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px;margin:12px 0 16px;box-shadow:0 10px 28px rgba(15,47,95,.08)}
 .dark .revize-form{background:#0f172a}.revize-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.revize-form-grid .wide{grid-column:span 2}.revize-form-grid .full{grid-column:1/-1}
 .revize-section-title{grid-column:1/-1;margin:8px 0 0;padding:7px 9px;border-left:4px solid var(--brand);background:#eff6ff;color:#0f2f5f;font-weight:900;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}.dark .revize-section-title{background:#172554;color:#dbeafe}
@@ -1687,7 +1688,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 @media(max-width:900px){.revize-form-grid{grid-template-columns:1fr}.revize-form-grid .wide{grid-column:auto}.revize-check-row{grid-template-columns:1fr}.revize-paper{width:100%;min-height:auto;padding:12px;box-shadow:none}.revize-toolbar .search{min-width:0;flex:1}}
 @media print{body.printing-revize header,body.printing-revize aside,body.printing-revize .container,body.printing-revize .preview-actions{display:none!important}.revize-paper{box-shadow:none;margin:0;padding:8mm;page-break-after:always}}
 
-/* v1.6 / 5.157: Revize ZZ tisknout jako přesné dvě čitelné A4 strany bez křížků/fajfek. */
+/* v1.6 / 5.158: Revize ZZ tisknout jako přesné dvě čitelné A4 strany bez křížků/fajfek. */
 .revize-paper{box-sizing:border-box;display:flex;flex-direction:column;gap:4px;min-height:297mm}
 .revize-paper table{table-layout:fixed;margin:0 0 4px;break-inside:avoid;page-break-inside:avoid}
 .revize-paper tr{break-inside:avoid;page-break-inside:avoid}
@@ -1707,7 +1708,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   .revize-paper:last-child{page-break-after:auto!important;break-after:auto!important}
 }
 
-/* v1.6 / 5.157: stable CSS icons, mobile overflow and cloud-save feedback */
+/* v1.6 / 5.158: stable CSS icons, mobile overflow and cloud-save feedback */
 html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
 img,svg,canvas,video{max-width:100%}
 .container,.page-section,.modal,.modal-content,.wizard-shell,.preview-shell,#content,.field,.suggest-wrap,.wizard-actions,.preview-actions,.preview-actions-left,.preview-actions-right{max-width:100%;min-width:0;box-sizing:border-box}
@@ -1720,13 +1721,13 @@ input,textarea,select,button{max-width:100%;min-width:0;box-sizing:border-box}
 .mark-box{width:14px;height:14px;border:1.7px solid #111;border-radius:2px;vertical-align:middle;position:relative;background:#fff}.mark-box.checked{background:#111}
 @media(max-width:640px){.modal{align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 10px) max(8px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom,0px) + 12px) max(8px,env(safe-area-inset-left))}.modal-content{width:100%;max-height:none!important;overflow:visible!important;border-radius:16px}.wizard-shell,.preview-shell{padding:16px}.wizard-actions{position:sticky;bottom:0;z-index:4;margin-left:-16px;margin-right:-16px;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(180deg,rgba(255,255,255,0) 0%,var(--panel) 22%)}.wizard-actions>div{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}.wizard-actions button{min-height:46px}#preview.modal.show{display:block!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;align-items:initial!important;justify-content:initial!important}#preview .modal-content{margin:0 auto 20px;max-height:none!important;overflow:visible!important}#preview .preview-shell,#preview .paper-wrap,#previewBody{overflow:visible!important;max-height:none!important}#preview .paper-page{min-height:auto!important;height:auto!important;overflow:visible!important;padding:8mm 5mm!important}.home-machine-search-row,.toolbar-right{min-width:0}.search,.filter{min-width:0;width:100%}}
 
-/* v1.6 / 5.157: náhled protokolu se na PC i mobilu posouvá celým oknem náhledu, ne zamčeným vnitřním panelem. */
+/* v1.6 / 5.158: náhled protokolu se na PC i mobilu posouvá celým oknem náhledu, ne zamčeným vnitřním panelem. */
 #preview.modal.show{display:block!important;align-items:initial!important;justify-content:initial!important;height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:18px!important;z-index:120!important}
 #preview .modal-content{margin:0 auto 24px!important;max-height:none!important;overflow:visible!important}
 #preview .preview-shell,#previewBody{max-height:none!important;overflow:visible!important}
 #preview .paper-wrap{max-height:none!important;overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch}
 
-/* v1.6 / 5.157: hlavní obrazovka musí zůstat posuvná kolečkem myši i po zavření náhledů a her. */
+/* v1.6 / 5.158: hlavní obrazovka musí zůstat posuvná kolečkem myši i po zavření náhledů a her. */
 html,body{height:auto!important;min-height:100%!important;overflow-y:auto!important}
 body{position:relative!important}
 
@@ -1778,7 +1779,7 @@ body{position:relative!important}
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.157</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.158</div>
   </div>
 </aside>
 
@@ -2851,7 +2852,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.157',
+      appVersion: '1.6 / 5.158',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3171,21 +3172,22 @@ function addMonthsToDate(dateStr, months=3){ const [y,m,dayRaw]=String(dateStr |
 function escapeHtml(v=''){ return String(v).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 function addSuggestion(key,val){ const clean = String(val||'').trim(); if(!clean || clean.length < 2) return; suggestionsStore[key] = suggestionsStore[key] || []; if(!suggestionsStore[key].includes(clean)) suggestionsStore[key].unshift(clean); suggestionsStore[key] = suggestionsStore[key].slice(0,20); }
 function getSuggestions(key,fallback=[]){ return [...new Set([...(suggestionsStore[key]||[]), ...fallback])]; }
+function normalizeSearchText(v){
+  return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'').trim();
+}
 function filterSuggestions(items,q){
-  q = String(q||'').trim().toLowerCase();
+  q = String(q||'').trim();
   if(!q) return [];
 
-  const normalize = (v) => String(v||'').toLowerCase().replace(/\s+/g,'').trim();
   const seen = new Set();
   const out = [];
-  const queryCompact = normalize(q);
+  const queryCompact = normalizeSearchText(q);
 
   for(const item of items){
     const raw = String(item||'');
-    const rawLower = raw.toLowerCase();
-    const rawCompact = normalize(raw);
+    const rawCompact = normalizeSearchText(raw);
 
-    if(!(rawLower.includes(q) || rawCompact.includes(queryCompact))) continue;
+    if(!rawCompact.includes(queryCompact)) continue;
     if(seen.has(rawCompact)) continue;
 
     seen.add(rawCompact);
@@ -3414,10 +3416,10 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.157'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.158'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.157';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.158';
 
   // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
@@ -3841,7 +3843,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.157';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.158';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3873,7 +3875,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.157: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.158: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3908,7 +3910,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.157'
+      appVersion: '1.6 / 5.158'
     };
     const rows = loadLocalAudit();
     rows.unshift(item);
@@ -4601,7 +4603,7 @@ async function printCurrent(){
     return;
   }
 
-  // v1.6 / 5.157: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.158: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4617,7 +4619,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.157: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.158: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -5172,7 +5174,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.157'
+      appVersion:'1.6 / 5.158'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5810,7 +5812,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.157'
+      appVersion:'1.6 / 5.158'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -6095,7 +6097,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.157: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.158: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6679,7 +6681,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.157'
+      appVersion:'1.6 / 5.158'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6766,7 +6768,7 @@ async function markPartResolved(id){
 }
 
 
-/* v1.6 / 5.157: Revize ZZ / PZP */
+/* v1.6 / 5.158: Revize ZZ / PZP */
 const REVIZE_DEVICE_TYPES = {
   scissor:{label:'Nůžková plošina', druh:'samohybná nůžková zdvihací pracovní plošina', skupina:'A/3', use:['rozmer_plosiny','deck'], skip:['bocni_dosah']},
   articulated:{label:'Kloubová plošina', druh:'samohybná kloubová zdvihací pracovní plošina', skupina:'B/3', use:['bocni_dosah','rameno','teleskop','rotace_kose','otoc']},
@@ -6829,7 +6831,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.157'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.158'}; }
 function revizeResult(r){ const answers = Object.values(r.checks||{}); const electro = Object.values(r.electro||{}).map(x=>x?.ok).filter(Boolean); const hasNo = [...answers,...electro].includes('NE'); const overdue = r.platnost && daysUntilDate(r.platnost) < 0; return (hasNo || overdue || String(r.vysledek||'').toUpperCase()==='NEVYHOVUJE') ? 'NEVYHOVUJE' : 'VYHOVUJE'; }
 function setRevizeMode(mode){ revizeMode = mode === 'archive' ? 'archive' : 'new'; const title=document.getElementById('revizeListTitle'); const hint=document.getElementById('revizeListHint'); const kicker=document.getElementById('revizeModeKicker'); if(kicker) kicker.textContent = revizeMode === 'archive' ? 'HOTOVÉ RZ' : 'ARCHIV RZ'; if(title) title.textContent = revizeMode === 'archive' ? 'Hotové RZ - archiv revizních protokolů' : 'Hotové RZ - uložené revizní protokoly'; if(hint) hint.textContent = 'Uložené revizní protokoly ZZ jsou oddělené od čtvrtletních kontrol, hlášení poruch a hlavního přehledu.'; }
 function openRevizeModal(mode='new'){ setRevizeMode(mode); showSection(mode === 'archive' ? 'revizeArchive' : 'revize'); if(mode === 'archive') closeRevizeForm(); renderRevize(); }
@@ -6888,6 +6890,17 @@ function serialMatchesCandidate(serial, candidate){
   const rs=normalizeSerial(candidate);
   return !!s && !!rs && (rs===s || (s.length>=3 && rs.endsWith(s)) || (rs.length>=3 && s.endsWith(rs)));
 }
+function normalizeBranchAddress(value, owner=''){
+  const raw = String(value||'').trim();
+  const company = String(owner||'').trim() || 'Zeppelin CZ s.r.o.';
+  if(!raw) return '';
+  const compact = normalizeSearchText(raw);
+  if(compact.includes('jazlovice') || compact.includes('zdebradska')) return `${company} – Zděbradská 57, 251 01 Jažlovice`;
+  return raw.replace(/\s+-\s+|\s+–\s+/, ' – ').replace(/\s*,\s*/g, ', ').replace(/\s{2,}/g, ' ');
+}
+function revizeFieldSourceKey(field){
+  return {vyrobni_cislo:'serial',evidencni_cislo:'evidencni',vyrobce:'maker',model:'model',rok_vyroby:'year',skupina:'group',umisteni:'place',provozovatel:'owner',norma:'norma',normy_revize:'normyRevize',hmotnost:'weight',nosnost:'capacity',pracovni_vyska:'workHeight',vyska_podlahy:'floorHeight',rozmer_plosiny:'platform',bocni_dosah:'reach',naklon:'tilt',pohon:'drive',napajeni:'power',stabilizatory:'stabilizers',deck:'deck',nabijec:'charger',zasuvka_kos:'socket',rcd:'rcd'}[field] || '';
+}
 function revizeLatestMachine(serial){
   const s=normalizeSerial(serial);
   if(!s) return null;
@@ -6905,16 +6918,31 @@ function revizeLatestMachine(serial){
     rows=all.filter(r=>normalizeSerial(r.serial)===s);
     if(!rows.length && s.length>=3) rows=all.filter(r=>{ const rs=normalizeSerial(r.serial); return rs.endsWith(s) || (rs.length>=3 && s.endsWith(rs)); });
   }
-  rows.sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));
+  rows.sort((a,b)=>{
+    const ax=normalizeSerial(a.serial)===s ? 1 : 0;
+    const bx=normalizeSerial(b.serial)===s ? 1 : 0;
+    if(ax!==bx) return bx-ax;
+    return String(b.created||'').localeCompare(String(a.created||''));
+  });
   if(!rows.length) return null;
   const merged={};
   rows.forEach(r=>Object.keys(r||{}).forEach(k=>{ if((merged[k]===undefined || merged[k]==='' || merged[k]===null) && r[k]!==undefined && r[k]!==null && String(r[k]).trim()) merged[k]=r[k]; }));
   merged.serial = rows[0].serial || merged.serial;
+  if(merged.place) merged.place = normalizeBranchAddress(merged.place, merged.owner);
   return merged;
 }
 function revizeSuggestValues(field){ const rows=revizeMachineRows(); const values=[]; const add=v=>{ if(v!==undefined && v!==null && String(v).trim()) values.push(String(v).trim()); };
+  const currentSerial = document.getElementById('rz_vyrobni_cislo')?.value || window.currentRevizeDraft?.vyrobni_cislo || '';
+  const exact = revizeLatestMachine(currentSerial);
+  const exactKey = revizeFieldSourceKey(field);
+  if(exact && exactKey){
+    let exactValue = exact[exactKey];
+    if(field==='model' && !exactValue) exactValue = exact.type;
+    if(field==='umisteni') exactValue = normalizeBranchAddress(exactValue, exact.owner);
+    if(exactValue !== undefined && exactValue !== null && String(exactValue).trim()) return [String(exactValue).trim()];
+  }
   const map={vyrobni_cislo:'serial',evidencni_cislo:'evidencni',vyrobce:'maker',model:'model',rok_vyroby:'year',skupina:'group',umisteni:'place',provozovatel:'owner',norma:'norma',normy_revize:'normyRevize',hmotnost:'weight',nosnost:'capacity',pracovni_vyska:'workHeight',vyska_podlahy:'floorHeight',rozmer_plosiny:'platform',bocni_dosah:'reach',naklon:'tilt',pohon:'drive',napajeni:'power',stabilizatory:'stabilizers',deck:'deck',nabijec:'charger',zasuvka_kos:'socket',rcd:'rcd'};
-  rows.forEach(r=>{ const key=map[field]; if(key) add(r[key]); if(field==='model') add(r.type); });
+  rows.forEach(r=>{ const key=map[field]; if(key) add(field==='umisteni' ? normalizeBranchAddress(r[key], r.owner) : r[key]); if(field==='model') add(r.type); });
   (revizeData||[]).forEach(r=>add(r[field]));
   if(['stabilizatory','deck','nabijec','zasuvka_kos','rcd'].includes(field)){ add('ANO'); add('NE'); }
   return [...new Set(values)].slice(0,60);
@@ -6949,7 +6977,7 @@ function applyRevizeDefaultsFromSerial(serial){
     if(!info) return;
     window.revizeApplyingDefaults = true;
     const set=(id,val,force=false)=>{ const el=document.getElementById(id); if(!el || val===undefined || val===null || !String(val).trim()) return; const cur=String(el.value||'').trim(); if(force || !cur || el.dataset.rzAuto==='1'){ el.value=String(val).trim(); el.dataset.rzAuto='1'; } };
-    set('rz_vyrobce', info.maker); set('rz_norma', info.norma); set('rz_normy_revize', info.normyRevize||revizeDefaultNormy(info.norma)); set('rz_model', info.model||info.type); set('rz_evidencni_cislo', info.evidencni); set('rz_rok_vyroby', info.year); set('rz_skupina', info.group); set('rz_umisteni', info.place); set('rz_provozovatel', info.owner); set('rz_hmotnost', info.weight); set('rz_nosnost', info.capacity); set('rz_pracovni_vyska', info.workHeight); set('rz_vyska_podlahy', info.floorHeight); set('rz_rozmer_plosiny', info.platform); set('rz_bocni_dosah', info.reach); set('rz_naklon', info.tilt); set('rz_pohon', info.drive); set('rz_napajeni', info.power); set('rz_stabilizatory', info.stabilizers); set('rz_deck', info.deck); set('rz_nabijec', info.charger); set('rz_zasuvka_kos', info.socket); set('rz_rcd', info.rcd);
+    set('rz_vyrobni_cislo', info.serial || serial, true); set('rz_vyrobce', info.maker); set('rz_norma', info.norma); set('rz_normy_revize', info.normyRevize||revizeDefaultNormy(info.norma)); set('rz_model', info.model||info.type); set('rz_evidencni_cislo', info.evidencni); set('rz_rok_vyroby', info.year); set('rz_skupina', info.group); set('rz_umisteni', normalizeBranchAddress(info.place, info.owner)); set('rz_provozovatel', info.owner); set('rz_hmotnost', info.weight); set('rz_nosnost', info.capacity); set('rz_pracovni_vyska', info.workHeight); set('rz_vyska_podlahy', info.floorHeight); set('rz_rozmer_plosiny', info.platform); set('rz_bocni_dosah', info.reach); set('rz_naklon', info.tilt); set('rz_pohon', info.drive); set('rz_napajeni', info.power); set('rz_stabilizatory', info.stabilizers); set('rz_deck', info.deck); set('rz_nabijec', info.charger); set('rz_zasuvka_kos', info.socket); set('rz_rcd', info.rcd);
     ['stabilizatory','deck','nabijec','zasuvka_kos','rcd'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el && (el.dataset.rzAuto==='1' || !String(el.value||'').trim())) el.value=revizeYesNoValue(el.value); });
     const type=document.getElementById('rz_typ_zarizeni'); const inferredType=info.deviceType||inferRevizeDeviceType([info.type,info.model].filter(Boolean).join(' ')); if(type && inferredType && REVIZE_DEVICE_TYPES[inferredType] && (!type.value || type.value==='scissor' || type.dataset.rzAuto==='1')){ type.value=inferredType; type.dataset.rzAuto='1'; }
     syncNormaFromRokVyroby(false);
@@ -7037,15 +7065,25 @@ function attachRevizeSuggestInput(input, getItems, onPick){
     const all=uniqueNonEmpty(getItems ? getItems() : []);
     const items=(q ? filterSuggestions(all,q) : all).slice(0,8);
     if(!items.length){ close(); return; }
-    box.innerHTML=items.map(v=>`<div class="smart-suggest-item" data-value="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('');
+    box.innerHTML=items.map(v=>`<div class="smart-suggest-item" role="option" tabindex="-1" data-value="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('');
     box.classList.add('show');
-    box.querySelectorAll('.smart-suggest-item').forEach(item=>item.onpointerdown=ev=>{
+    let pickedAt = 0;
+    const pick=(item, ev)=>{
       ev.preventDefault(); ev.stopPropagation();
+      const now = Date.now();
+      if(now - pickedAt < 250) return;
+      pickedAt = now;
       input.value=item.dataset.value||'';
+      input.dataset.rzAuto='0';
       input.dispatchEvent(new Event('input',{bubbles:true}));
       input.dispatchEvent(new Event('change',{bubbles:true}));
       close();
       if(typeof onPick==='function') onPick(input.value);
+      safeCollectRevizeDraft('revize suggest pick');
+      try{ input.focus({preventScroll:true}); }catch(_e){ input.focus(); }
+    };
+    box.querySelectorAll('.smart-suggest-item').forEach(item=>{
+      ['pointerdown','mousedown','touchstart','click'].forEach(type=>item.addEventListener(type, ev=>pick(item, ev), {passive:false}));
     });
   };
   input.addEventListener('input', ()=>{ if(!window.revizeApplyingDefaults) input.dataset.rzAuto='0'; open(); });
@@ -7098,7 +7136,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.157';
+  last.appVersion='1.6 / 5.158';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -7126,7 +7164,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ return ({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',rozmer_plosiny:'Rozměr plošiny',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.157'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.158'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
