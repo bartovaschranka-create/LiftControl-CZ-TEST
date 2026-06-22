@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
@@ -62,7 +62,7 @@ button{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weig
 input::placeholder, textarea::placeholder{color:#334155;font-weight:600;font-size:1rem;opacity:1} textarea{min-height:110px;resize:vertical}
 .suggest-wrap{position:relative}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 8px);border:1px solid var(--line);border-radius:14px;background:#fff;max-height:220px;overflow:auto;box-shadow:0 10px 24px rgba(15,23,42,.08);z-index:20}.suggest-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:.95rem}.suggest-item:last-child{border-bottom:none}.suggest-item:hover{background:#f8fbff}.helper{font-size:.8rem;color:var(--muted);margin-top:6px}
 .smart-suggest-wrap{position:relative;overflow:visible}.smart-suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);display:none;max-height:168px;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 26px rgba(15,23,42,.18);z-index:2147483000}.smart-suggest-box.show{display:block}.smart-suggest-box.mobile-floating{position:fixed!important;right:auto!important;top:auto;bottom:auto;z-index:2147483646!important;max-height:180px!important}.smart-suggest-item{padding:10px 12px;border-bottom:1px solid #eef2f7;cursor:pointer;font-size:.92rem;line-height:1.25;background:#fff}.smart-suggest-item:last-child{border-bottom:none}.smart-suggest-item:hover{background:#f8fbff}.smart-suggest-muted{padding:9px 12px;color:var(--muted);font-size:.86rem}.field textarea + .smart-suggest-box{top:calc(100% + 6px)}body.dark .smart-suggest-box{background:#0f172a;border-color:var(--line)}body.dark .smart-suggest-item{background:#0f172a;border-bottom-color:#243244}body.dark .smart-suggest-item:hover{background:#172033}
-/* v1.6 / 5.154 – našeptávač přímo pod polem jako světlý oddělený seznam */
+/* v1.6 / 5.156 – našeptávač přímo pod polem jako světlý oddělený seznam */
 .smart-suggest-wrap{position:relative!important;overflow:visible!important}
 .smart-suggest-box{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 6px)!important;bottom:auto!important;display:none;max-height:210px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#f1f5f9!important;border:1px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(15,23,42,.18)!important;z-index:2147483647!important}
 .smart-suggest-box.show{display:block!important}
@@ -1536,7 +1536,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 
 
 
-/* v1.6 / 5.154: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.156: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -1675,7 +1675,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 .easter-game.playing .easter-start{display:none}
 @media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
 
-/* v1.6 / 5.154: Revize ZZ / PZP */
+/* v1.6 / 5.156: Revize ZZ / PZP */
 .revize-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}.revize-toolbar .search{min-width:min(100%,280px)}
 .revize-archive-head{border:1px solid var(--line);background:linear-gradient(180deg,#f8fbff,#eef6ff);border-radius:10px;padding:10px 12px;margin:12px 0 10px}.dark .revize-archive-head{background:#111827}.revize-archive-head .step-title{margin:2px 0 3px;font-size:1.02rem}
 .revize-stepbar{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#f8fbff;border-radius:10px;padding:9px 11px;margin:0 0 12px}.dark .revize-stepbar{background:#111827}.revize-stepbar strong{font-size:.95rem}.revize-stepbar span{color:var(--muted);font-size:.82rem}.revize-step-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.revize-step-progress{min-width:72px;text-align:center;color:var(--muted);font-size:.85rem}.rz-hidden-step{display:none!important}
@@ -1687,7 +1687,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 @media(max-width:900px){.revize-form-grid{grid-template-columns:1fr}.revize-form-grid .wide{grid-column:auto}.revize-check-row{grid-template-columns:1fr}.revize-paper{width:100%;min-height:auto;padding:12px;box-shadow:none}.revize-toolbar .search{min-width:0;flex:1}}
 @media print{body.printing-revize header,body.printing-revize aside,body.printing-revize .container,body.printing-revize .preview-actions{display:none!important}.revize-paper{box-shadow:none;margin:0;padding:8mm;page-break-after:always}}
 
-/* v1.6 / 5.154: Revize ZZ tisknout jako přesné dvě čitelné A4 strany bez křížků/fajfek. */
+/* v1.6 / 5.156: Revize ZZ tisknout jako přesné dvě čitelné A4 strany bez křížků/fajfek. */
 .revize-paper{box-sizing:border-box;display:flex;flex-direction:column;gap:4px;min-height:297mm}
 .revize-paper table{table-layout:fixed;margin:0 0 4px;break-inside:avoid;page-break-inside:avoid}
 .revize-paper tr{break-inside:avoid;page-break-inside:avoid}
@@ -1707,7 +1707,7 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
   .revize-paper:last-child{page-break-after:auto!important;break-after:auto!important}
 }
 
-/* v1.6 / 5.154: stable CSS icons, mobile overflow and cloud-save feedback */
+/* v1.6 / 5.156: stable CSS icons, mobile overflow and cloud-save feedback */
 html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
 img,svg,canvas,video{max-width:100%}
 .container,.page-section,.modal,.modal-content,.wizard-shell,.preview-shell,#content,.field,.suggest-wrap,.wizard-actions,.preview-actions,.preview-actions-left,.preview-actions-right{max-width:100%;min-width:0;box-sizing:border-box}
@@ -1720,13 +1720,13 @@ input,textarea,select,button{max-width:100%;min-width:0;box-sizing:border-box}
 .mark-box{width:14px;height:14px;border:1.7px solid #111;border-radius:2px;vertical-align:middle;position:relative;background:#fff}.mark-box.checked{background:#111}
 @media(max-width:640px){.modal{align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 10px) max(8px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom,0px) + 12px) max(8px,env(safe-area-inset-left))}.modal-content{width:100%;max-height:none!important;overflow:visible!important;border-radius:16px}.wizard-shell,.preview-shell{padding:16px}.wizard-actions{position:sticky;bottom:0;z-index:4;margin-left:-16px;margin-right:-16px;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(180deg,rgba(255,255,255,0) 0%,var(--panel) 22%)}.wizard-actions>div{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}.wizard-actions button{min-height:46px}#preview.modal.show{display:block!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;align-items:initial!important;justify-content:initial!important}#preview .modal-content{margin:0 auto 20px;max-height:none!important;overflow:visible!important}#preview .preview-shell,#preview .paper-wrap,#previewBody{overflow:visible!important;max-height:none!important}#preview .paper-page{min-height:auto!important;height:auto!important;overflow:visible!important;padding:8mm 5mm!important}.home-machine-search-row,.toolbar-right{min-width:0}.search,.filter{min-width:0;width:100%}}
 
-/* v1.6 / 5.154: náhled protokolu se na PC i mobilu posouvá celým oknem náhledu, ne zamčeným vnitřním panelem. */
+/* v1.6 / 5.156: náhled protokolu se na PC i mobilu posouvá celým oknem náhledu, ne zamčeným vnitřním panelem. */
 #preview.modal.show{display:block!important;align-items:initial!important;justify-content:initial!important;height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:18px!important;z-index:120!important}
 #preview .modal-content{margin:0 auto 24px!important;max-height:none!important;overflow:visible!important}
 #preview .preview-shell,#previewBody{max-height:none!important;overflow:visible!important}
 #preview .paper-wrap{max-height:none!important;overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch}
 
-/* v1.6 / 5.154: hlavní obrazovka musí zůstat posuvná kolečkem myši i po zavření náhledů a her. */
+/* v1.6 / 5.156: hlavní obrazovka musí zůstat posuvná kolečkem myši i po zavření náhledů a her. */
 html,body{height:auto!important;min-height:100%!important;overflow-y:auto!important}
 body{position:relative!important}
 
@@ -1778,7 +1778,7 @@ body{position:relative!important}
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.154</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Verze: 1.6 / 5.156</div>
   </div>
 </aside>
 
@@ -2265,7 +2265,7 @@ body{position:relative!important}
 </div></div></div>
 
 <div class="modal" id="qrModal"><div class="modal-content"><div class="wizard-shell">
-  <h3 class="step-title">?? Vyfotit / vybrat QR kód plošiny</h3>
+  <h3 class="step-title">Vyfotit / vybrat QR kód plošiny</h3>
   <p class="step-desc">Vyfoť štítek nebo vyber fotku z galerie. Aplikace z obrázku načte QR a předvyplní typ zařízení i výrobní číslo.</p>
   <div id="qrReader" class="qr-reader" style="display:flex;align-items:center;justify-content:center;background:#f8fbff;color:#64748b;min-height:160px">Vyfoť QR kód nebo vyber fotku z galerie.</div>
   <div class="qr-help">Jednoduché focení QR bez serveru. Když se QR nepodaří přečíst, aplikace tě vrátí zpět na další pokus.</div>
@@ -2851,7 +2851,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.154',
+      appVersion: '1.6 / 5.156',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3414,12 +3414,12 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.154'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.156'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.154';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.156';
 
-  // ?? AUTO DOPLNĚNÍ Z HISTORIE PODLE VÝROBNÍHO ČÍSLA
+  // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
     const history = findProtocolsByMachine(rec.vc);
     if(history.length){
@@ -3841,7 +3841,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.154';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.156';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -3873,7 +3873,7 @@ function openPreviewById(id){
 function closePreview(){
   closeModal(els.preview);
 }
-/* v1.6 / 5.154: tisk protokolu přes samostatnou čistou tiskovou stránku. */
+/* v1.6 / 5.156: tisk protokolu přes samostatnou čistou tiskovou stránku. */
 
 function downloadById(id){
   const record = data.find(r => r.id === id);
@@ -3908,7 +3908,7 @@ async function logAuditAction(action, entity, record, by, detail){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.154'
+      appVersion: '1.6 / 5.156'
     };
     const rows = loadLocalAudit();
     rows.unshift(item);
@@ -4601,7 +4601,7 @@ async function printCurrent(){
     return;
   }
 
-  // v1.6 / 5.154: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
+  // v1.6 / 5.156: Přímý tisk z modalu i PDF generování přes html2pdf v některých prohlížečích vracelo prázdnou stránku.
   // Proto se protokol otevře jako samostatná čistá tisková stránka s vlastním CSS. Tisk se spustí až z této viditelné stránky.
   els.previewBody.innerHTML = renderPaper(currentPreview);
   const element = els.previewBody.querySelector('.paper');
@@ -4617,7 +4617,7 @@ async function printCurrent(){
 <title>${escapeHtml(fileBase)} - tisk protokolu</title>
 <style>${getPrintStyles()}
 
-/* v1.6 / 5.154: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.156: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -5172,7 +5172,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.154'
+      appVersion:'1.6 / 5.156'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -5810,7 +5810,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.154'
+      appVersion:'1.6 / 5.156'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -6095,7 +6095,7 @@ body.dark .audit-item{background:var(--panel2)}
 body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
 
 
-/* v1.6 / 5.154: mobilní náhled protokolu bez vodorovného posouvání */
+/* v1.6 / 5.156: mobilní náhled protokolu bez vodorovného posouvání */
 @media (max-width: 700px){
   #preview .modal-content{
     width:100vw!important;
@@ -6679,7 +6679,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.154'
+      appVersion:'1.6 / 5.156'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -6766,7 +6766,7 @@ async function markPartResolved(id){
 }
 
 
-/* v1.6 / 5.154: Revize ZZ / PZP */
+/* v1.6 / 5.156: Revize ZZ / PZP */
 const REVIZE_DEVICE_TYPES = {
   scissor:{label:'Nůžková plošina', druh:'samohybná nůžková zdvihací pracovní plošina', skupina:'A/3', use:['rozmer_plosiny','deck'], skip:['bocni_dosah']},
   articulated:{label:'Kloubová plošina', druh:'samohybná kloubová zdvihací pracovní plošina', skupina:'B/3', use:['bocni_dosah','rameno','teleskop','rotace_kose','otoc']},
@@ -6829,7 +6829,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.154'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.156'}; }
 function revizeResult(r){ const answers = Object.values(r.checks||{}); const electro = Object.values(r.electro||{}).map(x=>x?.ok).filter(Boolean); const hasNo = [...answers,...electro].includes('NE'); const overdue = r.platnost && daysUntilDate(r.platnost) < 0; return (hasNo || overdue || String(r.vysledek||'').toUpperCase()==='NEVYHOVUJE') ? 'NEVYHOVUJE' : 'VYHOVUJE'; }
 function setRevizeMode(mode){ revizeMode = mode === 'archive' ? 'archive' : 'new'; const title=document.getElementById('revizeListTitle'); const hint=document.getElementById('revizeListHint'); const kicker=document.getElementById('revizeModeKicker'); if(kicker) kicker.textContent = revizeMode === 'archive' ? 'HOTOVÉ RZ' : 'ARCHIV RZ'; if(title) title.textContent = revizeMode === 'archive' ? 'Hotové RZ - archiv revizních protokolů' : 'Hotové RZ - uložené revizní protokoly'; if(hint) hint.textContent = 'Uložené revizní protokoly ZZ jsou oddělené od čtvrtletních kontrol, hlášení poruch a hlavního přehledu.'; }
 function openRevizeModal(mode='new'){ setRevizeMode(mode); showSection(mode === 'archive' ? 'revizeArchive' : 'revize'); if(mode === 'archive') closeRevizeForm(); renderRevize(); }
@@ -6874,12 +6874,37 @@ function revizeMachineRows(){
   revizeMachineRowsCacheAt = now;
   return revizeMachineRowsCache;
 }
+function isIOSDevice(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function mapRevizeMachineRow(r, source=''){
+  if(!r) return null;
+  if(source === 'excel') return {created:r.created||'', serial:r.serial, evidencni:r.evidencni||'', maker:r.maker, model:r.model, type:r.model, deviceType:r.deviceType, year:r.year, group:r.group, place:r.place, owner:r.owner||'Zeppelin CZ s.r.o.', norma:r.norma, normyRevize:r.normy_revize||r.normyRevize||revizeDefaultNormy(r.norma), weight:r.weight, capacity:r.capacity, workHeight:r.workHeight, floorHeight:r.floorHeight, platform:r.platform, reach:r.reach, tilt:r.tilt, drive:r.drive, power:r.power, stabilizers:r.stabilizers, deck:r.deck, pothole:r.pothole, charger:r.charger, socket:r.socket, rcd:r.rcd, source:r.source, file:r.file};
+  if(source === 'revize') return {created:r.updatedAt||r.datum_kontroly||'', serial:r.vyrobni_cislo, evidencni:r.evidencni_cislo, maker:r.vyrobce, model:r.model, type:r.typ, deviceType:r.typ_zarizeni, year:r.rok_vyroby, group:r.skupina, place:r.umisteni, owner:r.provozovatel, norma:r.norma, normyRevize:r.normy_revize||r.normyRevize||revizeDefaultNormy(r.norma), weight:r.hmotnost, capacity:r.nosnost, workHeight:r.pracovni_vyska, floorHeight:r.vyska_podlahy, platform:r.rozmer_plosiny, reach:r.bocni_dosah, tilt:r.naklon, drive:r.pohon, power:r.napajeni, stabilizers:r.stabilizatory, deck:r.deck, pothole:r.pothole, charger:r.nabijec, socket:r.zasuvka_kos, rcd:r.rcd};
+  return {created:r.savedAt||r.datum||'', serial:r.vc, evidencni:r.evCislo||r.evidencni_cislo||r.ec||'', maker:r.vyrobce||'', model:r.typ, type:r.typ, year:r.rok, place:r.umisteni, owner:r.provozovatel||'Zeppelin CZ s.r.o.', charger:r.chargerPresent, socket:r.socket230Present};
+}
+function serialMatchesCandidate(serial, candidate){
+  const s=normalizeSerial(serial);
+  const rs=normalizeSerial(candidate);
+  return !!s && !!rs && (rs===s || (s.length>=3 && rs.endsWith(s)) || (rs.length>=3 && s.endsWith(rs)));
+}
 function revizeLatestMachine(serial){
   const s=normalizeSerial(serial);
   if(!s) return null;
-  const all=revizeMachineRows();
-  let rows=all.filter(r=>normalizeSerial(r.serial)===s);
-  if(!rows.length && s.length>=3) rows=all.filter(r=>{ const rs=normalizeSerial(r.serial); return rs.endsWith(s) || (rs.length>=3 && s.endsWith(rs)); });
+  let rows=[];
+  if(isIOSDevice()){
+    const excelRows = Array.isArray(window.REVIZE_MACHINE_DB) ? window.REVIZE_MACHINE_DB : [];
+    const revizeRows = [...(revizeData||[]), ...loadLocalRevize()];
+    const protocolRows = [...(data||[]), ...loadLocalData()];
+    excelRows.forEach(r=>{ if(serialMatchesCandidate(s, r.serial)) rows.push(mapRevizeMachineRow(r,'excel')); });
+    revizeRows.forEach(r=>{ if(serialMatchesCandidate(s, r.vyrobni_cislo)) rows.push(mapRevizeMachineRow(r,'revize')); });
+    protocolRows.forEach(r=>{ if(serialMatchesCandidate(s, r.vc)) rows.push(mapRevizeMachineRow(r,'protocol')); });
+    rows = rows.filter(Boolean);
+  } else {
+    const all=revizeMachineRows();
+    rows=all.filter(r=>normalizeSerial(r.serial)===s);
+    if(!rows.length && s.length>=3) rows=all.filter(r=>{ const rs=normalizeSerial(r.serial); return rs.endsWith(s) || (rs.length>=3 && s.endsWith(rs)); });
+  }
   rows.sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));
   if(!rows.length) return null;
   const merged={};
@@ -7019,11 +7044,18 @@ function attachRevizeSuggestInput(input, getItems, onPick){
 }
 function attachRevizeSuggests(){
   const fields=['vyrobni_cislo','evidencni_cislo','vyrobce','model','rok_vyroby','norma','normy_revize','skupina','umisteni','provozovatel','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni'];
-  fields.forEach(k=>attachRevizeSuggestInput(document.getElementById('rz_'+k), () => revizeSuggestValues(k), k==='vyrobni_cislo' ? applyRevizeDefaultsFromSerial : undefined));
+  const isiOS = isIOSDevice();
+  fields.forEach(k=>{
+    const input=document.getElementById('rz_'+k);
+    if(isiOS && k==='vyrobni_cislo'){
+      if(input){ input.setAttribute('autocomplete','off'); input.removeAttribute('list'); }
+      return;
+    }
+    attachRevizeSuggestInput(input, () => revizeSuggestValues(k), k==='vyrobni_cislo' ? applyRevizeDefaultsFromSerial : undefined);
+  });
   const serial=document.getElementById('rz_vyrobni_cislo');
   if(serial && serial.dataset.rzSerialDefaultsReady!=='1'){
     serial.dataset.rzSerialDefaultsReady='1';
-    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if(!isiOS){
       serial.addEventListener('change',()=>applyRevizeDefaultsFromSerial(serial.value));
       serial.addEventListener('blur',()=>applyRevizeDefaultsFromSerial(serial.value));
@@ -7038,7 +7070,7 @@ function setupRevizeWizard(){ markRevizeManualInputs(); attachRevizeSuggests(); 
   const moveStep=dir=>{ revizeStepIndex+=dir; while(skipStep(revizeStepIndex)) revizeStepIndex+=dir; };
   function paint(){ const total=Math.max(1,titles.length); revizeStepIndex=Math.max(0,Math.min(revizeStepIndex,total-1)); kids.forEach(el=>el.classList.toggle('rz-hidden-step', Number(el.dataset.rzStep)!==revizeStepIndex)); const label=titles[revizeStepIndex]?.textContent||'Revize ZZ'; bar.innerHTML=`<div><strong>${escapeHtml(label)}</strong><br><span>Postupné zadávání revize ZZ</span></div><span>Krok ${revizeStepIndex+1}/${total}</span>`; const prev=document.getElementById('prevRevizeStepBtn'), next=document.getElementById('nextRevizeStepBtn'), save=document.getElementById('saveRevizeBtn'), prog=document.getElementById('revizeStepProgress'); if(prev) prev.disabled=revizeStepIndex===0; if(next) next.classList.toggle('hidden', revizeStepIndex>=total-1); if(save) save.classList.toggle('hidden', revizeStepIndex<total-1); if(prog) prog.textContent=`${revizeStepIndex+1}/${total}`; }
   function focusCurrentStep(){ const nodes=kids.filter(el=>Number(el.dataset.rzStep)===revizeStepIndex); const target=nodes.map(el=>el.matches?.('input,select,textarea')?el:el.querySelector?.('input,select,textarea')).find(Boolean); setTimeout(()=>target?.focus(),0); }
-  const rokVyroby=document.getElementById('rz_rok_vyroby'), norma=document.getElementById('rz_norma'); rokVyroby?.addEventListener('change',()=>syncNormaFromRokVyroby(true)); rokVyroby?.addEventListener('input',()=>syncNormaFromRokVyroby(false)); norma?.addEventListener('input',()=>{ norma.dataset.auto='0'; }); syncNormaFromRokVyroby(false); const prevBtn=document.getElementById('prevRevizeStepBtn'), nextBtn=document.getElementById('nextRevizeStepBtn'); if(prevBtn) prevBtn.onclick=()=>{ safeCollectRevizeDraft('revize previous'); moveStep(-1); paint(); focusCurrentStep(); }; if(nextBtn) nextBtn.onclick=()=>{ if(revizeStepIndex===0) applyRevizeDefaultsFromSerial(document.getElementById('rz_vyrobni_cislo')?.value); safeCollectRevizeDraft('revize next'); moveStep(1); paint(); focusCurrentStep(); }; paint();
+  const rokVyroby=document.getElementById('rz_rok_vyroby'), norma=document.getElementById('rz_norma'); rokVyroby?.addEventListener('change',()=>syncNormaFromRokVyroby(true)); rokVyroby?.addEventListener('input',()=>syncNormaFromRokVyroby(false)); norma?.addEventListener('input',()=>{ norma.dataset.auto='0'; }); syncNormaFromRokVyroby(false); const prevBtn=document.getElementById('prevRevizeStepBtn'), nextBtn=document.getElementById('nextRevizeStepBtn'); if(prevBtn) prevBtn.onclick=()=>{ safeCollectRevizeDraft('revize previous'); moveStep(-1); paint(); focusCurrentStep(); }; if(nextBtn) nextBtn.onclick=()=>{ const serialValue=document.getElementById('rz_vyrobni_cislo')?.value; const shouldApply=revizeStepIndex===0 && String(serialValue||'').trim(); if(shouldApply && !isIOSDevice()) applyRevizeDefaultsFromSerial(serialValue); safeCollectRevizeDraft('revize next'); moveStep(1); paint(); focusCurrentStep(); if(shouldApply && isIOSDevice()) setTimeout(()=>{ applyRevizeDefaultsFromSerial(serialValue); safeCollectRevizeDraft('revize iOS delayed defaults'); },180); }; paint();
 }
 async function syncQuarterlyAfterRevize(r){
   const serial=normalizeSerial(r.vyrobni_cislo);
@@ -7058,7 +7090,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.154';
+  last.appVersion='1.6 / 5.156';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -7086,7 +7118,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ return ({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',rozmer_plosiny:'Rozměr plošiny',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.154'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','rozmer_plosiny','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=el.value; }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.156'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
@@ -7441,9 +7473,9 @@ window.addEventListener('focus', () => {
     if(!els.qrModal.classList.contains('show')) return;
     if(!qrPickerActive) return;
 
-    // ?? pokud uživatel zrušil focení (žádný soubor)
+    // Pokud uzivatel zrusil foceni a nevratil se zadny soubor.
     if(picker && !picker.files.length){
-      qrPickerActive = false; // ?? důležité – zabrání znovuotevření foťáku
+      qrPickerActive = false; // Zabrani znovuotevreni fotaku.
       closeQrModal();
     }
   }, 250);
@@ -7818,6 +7850,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
