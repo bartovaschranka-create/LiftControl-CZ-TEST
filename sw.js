@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'liftcontrol-cz-v1-6-5-137';
+const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-165';
 const APP_SHELL = [
   './',
   './index.html',
@@ -45,6 +45,12 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
   );
 });
+
+
+
+
+
+
 
 
 
