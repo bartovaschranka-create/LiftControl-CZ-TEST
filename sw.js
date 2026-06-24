@@ -1,4 +1,4 @@
-const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-166';
+const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-169';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,6 +15,12 @@ self.addEventListener('install', event => {
       .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', event => {

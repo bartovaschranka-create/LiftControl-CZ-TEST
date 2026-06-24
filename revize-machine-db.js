@@ -27,7 +27,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -78,7 +78,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -109,7 +109,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -171,7 +171,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -202,7 +202,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -233,7 +233,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -263,7 +263,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -325,7 +325,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -387,7 +387,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -418,7 +418,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -449,7 +449,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -480,7 +480,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280 +A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -511,7 +511,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -604,7 +604,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -635,7 +635,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -666,7 +666,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -697,7 +697,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -728,7 +728,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -758,7 +758,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -788,7 +788,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -819,7 +819,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -850,7 +850,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -881,7 +881,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -912,7 +912,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1005,7 +1005,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1067,7 +1067,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1129,7 +1129,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -1160,7 +1160,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1315,7 +1315,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1377,7 +1377,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1408,7 +1408,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -1439,7 +1439,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "telescopic"
   },
   {
@@ -1501,7 +1501,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1532,7 +1532,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1563,7 +1563,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1594,7 +1594,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1625,7 +1625,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -1687,7 +1687,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1718,7 +1718,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1749,7 +1749,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1780,7 +1780,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1811,7 +1811,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1904,7 +1904,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1935,7 +1935,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -1997,7 +1997,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2028,7 +2028,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2059,7 +2059,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ed.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ed.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2090,7 +2090,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2120,7 +2120,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "NE",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.2"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -2150,7 +2150,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2181,7 +2181,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2212,7 +2212,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ed.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ed.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2243,7 +2243,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2273,7 +2273,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2304,7 +2304,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2335,7 +2335,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2428,7 +2428,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280 +A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2459,7 +2459,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2489,7 +2489,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -2519,7 +2519,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ed.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ed.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -2550,7 +2550,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ed.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ed.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -2581,7 +2581,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2612,7 +2612,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2643,7 +2643,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2674,7 +2674,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "NE",
     "rcd": "NE",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2736,7 +2736,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2767,7 +2767,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2798,7 +2798,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2829,7 +2829,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -2890,7 +2890,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -2951,7 +2951,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -2981,7 +2981,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -3012,7 +3012,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "NE",
     "rcd": "NE",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3074,7 +3074,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3105,7 +3105,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -3136,7 +3136,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3167,7 +3167,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -3198,7 +3198,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3229,7 +3229,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3260,7 +3260,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -3353,7 +3353,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3384,7 +3384,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3477,7 +3477,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3528,7 +3528,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -3558,7 +3558,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3620,7 +3620,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280 +A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280 +A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3713,7 +3713,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3744,7 +3744,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -3775,7 +3775,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3806,7 +3806,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -3836,7 +3836,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -3866,7 +3866,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3897,7 +3897,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3928,7 +3928,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -3959,7 +3959,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -3990,7 +3990,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4021,7 +4021,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4052,7 +4052,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4083,7 +4083,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4114,7 +4114,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4145,7 +4145,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4176,7 +4176,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4207,7 +4207,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4238,7 +4238,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4268,7 +4268,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4298,7 +4298,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -4328,7 +4328,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4359,7 +4359,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4390,7 +4390,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4421,7 +4421,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4483,7 +4483,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4566,7 +4566,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -4597,7 +4597,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4628,7 +4628,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4659,7 +4659,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4690,7 +4690,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4721,7 +4721,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4751,7 +4751,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4782,7 +4782,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4813,7 +4813,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -4844,7 +4844,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4875,7 +4875,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -4906,7 +4906,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4937,7 +4937,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -4967,7 +4967,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -4997,7 +4997,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5028,7 +5028,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5059,7 +5059,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5119,7 +5119,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "NE",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -5149,7 +5149,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -5180,7 +5180,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5211,7 +5211,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5242,7 +5242,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5273,7 +5273,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5304,7 +5304,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5335,7 +5335,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5365,7 +5365,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -5394,7 +5394,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -5454,7 +5454,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -5483,7 +5483,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5514,7 +5514,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5576,7 +5576,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5607,7 +5607,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -5638,7 +5638,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5669,7 +5669,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -5700,7 +5700,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5731,7 +5731,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5761,7 +5761,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -5791,7 +5791,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5822,7 +5822,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5853,7 +5853,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -5915,7 +5915,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5946,7 +5946,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -5977,7 +5977,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6008,7 +6008,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.2",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.2",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6039,7 +6039,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6070,7 +6070,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6101,7 +6101,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6131,7 +6131,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6162,7 +6162,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6193,7 +6193,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6224,7 +6224,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6255,7 +6255,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -6286,7 +6286,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6316,7 +6316,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -6346,7 +6346,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6408,7 +6408,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -6439,7 +6439,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -6470,7 +6470,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -6501,7 +6501,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -6532,7 +6532,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6563,7 +6563,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -6593,7 +6593,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6624,7 +6624,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6654,7 +6654,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3"
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce."
   },
   {
     "source": "excel-2025-corrected-v2",
@@ -6714,7 +6714,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6744,7 +6744,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6775,7 +6775,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -6805,7 +6805,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6836,7 +6836,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -6898,7 +6898,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
@@ -6960,7 +6960,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -6991,7 +6991,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -7053,7 +7053,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -7115,7 +7115,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -7146,7 +7146,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -7238,7 +7238,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+A1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "scissor"
   },
   {
@@ -7269,7 +7269,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280-1 / ČSN EN 50699",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280-1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "mast"
   },
   {
@@ -7300,7 +7300,7 @@ window.REVIZE_MACHINE_DB = [
     "socket": "ANO",
     "rcd": "ANO",
     "norma": "ČSN EN 280+ A1 / ČSN EN 50699 a / ČSN EN 60204-1 ED.3",
-    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; kontrola EZ dle požadavků NV č. 190/2022 součinnosti ČSN EN 50699 a ČSN EN 60204-1 ED.3",
+    "normyRevize": "revize ZZ dle požadavků NV č.193/2022 v součinnosti ČSN EN 280+ A1; Kontrola elektrické výbavy zařízení dle ČSN EN 50699, ČSN 33 1600 ed. 2/Z2 a dokumentace výrobce.",
     "deviceType": "articulated"
   },
   {
