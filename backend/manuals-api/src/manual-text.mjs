@@ -1,14 +1,14 @@
 const TASK_MAP = [
-  ['kalibrace úhlového senzoru', ['angle sensor calibration', 'angle sensor', 'calibration']],
-  ['nastavení náklonového čidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor']],
-  ['výměna hydraulického filtru', ['hydraulic filter', 'filter replacement', 'replace filter']],
-  ['kontrola nouzového spouštění', ['emergency lowering', 'emergency descent', 'manual lowering']],
-  ['kontrola nabíječe', ['charger', 'battery charger', 'charging']],
-  ['diagnostika závady', ['diagnostic', 'troubleshooting', 'fault code']]
+  ['kalibrace uhloveho senzoru', ['angle sensor calibration', 'angle sensor', 'calibration']],
+  ['nastaveni naklonoveho cidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor']],
+  ['vymena hydraulickeho filtru', ['hydraulic filter', 'filter replacement', 'replace filter']],
+  ['kontrola nouzoveho spousteni', ['emergency lowering', 'emergency descent', 'manual lowering']],
+  ['kontrola nabijece', ['charger', 'battery charger', 'charging']],
+  ['diagnostika zavady', ['diagnostic', 'troubleshooting', 'fault code']]
 ];
 
 export function taskTerms(task) {
-  const normalized = String(task || '').toLowerCase();
+  const normalized = normalizeText(task);
   const terms = new Set(normalized.split(/[^\p{L}\p{N}]+/u).filter(x => x.length >= 3));
   for (const [cz, en] of TASK_MAP) {
     if (normalized.includes(cz)) en.forEach(x => terms.add(x));
@@ -25,35 +25,31 @@ export function findRelevantPages(pages, task, limit = 4) {
     .slice(0, limit);
 }
 
-export function buildSourceOnlyResult({ request, candidate, finalUrl, pages }) {
-  if (!pages.length) {
-    return {
-      status: 'not_found',
-      maker: request.maker,
-      model: request.model,
-      serial: request.serial,
-      manualTitle: candidate.title || '',
-      manualType: candidate.type || '',
-      serialRange: '',
-      originalUrl: finalUrl || candidate.url,
-      steps: [],
-      safety: [],
-      message: 'V textu manuálu nebyl nalezen doložitelný postup pro zadaný úkon.',
-      variants: []
-    };
-  }
-  return {
-    status: 'warn',
+export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {} }) {
+  const base = {
     maker: request.maker,
     model: request.model,
     serial: request.serial,
     manualTitle: candidate.title || '',
     manualType: candidate.type || '',
-    serialRange: '',
+    serialRange: fit.serialRange || '',
     originalUrl: finalUrl || candidate.url,
     steps: [],
     safety: [],
-    message: 'Relevantní text byl v manuálu nalezen, ale bez bezpečného AI strukturování nejsou vráceny žádné kroky. Při rozporu má vždy přednost originální manuál výrobce.',
+    sources: fit.sources || [],
+    variants: []
+  };
+  if (!pages.length) {
+    return {
+      ...base,
+      status: 'not_found',
+      message: 'V textu manualu nebyl nalezen dolozitelny postup pro zadany ukon.'
+    };
+  }
+  return {
+    ...base,
+    status: 'warn',
+    message: 'Relevantni text byl v manualu nalezen, ale bez OpenAI nejsou vraceny zadne ceske servisni kroky. Pri rozporu ma vzdy prednost originalni manual vyrobce.',
     variants: [{
       title: candidate.title || '',
       type: candidate.type || '',
@@ -64,6 +60,13 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages }) {
 }
 
 function scoreText(text, terms) {
-  const hay = String(text || '').toLowerCase();
-  return terms.reduce((sum, term) => sum + (hay.includes(term.toLowerCase()) ? 1 : 0), 0);
+  const hay = normalizeText(text);
+  return terms.reduce((sum, term) => sum + (hay.includes(normalizeText(term)) ? 1 : 0), 0);
+}
+
+function normalizeText(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 }

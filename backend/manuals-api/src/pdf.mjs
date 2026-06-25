@@ -1,4 +1,4 @@
-import zlib from 'node:zlib';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { validateOfficialUrl } from './official-domains.mjs';
 
 export async function downloadPdf(candidate, request, config, deps = {}) {
@@ -27,105 +27,93 @@ export async function downloadPdf(candidate, request, config, deps = {}) {
 
     if ([301, 302, 303, 307, 308].includes(res.status)) {
       const location = res.headers.get('location');
-      if (!location) throw new Error('Přesměrování bez cílové URL.');
+      if (!location) throw new Error('Presmerovani bez cilove URL.');
       currentUrl = new URL(location, currentUrl).toString();
       continue;
     }
 
     if (!res.ok) {
-      const err = new Error(`Stažení PDF selhalo (${res.status}).`);
+      const err = new Error(`Stazeni PDF selhalo (${res.status}).`);
       err.code = 'download_failed';
       throw err;
     }
     const contentLength = Number(res.headers.get('content-length') || 0);
     if (contentLength && contentLength > config.maxPdfBytes) {
-      const err = new Error('PDF je větší než povolený limit.');
+      const err = new Error('PDF je vetsi nez povoleny limit.');
       err.code = 'pdf_too_large';
       throw err;
     }
     const type = String(res.headers.get('content-type') || '').toLowerCase();
     if (type && !type.includes('pdf') && !candidate.url.toLowerCase().includes('.pdf')) {
-      const err = new Error('Stažený soubor nevypadá jako PDF.');
+      const err = new Error('Stazeny soubor nevypada jako PDF.');
       err.code = 'not_pdf';
       throw err;
     }
     const buffer = Buffer.from(await res.arrayBuffer());
     if (buffer.length > config.maxPdfBytes) {
-      const err = new Error('PDF je větší než povolený limit.');
+      const err = new Error('PDF je vetsi nez povoleny limit.');
       err.code = 'pdf_too_large';
       throw err;
     }
     return { buffer, finalUrl: currentUrl };
   }
 
-  const err = new Error('Překročen maximální počet přesměrování.');
+  const err = new Error('Prekrocen maximalni pocet presmerovani.');
   err.code = 'too_many_redirects';
   throw err;
 }
 
-export function extractPdfTextPages(buffer) {
-  const raw = buffer.toString('latin1');
-  if (!raw.includes('%PDF')) return [];
+export async function extractPdfTextPages(buffer) {
+  if (!Buffer.isBuffer(buffer) || !buffer.includes(Buffer.from('%PDF'))) return [];
+  let doc;
+  try {
+    const task = getDocument({
+      data: new Uint8Array(buffer),
+      disableFontFace: true,
+      useSystemFonts: true,
+      stopAtErrors: false,
+      isEvalSupported: false
+    });
+    doc = await task.promise;
+  } catch {
+    return [];
+  }
 
   const pages = [];
-  const streamRegex = /<<(.*?)>>\s*stream\r?\n?([\s\S]*?)\r?\n?endstream/g;
-  let match;
-  let collected = '';
-  while ((match = streamRegex.exec(raw))) {
-    const dict = match[1] || '';
-    let chunk = Buffer.from(match[2] || '', 'latin1');
-    if (/\/FlateDecode/.test(dict)) {
-      try {
-        chunk = zlib.inflateSync(chunk);
-      } catch {
-        continue;
-      }
+  try {
+    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber += 1) {
+      const page = await doc.getPage(pageNumber);
+      const content = await page.getTextContent({ includeMarkedContent: false, disableNormalization: false });
+      const text = normalizeExtractedText(textContentToString(content.items || []));
+      if (text) pages.push({ page: pageNumber, text });
+      page.cleanup?.();
     }
-    collected += '\n' + extractPdfTextOperators(chunk.toString('latin1'));
+  } finally {
+    await doc.destroy?.();
   }
-  const cleaned = normalizeExtractedText(collected);
-  if (cleaned) pages.push({ page: 1, text: cleaned });
   return pages;
 }
 
-function extractPdfTextOperators(content) {
+function textContentToString(items) {
   const pieces = [];
-  const literalRegex = /\((?:\\.|[^\\)])*\)\s*T[jJ]/g;
-  const arrayRegex = /\[((?:\s*(?:\((?:\\.|[^\\)])*\)|-?\d+)\s*)+)\]\s*TJ/g;
-  const hexRegex = /<([0-9A-Fa-f\s]+)>\s*T[jJ]/g;
-  let m;
-
-  while ((m = literalRegex.exec(content))) pieces.push(decodePdfLiteral(m[0].match(/\((?:\\.|[^\\)])*\)/)?.[0] || ''));
-  while ((m = arrayRegex.exec(content))) {
-    const literals = [...m[1].matchAll(/\((?:\\.|[^\\)])*\)/g)].map(x => decodePdfLiteral(x[0]));
-    if (literals.length) pieces.push(literals.join(''));
+  let lastY = null;
+  for (const item of items) {
+    if (!item || typeof item.str !== 'string') continue;
+    const y = Array.isArray(item.transform) ? Math.round(item.transform[5] || 0) : null;
+    if (lastY !== null && y !== null && Math.abs(y - lastY) > 4) pieces.push('\n');
+    pieces.push(item.str);
+    if (item.hasEOL) pieces.push('\n');
+    else pieces.push(' ');
+    if (y !== null) lastY = y;
   }
-  while ((m = hexRegex.exec(content))) pieces.push(decodePdfHex(m[1]));
-
-  return pieces.join('\n');
-}
-
-function decodePdfLiteral(value) {
-  return String(value || '')
-    .replace(/^\(|\)$/g, '')
-    .replace(/\\n/g, '\n')
-    .replace(/\\r/g, '\r')
-    .replace(/\\t/g, '\t')
-    .replace(/\\([()\\])/g, '$1')
-    .replace(/\\([0-7]{1,3})/g, (_, oct) => String.fromCharCode(parseInt(oct, 8)));
-}
-
-function decodePdfHex(value) {
-  const hex = String(value || '').replace(/\s+/g, '');
-  const bytes = [];
-  for (let i = 0; i < hex.length - 1; i += 2) bytes.push(parseInt(hex.slice(i, i + 2), 16));
-  return Buffer.from(bytes).toString('utf8').replace(/\0/g, '');
+  return pieces.join('');
 }
 
 function normalizeExtractedText(text) {
   return String(text || '')
     .replace(/\r/g, '\n')
-    .replace(/[ \t]+/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/[ \t]{2,}/g, ' ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
