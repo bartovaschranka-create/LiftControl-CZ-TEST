@@ -554,21 +554,48 @@ header{
   flex-wrap:wrap;
 }
 .smart-stats-box{
-  border:1px solid rgba(147,197,253,.22);
-  border-radius:12px;
-  background:rgba(37,99,235,.10);
-  padding:10px;
+  border:1px solid rgba(96,165,250,.34);
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(14,165,233,.10));
+  box-shadow:0 14px 35px rgba(15,23,42,.18);
+  padding:14px;
   display:grid;
-  gap:8px;
-  margin-bottom:10px;
+  gap:10px;
+  margin-bottom:12px;
 }
+.smart-stats-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.smart-stats-title{color:#f8fafc;font-size:1rem;font-weight:900}
+.smart-stats-sub{color:#bfdbfe;font-size:.74rem;line-height:1.35;margin-top:2px}
 .smart-stats-box label{color:#dbeafe;font-size:.78rem;font-weight:850}
 .smart-stats-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
-.smart-stats-row input{width:100%;min-width:0;border-radius:10px;border:1px solid rgba(148,163,184,.45);padding:11px 12px;font:inherit}
+.smart-stats-row input{width:100%;min-width:0;border-radius:12px;border:1px solid rgba(148,163,184,.45);padding:12px 13px;font:inherit;background:#fff;color:#0f172a}
 .smart-stats-hint{color:#93c5fd;font-size:.72rem;line-height:1.35}
+.smart-stats-history{display:flex;gap:6px;flex-wrap:wrap;min-height:28px}
+.smart-stats-history button,.stats-toggle-filters{
+  border:1px solid rgba(147,197,253,.35);
+  background:rgba(15,23,42,.30);
+  color:#dbeafe;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:.72rem;
+  font-weight:800;
+  cursor:pointer;
+}
+.smart-stats-history button:hover,.stats-toggle-filters:hover{background:rgba(37,99,235,.35)}
+.stats-advanced-panel{
+  display:grid;
+  gap:10px;
+  margin-bottom:10px;
+  padding:10px;
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:12px;
+  background:rgba(15,23,42,.34);
+}
+.stats-advanced-panel[hidden]{display:none!important}
 @media(max-width:640px){
   .stats-modal-content{width:100%!important;max-height:none!important}
   .stats-modal .side-stats-filters,.stats-modal .side-stats-grid{grid-template-columns:1fr}
+  .smart-stats-head{display:grid;gap:8px}
   .smart-stats-row{grid-template-columns:1fr}
   .stats-modal-actions button{width:100%}
 }
@@ -1913,7 +1940,7 @@ input,textarea,select,button{max-width:100%;min-width:0;box-sizing:border-box}
 html,body{height:auto!important;min-height:100%!important;overflow-y:auto!important}
 body{position:relative!important}
 
-/* v1.6 / 5.182: chytre statistiky pres bezpecny intent API v TEST verzi. */
+/* v1.6 / 5.183: lepsi okno chytrych statistik s historii hledani a skrytymi filtry. */
 .revize-wizard-modal .modal-content{width:min(98vw,1120px)!important;max-height:min(96dvh,920px)!important;overflow:visible!important}
 .revize-wizard-modal .revize-form{padding:24px 26px 18px!important}
 .revize-wizard-modal .revize-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;overflow:visible!important}
@@ -2023,7 +2050,7 @@ body{position:relative!important}
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.182</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.183</div>
   </div>
 </aside>
 
@@ -2033,57 +2060,66 @@ body{position:relative!important}
     <button id="closeStatsTopBtn" class="secondary mini" type="button">Zavřít</button>
   </div>
   <section class="side-stats" aria-label="Statistiky">
-    <div class="side-stats-title">Filtr statistik <span id="sideStatsScope">Čeká na generování</span></div>
+    <div class="side-stats-title">Chytré statistiky <span id="sideStatsScope">Čeká na dotaz</span></div>
     <div class="smart-stats-box">
-      <label for="smartStatsQuestion">Zeptej se statistik</label>
+      <div class="smart-stats-head">
+        <div>
+          <div class="smart-stats-title">Zeptej se statistik</div>
+          <div class="smart-stats-sub">Napiš otázku běžnou řečí, aplikace výsledek spočítá z uložených záznamů.</div>
+        </div>
+        <button class="stats-toggle-filters" id="toggleStatsFiltersBtn" type="button" aria-expanded="false">Podrobné filtry</button>
+      </div>
       <div class="smart-stats-row">
         <input id="smartStatsQuestion" type="search" autocomplete="off" placeholder="Např. napiš mi 10 plošin s nejčastějšími poruchami">
         <button class="primary mini" id="smartStatsBtn" type="button">Vyhodnotit</button>
       </div>
+      <div class="smart-stats-history" id="smartStatsHistory" aria-label="Poslední vyhledávání"></div>
       <div class="smart-stats-hint">Aplikace pošle do API jen dotaz, ne celou databázi. Výpočet proběhne nad uloženými záznamy v aplikaci.</div>
     </div>
-    <div class="side-stats-filters">
-      <select id="sideStatsPeriod" aria-label="Období statistik">
-        <option value="30">30 dní</option>
-        <option value="7">7 dní</option>
-        <option value="90">90 dní</option>
-        <option value="365">Rok</option>
-        <option value="all">Vše</option>
-      </select>
-      <select id="sideStatsType" aria-label="Typ záznamu">
-        <option value="all">Vše</option>
-        <option value="protocol">Kontroly</option>
-        <option value="revize">Revize</option>
-        <option value="fault">Poruchy</option>
-        <option value="part">ND</option>
-      </select>
-      <select id="sideStatsTech" aria-label="Technik">
-        <option value="all">Všichni</option>
-      </select>
-      <select id="sideStatsPlace" aria-label="Pobočka">
-        <option value="all">Všechna místa</option>
-      </select>
-      <select id="sideStatsFaultStatus" aria-label="Stav závady">
-        <option value="all">Všechny stavy závad</option>
-        <option value="open">Otevřené závady</option>
-        <option value="repaired">Opravené závady</option>
-        <option value="service">Stroj do servisu</option>
-        <option value="waiting_parts">Čeká na ND</option>
-      </select>
-      <select id="sideStatsPartStatus" aria-label="Stav náhradních dílů">
-        <option value="all">Všechny stavy ND</option>
-        <option value="open">Neobjednané ND</option>
-        <option value="ordered">Objednané ND</option>
-        <option value="sent">Odeslané ND</option>
-        <option value="resolved">Vyřešené ND</option>
-      </select>
-      <select id="sideStatsFaultType" aria-label="Typ závady">
-        <option value="all">Všechny typy závad</option>
-      </select>
-      <input id="sideStatsSearch" type="search" autocomplete="off" placeholder="Výrobní číslo, typ, model...">
-    </div>
-    <div class="stats-modal-actions">
-      <button class="primary" id="generateStatsBtn" type="button">Generovat</button>
+    <div class="stats-advanced-panel" id="statsAdvancedPanel" hidden>
+      <div class="side-stats-filters">
+        <select id="sideStatsPeriod" aria-label="Období statistik">
+          <option value="30">30 dní</option>
+          <option value="7">7 dní</option>
+          <option value="90">90 dní</option>
+          <option value="365">Rok</option>
+          <option value="all">Vše</option>
+        </select>
+        <select id="sideStatsType" aria-label="Typ záznamu">
+          <option value="all">Vše</option>
+          <option value="protocol">Kontroly</option>
+          <option value="revize">Revize</option>
+          <option value="fault">Poruchy</option>
+          <option value="part">ND</option>
+        </select>
+        <select id="sideStatsTech" aria-label="Technik">
+          <option value="all">Všichni</option>
+        </select>
+        <select id="sideStatsPlace" aria-label="Pobočka">
+          <option value="all">Všechna místa</option>
+        </select>
+        <select id="sideStatsFaultStatus" aria-label="Stav závady">
+          <option value="all">Všechny stavy závad</option>
+          <option value="open">Otevřené závady</option>
+          <option value="repaired">Opravené závady</option>
+          <option value="service">Stroj do servisu</option>
+          <option value="waiting_parts">Čeká na ND</option>
+        </select>
+        <select id="sideStatsPartStatus" aria-label="Stav náhradních dílů">
+          <option value="all">Všechny stavy ND</option>
+          <option value="open">Neobjednané ND</option>
+          <option value="ordered">Objednané ND</option>
+          <option value="sent">Odeslané ND</option>
+          <option value="resolved">Vyřešené ND</option>
+        </select>
+        <select id="sideStatsFaultType" aria-label="Typ závady">
+          <option value="all">Všechny typy závad</option>
+        </select>
+        <input id="sideStatsSearch" type="search" autocomplete="off" placeholder="Výrobní číslo, typ, model...">
+      </div>
+      <div class="stats-modal-actions">
+        <button class="primary" id="generateStatsBtn" type="button">Generovat z filtrů</button>
+      </div>
     </div>
     <div class="side-stats-grid">
       <div class="side-stat-card"><strong id="sideStatsChecks">0</strong><span>kontroly/revize</span></div>
@@ -3326,7 +3362,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.182',
+      appVersion: '1.6 / 5.183',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3952,10 +3988,10 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.182'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.183'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.182';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.183';
 
   // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
@@ -4379,7 +4415,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.182';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.183';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -4451,7 +4487,7 @@ async function logAuditAction(action, entity, record, by, detail, beforeRecord){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.182',
+      appVersion: '1.6 / 5.183',
       restoreVersion: 1,
       before: beforeSnapshot ? cloneForAuditSnapshot(beforeSnapshot) : null,
       after: afterSnapshot ? cloneForAuditSnapshot(afterSnapshot) : null
@@ -4940,12 +4976,53 @@ function openSmartStatsResult(kind, query){
   if(kind === 'revize'){ openRevizeModal(); const search=document.getElementById('revizeSearch'); if(search){ search.value=query; renderRevize(); } return; }
   showSection('archive'); const search=document.getElementById('searchInput'); if(search){ search.value=query; render(); }
 }
+const SMART_STATS_HISTORY_KEY = 'liftcontrol_smart_stats_history_v1';
+function smartStatsHistory(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(SMART_STATS_HISTORY_KEY) || '[]');
+    return Array.isArray(arr) ? arr.filter(Boolean).map(String).slice(0,5) : [];
+  }catch(e){ return []; }
+}
+function saveSmartStatsHistory(question){
+  const q = String(question || '').trim();
+  if(!q) return;
+  const next = [q].concat(smartStatsHistory().filter(x => normalizeSearchText(x) !== normalizeSearchText(q))).slice(0,5);
+  try{ localStorage.setItem(SMART_STATS_HISTORY_KEY, JSON.stringify(next)); }catch(e){}
+  renderSmartStatsHistory();
+}
+function renderSmartStatsHistory(){
+  const root = document.getElementById('smartStatsHistory');
+  if(!root) return;
+  const items = smartStatsHistory();
+  if(!items.length){
+    root.innerHTML = '<span class="smart-stats-hint">Poslední vyhledávání se zobrazí tady.</span>';
+    return;
+  }
+  root.innerHTML = items.map(q => `<button type="button" data-smart-history="${escapeHtml(q)}">${escapeHtml(q)}</button>`).join('');
+  root.querySelectorAll('[data-smart-history]').forEach(btn => btn.addEventListener('click', () => {
+    const input = document.getElementById('smartStatsQuestion');
+    if(input) input.value = btn.dataset.smartHistory || '';
+    runSmartStats();
+  }));
+}
+function toggleStatsAdvancedPanel(force){
+  const panel = document.getElementById('statsAdvancedPanel');
+  const btn = document.getElementById('toggleStatsFiltersBtn');
+  if(!panel) return;
+  const show = typeof force === 'boolean' ? force : panel.hidden;
+  panel.hidden = !show;
+  if(btn){
+    btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+    btn.textContent = show ? 'Skrýt filtry' : 'Podrobné filtry';
+  }
+}
 async function runSmartStats(){
   const input = document.getElementById('smartStatsQuestion');
   const question = String(input?.value || '').trim();
   if(!question){ alert('Napiš dotaz ke statistikám.'); return; }
   const root = document.getElementById('sideStatsList');
   if(root) root.innerHTML = '<div class="side-stats-empty">Vyhodnocuji dotaz...</div>';
+  saveSmartStatsHistory(question);
   let apiIntent = null;
   try{ apiIntent = await smartStatsIntentViaApi(question); }catch(e){ console.warn('Smart stats API fallback:', e); }
   const intent = smartStatsNormalizeIntent(apiIntent, question);
@@ -5042,7 +5119,9 @@ function renderSideStats(force=false){
 function openSideStatsModal(){
   closeSidePanel?.();
   refreshSideStatsFilterOptions();
-  resetSideStatsResults();
+  renderSmartStatsHistory();
+  toggleStatsAdvancedPanel(false);
+  resetSideStatsResults('Napiš dotaz do chytrých statistik, nebo rozbal podrobné filtry.');
   openModal(document.getElementById('statsModal'));
 }
 function openStatsResult(group, query){
@@ -6185,7 +6264,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.182'
+      appVersion:'1.6 / 5.183'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -6825,7 +6904,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.182'
+      appVersion:'1.6 / 5.183'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -7706,7 +7785,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.182'
+      appVersion:'1.6 / 5.183'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -7858,7 +7937,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.182'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.183'}; }
 function revizeResult(r){ const answers = Object.values(r.checks||{}); const electro = Object.values(r.electro||{}).map(x=>x?.ok).filter(Boolean); const hasNo = [...answers,...electro].includes('NE'); const overdue = r.platnost && daysUntilDate(r.platnost) < 0; return (hasNo || overdue || String(r.vysledek||'').toUpperCase()==='NEVYHOVUJE') ? 'NEVYHOVUJE' : 'VYHOVUJE'; }
 function setRevizeMode(mode){ revizeMode = mode === 'archive' ? 'archive' : 'new'; const title=document.getElementById('revizeListTitle'); const hint=document.getElementById('revizeListHint'); const kicker=document.getElementById('revizeModeKicker'); if(kicker) kicker.textContent = revizeMode === 'archive' ? 'HOTOVÉ RZ' : 'ARCHIV RZ'; if(title) title.textContent = revizeMode === 'archive' ? 'Hotové RZ - archiv revizních protokolů' : 'Hotové RZ - uložené revizní protokoly'; if(hint) hint.textContent = 'Uložené revizní protokoly ZZ jsou oddělené od čtvrtletních kontrol, hlášení poruch a hlavního přehledu.'; }
 function openRevizeModal(mode='new'){ setRevizeMode(mode); showSection(mode === 'archive' ? 'revizeArchive' : 'revize'); if(mode === 'archive') closeRevizeForm(); renderRevize(); }
@@ -8381,7 +8460,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.182';
+  last.appVersion='1.6 / 5.183';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -8445,7 +8524,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ const unit=revizeNumericUnit(k); const label=({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; return unit ? `${label} (${unit})` : label; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.182'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.183'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
@@ -8550,7 +8629,7 @@ function crc32(str){ let c=~0; for(let i=0;i<str.length;i++){ c^=str.charCodeAt(
 function zipStore(files){ const enc=new TextEncoder(); let local=[], central=[], offset=0; const u16=n=>String.fromCharCode(n&255,(n>>8)&255), u32=n=>String.fromCharCode(n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255); for(const f of files){ const name=enc.encode(f.name), data=enc.encode(f.data), crc=crc32(f.data); const head='PK\x03\x04'+u16(20)+u16(0)+u16(0)+u16(0)+u16(0)+u32(crc)+u32(data.length)+u32(data.length)+u16(name.length)+u16(0); local.push(head,String.fromCharCode(...name),String.fromCharCode(...data)); const cent='PK\x01\x02'+u16(20)+u16(20)+u16(0)+u16(0)+u16(0)+u16(0)+u32(crc)+u32(data.length)+u32(data.length)+u16(name.length)+u16(0)+u16(0)+u16(0)+u16(0)+u32(0)+u32(offset); central.push(cent,String.fromCharCode(...name)); offset += head.length + name.length + data.length; } const cd=central.join(''); const end='PK\x05\x06'+u16(0)+u16(0)+u16(files.length)+u16(files.length)+u32(cd.length)+u32(offset)+u16(0); return new Blob([...local,cd,end],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}); }
 function downloadRevizeDocx(id){ const r=(revizeData||[]).find(x=>x.id===id); if(!r) return; const body=revizePlainText(r).split(/(?=STRANA B)/).map((part,i)=>`<w:p><w:r><w:t>${escapeXml(part)}</w:t></w:r></w:p>${i===0?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>':''}`).join(''); const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720"/></w:sectPr></w:body></w:document>`; const blob=zipStore([{name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'},{name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'},{name:'word/document.xml',data:doc}]); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(r.protokol||'revize_zz').replace(/[^a-z0-9_-]+/gi,'_')+'.docx'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
 
-// v1.6 / 5.182: smart statistics question box with safe API intent fallback.
+// v1.6 / 5.183: improved smart statistics modal with recent searches.
 function revizeElectroUnit(k, fallback=''){
   return ({riso:'MΩ', rpe:'Ω', ipe:'mA', rcd_hodnota:'ms / mA', baterie:''})[k] || fallback || '';
 }
@@ -8761,6 +8840,7 @@ document.getElementById('sideStatsBtn')?.addEventListener('click', openSideStats
 document.getElementById('generateStatsBtn')?.addEventListener('click', () => renderSideStats(true));
 document.getElementById('smartStatsBtn')?.addEventListener('click', runSmartStats);
 document.getElementById('smartStatsQuestion')?.addEventListener('keydown', ev => { if(ev.key === 'Enter') runSmartStats(); });
+document.getElementById('toggleStatsFiltersBtn')?.addEventListener('click', () => toggleStatsAdvancedPanel());
 document.getElementById('closeStatsBtn')?.addEventListener('click', () => closeModal(document.getElementById('statsModal')));
 document.getElementById('closeStatsTopBtn')?.addEventListener('click', () => closeModal(document.getElementById('statsModal')));
 document.getElementById('sideSettingsBtn')?.addEventListener('click', () => { closeSidePanel(); openModal(document.getElementById('settingsModal')); });
