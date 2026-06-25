@@ -1,0 +1,15 @@
+{
+  "name": "liftcontrol-manuals-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node test/manuals-api.test.mjs",
+    "check": "node --check api/manuals/search.js && node --check src/handler.mjs && node --check src/brave.mjs && node --check src/pdf.mjs && node --check src/official-domains.mjs && node --check src/openai.mjs",
+    "audit": "npm audit --omit=dev"
+  },
+  "dependencies": {}
+}
