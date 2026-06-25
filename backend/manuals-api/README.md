@@ -1,12 +1,12 @@
 # LiftControl CZ Manuals API
 
-Backend API pro modul **Manualy** v aplikaci LiftControl CZ.
+Backend API pro modul **Manuály** v aplikaci LiftControl CZ.
 
-## Cil
+## Cíl
 
-Endpoint dohleda oficialni manual vyrobce JLG nebo Genie, stahne PDF pouze z povolene domeny, vytahne textovou vrstvu po skutecnych strankach a vrati bezpecny strukturovany vysledek pro frontend.
+Endpoint dohledá oficiální manuál výrobce JLG nebo Genie, stáhne PDF pouze z povolené domény, vytáhne textovou vrstvu po skutečných stránkách a vrátí bezpečný strukturovaný výsledek pro frontend.
 
-API nesmi vymyslet servisni postupy. Pokud postup neni dolozitelny textem z manualu a konkretni strankou, vraci `not_found`, `warn` nebo prazdne `steps`.
+API nesmí vymýšlet servisní postupy. Pokud postup není doložitelný textem z manuálu a konkrétní stránkou, vrací `not_found`, `warn` nebo prázdné `steps`.
 
 ## Endpoint
 
@@ -22,7 +22,7 @@ Request:
   "maker": "JLG",
   "model": "450AJ",
   "serial": "0300...",
-  "task": "diagnostika zavady"
+  "task": "diagnostika závady"
 }
 ```
 
@@ -40,7 +40,7 @@ Response:
   "originalUrl": "https://www.jlg.com/...",
   "steps": [
     {
-      "text": "Cesky krok dolozeny manualem.",
+      "text": "Český krok doložený manuálem.",
       "sourceQuote": "Exact English quote from the manual.",
       "page": 42
     }
@@ -52,14 +52,14 @@ Response:
       "quote": "Exact English quote from the manual."
     }
   ],
-  "message": "Pri rozporu ma vzdy prednost originalni manual vyrobce.",
+  "message": "Při rozporu má vždy přednost originální manuál výrobce.",
   "variants": []
 }
 ```
 
 ## Environment Variables
 
-Zkopiruj `.env.example` a nastav hodnoty ve Vercel projektu:
+Zkopíruj `.env.example` a nastav hodnoty ve Vercel projektu:
 
 ```text
 BRAVE_SEARCH_API_KEY=
@@ -70,13 +70,13 @@ MAX_PDF_BYTES=15728640
 DOWNLOAD_TIMEOUT_MS=15000
 ```
 
-`BRAVE_SEARCH_API_KEY` je povinny pro hledani manualu. Nesmí byt ve frontendu, v `index.html`, v GitHub Pages ani v repozitari.
+`BRAVE_SEARCH_API_KEY` je povinný pro hledání manuálu. Nesmí být ve frontendu, v `index.html`, v GitHub Pages ani v repozitáři.
 
-`OPENAI_API_KEY` je fakticky nutny pro vraceni ceskeho strukturovaneho postupu. Bez OpenAI backend zustane v bezpecnem fallbacku: zobrazi nalezeny manual, varianty a upozorneni, ale nevrati servisni kroky.
+`OPENAI_API_KEY` je fakticky nutný pro vrácení českého strukturovaného postupu. Bez OpenAI backend zůstane v bezpečném fallbacku: zobrazí nalezený manuál, varianty a upozornění, ale nevrátí servisní kroky.
 
 ## PDF Parser
 
-Backend pouziva `pdfjs-dist` legacy build pro Node 20/Vercel. Parser vraci samostatny objekt pro kazdou stranku:
+Backend používá `pdfjs-dist` legacy build pro Node 20/Vercel. Parser vrací samostatný objekt pro každou stránku:
 
 ```json
 [
@@ -85,47 +85,71 @@ Backend pouziva `pdfjs-dist` legacy build pro Node 20/Vercel. Parser vraci samos
 ]
 ```
 
-OCR se nepouziva. Pokud PDF nema citelnou textovou vrstvu, API vrati `not_found`.
+OCR se nepoužívá. Pokud PDF nemá čitelnou textovou vrstvu, API vrátí `not_found`.
 
-## Overeni modelu a vyrobniho cisla
+## Ověření modelu a výrobního čísla
 
-Pred strukturovanim postupu API kontroluje:
+Před strukturováním postupu API kontroluje:
 
-- titulni a prvni stranky,
-- stranky obsahujici vyrazy jako `serial number`, `serial range`, `S/N`, `from serial`, `before serial`,
+- titulní a první stránky,
+- stránky obsahující výrazy jako `serial number`, `serial range`, `S/N`, `from serial`, `before serial`,
 - shodu modelu,
-- dolozeny rozsah vyrobnich cisel, pokud je v manualu uveden.
+- doložený rozsah výrobních čísel, pokud je v manuálu uveden.
 
-Vysledky:
+Výrobní číslo se nerozhoduje pouhým spojením číslic. Backend ho rozdělí na:
 
-- `ok`: model odpovida a vyrobni cislo je v dolozenem rozsahu, nebo manual jednoznacne uvadi produktovou radu bez serial omezeni,
-- `warn`: model pravdepodobne odpovida, ale rozsah vyrobniho cisla nelze prokazatelne overit,
-- `not_found`: model nebo vyrobni cislo prokazatelne neodpovida.
+- prefix / produktovou řadu,
+- číselnou pořadovou část,
+- případný suffix,
+- normalizovanou původní hodnotu.
 
-`serialRange` musi byt citace nebo vyrez z manualu, ne odhad AI.
+Pokud manuál uvádí alfanumerický prefix, musí odpovídat. Například rozsah `GS30D-15000 and up` nesmí projít pro stroj `GS30E-16000` jen proto, že má podobné číslice. Pokud rozsah nejde bezpečně rozebrat, výsledek je maximálně `warn`, ne `ok`.
 
-## Validace AI vystupu
+Výsledky:
 
-OpenAI odpoved je vyzadovana jako striktni JSON schema. Kazdy krok i bezpecnostni bod musi mit:
+- `ok`: model odpovídá a výrobní číslo je v doloženém rozsahu, nebo manuál jednoznačně uvádí produktovou řadu bez serial omezení,
+- `warn`: model pravděpodobně odpovídá, ale rozsah výrobního čísla nelze prokazatelně ověřit,
+- `not_found`: model nebo výrobní číslo prokazatelně neodpovídá.
+
+`serialRange` musí být citace nebo výřez z manuálu, ne odhad AI.
+
+## Validace AI výstupu
+
+OpenAI odpověď je vyžadována jako striktní JSON schema. Každý krok i bezpečnostní bod musí mít:
 
 ```json
 {
-  "text": "cesky krok",
+  "text": "český krok",
   "sourceQuote": "exact English quote",
   "page": 42
 }
 ```
 
-Backend overuje:
+Backend nejdřív ověří:
 
-- stranka existuje,
-- `sourceQuote` je prave na uvedene strance,
-- citace neni prilis kratka nebo obecna,
-- citace odpovida hledanemu ukonu nebo bezpecnostnimu upozorneni,
-- pri pochybnosti se konkretni krok zahodi,
-- pokud nezbyde zadny overeny krok, vysledek je `not_found`.
+- stránka existuje,
+- `sourceQuote` je právě na uvedené stránce,
+- citace není příliš krátká nebo obecná,
+- citace odpovídá hledanému úkonu nebo bezpečnostnímu upozornění.
 
-## Oficialni zdroje
+Potom běží druhý oddělený validační krok přes OpenAI. Ten neposuzuje celý manuál, ale pouze vztah:
+
+- český krok,
+- přesná citace,
+- zdrojová stránka.
+
+Validátor vrací striktní JSON:
+
+```json
+{
+  "supported": true,
+  "reason": ""
+}
+```
+
+Krok projde pouze tehdy, když je český text překladem nebo úzkou parafrází citace. Nesmí přidat nové úkony, nástroje, hodnoty ani bezpečnostní pokyny. Při chybě, nejistotě nebo nulovém počtu ověřených kroků backend vrátí `not_found`.
+
+## Oficiální zdroje
 
 Povoleno:
 
@@ -133,24 +157,24 @@ Povoleno:
 - `https://manuals.genielift.com`
 - `https://jlg.com`
 
-Domeny typu `jlg.com.example.com` nebo `manuals.genielift.com.evil.example` jsou odmitnute.
+Domény typu `jlg.com.example.com` nebo `manuals.genielift.com.evil.example` jsou odmítnuté.
 
-## Bezpecnost
+## Bezpečnost
 
 Backend kontroluje:
 
 - pouze HTTPS URL,
-- povolene domeny podle vyrobce,
-- domenu po kazdem presmerovani,
-- zakaz localhostu a IP adres,
-- maximalni pocet redirectu,
-- maximalni velikost PDF,
-- timeout stahovani,
-- omezeni request body,
-- CORS jen pro povolene originy,
-- bezpecne chybove odpovedi bez uniku klicu.
+- povolené domény podle výrobce,
+- doménu po každém přesměrování,
+- zákaz localhostu a IP adres,
+- maximální počet redirectů,
+- maximální velikost PDF,
+- timeout stahování,
+- omezení request body,
+- CORS jen pro povolené originy,
+- bezpečné chybové odpovědi bez úniku klíčů.
 
-## Lokalni test
+## Lokální test
 
 ```bash
 pnpm install
@@ -159,13 +183,13 @@ pnpm run check
 pnpm audit --prod
 ```
 
-## Nasazeni na Vercel
+## Nasazení na Vercel
 
-Backend zatim nenasazuj, dokud neni PR zkontrolovane.
+Backend zatím nenasazuj, dokud není PR zkontrolované.
 
-Po schvaleni:
+Po schválení:
 
-1. Vytvor samostatny Vercel projekt z adresare:
+1. Vytvoř samostatný Vercel projekt z adresáře:
 
 ```text
 backend/manuals-api
@@ -173,7 +197,7 @@ backend/manuals-api
 
 2. Nastav environment variables ve Vercelu.
 3. Deploy.
-4. Vysledna URL bude napriklad:
+4. Výsledná URL bude například:
 
 ```text
 https://liftcontrol-manuals-api.vercel.app/api/manuals/search
@@ -185,12 +209,12 @@ Tuto URL pak nastav ve frontendu do:
 window.LIFTCHECK_MANUALS_API_URL = 'https://.../api/manuals/search';
 ```
 
-Produkcni URL nevkladej, dokud skutecne neexistuje.
+Produkční URL nevkládej, dokud skutečně neexistuje.
 
-## Povinne upozorneni
+## Povinné upozornění
 
-Kazda odpoved musi obsahovat:
+Každá odpověď musí obsahovat:
 
 ```text
-Pri rozporu ma vzdy prednost originalni manual vyrobce.
+Při rozporu má vždy přednost originální manuál výrobce.
 ```

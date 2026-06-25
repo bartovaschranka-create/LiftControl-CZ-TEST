@@ -5,14 +5,8 @@ const RESULT_SCHEMA = {
   additionalProperties: false,
   required: ['steps', 'safety', 'serialRange', 'message'],
   properties: {
-    steps: {
-      type: 'array',
-      items: sourceItemSchema()
-    },
-    safety: {
-      type: 'array',
-      items: sourceItemSchema()
-    },
+    steps: { type: 'array', items: sourceItemSchema() },
+    safety: { type: 'array', items: sourceItemSchema() },
     serialRange: { type: 'string' },
     message: { type: 'string' }
   }
@@ -72,7 +66,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   } catch {
     return null;
   }
-  const validated = validateAiOutput(parsed, pages, request);
+  const validated = await validateAiOutput(parsed, pages, request, { config, deps, requireSemanticValidation: true });
   const sources = uniqueSources([...(fit.sources || []), ...validated.sources]);
   return {
     status: validated.steps.length ? (fit.status === 'ok' ? 'ok' : 'warn') : 'not_found',
@@ -86,16 +80,16 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     steps: validated.steps,
     safety: validated.safety,
     sources,
-    message: validated.message || (validated.steps.length ? 'Postup nalezen v originalnim manualu.' : 'Postup nebyl v overenem textu manualu dolozen.'),
+    message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Postup nebyl v ověřeném textu manuálu doložen.'),
     variants: []
   };
 }
 
-export function validateAiOutput(parsed, pages, request = {}) {
+export async function validateAiOutput(parsed, pages, request = {}, options = {}) {
   const pageMap = new Map(pages.map(p => [Number(p.page), p.text || '']));
   const terms = taskTerms(request.task || '').map(normalizeText).filter(x => x.length >= 3);
-  const validSteps = validateItems(parsed.steps, pageMap, terms, 'step');
-  const validSafety = validateItems(parsed.safety, pageMap, terms, 'safety');
+  const validSteps = await validateItems(parsed.steps, pageMap, terms, 'step', request, options);
+  const validSafety = await validateItems(parsed.safety, pageMap, terms, 'safety', request, options);
   const sources = [...validSteps, ...validSafety].map(item => ({ page: item.page, quote: item.sourceQuote }));
   return {
     steps: validSteps,
@@ -106,8 +100,8 @@ export function validateAiOutput(parsed, pages, request = {}) {
   };
 }
 
-function validateItems(items, pageMap, terms, kind) {
-  return (Array.isArray(items) ? items : [])
+async function validateItems(items, pageMap, terms, kind, request, options) {
+  const structurallyValid = (Array.isArray(items) ? items : [])
     .filter(item => item?.text && item?.sourceQuote && Number.isInteger(Number(item.page)))
     .map(item => ({
       text: String(item.text).trim(),
@@ -118,6 +112,89 @@ function validateItems(items, pageMap, terms, kind) {
     .filter(item => pageMap.has(item.page))
     .filter(item => pageContainsQuote(pageMap.get(item.page), item.sourceQuote))
     .filter(item => quoteMatchesPurpose(item.sourceQuote, terms, kind));
+
+  const out = [];
+  for (const item of structurallyValid) {
+    if (await semanticSupportsItem(item, kind, request, options)) out.push(item);
+  }
+  return out;
+}
+
+async function semanticSupportsItem(item, kind, request, options = {}) {
+  if (typeof options.semanticValidator === 'function') {
+    try {
+      return await options.semanticValidator({ item, kind, request });
+    } catch {
+      return false;
+    }
+  }
+  if (!options.requireSemanticValidation) return true;
+  return validateMeaningWithOpenAI({ item, kind, request, config: options.config, deps: options.deps });
+}
+
+async function validateMeaningWithOpenAI({ item, kind, request, config, deps = {} }) {
+  if (!config?.openaiApiKey) return false;
+  const fetchImpl = deps.fetch || fetch;
+  let res;
+  try {
+    res = await fetchImpl('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.openaiApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: config.openaiModel,
+        input: [
+          {
+            role: 'system',
+            content: [
+              'You are a strict source validation gate.',
+              'Decide whether the Czech text is only a translation or narrow paraphrase of the exact English quote.',
+              'Do not allow added tools, values, safety instructions, steps, or conclusions.',
+              'When unsure, return supported false.'
+            ].join(' ')
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              kind,
+              task: request.task || '',
+              page: item.page,
+              czechText: item.text,
+              exactSourceQuote: item.sourceQuote
+            })
+          }
+        ],
+        text: {
+          format: {
+            type: 'json_schema',
+            name: 'manual_source_support_check',
+            strict: true,
+            schema: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['supported', 'reason'],
+              properties: {
+                supported: { type: 'boolean' },
+                reason: { type: 'string' }
+              }
+            }
+          }
+        }
+      })
+    });
+  } catch {
+    return false;
+  }
+  if (!res.ok) return false;
+  try {
+    const data = await res.json();
+    const parsed = JSON.parse(extractResponseText(data));
+    return parsed?.supported === true;
+  } catch {
+    return false;
+  }
 }
 
 function quoteIsSpecific(quote) {

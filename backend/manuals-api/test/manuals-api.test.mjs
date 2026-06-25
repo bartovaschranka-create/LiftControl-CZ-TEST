@@ -6,6 +6,7 @@ import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
 import { extractPdfTextPages } from '../src/pdf.mjs';
 import { validateAiOutput } from '../src/openai.mjs';
+import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
 
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
@@ -117,9 +118,54 @@ test('page-aware PDF extraction keeps text on the real second page', async () =>
   assert.doesNotMatch(pages[0].text, /diagnostic troubleshooting/);
 });
 
-test('AI validation rejects invented step with unrelated real quote', () => {
+test('serial parser keeps alphanumeric prefix and numeric sequence separate', () => {
+  assert.deepEqual(parseSerialValue('GS30D-12345'), {
+    original: 'GS30D-12345',
+    normalized: 'GS30D12345',
+    prefix: 'GS30D',
+    number: 12345,
+    suffix: '',
+    reliable: true
+  });
+  assert.deepEqual(parseSerialValue('0300123456'), {
+    original: '0300123456',
+    normalized: '0300123456',
+    prefix: '',
+    number: 300123456,
+    suffix: '',
+    reliable: true
+  });
+});
+
+test('serial range rejects different alphanumeric prefix', () => {
+  const pages = [{ page: 1, text: 'Genie GS-1930 service manual serial number GS30D-15000 and up' }];
+  const good = evaluateManualFit({ request: { model: 'GS-1930', serial: 'GS30D-16000' }, pages });
+  const bad = evaluateManualFit({ request: { model: 'GS-1930', serial: 'GS30E-16000' }, pages });
+  assert.equal(good.status, 'ok');
+  assert.equal(bad.status, 'not_found');
+});
+
+test('numeric serial range still works when no prefix is present', () => {
+  const range = parseSerialRange('serial number 0300000000 and up');
+  assert.equal(range.reliable, true);
+  const fit = evaluateManualFit({
+    request: { model: '450AJ', serial: '0300123456' },
+    pages: [{ page: 1, text: 'JLG 450AJ service manual serial number 0300000000 and up' }]
+  });
+  assert.equal(fit.status, 'ok');
+});
+
+test('unparseable serial range returns warn rather than ok', () => {
+  const fit = evaluateManualFit({
+    request: { model: 'GS-1930', serial: 'GS30D-12345' },
+    pages: [{ page: 1, text: 'Genie GS-1930 service manual serial number see machine plate for applicable models' }]
+  });
+  assert.equal(fit.status, 'warn');
+});
+
+test('AI validation rejects invented step with unrelated real quote', async () => {
   const pages = [{ page: 2, text: 'Battery charger green light indicates charging is complete.' }];
-  const out = validateAiOutput({
+  const out = await validateAiOutput({
     steps: [{ text: 'Proved kalibraci uhloveho senzoru.', sourceQuote: 'Battery charger green light indicates charging is complete.', page: 2 }],
     safety: [],
     serialRange: '',
@@ -128,12 +174,12 @@ test('AI validation rejects invented step with unrelated real quote', () => {
   assert.deepEqual(out.steps, []);
 });
 
-test('AI validation rejects correct quote with wrong page number', () => {
+test('AI validation rejects correct quote with wrong page number', async () => {
   const pages = [
     { page: 1, text: 'Title page only.' },
     { page: 2, text: 'Use the analyzer to read diagnostic fault codes.' }
   ];
-  const out = validateAiOutput({
+  const out = await validateAiOutput({
     steps: [{ text: 'Nacti diagnosticke chybove kody analyzatorem.', sourceQuote: 'Use the analyzer to read diagnostic fault codes.', page: 1 }],
     safety: [],
     serialRange: '',
@@ -142,8 +188,8 @@ test('AI validation rejects correct quote with wrong page number', () => {
   assert.deepEqual(out.steps, []);
 });
 
-test('AI validation rejects step without quote', () => {
-  const out = validateAiOutput({
+test('AI validation rejects step without quote', async () => {
+  const out = await validateAiOutput({
     steps: [{ text: 'Nacti diagnosticke chybove kody analyzatorem.', page: 1 }],
     safety: [],
     serialRange: '',
@@ -152,14 +198,27 @@ test('AI validation rejects step without quote', () => {
   assert.deepEqual(out.steps, []);
 });
 
-test('AI validation rejects safety warning that is not in the manual', () => {
-  const out = validateAiOutput({
+test('AI validation rejects safety warning that is not in the manual', async () => {
+  const out = await validateAiOutput({
     steps: [],
     safety: [{ text: 'Odpoj baterii.', sourceQuote: 'Disconnect the battery before servicing the charger.', page: 1 }],
     serialRange: '',
     message: ''
   }, [{ page: 1, text: 'Use the analyzer to read diagnostic fault codes.' }], { task: 'diagnostika zavady' });
   assert.deepEqual(out.safety, []);
+});
+
+test('semantic validation rejects unrelated Czech step even with relevant angle sensor quote', async () => {
+  const pages = [{ page: 5, text: 'Angle sensor calibration must be performed with the platform fully lowered.' }];
+  const out = await validateAiOutput({
+    steps: [{ text: 'Vymen hydraulicky filtr a odvzdusni soustavu.', sourceQuote: 'Angle sensor calibration must be performed with the platform fully lowered.', page: 5 }],
+    safety: [],
+    serialRange: '',
+    message: ''
+  }, pages, { task: 'kalibrace uhloveho senzoru' }, {
+    semanticValidator: async ({ item }) => item.text.includes('Kalibrace uhlu')
+  });
+  assert.deepEqual(out.steps, []);
 });
 
 async function callApi(body, options = {}) {
