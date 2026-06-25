@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/manuals/search.js": {
+      "maxDuration": 30
+    }
+  }
+}
