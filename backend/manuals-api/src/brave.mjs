@@ -4,10 +4,13 @@ const BRAVE_WEB_ENDPOINT = 'https://api.search.brave.com/res/v1/web/search';
 
 export function buildManualQueries({ maker, model }) {
   if (maker === 'Genie') {
+    const models = genieModelQueries(model);
     return [
-      { type: 'service', q: `site:genielift.com OR site:manuals.genielift.com ${model} service manual filetype:pdf` },
-      { type: 'parts', q: `site:genielift.com OR site:manuals.genielift.com ${model} parts manual filetype:pdf` },
-      { type: 'operator', q: `site:genielift.com OR site:manuals.genielift.com ${model} operator manual filetype:pdf` }
+      { type: 'service', q: `site:manuals.genielift.com (${models}) service maintenance manual filetype:pdf` },
+      { type: 'service', q: `site:genielift.com (${models}) service maintenance manual filetype:pdf` },
+      { type: 'parts', q: `site:manuals.genielift.com (${models}) parts manual filetype:pdf` },
+      { type: 'operator', q: `site:manuals.genielift.com (${models}) operator manual filetype:pdf` },
+      { type: 'operator', q: `site:genielift.com (${models}) operators manual filetype:pdf` }
     ];
   }
   return [
@@ -15,6 +18,29 @@ export function buildManualQueries({ maker, model }) {
     { type: 'parts', q: `site:jlg.com ${model} parts manual filetype:pdf` },
     { type: 'operator', q: `site:jlg.com ${model} operator manual filetype:pdf` }
   ];
+}
+
+function genieModelQueries(model = '') {
+  const raw = String(model || '').trim();
+  const compact = raw.replace(/\s+/g, '').toUpperCase();
+  const variants = new Set([raw]);
+  const gs = compact.match(/^GS-?(\d{2})(\d{2})/);
+  if (gs) {
+    variants.add(`GS-${gs[1]}${gs[2]}`);
+    variants.add(`GS ${gs[1]}${gs[2]}`);
+    variants.add(`GS${gs[1]}${gs[2]}`);
+  }
+  const z = compact.match(/^Z-?(\d{2})\/?(\d{2})/);
+  if (z) {
+    variants.add(`Z-${z[1]}/${z[2]}`);
+    variants.add(`Z ${z[1]}/${z[2]}`);
+    variants.add(`Z${z[1]}${z[2]}`);
+  }
+  return [...variants]
+    .map(v => String(v || '').trim())
+    .filter(Boolean)
+    .map(v => /\s/.test(v) ? `"${v}"` : v)
+    .join(' OR ');
 }
 
 export async function searchManualCandidates(request, config, deps = {}) {
