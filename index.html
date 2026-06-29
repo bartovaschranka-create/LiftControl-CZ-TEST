@@ -2401,7 +2401,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.191</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.192</div>
   </div>
 </aside>
 
@@ -2742,6 +2742,13 @@ body.dark .theme-toggle{
         <select id="workPlanTech"></select>
       </div>
       <div class="field">
+        <label>Typ záznamu</label>
+        <select id="workPlanType">
+          <option value="work">Práce</option>
+          <option value="vacation">Dovolená</option>
+        </select>
+      </div>
+      <div class="field" id="workPlanPlaceWrap">
         <label>Místo / pobočka</label>
         <select id="workPlanPlace"></select>
       </div>
@@ -2749,7 +2756,7 @@ body.dark .theme-toggle{
         <label>Jiné místo</label>
         <input id="workPlanCustomPlace" type="text" autocomplete="off" placeholder="Zákazník, stavba, servis mimo pobočku...">
       </div>
-      <div class="field work-plan-extra">
+      <div class="field work-plan-extra" id="workPlanExtraWrap">
         <label>Další místa práce</label>
         <input id="workPlanExtraPlaces" type="hidden"><datalist id="workPlanPlaceList"></datalist>
         <div id="workPlanExtraList" class="work-extra-list"></div>
@@ -6532,12 +6539,34 @@ function setWorkExtraPlacesRows(values=[]){
   rows.forEach(v => addWorkExtraPlaceRow(v));
   if(hidden) hidden.value = rows.join('\n');
 }
+function isVacationWorkPlan(row){
+  const type = String(row?.workType || row?.type || '').toLowerCase();
+  return type === 'vacation' || type === 'dovolena' || type === 'dovolená';
+}
+function updateWorkPlanTypeUi(){
+  const isVacation = document.getElementById('workPlanType')?.value === 'vacation';
+  document.getElementById('workPlanPlaceWrap')?.classList.toggle('hidden', isVacation);
+  document.getElementById('workPlanCustomWrap')?.classList.add('hidden');
+  document.getElementById('workPlanExtraWrap')?.classList.toggle('hidden', isVacation);
+  if(isVacation){
+    const place = document.getElementById('workPlanPlace');
+    const custom = document.getElementById('workPlanCustomPlace');
+    if(place) place.value = '';
+    if(custom) custom.value = '';
+    setWorkExtraPlacesRows([]);
+  }else{
+    const place = document.getElementById('workPlanPlace');
+    document.getElementById('workPlanCustomWrap')?.classList.toggle('hidden', place?.value !== '__custom__');
+  }
+}
 function getWorkPlanPlaces(row){
+  if(isVacationWorkPlan(row)) return [];
   const base = row.place ? [normalizeCanonicalBranch(row.place)] : [];
   const extras = Array.isArray(row.extraPlaces) ? row.extraPlaces.map(normalizeCanonicalBranch) : [];
   return [...base, ...extras].filter(Boolean);
 }
 function getWorkPlanPlaceLabels(row){
+  if(isVacationWorkPlan(row)) return ['Dovolená'];
   return getWorkPlanPlaces(row).map(displayPlaceName);
 }
 function getWorkPlanRowsForDate(dateStr){
@@ -6629,6 +6658,8 @@ function openWorkPlanForm(id=null, dateStr=null){
   const row = id ? (scheduleData || []).find(x => x.id === id) : null;
   document.getElementById('workPlanDate').value = formatDateForInput((row && row.date) || dateStr || ymd(new Date()));
   document.getElementById('workPlanTech').value = (row && row.technician) || '';
+  const typeSelect = document.getElementById('workPlanType');
+  if(typeSelect) typeSelect.value = isVacationWorkPlan(row) ? 'vacation' : 'work';
   const placeSelect = document.getElementById('workPlanPlace');
   const customWrap = document.getElementById('workPlanCustomWrap');
   const customInput = document.getElementById('workPlanCustomPlace');
@@ -6647,6 +6678,7 @@ function openWorkPlanForm(id=null, dateStr=null){
     customInput.value = placeVal;
   }
   setWorkExtraPlacesRows((row && Array.isArray(row.extraPlaces)) ? row.extraPlaces.map(normalizeCanonicalBranch) : []);
+  updateWorkPlanTypeUi();
   document.getElementById('workPlanNote').value = (row && row.note) || '';
   document.getElementById('workPlanFormWrap').classList.remove('hidden');
   attachWorkSmartSuggests();
@@ -6664,14 +6696,16 @@ async function saveWorkPlanFromForm(){
   const rawDate = document.getElementById('workPlanDate').value;
   const date = parseCzechDateInput(rawDate);
   const technician = document.getElementById('workPlanTech').value;
+  const workType = document.getElementById('workPlanType')?.value || 'work';
+  const isVacation = workType === 'vacation';
   const placeSelect = document.getElementById('workPlanPlace').value;
   const customPlace = document.getElementById('workPlanCustomPlace').value.trim();
-  const place = normalizeCanonicalBranch(placeSelect === '__custom__' ? customPlace : placeSelect);
-  const extraPlaces = parseExtraPlaces(document.getElementById('workPlanExtraPlaces').value).map(normalizeCanonicalBranch).filter(Boolean);
+  const place = isVacation ? '' : normalizeCanonicalBranch(placeSelect === '__custom__' ? customPlace : placeSelect);
+  const extraPlaces = isVacation ? [] : parseExtraPlaces(document.getElementById('workPlanExtraPlaces').value).map(normalizeCanonicalBranch).filter(Boolean);
   const note = document.getElementById('workPlanNote').value.trim();
   if(!date){ alert('Vyplň datum ve formátu DD.MM.RRRR.'); return; }
   if(!technician){ alert('Vyber technika.'); return; }
-  if(!place && !extraPlaces.length){ alert('Vyplň alespoň jedno místo práce.'); return; }
+  if(!isVacation && !place && !extraPlaces.length){ alert('Vyplň alespoň jedno místo práce.'); return; }
   if(workPlanSaveInProgress) return;
   workPlanSaveInProgress = true;
   const saveBtn = document.getElementById('saveWorkPlanBtn');
@@ -6683,10 +6717,11 @@ async function saveWorkPlanFromForm(){
       id: editingWorkPlanId || scheduleUid(),
       date,
       technician,
+      workType,
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.191'
+      appVersion:'1.6 / 5.192'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -9608,7 +9643,9 @@ document.getElementById('prevWorkWeekBtn')?.addEventListener('click', () => { cu
 document.getElementById('todayWorkWeekBtn')?.addEventListener('click', () => { currentWorkWeekStart = startOfWeek(new Date()); renderWorkPlan(); });
 document.getElementById('nextWorkWeekBtn')?.addEventListener('click', () => { currentWorkWeekStart = addDays(currentWorkWeekStart || startOfWeek(new Date()), 7); renderWorkPlan(); });
 document.getElementById('workPlanTechFilter')?.addEventListener('change', renderWorkPlan);
+document.getElementById('workPlanType')?.addEventListener('change', updateWorkPlanTypeUi);
 document.getElementById('workPlanPlace')?.addEventListener('change', (e) => {
+  if(document.getElementById('workPlanType')?.value === 'vacation') return;
   document.getElementById('workPlanCustomWrap')?.classList.toggle('hidden', e.target.value !== '__custom__');
 });
 document.getElementById('addWorkExtraPlaceBtn')?.addEventListener('click', () => addWorkExtraPlaceRow());
