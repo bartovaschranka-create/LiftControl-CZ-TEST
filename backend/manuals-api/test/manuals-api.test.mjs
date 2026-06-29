@@ -7,6 +7,7 @@ import { validateManualRequest } from '../src/validation.mjs';
 import { extractPdfTextPages } from '../src/pdf.mjs';
 import { validateAiOutput } from '../src/openai.mjs';
 import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
+import { buildManualQueries } from '../src/brave.mjs';
 
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
@@ -24,6 +25,14 @@ test('valid Genie request accepts official Genie manuals domain', async () => {
   assert.equal(res.json.maker, 'Genie');
   assert.equal(res.json.manualType, 'service');
   assert.match(res.json.originalUrl, /^https:\/\/manuals\.genielift\.com/);
+});
+
+test('Genie search queries prioritize manuals.genielift.com and model variants', () => {
+  const queries = buildManualQueries({ maker: 'Genie', model: 'GS-1930' });
+  assert.ok(queries.some(q => q.type === 'service' && q.q.includes('site:manuals.genielift.com')));
+  assert.ok(queries.some(q => q.q.includes('GS-1930')));
+  assert.ok(queries.some(q => q.q.includes('GS1930')));
+  assert.ok(queries.some(q => q.q.includes('"GS 1930"')));
 });
 
 test('unsupported maker is rejected', async () => {
