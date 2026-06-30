@@ -2401,7 +2401,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.195</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.197</div>
   </div>
 </aside>
 
@@ -3513,6 +3513,21 @@ function cloudSaveResult(ok=true, err=null, record=null){ return {local:true, cl
 function alertCloudResult(result, label){
   if(result && result.error) alert(label + ' je uložené v zařízení, ale Firebase synchronizace selhala: ' + errorText(result.error));
 }
+function protocolSyncPending(p){ return !!(p && (p.syncPending || p.cloudPending)); }
+function markProtocolSyncState(record, ok, err=null){
+  if(!record) return record;
+  record.syncPending = !ok;
+  record.cloudPending = !ok;
+  record.cloudSynced = !!ok;
+  record.syncError = ok ? '' : errorText(err || new Error('Ceka na synchronizaci'));
+  record.cloudSyncError = ok ? '' : errorText(err || new Error('Ceka na synchronizaci'));
+  record.cloudSyncedAt = ok ? new Date().toISOString() : '';
+  return record;
+}
+function protocolSyncBadgeHtml(record){
+  if(!protocolSyncPending(record)) return '';
+  return '<span class="badge badge-warn" title="Protokol je ulozeny jen v tomto zarizeni a ceka na odeslani do Firebase.">Ceka na synchronizaci</span>';
+}
 function localSaveResult(ok=true, err=null){ return {ok:!!ok, error:err || null}; }
 function faultSyncPending(f){ return !!(f && (f.syncPending || f.cloudPending)); }
 function faultNeedsLegacySyncRetry(f){
@@ -3537,6 +3552,30 @@ function markFaultSyncState(record, ok, err=null){
 function faultSyncBadgeHtml(record){
   if(!faultSyncPending(record)) return '';
   return '<span class="status-pill status-waiting" title="Záznam je uložený jen v tomto zařízení a čeká na odeslání do Firebase.">Čeká na synchronizaci</span>';
+}
+function partSyncPending(p){ return !!(p && (p.syncPending || p.cloudPending)); }
+function partNeedsLegacySyncRetry(p){
+  if(!p || partSyncPending(p) || p.cloudSynced === true || !p.id) return false;
+  if(!(p.serial || p.type || p.partName || p.partNumber)) return false;
+  const stamp = Date.parse(p.updatedAt || p.createdAt || '');
+  const recentEnough = !Number.isFinite(stamp) || (Date.now() - stamp) <= 14 * 24 * 60 * 60 * 1000;
+  if(!recentEnough) return false;
+  const version = String(p.appVersion || '');
+  return !('cloudSynced' in p) || /^1\.6\s*\/\s*5\.(18[0-9]|19[0-6])$/.test(version);
+}
+function markPartSyncState(record, ok, err=null){
+  if(!record) return record;
+  record.syncPending = !ok;
+  record.cloudPending = !ok;
+  record.cloudSynced = !!ok;
+  record.syncError = ok ? '' : errorText(err);
+  record.cloudSyncError = ok ? '' : errorText(err);
+  record.cloudSyncedAt = ok ? new Date().toISOString() : '';
+  return record;
+}
+function partSyncBadgeHtml(record){
+  if(!partSyncPending(record)) return '';
+  return '<span class="status-pill status-waiting" title="Požadavek na ND je uložený jen v tomto zařízení a čeká na odeslání do Firebase.">Čeká na synchronizaci</span>';
 }
 
 async function uploadDataUrl(path, dataUrl){
@@ -3598,9 +3637,10 @@ function cloneForAuditSnapshot(record){
   return stripLargePhotoData(cloned);
 }
 async function syncProtocolToCloud(record){
-  if(!(firebaseAvailable && db)) return cloudSaveResult(false, null);
+  if(!(firebaseAvailable && db)) return cloudSaveResult(false, new Error('Firebase neni dostupny.'), record);
   try{
     const cloudRecord = await prepareRecordForSave(cloneForCloudSync(record));
+    markProtocolSyncState(cloudRecord, true, null);
     await withTimeout(db.collection(COLLECTION_NAME).doc(cloudRecord.id).set(cloudRecord), 12000, 'Uložení protokolu do Firestore');
     return cloudSaveResult(true, null, cloudRecord);
   }catch(err){
@@ -3611,6 +3651,7 @@ async function syncProtocolToCloud(record){
 async function saveProtocol(record){
   record.photos = record.photos || {};
   record.issuePhotos = record.issuePhotos || {};
+  markProtocolSyncState(record, false, null);
   unmarkProtocolDeleted(record.id);
   data = upsertLocalRow(loadLocalData, saveLocalData, record);
   render();
@@ -3619,8 +3660,30 @@ async function saveProtocol(record){
     data = upsertLocalRow(loadLocalData, saveLocalData, result.record);
     Object.assign(record, result.record);
     render();
+  } else {
+    markProtocolSyncState(record, false, result?.error || new Error('Firebase synchronizace protokolu selhala.'));
+    data = upsertLocalRow(loadLocalData, saveLocalData, record);
+    render();
   }
   return result;
+}
+async function retryPendingProtocolSync(){
+  if(!(firebaseAvailable && db)) return;
+  const pending = loadLocalData().filter(protocolSyncPending);
+  if(!pending.length) return;
+  for(const record of pending){
+    try{
+      const result = await syncProtocolToCloud(record);
+      if(result && result.cloud && result.record){
+        upsertLocalRow(loadLocalData, saveLocalData, result.record);
+      }
+    }catch(err){
+      console.warn('Pending protocol sync retry failed', err);
+    }
+  }
+  data = mergeCloudWithLocal(data, loadLocalData(), saveLocalData);
+  render();
+  updateMainOverview?.();
 }
 async function deleteProtocol(id){
   markProtocolDeleted(id);
@@ -3754,7 +3817,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.195',
+      appVersion: '1.6 / 5.197',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -3947,17 +4010,25 @@ function startLocalMode(){
   render();
   renderRevize();
 }
+function rowSyncTime(row){
+  const stamp = Date.parse(row?.updatedAt || row?.savedAt || row?.createdAt || row?.draftSavedAt || row?.datum || row?.date || '');
+  return Number.isFinite(stamp) ? stamp : 0;
+}
+function preferMergedRow(current, next){
+  if(!current) return next;
+  if(!next) return current;
+  if(protocolSyncPending(next) && !protocolSyncPending(current)) return next;
+  if(protocolSyncPending(current) && !protocolSyncPending(next)) return current;
+  return rowSyncTime(next) > rowSyncTime(current) ? next : current;
+}
 function mergeRowsById(primary=[], secondary=[]){
-  const out=[];
-  const seen=new Set();
+  const byKey=new Map();
   [...(primary||[]), ...(secondary||[])].forEach(row=>{
     if(!row) return;
     const key=row.id || [row.vc,row.protokol,row.datum,row.savedAt,row.updatedAt].filter(Boolean).join('|') || JSON.stringify(row);
-    if(seen.has(key)) return;
-    seen.add(key);
-    out.push(row);
+    byKey.set(key, preferMergedRow(byKey.get(key), row));
   });
-  return out;
+  return Array.from(byKey.values()).sort((a,b)=>rowSyncTime(b)-rowSyncTime(a));
 }
 function mergeCloudWithLocal(cloudRows, localRows, saveLocal){
   const cloud=Array.isArray(cloudRows) ? cloudRows : [];
@@ -4295,6 +4366,7 @@ function render(){
             <span class="badge ${hasIssue(r)?'badge-warn':'badge-ok'}">${hasIssue(r)?'Se závadou':'Bez závad'}</span>
             ${r.externalCustomer ? '<span class="badge badge-external">Externí zákazník</span>' : ''}
             ${firebaseAvailable ? '' : '<span class="badge badge-warn">Sdílení vypnuté</span>'}
+            ${protocolSyncBadgeHtml(r)}
           </div>
         </div>
         <div class="card-sub">${escapeHtml(formatDate(r.datum))}</div>
@@ -4402,10 +4474,10 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.195'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.197'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.195';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.197';
 
   // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
@@ -4829,7 +4901,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.195';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.197';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -4839,9 +4911,10 @@ async function nextStep(){
     const saveResult = await saveProtocol(rec);
     logAuditAction(wasExistingProtocol ? 'update' : 'create','protocol',rec,rec.enteredBy || rec.technik, undefined, beforeProtocol)
       .catch(err => console.warn('Audit protokolu se nepodařilo zapsat na pozadí.', err));
+    alertCloudResult(saveResult, 'Protokol');
     closeWizard();
     render();
-    alert('Protokol uložen.');
+    if(saveResult?.cloud) alert('Protokol uložen a synchronizován.');
   }catch(err){
     console.error(err);
     alert('Uložení protokolu se nepodařilo: ' + errorText(err));
@@ -4901,7 +4974,7 @@ async function logAuditAction(action, entity, record, by, detail, beforeRecord){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.195',
+      appVersion: '1.6 / 5.197',
       restoreVersion: 1,
       before: beforeSnapshot ? cloneForAuditSnapshot(beforeSnapshot) : null,
       after: afterSnapshot ? cloneForAuditSnapshot(afterSnapshot) : null
@@ -6756,7 +6829,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.195'
+      appVersion:'1.6 / 5.197'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -7464,7 +7537,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.195'
+      appVersion:'1.6 / 5.197'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -8053,20 +8126,60 @@ async function savePartRecord(record){
   record.photos = getPartPhotoList(record);
   record.photo = record.photos[0] || null;
   record.updatedAt = new Date().toISOString();
+  markPartSyncState(record, false, null);
   partsData = upsertLocalRow(loadLocalParts, saveLocalParts, record);
   renderParts();
   updateMainOverview();
   if(firebaseAvailable && db){
     try{
       const cloudRecord = await preparePartForSave(cloneForCloudSync(record));
+      markPartSyncState(cloudRecord, true, null);
       await withTimeout(db.collection(PARTS_COLLECTION_NAME).doc(cloudRecord.id).set(cloudRecord), 12000, 'Uložení náhradního dílu do Firestore');
-      return cloudSaveResult(true);
+      partsData = upsertLocalRow(loadLocalParts, saveLocalParts, cloudRecord);
+      Object.assign(record, cloudRecord);
+      renderParts();
+      updateMainOverview();
+      return cloudSaveResult(true, null, cloudRecord);
     }catch(err){
       console.warn('Cloud sync náhradního dílu selhal, lokální data zůstávají uložená.', err);
+      markPartSyncState(record, false, err);
+      partsData = upsertLocalRow(loadLocalParts, saveLocalParts, record);
+      renderParts();
       return cloudSaveResult(false, err);
     }
   }
-  return cloudSaveResult(false, null);
+  return cloudSaveResult(false, new Error('Firebase není dostupný.'), record);
+}
+async function retryPendingPartSync(){
+  if(!(firebaseAvailable && db)) return;
+  const pending = loadLocalParts().filter(p => partSyncPending(p) || partNeedsLegacySyncRetry(p));
+  if(!pending.length) return;
+  for(const record of pending){
+    try{
+      const docRef = db.collection(PARTS_COLLECTION_NAME).doc(record.id);
+      if(!partSyncPending(record) && partNeedsLegacySyncRetry(record)){
+        const existingDoc = await withTimeout(docRef.get(), 8000, 'Ověření staršího lokálního požadavku na ND');
+        if(existingDoc.exists){
+          markPartSyncState(record, true, null);
+          upsertLocalRow(loadLocalParts, saveLocalParts, record);
+          continue;
+        }
+        markPartSyncState(record, false, new Error('Starší lokální požadavek na ND čeká na synchronizaci.'));
+        upsertLocalRow(loadLocalParts, saveLocalParts, record);
+      }
+      const cloudRecord = await preparePartForSave(cloneForCloudSync(record));
+      markPartSyncState(cloudRecord, true, null);
+      await withTimeout(docRef.set(cloudRecord), 12000, 'Opakovaná synchronizace náhradního dílu');
+      upsertLocalRow(loadLocalParts, saveLocalParts, cloudRecord);
+    }catch(err){
+      console.warn('Pending part sync retry failed', err);
+      markPartSyncState(record, false, err);
+      upsertLocalRow(loadLocalParts, saveLocalParts, record);
+    }
+  }
+  partsData = mergeCloudWithLocal(partsData, loadLocalParts(), saveLocalParts);
+  renderParts();
+  updateMainOverview();
 }
 async function deletePartRecord(id){
   const record = (partsData || []).find(x => x.id === id);
@@ -8133,7 +8246,7 @@ function renderParts(){
           <div class="part-title">${escapeHtml(p.partNumber || 'Bez PN')} · ${escapeHtml(p.partName || 'Bez popisu')}</div>
           <div class="part-sub">${escapeHtml(p.type || 'Bez typu')} · v.č. ${escapeHtml(p.serial || '—')} · ${escapeHtml(displayPlaceName(p.place) || '—')}</div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">${st.txt !== 'Požadavek' ? `<span class="status-pill ${st.cls}">${st.txt}</span>` : ''}${p.externalCustomer ? '<span class="status-pill status-external">Externí zákazník</span>' : ''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">${st.txt !== 'Požadavek' ? `<span class="status-pill ${st.cls}">${st.txt}</span>` : ''}${p.externalCustomer ? '<span class="status-pill status-external">Externí zákazník</span>' : ''}${partSyncBadgeHtml(p)}</div>
       </div>
       <div class="part-grid">
         <div class="part-meta"><div class="part-meta-label">Vytvořeno</div><div class="part-meta-value">${escapeHtml(formatDateTime(p.createdAt))}</div></div>
@@ -8355,13 +8468,14 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.195'
+      appVersion:'1.6 / 5.197'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
-    await savePartRecord(record);
+    const saveResult = await savePartRecord(record);
+    alertCloudResult(saveResult, 'Požadavek na ND');
     await logAuditAction(existing ? 'update' : 'create','part',record,record.enteredBy, undefined, beforeRecord);
     closePartForm();
     renderParts();
@@ -8507,7 +8621,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.195'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.197'}; }
 function revizeAnswerValue(value){ return String(value||'').trim().toUpperCase()==='NE' ? 'NE' : 'ANO'; }
 function revizeResult(r){
   r = r || {};
@@ -9063,7 +9177,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.195';
+  last.appVersion='1.6 / 5.197';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -9127,7 +9241,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ const unit=revizeNumericUnit(k); const label=({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; return unit ? `${label} (${unit})` : label; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.195'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.197'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
@@ -10197,7 +10311,11 @@ function installDoubleTapGuard(){
   }, {passive:false});
 }
 installDoubleTapGuard();
-window.addEventListener('online', () => retryPendingFaultSync().catch(err => console.warn('Pending fault sync retry failed:', err)));
+window.addEventListener('online', () => {
+  retryPendingProtocolSync().catch(err => console.warn('Pending protocol sync retry failed:', err));
+  retryPendingPartSync().catch(err => console.warn('Pending part sync retry failed:', err));
+  retryPendingFaultSync().catch(err => console.warn('Pending fault sync retry failed:', err));
+});
 
 restoreEmbeddedBackupIfEmpty();
 if(firebaseAvailable && db){
@@ -10208,7 +10326,7 @@ if(firebaseAvailable && db){
   auditData = loadLocalAudit();
   renderAuditHistory();
   db.collection(COLLECTION_NAME).onSnapshot(
-    snap => { const cloud=filterDeletedProtocols(snap.docs.map(d => ({...d.data(), id:d.id}))); data = mergeCloudWithLocal(cloud, filterDeletedProtocols(loadLocalData()), saveLocalData); render(); },
+    snap => { const cloud=filterDeletedProtocols(snap.docs.map(d => ({...d.data(), id:d.id}))); data = mergeCloudWithLocal(cloud, filterDeletedProtocols(loadLocalData()), saveLocalData); render(); updateMainOverview(); retryPendingProtocolSync().catch(err => console.warn('Pending protocol sync retry failed:', err)); },
     err => {
       console.error('Firebase sync error:', err);
       els.list.innerHTML = '<div class="empty"><span class="badge badge-warn">Sdílení nejde</span><div style="margin-top:10px">Zkontroluj internet, Firebase pravidla nebo spuštění přes webový odkaz.</div></div>';
@@ -10223,7 +10341,7 @@ if(firebaseAvailable && db){
     }
   );
   db.collection(PARTS_COLLECTION_NAME).onSnapshot(
-    snap => { const cloud=snap.docs.map(d => ({...d.data(), id:d.id})); partsData = mergeCloudWithLocal(cloud, loadLocalParts(), saveLocalParts); renderParts(); updateMainOverview(); },
+    snap => { const cloud=snap.docs.map(d => ({...d.data(), id:d.id})); partsData = mergeCloudWithLocal(cloud, loadLocalParts(), saveLocalParts); renderParts(); updateMainOverview(); retryPendingPartSync().catch(err => console.warn('Pending part sync retry failed:', err)); },
     err => {
       console.error('Firebase náhradní díly sync error:', err);
       startLocalPartsMode();
