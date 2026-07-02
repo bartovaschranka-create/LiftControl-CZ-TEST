@@ -1260,11 +1260,22 @@ body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fa
 .repair-protocol-paper .rp-sign-row{display:flex;gap:8px;margin-bottom:7px}
 .repair-protocol-paper .rp-sign-label{min-width:72px;font-weight:700}
 .repair-protocol-paper .rp-sign-line{display:inline-block;border-bottom:1px solid #111;min-width:58mm;height:15px;flex:1}
+.repair-protocol-paper .rp-signature-img{display:block;max-width:78mm;max-height:22mm;object-fit:contain;margin:-10px 0 0 0}
 .repair-protocol-paper .rp-distribution{font-size:10.5px;margin-top:6px}
 .repair-protocol-paper .rp-page-no{text-align:right;font-size:9px;color:#333;margin-top:5px}
 .repair-protocol-paper .rp-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .repair-protocol-paper .rp-photo{border:1px solid #555;min-height:55mm;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .repair-protocol-paper .rp-photo img{width:100%;height:100%;object-fit:cover}
+.signature-modal-content{width:min(96vw,940px)!important;background:#fff;color:#111}
+.signature-pad-shell{display:grid;gap:12px}
+.signature-pad-title{font-weight:900;font-size:1.1rem}
+.signature-pad-canvas{width:100%;height:min(54vh,360px);border:2px solid #111;border-radius:10px;background:#fff;touch-action:none;display:block}
+.signature-preview{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.signature-preview img{max-width:220px;max-height:64px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:4px}
+@media(max-width:640px){
+  .signature-modal-content{width:100%!important;min-height:calc(100dvh - 18px)}
+  .signature-pad-canvas{height:58vh}
+}
 @media print{
   .repair-protocol-paper{padding:0}
 }
@@ -2402,7 +2413,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.200</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.201</div>
   </div>
 </aside>
 
@@ -2507,11 +2518,24 @@ body.dark .theme-toggle{
     <div class="field full"><label>Pou&#382;it&eacute; n&aacute;hradn&iacute; d&iacute;ly</label><textarea id="repairPartsText" placeholder="N&aacute;zev d&iacute;lu, objednac&iacute; / katalogov&eacute; &#269;., mno&#382;stv&iacute;, pozn&aacute;mka"></textarea></div>
     <div class="field"><label>V&yacute;sledek opravy</label><select id="repairResult"><option value="fixed">Opraveno</option><option value="partial">&#268;&aacute;ste&#269;n&#283; opraveno</option><option value="waiting_parts">&#268;ek&aacute; na ND</option><option value="service">Nutn&yacute; dal&scaron;&iacute; servis</option></select></div>
     <div class="field"><label>Jm&eacute;no za provozovatele / objednatele</label><input id="repairReceiver" autocomplete="off"></div>
+    <div class="field full"><label>Podpis provozovatele / objednatele</label><div class="signature-preview"><button id="openRepairSignatureBtn" class="secondary" type="button">Podepsat na displeji</button><button id="clearRepairSignatureBtn" class="ghost" type="button">Vymazat podpis</button><span id="repairSignatureState" class="helper">Podpis nen&iacute; povinn&yacute;.</span><img id="repairSignaturePreview" alt="" hidden></div></div>
     <div class="field full"><label>Fotodokumentace</label><input id="repairPhotoInput" type="file" accept="image/*" multiple><div class="helper">Fotky jsou voliteln&eacute;. V protokolu se zobraz&iacute; bez p&#345;edepsan&yacute;ch popisk&#367;.</div><div id="repairPhotoPreview" class="photo-preview"></div></div>
   </div>
   <div class="preview-actions">
     <div class="preview-actions-left"><button id="closeRepairBtn" class="secondary" type="button">Zru&scaron;it</button></div>
     <div class="preview-actions-right"><button id="printRepairBtn" class="primary" type="button">N&aacute;hled / tisk PDF</button></div>
+  </div>
+</div></div></div>
+
+<div class="modal" id="repairSignatureModal"><div class="modal-content signature-modal-content"><div class="signature-pad-shell">
+  <div class="preview-header">
+    <div><div class="signature-pad-title">Podpis provozovatele / objednatele</div><div class="card-sub">Podepi&scaron;te se prstem nebo perem do b&iacute;l&eacute; plochy.</div></div>
+    <button id="closeRepairSignatureTopBtn" class="secondary mini" type="button">Zav&#345;&iacute;t</button>
+  </div>
+  <canvas id="repairSignatureCanvas" class="signature-pad-canvas"></canvas>
+  <div class="preview-actions">
+    <div class="preview-actions-left"><button id="wipeRepairSignatureBtn" class="secondary" type="button">Vymazat</button></div>
+    <div class="preview-actions-right"><button id="cancelRepairSignatureBtn" class="ghost" type="button">Zru&scaron;it</button><button id="saveRepairSignatureBtn" class="primary" type="button">Vlo&#382;it podpis</button></div>
   </div>
 </div></div></div>
 
@@ -3850,7 +3874,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.200',
+      appVersion: '1.6 / 5.201',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -4507,10 +4531,10 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.200'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.201'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.200';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.201';
 
   // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
@@ -4934,7 +4958,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.200';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.201';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -5007,7 +5031,7 @@ async function logAuditAction(action, entity, record, by, detail, beforeRecord){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.200',
+      appVersion: '1.6 / 5.201',
       restoreVersion: 1,
       before: beforeSnapshot ? cloneForAuditSnapshot(beforeSnapshot) : null,
       after: afterSnapshot ? cloneForAuditSnapshot(afterSnapshot) : null
@@ -6862,7 +6886,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.200'
+      appVersion:'1.6 / 5.201'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -7570,7 +7594,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.200'
+      appVersion:'1.6 / 5.201'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -7665,6 +7689,9 @@ function renderFaults(){
 }
 
 let currentRepairPhotos = [];
+let currentRepairSignature = '';
+let repairSignatureHasInk = false;
+let repairSignatureDrawing = false;
 function repairDateTimeInputValue(value){
   const d = value ? new Date(value) : new Date();
   if(Number.isNaN(d.getTime())) return '';
@@ -7681,6 +7708,9 @@ function repairPartsRows(text){
   const rows = String(text || '').split(/\n+/).map(x => x.trim()).filter(Boolean).slice(0,4);
   while(rows.length < 4) rows.push('');
   return rows.map((row,i) => '<tr><td>' + (i+1) + '</td><td>' + (row ? escapeHtml(row) : '&nbsp;') + '</td></tr>').join('');
+}
+function repairSignatureHtml(dataUrl){
+  return dataUrl ? '<img class="rp-signature-img" src="' + escapeHtml(dataUrl) + '" alt="">' : '<span class="rp-sign-line"></span>';
 }
 function repairProtocolHtml(r){
   const safe = String(r.safe || '').toUpperCase() === 'NE' ? 'NE' : 'ANO';
@@ -7701,7 +7731,7 @@ function repairProtocolHtml(r){
     '<div class="rp-result-grid"><div class="rp-result-box"><strong>V&yacute;sledek opravy</strong><div class="rp-result-line">' + markBox(repairResultChecked(result,'fixed')) + ' Opraveno</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'partial')) + ' &#268;&aacute;ste&#269;n&#283; opraveno</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'waiting_parts')) + ' &#268;ek&aacute; na ND</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'service')) + ' Nutn&yacute; dal&scaron;&iacute; servis</div></div>' +
     '<div class="rp-result-box"><strong>Za&#345;&iacute;zen&iacute; po oprav&#283; schopn&eacute; provozu</strong><div class="rp-result-line">' + markBox(safe === 'ANO') + ' ANO</div><div class="rp-result-line">' + markBox(safe === 'NE') + ' NE</div></div></div>' +
     '<div class="rp-final"><strong>Z&Aacute;V&#282;RE&#268;N&Eacute; VYHODNOCEN&Iacute;:</strong> Za&#345;&iacute;zen&iacute; ' + (safe === 'ANO' ? 'je' : 'nen&iacute;') + ' po proveden&eacute; oprav&#283; schopn&eacute; bezpe&#269;n&eacute;ho provozu.</div>' +
-    '<table class="rp-sign-table"><tr><th>Technik</th><th>Provozovatel / objednatel</th></tr><tr><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.tech || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span><span class="rp-sign-line"></span></div></td><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.receiver || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span><span class="rp-sign-line"></span></div></td></tr></table>' +
+    '<table class="rp-sign-table"><tr><th>Technik</th><th>Provozovatel / objednatel</th></tr><tr><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.tech || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span><span class="rp-sign-line"></span></div></td><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.receiver || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span>' + repairSignatureHtml(r.receiverSignature) + '</div></td></tr></table>' +
     '<div class="rp-distribution">Rozd&#283;lovn&iacute;k: 1x provozovatel / objednatel &nbsp; / &nbsp; 1x servis</div><div class="rp-page-no">Strana 1</div></div>' + repairPhotosHtml(r.photos) + '</body></html>';
 }
 function printRepairRecord(record){
@@ -7733,6 +7763,7 @@ function repairRecordFromFault(f){
     parts:'',
     result:faultIsRepaired(f) ? 'fixed' : (faultWaitingParts(f) ? 'waiting_parts' : (faultInService(f) ? 'service' : 'partial')),
     receiver:'',
+    receiverSignature:'',
     photos:Array.isArray(f.photos) ? f.photos : []
   };
 }
@@ -7753,8 +7784,79 @@ function renderRepairPhotoPreview(){
   if(!wrap) return;
   wrap.innerHTML = (currentRepairPhotos || []).map(p => '<img src="' + escapeHtml(p.url || p.dataUrl || '') + '" alt="">').join('');
 }
+function updateRepairSignaturePreview(){
+  const img = document.getElementById('repairSignaturePreview');
+  const state = document.getElementById('repairSignatureState');
+  if(img){
+    img.hidden = !currentRepairSignature;
+    if(currentRepairSignature) img.src = currentRepairSignature;
+    else img.removeAttribute('src');
+  }
+  if(state) state.textContent = currentRepairSignature ? 'Podpis bude vlozen do protokolu.' : 'Podpis neni povinny.';
+}
+function setupRepairSignatureCanvas(){
+  const canvas = document.getElementById('repairSignatureCanvas');
+  if(!canvas) return null;
+  const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(600, Math.round(rect.width * dpr));
+  canvas.height = Math.max(260, Math.round(rect.height * dpr));
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.lineWidth = Math.max(4, Math.round(3 * dpr));
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111';
+  repairSignatureHasInk = false;
+  return {canvas,ctx};
+}
+function repairSignaturePoint(canvas, ev){
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x:(ev.clientX - rect.left) * (canvas.width / rect.width),
+    y:(ev.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+function trimRepairSignature(canvas){
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
+  const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+  let minX=canvas.width, minY=canvas.height, maxX=-1, maxY=-1;
+  for(let y=0; y<canvas.height; y++){
+    for(let x=0; x<canvas.width; x++){
+      const i=(y*canvas.width+x)*4;
+      if(img.data[i] < 245 || img.data[i+1] < 245 || img.data[i+2] < 245){
+        if(x<minX) minX=x; if(y<minY) minY=y; if(x>maxX) maxX=x; if(y>maxY) maxY=y;
+      }
+    }
+  }
+  if(maxX < minX || maxY < minY) return '';
+  const pad = 28;
+  minX = Math.max(0, minX-pad); minY = Math.max(0, minY-pad);
+  maxX = Math.min(canvas.width-1, maxX+pad); maxY = Math.min(canvas.height-1, maxY+pad);
+  const w = maxX-minX+1, h = maxY-minY+1;
+  const out = document.createElement('canvas');
+  out.width = Math.min(900, Math.max(420, w));
+  out.height = Math.min(260, Math.max(130, h));
+  const outCtx = out.getContext('2d');
+  outCtx.fillStyle = '#fff';
+  outCtx.fillRect(0,0,out.width,out.height);
+  const scale = Math.min((out.width-18)/w, (out.height-18)/h);
+  const dw = w * scale, dh = h * scale;
+  outCtx.drawImage(canvas, minX, minY, w, h, (out.width-dw)/2, (out.height-dh)/2, dw, dh);
+  return out.toDataURL('image/png');
+}
+function openRepairSignaturePad(){
+  openModal(document.getElementById('repairSignatureModal'));
+  setTimeout(() => setupRepairSignatureCanvas(), 50);
+}
+function closeRepairSignaturePad(){
+  closeModal(document.getElementById('repairSignatureModal'));
+}
 function openRepairModal(prefill={}){
   currentRepairPhotos = Array.isArray(prefill.photos) ? JSON.parse(JSON.stringify(prefill.photos)) : [];
+  currentRepairSignature = prefill.receiverSignature || '';
   fillRepairTechOptions();
   const set = (id,val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
   set('repairType', prefill.type);
@@ -7774,6 +7876,7 @@ function openRepairModal(prefill={}){
   set('repairResult', prefill.result || 'fixed');
   set('repairReceiver', prefill.receiver);
   renderRepairPhotoPreview();
+  updateRepairSignaturePreview();
   openModal(document.getElementById('repairModal'));
 }
 function collectRepairRecordFromForm(){
@@ -7795,6 +7898,7 @@ function collectRepairRecordFromForm(){
     parts:val('repairPartsText'),
     result:val('repairResult'),
     receiver:val('repairReceiver'),
+    receiverSignature:currentRepairSignature,
     photos:currentRepairPhotos
   };
 }
@@ -8304,7 +8408,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.200'
+      appVersion:'1.6 / 5.201'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -8457,7 +8561,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.200'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.201'}; }
 function revizeAnswerValue(value){ return String(value||'').trim().toUpperCase()==='NE' ? 'NE' : 'ANO'; }
 function revizeResult(r){
   r = r || {};
@@ -9066,7 +9170,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.200';
+  last.appVersion='1.6 / 5.201';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -9130,7 +9234,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ const unit=revizeNumericUnit(k); const label=({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; return unit ? `${label} (${unit})` : label; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.200'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.201'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
@@ -9607,6 +9711,45 @@ document.getElementById('homeRepairBtn')?.addEventListener('click', () => openRe
 document.getElementById('closeRepairBtn')?.addEventListener('click', () => closeModal(document.getElementById('repairModal')));
 document.getElementById('closeRepairTopBtn')?.addEventListener('click', () => closeModal(document.getElementById('repairModal')));
 document.getElementById('printRepairBtn')?.addEventListener('click', () => printRepairRecord(collectRepairRecordFromForm()));
+document.getElementById('openRepairSignatureBtn')?.addEventListener('click', openRepairSignaturePad);
+document.getElementById('clearRepairSignatureBtn')?.addEventListener('click', () => { currentRepairSignature = ''; updateRepairSignaturePreview(); });
+document.getElementById('closeRepairSignatureTopBtn')?.addEventListener('click', closeRepairSignaturePad);
+document.getElementById('cancelRepairSignatureBtn')?.addEventListener('click', closeRepairSignaturePad);
+document.getElementById('wipeRepairSignatureBtn')?.addEventListener('click', setupRepairSignatureCanvas);
+document.getElementById('saveRepairSignatureBtn')?.addEventListener('click', () => {
+  const canvas = document.getElementById('repairSignatureCanvas');
+  if(canvas && repairSignatureHasInk) currentRepairSignature = trimRepairSignature(canvas);
+  updateRepairSignaturePreview();
+  closeRepairSignaturePad();
+});
+document.getElementById('repairSignatureCanvas')?.addEventListener('pointerdown', ev => {
+  const canvas = ev.currentTarget;
+  const ctx = canvas.getContext('2d');
+  const p = repairSignaturePoint(canvas, ev);
+  repairSignatureDrawing = true;
+  repairSignatureHasInk = true;
+  canvas.setPointerCapture?.(ev.pointerId);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  ev.preventDefault();
+});
+document.getElementById('repairSignatureCanvas')?.addEventListener('pointermove', ev => {
+  if(!repairSignatureDrawing) return;
+  const canvas = ev.currentTarget;
+  const ctx = canvas.getContext('2d');
+  const p = repairSignaturePoint(canvas, ev);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  ev.preventDefault();
+});
+['pointerup','pointercancel','pointerleave'].forEach(type => {
+  document.getElementById('repairSignatureCanvas')?.addEventListener(type, ev => {
+    if(!repairSignatureDrawing) return;
+    repairSignatureDrawing = false;
+    ev.currentTarget.releasePointerCapture?.(ev.pointerId);
+    ev.preventDefault();
+  });
+});
 document.getElementById('repairPhotoInput')?.addEventListener('change', async (e) => {
   const files = Array.from(e.target.files || []);
   for(const file of files){
