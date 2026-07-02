@@ -1220,50 +1220,61 @@ body.dark .day-row .place-pill{background:rgba(2,6,23,.66)!important;color:#f8fa
   justify-content:flex-end;
 }
 .repair-protocol-paper{
-  font-family: Arial, sans-serif;
-  color:#111827;
-  padding:22px;
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  background:#fff;
+  color:#111;
+  padding:8mm;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:11px;
+  line-height:1.28;
 }
-.repair-protocol-paper h1{
-  font-size:22px;
-  margin:0 0 14px;
+.repair-protocol-paper h1,
+.repair-protocol-paper h2{
+  text-align:center;
+  margin:0;
+  font-weight:800;
+  letter-spacing:.2px;
 }
-.repair-protocol-paper .rp-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin:12px 0;
-}
-.repair-protocol-paper .rp-cell{
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  padding:8px;
-}
-.repair-protocol-paper .rp-label{
-  color:#6b7280;
-  font-size:12px;
-  margin-bottom:3px;
-}
-.repair-protocol-paper .rp-value{
-  font-weight:700;
-}
-.repair-protocol-paper .rp-box{
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  padding:10px;
-  min-height:70px;
-  white-space:pre-wrap;
-}
-.repair-protocol-paper .rp-sign{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:36px;
-}
-.repair-protocol-paper .rp-sign div{
-  border-top:1px solid #111827;
-  padding-top:6px;
-  font-size:13px;
+.repair-protocol-paper h1{font-size:19px;line-height:1.15}
+.repair-protocol-paper h2{font-size:17px;line-height:1.15;margin-bottom:7px}
+.repair-protocol-paper .rp-legal{border-top:1px solid #111;border-bottom:1px solid #111;padding:5px 6px;margin:7px 0 8px;font-size:10.5px}
+.repair-protocol-paper table{width:100%;border-collapse:collapse;margin:0 0 7px;table-layout:fixed}
+.repair-protocol-paper th,.repair-protocol-paper td{border:1px solid #555;padding:5px 7px;vertical-align:top}
+.repair-protocol-paper th{font-weight:800;text-align:left;background:#fff}
+.repair-protocol-paper .rp-kv th{width:22%}
+.repair-protocol-paper .rp-kv td{width:28%}
+.repair-protocol-paper .rp-section{font-weight:800;text-align:center;border:1px solid #555;padding:5px 7px;margin:7px 0 0}
+.repair-protocol-paper .rp-text{border:1px solid #555;border-top:0;min-height:18mm;padding:6px 7px;margin:0 0 7px;white-space:pre-wrap}
+.repair-protocol-paper .rp-text.tall{min-height:26mm}
+.repair-protocol-paper .rp-parts th,.repair-protocol-paper .rp-parts td{height:8mm}
+.repair-protocol-paper .rp-result-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:7px;margin-bottom:7px}
+.repair-protocol-paper .rp-result-box{border:1px solid #555;padding:6px 7px;min-height:27mm}
+.repair-protocol-paper .rp-result-box strong{display:block;margin-bottom:5px}
+.repair-protocol-paper .rp-result-line{display:flex;gap:7px;align-items:center;margin:4px 0}
+.repair-protocol-paper .rp-final{border:2px solid #111;padding:6px 7px;margin:7px 0;font-size:12px}
+.repair-protocol-paper .rp-sign-table{margin-top:7px}
+.repair-protocol-paper .rp-sign-table th{text-align:center}
+.repair-protocol-paper .rp-sign-table td{height:34mm}
+.repair-protocol-paper .rp-sign-row{display:flex;gap:8px;margin-bottom:7px}
+.repair-protocol-paper .rp-sign-label{min-width:72px;font-weight:700}
+.repair-protocol-paper .rp-sign-line{display:inline-block;border-bottom:1px solid #111;min-width:58mm;height:15px;flex:1}
+.repair-protocol-paper .rp-signature-img{display:block;max-width:78mm;max-height:22mm;object-fit:contain;margin:-10px 0 0 0}
+.repair-protocol-paper .rp-distribution{font-size:10.5px;margin-top:6px}
+.repair-protocol-paper .rp-page-no{text-align:right;font-size:9px;color:#333;margin-top:5px}
+.repair-protocol-paper .rp-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.repair-protocol-paper .rp-photo{border:1px solid #555;min-height:55mm;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.repair-protocol-paper .rp-photo img{width:100%;height:100%;object-fit:cover}
+.signature-modal-content{width:min(96vw,940px)!important;background:#fff;color:#111}
+.signature-pad-shell{display:grid;gap:12px}
+.signature-pad-title{font-weight:900;font-size:1.1rem}
+.signature-pad-canvas{width:100%;height:min(54vh,360px);border:2px solid #111;border-radius:10px;background:#fff;touch-action:none;display:block}
+.signature-preview{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.signature-preview img{max-width:220px;max-height:64px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:4px}
+@media(max-width:640px){
+  .signature-modal-content{width:100%!important;min-height:calc(100dvh - 18px)}
+  .signature-pad-canvas{height:58vh}
 }
 @media print{
   .repair-protocol-paper{padding:0}
@@ -1927,7 +1938,7 @@ input,textarea,select,button{max-width:100%;min-width:0;box-sizing:border-box}
 .css-icon{width:1.18em;height:1.18em;color:currentColor}.icon-menu{width:22px;height:16px;border-top:3px solid currentColor;border-bottom:3px solid currentColor;position:relative}.icon-menu span{position:absolute;left:0;right:0;top:50%;border-top:3px solid currentColor;transform:translateY(-50%)}
 .icon-check{width:1.15em;height:.72em;border-left:4px solid currentColor;border-bottom:4px solid currentColor;transform:rotate(-45deg);margin-top:-.18em}.icon-cross{width:1em;height:1em;position:relative}.icon-cross span{position:absolute;left:50%;top:50%;width:1.08em;border-top:4px solid currentColor;border-radius:3px}.icon-cross span:first-child{transform:translate(-50%,-50%) rotate(45deg)}.icon-cross span:last-child{transform:translate(-50%,-50%) rotate(-45deg)}.icon-dash{width:1.05em;border-top:4px solid currentColor;border-radius:4px}
 .yn-icon{width:1.35em;height:1.35em;border:2px solid rgba(255,255,255,.82);border-radius:999px}.yn-btn{white-space:normal;text-align:center}.yn-btn .yn-icon{margin-right:.1em}.yn-icon-yes::after{content:"";width:.7em;height:.42em;border-left:3px solid currentColor;border-bottom:3px solid currentColor;transform:rotate(-45deg);margin-top:-.12em}.yn-icon-no{position:relative}.yn-icon-no span{position:absolute;width:.78em;border-top:3px solid currentColor;border-radius:3px}.yn-icon-no span:first-child{transform:rotate(45deg)}.yn-icon-no span:last-child{transform:rotate(-45deg)}.yn-icon-dash span{width:.76em;border-top:3px solid currentColor;border-radius:3px}
-.mark-box{width:14px;height:14px;border:1.7px solid #111;border-radius:2px;vertical-align:middle;position:relative;background:#fff}.mark-box.checked{background:#111}
+.mark-box{width:14px;height:14px;border:1.7px solid #111;border-radius:2px;vertical-align:middle;position:relative;background:#fff}.mark-box.checked{background:#fff}.mark-box.checked::after{content:"";display:block;width:6px;height:10px;border:solid #111;border-width:0 2px 2px 0;transform:rotate(45deg);position:absolute;left:3px;top:-1px}
 @media(max-width:640px){.modal{align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 10px) max(8px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom,0px) + 12px) max(8px,env(safe-area-inset-left))}.modal-content{width:100%;max-height:none!important;overflow:visible!important;border-radius:16px}.wizard-shell,.preview-shell{padding:16px}.wizard-actions{position:sticky;bottom:0;z-index:4;margin-left:-16px;margin-right:-16px;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(180deg,rgba(255,255,255,0) 0%,var(--panel) 22%)}.wizard-actions>div{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}.wizard-actions button{min-height:46px}#preview.modal.show{display:block!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;align-items:initial!important;justify-content:initial!important}#preview .modal-content{margin:0 auto 20px;max-height:none!important;overflow:visible!important}#preview .preview-shell,#preview .paper-wrap,#previewBody{overflow:visible!important;max-height:none!important}#preview .paper-page{min-height:auto!important;height:auto!important;overflow:visible!important;padding:8mm 5mm!important}.home-machine-search-row,.toolbar-right{min-width:0}.search,.filter{min-width:0;width:100%}}
 
 /* v1.6 / 5.159: náhled protokolu se na PC i mobilu posouvá celým oknem náhledu, ne zamčeným vnitřním panelem. */
@@ -2393,6 +2404,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-link" data-view="revize">Revize ZZ</button>
     <button type="button" class="side-link" data-view="revizeArchive">Hotov&eacute; RZ</button>
     <button type="button" class="side-link" data-view="manuals">Manuály</button>
+    <button type="button" class="side-link" id="sideRepairBtn">Z&aacute;pis o oprav&#283;</button>
     <button type="button" class="side-link" id="sideStatsBtn">Statistiky</button>
     <button type="button" class="side-link" id="sideSettingsBtn">Nastavení</button>
   </nav>
@@ -2401,7 +2413,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.197</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.201</div>
   </div>
 </aside>
 
@@ -2483,6 +2495,50 @@ body.dark .theme-toggle{
   <div class="preview-actions"><div class="preview-actions-left"><button id="closeStatsBtn" class="secondary" type="button">Zavřít</button></div></div>
 </div></div></div>
 
+
+<div class="modal" id="repairModal"><div class="modal-content"><div class="wizard-shell">
+  <div class="preview-header">
+    <div><div class="preview-title">Z&aacute;pis o oprav&#283;</div><div class="card-sub">Samostatn&yacute; servisn&iacute; z&aacute;pis nebo protokol nav&aacute;zan&yacute; na poruchu.</div></div>
+    <button id="closeRepairTopBtn" class="secondary mini" type="button">Zav&#345;&iacute;t</button>
+  </div>
+  <div class="form-grid fault-form">
+    <div class="field"><label>Typ za&#345;&iacute;zen&iacute;</label><input id="repairType" autocomplete="off"></div>
+    <div class="field"><label>V&yacute;robce / model</label><input id="repairModel" autocomplete="off"></div>
+    <div class="field"><label>V&yacute;robn&iacute; &#269;&iacute;slo</label><input id="repairSerial" autocomplete="off"></div>
+    <div class="field"><label>Eviden&#269;n&iacute; &#269;&iacute;slo</label><input id="repairEvidence" autocomplete="off"></div>
+    <div class="field"><label>Um&iacute;st&#283;n&iacute; / pobo&#269;ka</label><input id="repairPlace" autocomplete="off"></div>
+    <div class="field"><label>Provozovatel / objednatel</label><input id="repairCustomer" value="Zeppelin CZ s.r.o." autocomplete="off"></div>
+    <div class="field"><label>Zah&aacute;jen&iacute; opravy</label><input id="repairStartedAt" type="datetime-local"></div>
+    <div class="field"><label>Ukon&#269;en&iacute; opravy</label><input id="repairFinishedAt" type="datetime-local"></div>
+    <div class="field"><label>Technik</label><select id="repairTech"></select></div>
+    <div class="field"><label>Za&#345;&iacute;zen&iacute; po oprav&#283; schopn&eacute; provozu</label><select id="repairSafe"><option>ANO</option><option>NE</option></select></div>
+    <div class="field full"><label>Popis z&aacute;vady / po&#382;adavku</label><textarea id="repairFaultText"></textarea></div>
+    <div class="field full"><label>Zji&scaron;t&#283;n&aacute; p&#345;&iacute;&#269;ina</label><textarea id="repairCauseText"></textarea></div>
+    <div class="field full"><label>Proveden&aacute; oprava</label><textarea id="repairWorkText"></textarea></div>
+    <div class="field full"><label>Pou&#382;it&eacute; n&aacute;hradn&iacute; d&iacute;ly</label><textarea id="repairPartsText" placeholder="N&aacute;zev d&iacute;lu, objednac&iacute; / katalogov&eacute; &#269;., mno&#382;stv&iacute;, pozn&aacute;mka"></textarea></div>
+    <div class="field"><label>V&yacute;sledek opravy</label><select id="repairResult"><option value="fixed">Opraveno</option><option value="partial">&#268;&aacute;ste&#269;n&#283; opraveno</option><option value="waiting_parts">&#268;ek&aacute; na ND</option><option value="service">Nutn&yacute; dal&scaron;&iacute; servis</option></select></div>
+    <div class="field"><label>Jm&eacute;no za provozovatele / objednatele</label><input id="repairReceiver" autocomplete="off"></div>
+    <div class="field full"><label>Podpis provozovatele / objednatele</label><div class="signature-preview"><button id="openRepairSignatureBtn" class="secondary" type="button">Podepsat na displeji</button><button id="clearRepairSignatureBtn" class="ghost" type="button">Vymazat podpis</button><span id="repairSignatureState" class="helper">Podpis nen&iacute; povinn&yacute;.</span><img id="repairSignaturePreview" alt="" hidden></div></div>
+    <div class="field full"><label>Fotodokumentace</label><input id="repairPhotoInput" type="file" accept="image/*" multiple><div class="helper">Fotky jsou voliteln&eacute;. V protokolu se zobraz&iacute; bez p&#345;edepsan&yacute;ch popisk&#367;.</div><div id="repairPhotoPreview" class="photo-preview"></div></div>
+  </div>
+  <div class="preview-actions">
+    <div class="preview-actions-left"><button id="closeRepairBtn" class="secondary" type="button">Zru&scaron;it</button></div>
+    <div class="preview-actions-right"><button id="printRepairBtn" class="primary" type="button">N&aacute;hled / tisk PDF</button></div>
+  </div>
+</div></div></div>
+
+<div class="modal" id="repairSignatureModal"><div class="modal-content signature-modal-content"><div class="signature-pad-shell">
+  <div class="preview-header">
+    <div><div class="signature-pad-title">Podpis provozovatele / objednatele</div><div class="card-sub">Podepi&scaron;te se prstem nebo perem do b&iacute;l&eacute; plochy.</div></div>
+    <button id="closeRepairSignatureTopBtn" class="secondary mini" type="button">Zav&#345;&iacute;t</button>
+  </div>
+  <canvas id="repairSignatureCanvas" class="signature-pad-canvas"></canvas>
+  <div class="preview-actions">
+    <div class="preview-actions-left"><button id="wipeRepairSignatureBtn" class="secondary" type="button">Vymazat</button></div>
+    <div class="preview-actions-right"><button id="cancelRepairSignatureBtn" class="ghost" type="button">Zru&scaron;it</button><button id="saveRepairSignatureBtn" class="primary" type="button">Vlo&#382;it podpis</button></div>
+  </div>
+</div></div></div>
+
 <div class="app-update-banner" id="appUpdateBanner" role="status" aria-live="polite">
   <span>Je dostupná nová verze aplikace.</span>
   <button class="primary" id="appUpdateNowBtn" type="button">Aktualizovat</button>
@@ -2507,6 +2563,7 @@ body.dark .theme-toggle{
           <button type="button" class="ghost small" id="homePlanBtn">Plán práce</button>
           <button type="button" class="ghost small" id="homePartsBtn">Náhradní díly</button>
           <button type="button" class="ghost small" id="homeFaultsBtn">Hlášení poruch</button>
+          <button type="button" class="ghost small" id="homeRepairBtn">Z&aacute;pis o oprav&#283;</button>
           <button type="button" class="ghost small" id="homeMachineCardBtn">Karta stroje</button>
         </div>
         <div id="homeMachineSearchWrap" class="home-machine-search hidden">
@@ -3817,7 +3874,7 @@ async function exportBackup(){
     }
     const payload = {
       app: 'LiftControl CZ',
-      appVersion: '1.6 / 5.197',
+      appVersion: '1.6 / 5.201',
       backupType: 'complete',
       schemaVersion: 2,
       exportedAt: new Date().toISOString(),
@@ -4474,10 +4531,10 @@ installMainWheelScroll();
 function openWizard(editId=null, prefill={}){
   protocolSaveInProgress = false;
   if(els.nextBtn) els.nextBtn.disabled = false;
-  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.197'};
+  rec = editId ? JSON.parse(JSON.stringify(data.find(r=>r.id===editId) || {id:uid()})) : {id:uid(), cLogic:'legacy', appVersion:'1.6 / 5.201'};
   rec = Object.assign({}, rec, prefill || {});
   if(!editId && !rec.cLogic) rec.cLogic = 'legacy';
-  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.197';
+  if(!editId && !rec.appVersion) rec.appVersion = '1.6 / 5.201';
 
   // Auto doplneni z historie podle vyrobniho cisla.
   if(rec.vc){
@@ -4901,7 +4958,7 @@ async function nextStep(){
     syncRevizeIssue(rec);
     syncModelPreferences(rec);
     if(!rec.cLogic) rec.cLogic = 'legacy';
-    if(!rec.appVersion) rec.appVersion = '1.6 / 5.197';
+    if(!rec.appVersion) rec.appVersion = '1.6 / 5.201';
     if(!rec.enteredBy) rec.enteredBy = rec.technik || getEnteredByDefault();
     setLastEnteredBy(rec.enteredBy);
     rec.savedAt = new Date().toISOString();
@@ -4974,7 +5031,7 @@ async function logAuditAction(action, entity, record, by, detail, beforeRecord){
       serial: record?.vc || record?.serial || '',
       type: record?.typ || record?.type || '',
       createdAt: new Date().toISOString(),
-      appVersion: '1.6 / 5.197',
+      appVersion: '1.6 / 5.201',
       restoreVersion: 1,
       before: beforeSnapshot ? cloneForAuditSnapshot(beforeSnapshot) : null,
       after: afterSnapshot ? cloneForAuditSnapshot(afterSnapshot) : null
@@ -6829,7 +6886,7 @@ async function saveWorkPlanFromForm(){
       place,
       extraPlaces,
       note,
-      appVersion:'1.6 / 5.197'
+      appVersion:'1.6 / 5.201'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     await saveWorkPlan(record);
@@ -7537,7 +7594,7 @@ async function saveFaultFromForm(){
       inService: status === 'service' ? true : (existing ? !!existing.inService : false),
       waitingParts: status === 'waiting_parts' ? true : (existing ? !!existing.waitingParts : false),
       photos: currentFaultPhotos,
-      appVersion:'1.6 / 5.197'
+      appVersion:'1.6 / 5.201'
     });
     if(!record.createdAt) record.createdAt = new Date().toISOString();
     setLastEnteredBy(record.enteredBy);
@@ -7631,336 +7688,219 @@ function renderFaults(){
   list.querySelectorAll('[data-fault-create-protocol]').forEach(btn => btn.addEventListener('click', () => createProtocolFromFault(btn.dataset.faultCreateProtocol)));
 }
 
-function printRepairProtocol(id){
-  const f = (faultsData || []).find(x => x.id === id);
-  if(!f){ alert('Záznam poruchy nebyl nalezen.'); return; }
-  const state = getFaultStatus(f).txt;
-  const photos = Array.isArray(f.photos) ? f.photos : [];
-  const photoHtml = photos.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${photos.map(p => {
-    const src = p.url || p.dataUrl || '';
-    return src ? `<img src="${escapeHtml(src)}" style="width:130px;height:95px;object-fit:cover;border:1px solid #d1d5db;border-radius:8px">` : '';
-  }).join('')}</div>` : '';
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Protokol po opravě</title></head><body>
-  <div class="repair-protocol-toolbar">
-    <button onclick="window.print()" style="border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#2563eb;color:white;cursor:pointer">Tisk / PDF</button>
-    <button onclick="window.close()" style="border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#e5e7eb;color:#111827;cursor:pointer">Zavřít</button>
-  </div>
-  <div class="repair-protocol-paper">
-    <h1>Protokol po opravě závady</h1>
-    <div style="color:#6b7280;margin-bottom:10px">LiftControl CZ · vlastník/admin: Jan Bartoš</div>
-    <div class="rp-grid">
-      <div class="rp-cell"><div class="rp-label">Typ zařízení</div><div class="rp-value">${escapeHtml(f.type || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Výrobní číslo</div><div class="rp-value">${escapeHtml(f.serial || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Místo</div><div class="rp-value">${escapeHtml(displayPlaceName(f.place) || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Datum hlášení</div><div class="rp-value">${escapeHtml(formatDate(f.date) || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Motohodiny</div><div class="rp-value">${escapeHtml(f.mh || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Datum opravy</div><div class="rp-value">${escapeHtml(formatDateTime(f.repairedAt || f.updatedAt) || '—')}</div></div>
-      <div class="rp-cell"><div class="rp-label">Stav</div><div class="rp-value">${escapeHtml(state)}</div></div>
-      <div class="rp-cell"><div class="rp-label">Schopné provozu</div><div class="rp-value">${faultIsRepaired(f) ? 'ANO' : 'NE'}</div></div>
-    </div>
-    <div class="rp-label">Popis původní závady</div>
-    <div class="rp-box">${escapeHtml(f.description || '—')}</div>
-    ${photoHtml ? `<div class="rp-label" style="margin-top:12px">Fotodokumentace</div>${photoHtml}` : ''}
-    <div class="rp-sign">
-      <div>Opravu / stav ověřil</div>
-      <div>Převzal</div>
-    </div>
-  </div>
-  </body></html>`;
+let currentRepairPhotos = [];
+let currentRepairSignature = '';
+let repairSignatureHasInk = false;
+let repairSignatureDrawing = false;
+function repairDateTimeInputValue(value){
+  const d = value ? new Date(value) : new Date();
+  if(Number.isNaN(d.getTime())) return '';
+  const pad = n => String(n).padStart(2,'0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function repairResultChecked(value,want){ return String(value || 'fixed') === want; }
+function repairPhotosHtml(photos){
+  const list = (Array.isArray(photos) ? photos : []).map(p => p && (p.url || p.dataUrl)).filter(Boolean);
+  if(!list.length) return '';
+  return '<div class="repair-protocol-paper" style="page-break-before:always"><h1>PROTOKOL - Z&Aacute;PIS O OPRAV&#282;</h1><h2>FOTODOKUMENTACE</h2><div class="rp-photo-grid">' + list.map(src => '<div class="rp-photo"><img src="' + escapeHtml(src) + '" alt=""></div>').join('') + '</div><div class="rp-page-no">Strana 2</div></div>';
+}
+function repairPartsRows(text){
+  const rows = String(text || '').split(/\n+/).map(x => x.trim()).filter(Boolean).slice(0,4);
+  while(rows.length < 4) rows.push('');
+  return rows.map((row,i) => '<tr><td>' + (i+1) + '</td><td>' + (row ? escapeHtml(row) : '&nbsp;') + '</td></tr>').join('');
+}
+function repairSignatureHtml(dataUrl){
+  return dataUrl ? '<img class="rp-signature-img" src="' + escapeHtml(dataUrl) + '" alt="">' : '<span class="rp-sign-line"></span>';
+}
+function repairProtocolHtml(r){
+  const safe = String(r.safe || '').toUpperCase() === 'NE' ? 'NE' : 'ANO';
+  const result = r.result || 'fixed';
+  const originalText = r.sourceFaultText ? '<div class="rp-section">P&#366;vodn&iacute; hl&aacute;&scaron;en&iacute; / z&aacute;vada</div><div class="rp-text">' + escapeHtml(r.sourceFaultText) + '</div>' : '';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Z&aacute;pis o oprav&#283;</title></head><body>' +
+    '<div class="repair-protocol-toolbar"><button onclick="window.print()" style="border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#2563eb;color:white;cursor:pointer">Tisk / PDF</button><button onclick="window.close()" style="border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#e5e7eb;color:#111827;cursor:pointer">Zav&#345;&iacute;t</button></div>' +
+    '<div class="repair-protocol-paper"><h1>PROTOKOL - Z&Aacute;PIS O OPRAV&#282;</h1><h2>SERVISN&Iacute; Z&Aacute;SAH NA PRACOVN&Iacute; PLO&Scaron;IN&#282;</h2>' +
+    '<div class="rp-legal">Z&aacute;pis dokumentuje provedenou opravu, ov&#283;&#345;en&iacute; funkce a stav za&#345;&iacute;zen&iacute; po servisn&iacute;m z&aacute;sahu. Nenahrazuje revizi vyhrazen&eacute;ho zdvihac&iacute;ho za&#345;&iacute;zen&iacute;, pokud je vy&#382;adov&aacute;na pr&aacute;vn&iacute;mi p&#345;edpisy nebo dokumentac&iacute; v&yacute;robce.</div>' +
+    '<table class="rp-kv"><tr><th>Za&#345;&iacute;zen&iacute;</th><td>' + escapeHtml(r.type || '') + '</td><th>V&yacute;robce / model</th><td>' + escapeHtml(r.model || '') + '</td></tr>' +
+    '<tr><th>V&yacute;robn&iacute; / evid. &#269;.</th><td>' + escapeHtml([r.serial,r.evidence].filter(Boolean).join(' / ')) + '</td><th>Pracovi&scaron;t&#283;</th><td>' + escapeHtml(r.place || '') + '</td></tr>' +
+    '<tr><th>Provozovatel / objednatel</th><td>' + escapeHtml(r.customer || '') + '</td><th>Technik</th><td>' + escapeHtml(r.tech || '') + '</td></tr>' +
+    '<tr><th>Zah&aacute;jen&iacute; opravy</th><td>' + escapeHtml(formatDateTime(r.startedAt) || '') + '</td><th>Ukon&#269;en&iacute; opravy</th><td>' + escapeHtml(formatDateTime(r.finishedAt) || '') + '</td></tr></table>' +
+    originalText +
+    '<div class="rp-section">Zji&scaron;t&#283;n&aacute; p&#345;&iacute;&#269;ina</div><div class="rp-text">' + escapeHtml(r.cause || '') + '</div>' +
+    '<div class="rp-section">Proveden&aacute; oprava</div><div class="rp-text tall">' + escapeHtml(r.work || '') + '</div>' +
+    '<table class="rp-parts"><thead><tr><th style="width:35px">#</th><th>Pou&#382;it&eacute; n&aacute;hradn&iacute; d&iacute;ly / materi&aacute;l</th></tr></thead><tbody>' + repairPartsRows(r.parts) + '</tbody></table>' +
+    '<div class="rp-result-grid"><div class="rp-result-box"><strong>V&yacute;sledek opravy</strong><div class="rp-result-line">' + markBox(repairResultChecked(result,'fixed')) + ' Opraveno</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'partial')) + ' &#268;&aacute;ste&#269;n&#283; opraveno</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'waiting_parts')) + ' &#268;ek&aacute; na ND</div><div class="rp-result-line">' + markBox(repairResultChecked(result,'service')) + ' Nutn&yacute; dal&scaron;&iacute; servis</div></div>' +
+    '<div class="rp-result-box"><strong>Za&#345;&iacute;zen&iacute; po oprav&#283; schopn&eacute; provozu</strong><div class="rp-result-line">' + markBox(safe === 'ANO') + ' ANO</div><div class="rp-result-line">' + markBox(safe === 'NE') + ' NE</div></div></div>' +
+    '<div class="rp-final"><strong>Z&Aacute;V&#282;RE&#268;N&Eacute; VYHODNOCEN&Iacute;:</strong> Za&#345;&iacute;zen&iacute; ' + (safe === 'ANO' ? 'je' : 'nen&iacute;') + ' po proveden&eacute; oprav&#283; schopn&eacute; bezpe&#269;n&eacute;ho provozu.</div>' +
+    '<table class="rp-sign-table"><tr><th>Technik</th><th>Provozovatel / objednatel</th></tr><tr><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.tech || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span><span class="rp-sign-line"></span></div></td><td><div class="rp-sign-row"><span class="rp-sign-label">Jm&eacute;no:</span><span>' + escapeHtml(r.receiver || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Datum:</span><span>' + escapeHtml(formatDate(r.finishedAt || r.startedAt || new Date()) || '') + '</span></div><div class="rp-sign-row"><span class="rp-sign-label">Podpis:</span>' + repairSignatureHtml(r.receiverSignature) + '</div></td></tr></table>' +
+    '<div class="rp-distribution">Rozd&#283;lovn&iacute;k: 1x provozovatel / objednatel &nbsp; / &nbsp; 1x servis</div><div class="rp-page-no">Strana 1</div></div>' + repairPhotosHtml(r.photos) + '</body></html>';
+}
+function printRepairRecord(record){
+  const html = repairProtocolHtml(record);
   const w = window.open('', '_blank');
-  if(!w){ alert('Prohlížeč zablokoval otevření protokolu.'); return; }
-  const style = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML).join('\n');
+  if(!w){ alert('Prohlizec zablokoval otevreni protokolu.'); return; }
+  const style = Array.from(document.querySelectorAll('style')).map(st => st.innerHTML).join('\n');
   w.document.open();
-  w.document.write(html.replace('</head>', `<style>${style}
-/* v1.6 / 5.64 – fonty, plán práce více míst, menu */
-html, body, input, select, textarea, button, option {
-  font-family: Inter, "Segoe UI", Arial, sans-serif !important;
-}
-input, select, textarea, button,
-.field input, .field select, .field textarea,
-.work-plan-form input, .work-plan-form select, .work-plan-form textarea,
-.parts-form input, .parts-form select, .parts-form textarea,
-.fault-form input, .fault-form select, .fault-form textarea {
-  font-family: Inter, "Segoe UI", Arial, sans-serif !important;
-  font-variant-numeric: normal !important;
-  letter-spacing: normal !important;
-}
-.work-plan-extra{grid-column:1/-1}
-.work-plan-extra textarea{min-height:74px}
-.work-event-place-line{display:block}
-.quick-links{grid-template-columns:1fr}
-
-
-.side-panel{
-  overflow-y:auto;
-}
-.side-nav{
-  padding-bottom:8px;
-}
-
-
-/* v1.6 / 5.64 – provozní doladění */
-.backup-row{
-  padding:12px;
-  border:1px solid #bfdbfe;
-  border-radius:16px;
-  background:#eff6ff;
-}
-.backup-main-btn{
-  font-size:1rem;
-  min-height:46px;
-}
-.mobile-tech-panel{
-  display:none;
-  margin:14px 0;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:linear-gradient(180deg,#fff,#f8fafc);
-  padding:16px;
-  box-shadow:var(--shadow);
-}
-.mobile-tech-title{
-  font-weight:900;
-  margin-bottom:10px;
-}
-.mobile-tech-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-.mobile-tech-grid button{
-  min-height:54px;
-  font-size:1rem;
-}
-@media(max-width:920px){
-  .mobile-tech-panel{display:none!important}
-  .mobile-tech-grid button:first-child{grid-column:1/-1}
-}
-@media(max-width:760px){
-  .mobile-tech-grid{grid-template-columns:1fr}
-  .mobile-tech-grid button:first-child{grid-column:auto}
-}
-.work-plan-toolbar select.filter.mini{
-  width:auto;
-  min-height:34px;
-}
-body.dark .backup-row{
-  background:#0f172a;
-  border-color:#1d4ed8;
-}
-body.dark .mobile-tech-panel{
-  background:linear-gradient(180deg,#0f172a,#111827);
-}
-
-
-/* v1.6 / 5.64 – jasné označení čtvrtletních kontrol */
-.module-kicker{
-  display:inline-flex;
-  width:max-content;
-  align-items:center;
-  gap:6px;
-  margin-bottom:6px;
-  padding:4px 9px;
-  border-radius:999px;
-  background:#eff6ff;
-  color:#1d4ed8;
-  border:1px solid #bfdbfe;
-  font-size:.72rem;
-  font-weight:900;
-  letter-spacing:.04em;
-}
-.quick-protocol-card .card-title{
-  line-height:1.2;
-}
-body.dark .module-kicker{
-  background:#0f172a;
-  color:#93c5fd;
-  border-color:#1d4ed8;
-}
-
-
-/* v1.6 / 5.90 – externí zákazník */
-.external-customer-card{
-  border-color:#7c3aed!important;
-  box-shadow:0 0 0 2px rgba(124,58,237,.10), var(--shadow)!important;
-  background:linear-gradient(180deg,#faf5ff 0%,#ffffff 100%)!important;
-}
-body.dark .external-customer-card{
-  background:linear-gradient(180deg,rgba(124,58,237,.18) 0%,var(--panel) 100%)!important;
-  border-color:#a78bfa!important;
-}
-.badge-external,.status-external{
-  background:#f3e8ff!important;
-  color:#6d28d9!important;
-  border-color:#d8b4fe!important;
-}
-body.dark .badge-external,body.dark .status-external{
-  background:rgba(124,58,237,.22)!important;
-  color:#ddd6fe!important;
-  border-color:#a78bfa!important;
-}
-.external-check{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:var(--panel2);
-}
-.external-check input{width:auto;min-width:20px;height:20px}
-.external-check strong{display:block}
-.external-check span{display:block;color:var(--muted);font-size:.83rem;margin-top:2px}
-.customer-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.customer-extra-note{font-size:.78rem;color:var(--muted);margin-top:6px}
-.operator-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-@media(max-width:720px){.customer-extra-grid,.operator-mini-row{grid-template-columns:1fr}}
-
-
-/* v5.76 read-only ND cards + audit history */
-.part-note-display{border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:11px 12px;display:grid;gap:4px}
-.part-note-display strong{font-size:.78rem;color:var(--muted)}
-.part-note-display div{font-weight:650;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
-.part-card.focus-flash{outline:3px solid #2563eb;outline-offset:3px}
-.audit-list{display:grid;gap:10px;margin-top:12px}
-.audit-item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px;display:grid;gap:5px}
-body.dark .audit-item{background:var(--panel2)}
-.audit-title{font-weight:850}.audit-sub{font-size:.84rem;color:var(--muted);line-height:1.35}.audit-action{display:inline-flex;width:max-content;border-radius:999px;padding:4px 8px;background:#eff6ff;color:#1d4ed8;font-size:.75rem;font-weight:800}
-.audit-action.delete{background:#fef2f2;color:#b91c1c}.audit-action.update{background:#fff7ed;color:#9a3412}.audit-action.create{background:#ecfdf5;color:#166534}
-
-.part-handler-note-display{border-color:#bfdbfe;background:#eff6ff}.part-handler-note-display small{display:block;margin-top:6px;color:var(--muted);font-size:.78rem}
-body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-color:rgba(96,165,250,.35)}
-
-
-/* v1.6 / 5.159: mobilní náhled protokolu bez vodorovného posouvání */
-@media (max-width: 700px){
-  #preview .modal-content{
-    width:100vw!important;
-    max-width:100vw!important;
-    height:100vh!important;
-    max-height:100vh!important;
-    border-radius:0!important;
-  }
-  #preview .preview-shell{
-    padding:8px!important;
-  }
-  #preview .paper-wrap{
-    padding:0!important;
-    overflow-x:hidden!important;
-    border-radius:14px!important;
-  }
-  #preview .paper,
-  #preview .paper-doc,
-  #preview .paper-page{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-  }
-  #preview .paper-page{
-    min-height:0!important;
-    height:auto!important;
-    padding:8px 6px 10px 6px!important;
-    gap:5px!important;
-    overflow:hidden!important;
-  }
-  #preview .paper-header h2{
-    font-size:16px!important;
-    line-height:1.1!important;
-  }
-  #preview .paper-header .subhead{
-    font-size:8.5px!important;
-  }
-  #preview .proto-meta,
-  #preview .proto-table{
-    width:100%!important;
-    table-layout:fixed!important;
-    font-size:8px!important;
-    line-height:1.1!important;
-  }
-  #preview .proto-meta td,
-  #preview .proto-meta th,
-  #preview .proto-table td,
-  #preview .proto-table th{
-    padding:2.5px 3px!important;
-    word-break:break-word!important;
-    overflow-wrap:anywhere!important;
-  }
-  #preview .proto-meta td.label{
-    width:23%!important;
-  }
-  #preview .proto-meta td.value{
-    width:27%!important;
-  }
-  #preview .proto-table .num-col{width:18px!important}
-  #preview .proto-table .yn-col{width:28px!important}
-  #preview .proto-table .note-col{width:30%!important}
-  #preview .section-head{
-    font-size:9px!important;
-    padding:3px 4px!important;
-  }
-  #preview .section-note{
-    font-size:7px!important;
-  }
-  #preview .paper-row-2,
-  #preview .conclusion-grid{
-    grid-template-columns:1fr!important;
-    gap:5px!important;
-  }
-  #preview .photo-strip{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  }
-  #preview .photo-mini{
-    min-width:0!important;
-    min-height:70px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-    line-height:1.05!important;
-  }
-  #preview .photo-mini img{
-    height:42px!important;
-    margin-bottom:3px!important;
-  }
-  #preview .issue-strip{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-  #preview .issue-mini{
-    min-width:0!important;
-    min-height:55px!important;
-    padding:3px 2px!important;
-    font-size:7px!important;
-  }
-  #preview .issue-mini img{
-    height:36px!important;
-  }
-  #preview .findings-box{
-    min-height:45px!important;
-    padding:4px!important;
-  }
-  #preview .findings-lines{
-    gap:5px!important;
-  }
-  #preview .findings-lines div{
-    height:12px!important;
-  }
-  #preview .signature-grid{
-    grid-template-columns:1fr 1fr 1fr!important;
-  }
-  #preview .signature-grid > div{
-    min-height:48px!important;
-    padding:4px!important;
-    font-size:8px!important;
-    word-break:break-word!important;
-  }
-  #preview .page-number{
-    font-size:8px!important;
-  }
-}
-
-
-</style></head>`));
+  w.document.write(html.replace('</head>', '<style>' + style + '</style></head>'));
   w.document.close();
   try { w.focus(); } catch(e){}
+}
+function repairRecordFromFault(f){
+  const state = getFaultStatus(f).txt;
+  return {
+    type:f.type || '',
+    model:f.model || '',
+    serial:f.serial || '',
+    evidence:f.evidence || '',
+    place:displayPlaceName(f.place) || '',
+    customer:f.customerName || f.companyName || 'Zeppelin CZ s.r.o.',
+    startedAt:f.date || f.createdAt || '',
+    finishedAt:f.repairedAt || f.updatedAt || new Date().toISOString(),
+    tech:f.repairedBy || f.enteredBy || getEnteredByDefault(),
+    safe:faultIsRepaired(f) ? 'ANO' : 'NE',
+    sourceFaultText:[f.description, state ? 'Stav: ' + state : ''].filter(Boolean).join('\n'),
+    cause:'',
+    work:f.repairNote || '',
+    parts:'',
+    result:faultIsRepaired(f) ? 'fixed' : (faultWaitingParts(f) ? 'waiting_parts' : (faultInService(f) ? 'service' : 'partial')),
+    receiver:'',
+    receiverSignature:'',
+    photos:Array.isArray(f.photos) ? f.photos : []
+  };
+}
+function printRepairProtocol(id){
+  const f = (faultsData || []).find(x => x.id === id);
+  if(!f){ alert('Zaznam poruchy nebyl nalezen.'); return; }
+  printRepairRecord(repairRecordFromFault(f));
+}
+function fillRepairTechOptions(){
+  const el = document.getElementById('repairTech');
+  if(!el) return;
+  const names = Array.from(new Set([getEnteredByDefault(), ...TECHNICI].filter(Boolean)));
+  el.innerHTML = names.map(n => '<option>' + escapeHtml(n) + '</option>').join('');
+  el.value = getEnteredByDefault();
+}
+function renderRepairPhotoPreview(){
+  const wrap = document.getElementById('repairPhotoPreview');
+  if(!wrap) return;
+  wrap.innerHTML = (currentRepairPhotos || []).map(p => '<img src="' + escapeHtml(p.url || p.dataUrl || '') + '" alt="">').join('');
+}
+function updateRepairSignaturePreview(){
+  const img = document.getElementById('repairSignaturePreview');
+  const state = document.getElementById('repairSignatureState');
+  if(img){
+    img.hidden = !currentRepairSignature;
+    if(currentRepairSignature) img.src = currentRepairSignature;
+    else img.removeAttribute('src');
+  }
+  if(state) state.textContent = currentRepairSignature ? 'Podpis bude vlozen do protokolu.' : 'Podpis neni povinny.';
+}
+function setupRepairSignatureCanvas(){
+  const canvas = document.getElementById('repairSignatureCanvas');
+  if(!canvas) return null;
+  const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(600, Math.round(rect.width * dpr));
+  canvas.height = Math.max(260, Math.round(rect.height * dpr));
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.lineWidth = Math.max(4, Math.round(3 * dpr));
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111';
+  repairSignatureHasInk = false;
+  return {canvas,ctx};
+}
+function repairSignaturePoint(canvas, ev){
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x:(ev.clientX - rect.left) * (canvas.width / rect.width),
+    y:(ev.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+function trimRepairSignature(canvas){
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
+  const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+  let minX=canvas.width, minY=canvas.height, maxX=-1, maxY=-1;
+  for(let y=0; y<canvas.height; y++){
+    for(let x=0; x<canvas.width; x++){
+      const i=(y*canvas.width+x)*4;
+      if(img.data[i] < 245 || img.data[i+1] < 245 || img.data[i+2] < 245){
+        if(x<minX) minX=x; if(y<minY) minY=y; if(x>maxX) maxX=x; if(y>maxY) maxY=y;
+      }
+    }
+  }
+  if(maxX < minX || maxY < minY) return '';
+  const pad = 28;
+  minX = Math.max(0, minX-pad); minY = Math.max(0, minY-pad);
+  maxX = Math.min(canvas.width-1, maxX+pad); maxY = Math.min(canvas.height-1, maxY+pad);
+  const w = maxX-minX+1, h = maxY-minY+1;
+  const out = document.createElement('canvas');
+  out.width = Math.min(900, Math.max(420, w));
+  out.height = Math.min(260, Math.max(130, h));
+  const outCtx = out.getContext('2d');
+  outCtx.fillStyle = '#fff';
+  outCtx.fillRect(0,0,out.width,out.height);
+  const scale = Math.min((out.width-18)/w, (out.height-18)/h);
+  const dw = w * scale, dh = h * scale;
+  outCtx.drawImage(canvas, minX, minY, w, h, (out.width-dw)/2, (out.height-dh)/2, dw, dh);
+  return out.toDataURL('image/png');
+}
+function openRepairSignaturePad(){
+  openModal(document.getElementById('repairSignatureModal'));
+  setTimeout(() => setupRepairSignatureCanvas(), 50);
+}
+function closeRepairSignaturePad(){
+  closeModal(document.getElementById('repairSignatureModal'));
+}
+function openRepairModal(prefill={}){
+  currentRepairPhotos = Array.isArray(prefill.photos) ? JSON.parse(JSON.stringify(prefill.photos)) : [];
+  currentRepairSignature = prefill.receiverSignature || '';
+  fillRepairTechOptions();
+  const set = (id,val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+  set('repairType', prefill.type);
+  set('repairModel', prefill.model);
+  set('repairSerial', prefill.serial);
+  set('repairEvidence', prefill.evidence);
+  set('repairPlace', prefill.place);
+  set('repairCustomer', prefill.customer || 'Zeppelin CZ s.r.o.');
+  set('repairStartedAt', repairDateTimeInputValue(prefill.startedAt || new Date()));
+  set('repairFinishedAt', repairDateTimeInputValue(prefill.finishedAt || new Date()));
+  set('repairTech', prefill.tech || getEnteredByDefault());
+  set('repairSafe', prefill.safe || 'ANO');
+  set('repairFaultText', prefill.sourceFaultText || prefill.fault || '');
+  set('repairCauseText', prefill.cause);
+  set('repairWorkText', prefill.work);
+  set('repairPartsText', prefill.parts);
+  set('repairResult', prefill.result || 'fixed');
+  set('repairReceiver', prefill.receiver);
+  renderRepairPhotoPreview();
+  updateRepairSignaturePreview();
+  openModal(document.getElementById('repairModal'));
+}
+function collectRepairRecordFromForm(){
+  const val = id => document.getElementById(id)?.value || '';
+  return {
+    type:val('repairType'),
+    model:val('repairModel'),
+    serial:val('repairSerial'),
+    evidence:val('repairEvidence'),
+    place:val('repairPlace'),
+    customer:val('repairCustomer'),
+    startedAt:val('repairStartedAt'),
+    finishedAt:val('repairFinishedAt'),
+    tech:val('repairTech'),
+    safe:val('repairSafe'),
+    sourceFaultText:val('repairFaultText'),
+    cause:val('repairCauseText'),
+    work:val('repairWorkText'),
+    parts:val('repairPartsText'),
+    result:val('repairResult'),
+    receiver:val('repairReceiver'),
+    receiverSignature:currentRepairSignature,
+    photos:currentRepairPhotos
+  };
 }
 async function markFaultWaitingParts(id){
   const f = (faultsData || []).find(x => x.id === id);
@@ -8468,7 +8408,7 @@ async function savePartFromForm(){
       orderedAt: (statusVal === 'ordered' || statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.orderedAt) || new Date().toISOString()) : '',
       sentAt: (statusVal === 'sent' || statusVal === 'resolved') ? ((existing && existing.sentAt) || new Date().toISOString()) : '',
       resolvedAt: statusVal === 'resolved' ? ((existing && existing.resolvedAt) || new Date().toISOString()) : '',
-      appVersion:'1.6 / 5.197'
+      appVersion:'1.6 / 5.201'
     });
     record.photos = JSON.parse(JSON.stringify(currentPartPhotos || []));
     record.photo = record.photos[0] || null;
@@ -8621,7 +8561,7 @@ function saveLocalRevize(rows){ try { localStorage.setItem('revize_zz_local', JS
 function revizeNextNumber(){ const year2=String(new Date().getFullYear()).slice(-2); const nums=(revizeData||[]).map(r=>String(r.protokol||'').match(/(\d+)\s*RZ\s*\/\s*\d{2,4}/i)?.[1]).filter(Boolean).map(Number); const max=Math.max(0,...nums); return `${max+1}RZ/${year2}`; }
 function revizeDefaultMeter(){ try{ return localStorage.getItem('revize_last_meter') || 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; }catch(e){ return 'Přístroj: REVEX plus v.č.011134 kal.do 1.6.2026, Eurotest XE v.č.17200404 kal.do 1.7.2027'; } }
 function revizeMeterInfo(text){ const s=String(text||''); const ev=[...s.matchAll(/v\.?\s*č\.?\s*[:.]?\s*([A-Za-z0-9/.-]+)/gi)].map(m=>m[1]); const kal=[...s.matchAll(/kal\.?\s*do\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4})/gi)].map(m=>m[1]); return {ev:ev.join(', '), kalibrace:kal.join(', ')}; }
-function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.197'}; }
+function revizeDefaultRecord(){ const d=todayLocal(); const meter=revizeDefaultMeter(); const mi=revizeMeterInfo(meter); return {id:uid(),protokol:revizeNextNumber(),datum_kontroly:d,platnost:addMonthsToDate(d,12),druh_kontroly:'Pravidelná',provozovatel:'Zeppelin CZ s.r.o.',umisteni:'',typ_zarizeni:'scissor',skupina:'A/3',typ:'Nůžková plošina',rt_jmeno:'Jan Bartoš',rt_zz_osvedceni:'0918/6/22/R,Z-ZZ-c',rt_zz_opravneni:'ev.č. 38/22/ZZ-M,O,R,Z-b,b1',rt_ez:'',rt_ez_osvedceni:'ev.č.EL: 0171/1/22/R-EZ-E2A',pristroj:meter,pristroj_ev:mi.ev,kalibrace:mi.kalibrace,checks:{},notes:{},electro:{},zavady:'',termin_odstraneni:'',predal:'Jan Bartoš',prevzal:'Petr Čáp',norma:'',normy_revize:revizeDefaultNormy(),createdAt:new Date().toISOString(),appVersion:'1.6 / 5.201'}; }
 function revizeAnswerValue(value){ return String(value||'').trim().toUpperCase()==='NE' ? 'NE' : 'ANO'; }
 function revizeResult(r){
   r = r || {};
@@ -8701,6 +8641,38 @@ function normalizeBranchAddress(value, owner=''){
 function revizeFieldSourceKey(field){
   return {vyrobni_cislo:'serial',evidencni_cislo:'evidencni',vyrobce:'maker',model:'model',rok_vyroby:'year',skupina:'group',umisteni:'place',provozovatel:'owner',norma:'norma',normy_revize:'normyRevize',hmotnost:'weight',nosnost:'capacity',pracovni_vyska:'workHeight',vyska_podlahy:'floorHeight',rozmer_plosiny:'platform',bocni_dosah:'reach',naklon:'tilt',staticka_zatez:'staticLoad',dynamicka_zatez:'dynamicLoad',pohon:'drive',napajeni:'power',stabilizatory:'stabilizers',deck:'deck',nabijec:'charger',zasuvka_kos:'socket',rcd:'rcd'}[field] || '';
 }
+const REVIZE_PREFILL_SOURCE_KEYS = {
+  vyrobni_cislo:'serial', evidencni_cislo:'evidencni', vyrobce:'maker', model:'model', rok_vyroby:'year',
+  skupina:'group', umisteni:'place', provozovatel:'owner', norma:'norma', normy_revize:'normyRevize',
+  hmotnost:'weight', nosnost:'capacity', pracovni_vyska:'workHeight', vyska_podlahy:'floorHeight',
+  bocni_dosah:'reach', naklon:'tilt', staticka_zatez:'staticLoad', dynamicka_zatez:'dynamicLoad',
+  pohon:'drive', napajeni:'power', stabilizatory:'stabilizers', deck:'deck', nabijec:'charger',
+  zasuvka_kos:'socket', rcd:'rcd'
+};
+const REVIZE_MODEL_FALLBACK_KEYS = ['weight','capacity','workHeight','floorHeight','reach','tilt','staticLoad','dynamicLoad','drive','power','stabilizers','deck','charger','socket','rcd'];
+function revizeMergeMissingMachineInfo(target, source, keys){
+  if(!target || !source) return target;
+  (keys || Object.keys(source)).forEach(k => {
+    if((target[k]===undefined || target[k]===null || !String(target[k]).trim()) && source[k]!==undefined && source[k]!==null && String(source[k]).trim()) target[k]=source[k];
+  });
+  return target;
+}
+function revizeEnrichFromSameModel(info){
+  if(!info) return info;
+  const modelKey = normalizeSearchText(info.model || info.type || '');
+  if(!modelKey) return info;
+  const yearKey = normalizeSearchText(info.year || '');
+  const rows = revizeMachineRows()
+    .filter(r => normalizeSearchText(r.model || r.type || '') === modelKey)
+    .sort((a,b) => {
+      const ay = yearKey && normalizeSearchText(a.year) === yearKey ? 1 : 0;
+      const by = yearKey && normalizeSearchText(b.year) === yearKey ? 1 : 0;
+      if(ay !== by) return by - ay;
+      return String(b.created||'').localeCompare(String(a.created||''));
+    });
+  rows.forEach(r => revizeMergeMissingMachineInfo(info, r, REVIZE_MODEL_FALLBACK_KEYS));
+  return info;
+}
 function revizeLatestMachine(serial){
   const s=normalizeSerial(serial);
   if(!s) return null;
@@ -8733,6 +8705,7 @@ function revizeLatestMachine(serial){
     const withSameModel = revizeMachineRows().find(r=>normalizeSearchText(r.model||r.type)===modelKey && r.platform);
     if(withSameModel) merged.platform = withSameModel.platform;
   }
+  revizeEnrichFromSameModel(merged);
   if(merged.place) merged.place = normalizeBranchAddress(merged.place, merged.owner);
   return merged;
 }
@@ -9008,8 +8981,28 @@ function applyRevizeDefaultsFromSerial(serial){
     const info=revizeLatestMachine(serial);
     if(!info) return;
     window.revizeApplyingDefaults = true;
-    const set=(id,val,force=false)=>{ const el=document.getElementById(id); if(!el || val===undefined || val===null || !String(val).trim()) return; const cur=String(el.value||'').trim(); if(force || !cur || el.dataset.rzAuto==='1'){ const key=id.replace(/^rz_/,''); el.value=revizeInputValue(key,val); el.dataset.rzAuto='1'; el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } };
-    set('rz_vyrobni_cislo', info.serial || serial, true); set('rz_vyrobce', info.maker); set('rz_norma', info.norma); set('rz_normy_revize', info.normyRevize||revizeDefaultNormy(info.norma)); set('rz_model', info.model||info.type); set('rz_evidencni_cislo', info.evidencni); set('rz_rok_vyroby', info.year); set('rz_skupina', info.group); set('rz_umisteni', normalizeBranchAddress(info.place, info.owner)); set('rz_provozovatel', info.owner); set('rz_hmotnost', info.weight); set('rz_nosnost', info.capacity); set('rz_pracovni_vyska', info.workHeight); set('rz_vyska_podlahy', info.floorHeight); set('rz_bocni_dosah', info.reach); set('rz_naklon', info.tilt); set('rz_staticka_zatez', info.staticLoad); set('rz_dynamicka_zatez', info.dynamicLoad); set('rz_pohon', info.drive); set('rz_napajeni', info.power); set('rz_stabilizatory', info.stabilizers); set('rz_deck', info.deck); set('rz_nabijec', info.charger); set('rz_zasuvka_kos', info.socket); set('rz_rcd', info.rcd);
+    const draft = window.currentRevizeDraft || {};
+    const set=(field,val,force=false)=>{
+      const el=document.getElementById('rz_'+field);
+      if(!el || val===undefined || val===null || !String(val).trim()) return;
+      if(!force && el.dataset.rzAuto==='0') return;
+      const clean = field === 'umisteni' ? normalizeBranchAddress(val, info.owner) : revizeInputValue(field,val);
+      if(!String(clean||'').trim()) return;
+      el.value=clean;
+      el.dataset.rzAuto='1';
+      draft[field]=clean;
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    };
+    set('vyrobni_cislo', info.serial || serial, true);
+    Object.entries(REVIZE_PREFILL_SOURCE_KEYS).forEach(([field, sourceKey]) => {
+      if(field === 'vyrobni_cislo') return;
+      let value = info[sourceKey];
+      if(field === 'model' && !value) value = info.type;
+      if(field === 'normy_revize' && !value) value = revizeDefaultNormy(info.norma);
+      set(field, value);
+    });
+    window.currentRevizeDraft = draft;
     ['stabilizatory','deck','nabijec','zasuvka_kos','rcd'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el && (el.dataset.rzAuto==='1' || !String(el.value||'').trim())) el.value=revizeYesNoValue(el.value); });
     const type=document.getElementById('rz_typ_zarizeni'); const inferredType=info.deviceType||inferRevizeDeviceType([info.type,info.model].filter(Boolean).join(' ')); if(type && inferredType && REVIZE_DEVICE_TYPES[inferredType] && (!type.value || type.value==='scissor' || type.dataset.rzAuto==='1')){ type.value=inferredType; type.dataset.rzAuto='1'; }
     syncNormaFromRokVyroby(false);
@@ -9177,7 +9170,7 @@ async function syncQuarterlyAfterRevize(r){
   last.typ=last.typ||r.model||r.typ||'';
   last.rok=last.rok||r.rok_vyroby||'';
   last.umisteni=r.umisteni||last.umisteni||'';
-  last.appVersion='1.6 / 5.197';
+  last.appVersion='1.6 / 5.201';
   const replaceByIdOrSerial=(arr, updated)=>{
     const idx=(arr||[]).findIndex(x=>(updated.id && x.id===updated.id) || matchesSerial(x));
     if(idx>=0) arr[idx]={...arr[idx],...updated};
@@ -9241,7 +9234,7 @@ function renderRevizeForm(r){ const type = r.typ_zarizeni || 'scissor'; const de
 function revizeFieldLabel(k){ const unit=revizeNumericUnit(k); const label=({hmotnost:'Hmotnost',nosnost:'Nosnost',pracovni_vyska:'Pracovní výška',vyska_podlahy:'Výška podlahy',bocni_dosah:'Boční dosah',naklon:'Max. náklon',staticka_zatez:'Statická zátěž 125 %',dynamicka_zatez:'Dynamická zátěž 110 %',pohon:'Pohon',napajeni:'Napájení',stabilizatory:'Stabilizátory',deck:'Výsuvný deck',nabijec:'Nabíječ',zasuvka_kos:'Zásuvka v koši',rcd:'RCD'})[k]||k; return unit ? `${label} (${unit})` : label; }
 function revizeCheckRows(items,r,prefix){ return items.map(([k,l])=>{ const v=(r.checks||{})[k]||'ANO'; const n=(r.notes||{})[k]||''; return `<div class="revize-check-row"><strong>${escapeHtml(l)}</strong><div class="yesno"><button type="button" class="yn-btn ${v==='ANO'?'yes active':'yes'}" data-rz-check="${k}" data-rz-val="ANO">ANO</button><button type="button" class="yn-btn ${v==='NE'?'no active':'no'}" data-rz-check="${k}" data-rz-val="NE">NE</button></div><input data-rz-note="${k}" value="${escapeHtml(n)}" placeholder="Poznámka / opatření"></div>`; }).join(''); }
 function revizeElectroTable(r){ return `<table class="revize-mini-table"><thead><tr><th>Měřená část</th><th>Hodnota</th><th>Vyhovuje</th><th>Poznámka</th></tr></thead><tbody>${REVIZE_ELECTRO.map(([k,l,u])=>{ const e=(r.electro||{})[k]||{}; return `<tr><td>${escapeHtml(l)}</td><td><input data-rz-electro-val="${k}" value="${escapeHtml(e.value||'')}" placeholder="${escapeHtml(u)}"></td><td><select data-rz-electro-ok="${k}"><option ${e.ok==='ANO'?'selected':''}>ANO</option><option ${e.ok==='NE'?'selected':''}>NE</option></select></td><td><input data-rz-electro-note="${k}" value="${escapeHtml(e.note||'')}"></td></tr>`; }).join('')}</tbody></table>`; }
-function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.197'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
+function collectRevizeDraft(){ syncRevizeMeterFields(); const r=window.currentRevizeDraft||revizeDefaultRecord(); ['protokol','datum_kontroly','platnost','druh_kontroly','provozovatel','umisteni','typ_zarizeni','vyrobce','model','vyrobni_cislo','evidencni_cislo','rok_vyroby','norma','normy_revize','skupina','hmotnost','nosnost','pracovni_vyska','vyska_podlahy','bocni_dosah','naklon','staticka_zatez','dynamicka_zatez','pohon','napajeni','stabilizatory','deck','nabijec','zasuvka_kos','rcd','rt_jmeno','rt_zz_osvedceni','rt_zz_opravneni','rt_ez_osvedceni','pristroj','pristroj_ev','kalibrace','zavady','predal','prevzal'].forEach(k=>{ const el=document.getElementById('rz_'+k); if(el) r[k]=revizeInputValue(k,el.value); }); if(!String(r.normy_revize||'').trim()) r.normy_revize=revizeDefaultNormy(r.norma); delete r.rozmer_plosiny; delete r.typ_kol; delete r.pothole; delete r.rt_ez; delete r.termin_odstraneni; const cfg=REVIZE_DEVICE_TYPES[r.typ_zarizeni]||REVIZE_DEVICE_TYPES.scissor; r.typ=cfg.label; r.checks=r.checks||{}; r.notes=r.notes||{}; document.querySelectorAll('[data-rz-check].active').forEach(b=>r.checks[b.dataset.rzCheck]=b.dataset.rzVal); document.querySelectorAll('[data-rz-note]').forEach(i=>r.notes[i.dataset.rzNote]=i.value); r.electro=r.electro||{}; REVIZE_ELECTRO.forEach(([k])=>{ r.electro[k]={value:document.querySelector(`[data-rz-electro-val="${k}"]`)?.value||'',ok:document.querySelector(`[data-rz-electro-ok="${k}"]`)?.value||'ANO',note:document.querySelector(`[data-rz-electro-note="${k}"]`)?.value||''}; }); r.vysledek=revizeResult(r); r.updatedAt=new Date().toISOString(); r.appVersion='1.6 / 5.201'; try{ if(r.pristroj) localStorage.setItem('revize_last_meter', r.pristroj); }catch(e){} window.currentRevizeDraft=r; return r; }
 async function saveRevizeFromForm(){
   if(revizeSaveInProgress) return;
   const r=collectRevizeDraft();
@@ -9676,6 +9669,7 @@ document.getElementById('sideCloseBtn')?.addEventListener('click', () => {
   document.getElementById(id)?.addEventListener('change', () => resetSideStatsResults('Filtr změněn. Klikni na Generovat.'));
 });
 document.getElementById('sideStatsSearch')?.addEventListener('input', () => resetSideStatsResults('Filtr změněn. Klikni na Generovat.'));
+document.getElementById('sideRepairBtn')?.addEventListener('click', () => { closeSidePanel?.(); openRepairModal(); });
 document.getElementById('sideStatsBtn')?.addEventListener('click', openSideStatsModal);
 document.getElementById('generateStatsBtn')?.addEventListener('click', () => renderSideStats(true));
 document.getElementById('smartStatsBtn')?.addEventListener('click', runSmartStats);
@@ -9713,6 +9707,57 @@ document.getElementById('homePlanBtn')?.addEventListener('click', openWorkPlanMo
 document.getElementById('homeOpenWeekPlanBtn')?.addEventListener('click', openWorkPlanModal);
 document.getElementById('homePartsBtn')?.addEventListener('click', openPartsModal);
 document.getElementById('homeFaultsBtn')?.addEventListener('click', openFaultsModal);
+document.getElementById('homeRepairBtn')?.addEventListener('click', () => openRepairModal());
+document.getElementById('closeRepairBtn')?.addEventListener('click', () => closeModal(document.getElementById('repairModal')));
+document.getElementById('closeRepairTopBtn')?.addEventListener('click', () => closeModal(document.getElementById('repairModal')));
+document.getElementById('printRepairBtn')?.addEventListener('click', () => printRepairRecord(collectRepairRecordFromForm()));
+document.getElementById('openRepairSignatureBtn')?.addEventListener('click', openRepairSignaturePad);
+document.getElementById('clearRepairSignatureBtn')?.addEventListener('click', () => { currentRepairSignature = ''; updateRepairSignaturePreview(); });
+document.getElementById('closeRepairSignatureTopBtn')?.addEventListener('click', closeRepairSignaturePad);
+document.getElementById('cancelRepairSignatureBtn')?.addEventListener('click', closeRepairSignaturePad);
+document.getElementById('wipeRepairSignatureBtn')?.addEventListener('click', setupRepairSignatureCanvas);
+document.getElementById('saveRepairSignatureBtn')?.addEventListener('click', () => {
+  const canvas = document.getElementById('repairSignatureCanvas');
+  if(canvas && repairSignatureHasInk) currentRepairSignature = trimRepairSignature(canvas);
+  updateRepairSignaturePreview();
+  closeRepairSignaturePad();
+});
+document.getElementById('repairSignatureCanvas')?.addEventListener('pointerdown', ev => {
+  const canvas = ev.currentTarget;
+  const ctx = canvas.getContext('2d');
+  const p = repairSignaturePoint(canvas, ev);
+  repairSignatureDrawing = true;
+  repairSignatureHasInk = true;
+  canvas.setPointerCapture?.(ev.pointerId);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  ev.preventDefault();
+});
+document.getElementById('repairSignatureCanvas')?.addEventListener('pointermove', ev => {
+  if(!repairSignatureDrawing) return;
+  const canvas = ev.currentTarget;
+  const ctx = canvas.getContext('2d');
+  const p = repairSignaturePoint(canvas, ev);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  ev.preventDefault();
+});
+['pointerup','pointercancel','pointerleave'].forEach(type => {
+  document.getElementById('repairSignatureCanvas')?.addEventListener(type, ev => {
+    if(!repairSignatureDrawing) return;
+    repairSignatureDrawing = false;
+    ev.currentTarget.releasePointerCapture?.(ev.pointerId);
+    ev.preventDefault();
+  });
+});
+document.getElementById('repairPhotoInput')?.addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  for(const file of files){
+    try{ const out = await compressPhoto(file, MAX_PHOTO_BYTES); currentRepairPhotos.push({dataUrl:out.dataUrl, bytes:out.bytes, width:out.width, height:out.height}); }
+    catch(err){ console.error(err); alert('Nekterou fotku se nepodarilo zpracovat.'); }
+  }
+  renderRepairPhotoPreview(); e.target.value = '';
+});
 document.getElementById('homeMachineCardBtn')?.addEventListener('click', () => {
   updateHomeMachineDatalist();
   const wrap = document.getElementById('homeMachineSearchWrap');
