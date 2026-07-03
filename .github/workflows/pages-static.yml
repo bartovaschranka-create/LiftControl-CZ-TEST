@@ -1,0 +1,45 @@
+name: Deploy static app to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare static artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp index.html sw.js manifest.json revize-machine-db.js liftcontrol-backup-data.js dist/
+          cp icon-192.png icon-512.png icon-192-v4.png icon-512-v4.png apple-touch-icon-v4.png dist/
+          if [ -f protokoly_backup.json ]; then cp protokoly_backup.json dist/; fi
+          touch dist/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
