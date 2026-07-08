@@ -55,10 +55,10 @@ test('angle sensor task terms include service calibration vocabulary', () => {
 test('service calibration ranking keeps service manual before operator manual', () => {
   const ranked = rankCandidates([
     {
-      title: 'Genie GS-4390 Operator Manual PDF',
+      title: "Operator's Manual GS-3384 CE GS-3390 GS-4390 GS-5390 with Maintenance",
       url: 'https://manuals.genielift.com/operators/english/gs4390.pdf',
       description: 'operator manual angle sensor warning',
-      type: 'operator'
+      type: 'service'
     },
     {
       title: 'Genie GS-4390 Service and Maintenance Manual PDF',
@@ -69,6 +69,7 @@ test('service calibration ranking keeps service manual before operator manual', 
   ], { maker: 'Genie', model: 'GS-4390 RT', task: 'kalibrace uhloveho senzoru' });
   assert.equal(ranked[0].type, 'service');
   assert.match(ranked[0].title, /Service/i);
+  assert.equal(ranked[1].type, 'operator');
 });
 
 test('service findRelevantPages keeps angle sensor pages and raises service limit', () => {

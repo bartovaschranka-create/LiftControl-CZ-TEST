@@ -55,7 +55,8 @@ function scoreCandidate(candidate, request) {
 
 function inferManualType(candidate) {
   const hay = [candidate.title, candidate.url, candidate.description, ...(candidate.snippets || [])].join(' ').toLowerCase();
-  if (/service|maintenance|parts%20and%20service/.test(hay)) return 'service';
+  if (/operator|operation/.test(hay) && !/service (and )?maintenance|service manual|parts%20and%20service/.test(hay)) return 'operator';
+  if (/service (and )?maintenance|service manual|parts%20and%20service/.test(hay)) return 'service';
   if (/parts/.test(hay)) return 'parts';
   if (/operator|operation/.test(hay)) return 'operator';
   return candidate.type || '';
