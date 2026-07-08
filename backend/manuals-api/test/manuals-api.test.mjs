@@ -8,6 +8,8 @@ import { extractPdfTextPages } from '../src/pdf.mjs';
 import { validateAiOutput } from '../src/openai.mjs';
 import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
 import { buildManualQueries } from '../src/brave.mjs';
+import { rankCandidates } from '../src/candidates.mjs';
+import { findRelevantPages, taskTerms } from '../src/manual-text.mjs';
 
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
@@ -33,6 +35,50 @@ test('Genie search queries prioritize manuals.genielift.com and model variants',
   assert.ok(queries.some(q => q.q.includes('GS-1930')));
   assert.ok(queries.some(q => q.q.includes('GS1930')));
   assert.ok(queries.some(q => q.q.includes('"GS 1930"')));
+});
+
+test('Genie angle sensor task adds precise service manual queries first', () => {
+  const queries = buildManualQueries({ maker: 'Genie', model: 'GS-4390 RT', task: 'kalibrace uhloveho senzoru' });
+  assert.equal(queries[0].type, 'service');
+  assert.match(queries[0].q, /GS-4390 service manual angle sensor filetype:pdf/);
+  assert.ok(queries.some(q => q.q.includes('"GS-4390" "angle sensor" "service manual" filetype:pdf')));
+  assert.ok(queries.some(q => q.q.includes('"GS-4390" "angle sensor" "calibration" filetype:pdf')));
+});
+
+test('angle sensor task terms include service calibration vocabulary', () => {
+  const terms = taskTerms('kalibrace uhloveho senzoru');
+  for (const term of ['angle sensor', 'angle sensor calibration', 'platform angle sensor', 'controller calibration', 'ECM calibration']) {
+    assert.ok(terms.includes(term), term);
+  }
+});
+
+test('service calibration ranking keeps service manual before operator manual', () => {
+  const ranked = rankCandidates([
+    {
+      title: 'Genie GS-4390 Operator Manual PDF',
+      url: 'https://manuals.genielift.com/operators/english/gs4390.pdf',
+      description: 'operator manual angle sensor warning',
+      type: 'operator'
+    },
+    {
+      title: 'Genie GS-4390 Service and Maintenance Manual PDF',
+      url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf',
+      description: 'service maintenance manual angle sensor calibration',
+      type: 'service'
+    }
+  ], { maker: 'Genie', model: 'GS-4390 RT', task: 'kalibrace uhloveho senzoru' });
+  assert.equal(ranked[0].type, 'service');
+  assert.match(ranked[0].title, /Service/i);
+});
+
+test('service findRelevantPages keeps angle sensor pages and raises service limit', () => {
+  const pages = Array.from({ length: 15 }, (_, i) => ({
+    page: i + 1,
+    text: i === 11 ? 'Platform angle sensor diagnostic page without the word calibration.' : `Unrelated service page ${i + 1}`
+  }));
+  const relevant = findRelevantPages(pages, 'kalibrace uhloveho senzoru', { manualType: 'service' });
+  assert.ok(relevant.some(p => p.page === 12));
+  assert.ok(relevant.length <= 12);
 });
 
 test('unsupported maker is rejected', async () => {

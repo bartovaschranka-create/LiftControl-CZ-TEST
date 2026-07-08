@@ -1,4 +1,5 @@
 import { isOfficialUrl } from './official-domains.mjs';
+import { isServiceCalibrationTask } from './manual-text.mjs';
 
 const TYPE_PRIORITY = { service: 3, parts: 2, operator: 1 };
 
@@ -12,7 +13,10 @@ export function rankCandidates(rawResults, request) {
       seen.add(key);
       return true;
     })
-    .map(r => ({ ...r, confidence: scoreCandidate(r, request) }))
+    .map(r => {
+      const typed = { ...r, type: inferManualType(r) };
+      return { ...typed, confidence: scoreCandidate(typed, request) };
+    })
     .filter(r => r.confidence >= 0.25)
     .sort((a, b) => {
       const byType = (TYPE_PRIORITY[b.type] || 0) - (TYPE_PRIORITY[a.type] || 0);
@@ -33,11 +37,26 @@ export function toVariant(candidate) {
 function scoreCandidate(candidate, request) {
   const hay = [candidate.title, candidate.url, candidate.description, ...(candidate.snippets || [])].join(' ').toLowerCase();
   const modelTokens = String(request.model || '').toLowerCase().split(/[\s/-]+/).filter(Boolean);
+  const serviceTask = isServiceCalibrationTask(request.task || '');
   let score = 0.15;
   for (const token of modelTokens) if (token.length >= 2 && hay.includes(token)) score += 0.18;
   if (/service|maintenance/.test(hay)) score += candidate.type === 'service' ? 0.2 : 0.05;
   if (/parts/.test(hay)) score += candidate.type === 'parts' ? 0.2 : 0.04;
   if (/operator|operation/.test(hay)) score += candidate.type === 'operator' ? 0.2 : 0.04;
+  if (serviceTask) {
+    if (candidate.type === 'service') score += 0.45;
+    if (candidate.type === 'parts') score -= 0.08;
+    if (candidate.type === 'operator') score -= 0.35;
+    if (/angle sensor|calibration|service calibration|controller calibration|ecm calibration/.test(hay)) score += 0.18;
+  }
   if (/\.pdf(\?|$)/i.test(candidate.url)) score += 0.1;
   return Math.min(score, 0.98);
+}
+
+function inferManualType(candidate) {
+  const hay = [candidate.title, candidate.url, candidate.description, ...(candidate.snippets || [])].join(' ').toLowerCase();
+  if (/service|maintenance|parts%20and%20service/.test(hay)) return 'service';
+  if (/parts/.test(hay)) return 'parts';
+  if (/operator|operation/.test(hay)) return 'operator';
+  return candidate.type || '';
 }

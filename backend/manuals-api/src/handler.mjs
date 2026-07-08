@@ -48,6 +48,7 @@ export function createManualsHandler(deps = {}) {
 
     const candidates = rankCandidates(rawCandidates, request);
     const variants = candidates.slice(0, 5).map(toVariant);
+    const attempts = [];
     if (!candidates.length) {
       return sendJson(res, 200, emptyResponse('not_found', request, 'Nebyl nalezen oficiální manuál výrobce.', []));
     }
@@ -56,6 +57,8 @@ export function createManualsHandler(deps = {}) {
       try {
         const { buffer, finalUrl } = await downloadPdf(candidate, request, config, deps);
         const pages = await extractPdfTextPages(buffer);
+        const debug = buildManualDebug({ candidate, finalUrl, pages });
+        attempts.push(debug);
         if (!pages.length) {
           continue;
         }
@@ -63,13 +66,15 @@ export function createManualsHandler(deps = {}) {
         if (fit.status === 'not_found') {
           continue;
         }
-        const relevantPages = findRelevantPages(pages, request.task);
+        const relevantPages = findRelevantPages(pages, request.task, { manualType: candidate.type });
+        debug.relevantPages = relevantPages.map(p => p.page);
         if (!relevantPages.length) {
           continue;
         }
         const aiPages = mergePages(relevantPages, pages, fit.sources);
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit });
+        result.debug = debug;
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Při rozporu má vždy přednost originální manuál výrobce.')) {
           result.message = `${result.message} Při rozporu má vždy přednost originální manuál výrobce.`;
@@ -82,7 +87,19 @@ export function createManualsHandler(deps = {}) {
       }
     }
 
+    if (attempts.length) console.info('manuals-api PDF attempts', attempts);
     return sendJson(res, 200, emptyResponse('not_found', request, 'Oficiální manuál byl nalezen, ale relevantní doložitelný postup v textu PDF nalezen nebyl. Při rozporu má vždy přednost originální manuál výrobce.', variants));
+  };
+}
+
+function buildManualDebug({ candidate, finalUrl, pages }) {
+  return {
+    pdfUrl: finalUrl || candidate.url || '',
+    manualType: candidate.type || '',
+    textLayerPages: pages.length,
+    angleSensorPages: pages
+      .filter(page => /\bangle\b/i.test(page.text || '') && /\bsensor\b/i.test(page.text || ''))
+      .map(page => page.page)
   };
 }
 

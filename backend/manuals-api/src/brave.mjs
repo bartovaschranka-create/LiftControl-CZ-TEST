@@ -1,11 +1,15 @@
 import { emptyResponse } from './validation.mjs';
+import { isServiceCalibrationTask } from './manual-text.mjs';
 
 const BRAVE_WEB_ENDPOINT = 'https://api.search.brave.com/res/v1/web/search';
 
-export function buildManualQueries({ maker, model }) {
+export function buildManualQueries(request = {}) {
+  const { maker, model } = request;
   if (maker === 'Genie') {
     const models = genieModelQueries(model);
+    const serviceQueries = isServiceCalibrationTask(request.task) ? genieServiceCalibrationQueries(model) : [];
     return [
+      ...serviceQueries,
       { type: 'service', q: `site:manuals.genielift.com (${models}) service maintenance manual filetype:pdf` },
       { type: 'service', q: `site:genielift.com (${models}) service maintenance manual filetype:pdf` },
       { type: 'parts', q: `site:manuals.genielift.com (${models}) parts manual filetype:pdf` },
@@ -18,6 +22,18 @@ export function buildManualQueries({ maker, model }) {
     { type: 'parts', q: `site:jlg.com ${model} parts manual filetype:pdf` },
     { type: 'operator', q: `site:jlg.com ${model} operator manual filetype:pdf` }
   ];
+}
+
+function genieServiceCalibrationQueries(model = '') {
+  const clean = String(model || '').replace(/\bRT\b/gi, '').replace(/\s+/g, ' ').trim();
+  const quoted = clean ? `"${clean}"` : '';
+  const plain = clean || String(model || '').trim();
+  return [
+    { type: 'service', q: `site:manuals.genielift.com ${plain} service manual angle sensor filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${plain} service maintenance manual angle sensor filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${quoted} "angle sensor" "service manual" filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${quoted} "angle sensor" "calibration" filetype:pdf` }
+  ].filter(item => item.q.replace(/"/g, '').trim());
 }
 
 function genieModelQueries(model = '') {
