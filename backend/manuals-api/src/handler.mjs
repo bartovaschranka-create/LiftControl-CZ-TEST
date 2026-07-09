@@ -71,7 +71,7 @@ export function createManualsHandler(deps = {}) {
         const { buffer, finalUrl } = await downloadPdf(candidate, request, config, deps);
         debug.downloaded = true;
         debug.finalUrl = finalUrl || candidate.url || '';
-        const pages = await extractPdfTextPages(buffer);
+        const pages = await extractPdfTextPages(buffer, debug);
         debug.textPages = pages.length;
         if (!pages.length) {
           debug.skippedReason = 'PDF nema citelnou textovou vrstvu.';

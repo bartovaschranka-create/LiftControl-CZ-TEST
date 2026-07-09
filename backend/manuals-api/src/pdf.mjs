@@ -1,5 +1,11 @@
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { validateOfficialUrl } from './official-domains.mjs';
+
+const PDFJS_DIST_DIR = dirname(fileURLToPath(import.meta.resolve('pdfjs-dist/package.json')));
+const CMAP_URL = join(PDFJS_DIST_DIR, 'cmaps') + '/';
+const STANDARD_FONT_DATA_URL = join(PDFJS_DIST_DIR, 'standard_fonts') + '/';
 
 export async function downloadPdf(candidate, request, config, deps = {}) {
   const fetchImpl = deps.fetch || fetch;
@@ -63,30 +69,43 @@ export async function downloadPdf(candidate, request, config, deps = {}) {
   throw err;
 }
 
-export async function extractPdfTextPages(buffer) {
+export async function extractPdfTextPages(buffer, debug = null) {
   if (!Buffer.isBuffer(buffer) || !buffer.includes(Buffer.from('%PDF'))) return [];
   let doc;
   try {
     const task = getDocument({
       data: new Uint8Array(buffer),
+      cMapUrl: CMAP_URL,
+      cMapPacked: true,
+      standardFontDataUrl: STANDARD_FONT_DATA_URL,
+      useWorkerFetch: false,
       disableFontFace: true,
       useSystemFonts: true,
       stopAtErrors: false,
       isEvalSupported: false
     });
     doc = await task.promise;
-  } catch {
+    if (debug) debug.pdfPages = doc.numPages;
+  } catch (error) {
+    if (debug) debug.extractError = error?.message || String(error);
     return [];
   }
 
   const pages = [];
   try {
     for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber += 1) {
-      const page = await doc.getPage(pageNumber);
-      const content = await page.getTextContent({ includeMarkedContent: false, disableNormalization: false });
-      const text = normalizeExtractedText(textContentToString(content.items || []));
-      if (text) pages.push({ page: pageNumber, text });
-      page.cleanup?.();
+      try {
+        const page = await doc.getPage(pageNumber);
+        const content = await page.getTextContent({ includeMarkedContent: false, disableNormalization: false });
+        const text = normalizeExtractedText(textContentToString(content.items || []));
+        if (text) pages.push({ page: pageNumber, text });
+        page.cleanup?.();
+      } catch (error) {
+        if (debug) {
+          debug.pageErrors = debug.pageErrors || [];
+          debug.pageErrors.push({ page: pageNumber, error: error?.message || String(error) });
+        }
+      }
     }
   } finally {
     await doc.destroy?.();
