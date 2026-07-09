@@ -8,6 +8,8 @@ import { extractPdfTextPages } from '../src/pdf.mjs';
 import { validateAiOutput } from '../src/openai.mjs';
 import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
 import { buildManualQueries } from '../src/brave.mjs';
+import { rankCandidates } from '../src/candidates.mjs';
+import { findRelevantPages, taskTerms } from '../src/manual-text.mjs';
 
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
@@ -33,6 +35,77 @@ test('Genie search queries prioritize manuals.genielift.com and model variants',
   assert.ok(queries.some(q => q.q.includes('GS-1930')));
   assert.ok(queries.some(q => q.q.includes('GS1930')));
   assert.ok(queries.some(q => q.q.includes('"GS 1930"')));
+});
+
+test('generic calibration expands to service calibration terms', () => {
+  const terms = taskTerms('kalibrace');
+  for (const term of ['calibration', 'calibration procedure', 'function calibration', 'controller calibration', 'ECM calibration']) {
+    assert.ok(terms.includes(term), term);
+  }
+});
+
+test('hydraulic filter expands to maintenance terms', () => {
+  const terms = taskTerms('vymena hydraulickeho filtru');
+  for (const term of ['hydraulic filter', 'hydraulic oil filter', 'return filter', 'filter element', 'maintenance procedure']) {
+    assert.ok(terms.includes(term), term);
+  }
+});
+
+test('service tasks rank service manual before operator and parts fallback', () => {
+  const ranked = rankCandidates([
+    {
+      title: "Operator's Manual GS-3384 CE GS-3390 GS-4390 GS-5390 with Maintenance",
+      url: 'https://manuals.genielift.com/operators/english/133553.pdf',
+      description: 'operator manual maintenance',
+      type: 'service'
+    },
+    {
+      title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual',
+      url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf',
+      description: 'service manual calibration hydraulic filter',
+      type: 'service'
+    },
+    {
+      title: 'Genie GS-4390 Parts Manual',
+      url: 'https://manuals.genielift.com/parts/gs4390-parts.pdf',
+      description: 'parts manual',
+      type: 'parts'
+    }
+  ], { maker: 'Genie', model: 'GS-4390 RT', task: 'kalibrace' });
+  assert.match(ranked[0].title, /Service Manual/i);
+  assert.equal(ranked[0].type, 'service');
+  assert.equal(ranked.find(x => /Operator/.test(x.title))?.type, 'operator');
+});
+
+test('service findRelevantPages matches word combinations', () => {
+  const pages = [
+    { page: 1, text: 'General safety only.' },
+    { page: 2, text: 'Hydraulic system maintenance includes replacing the return filter element.' },
+    { page: 3, text: 'Function calibration procedures are listed in the service menu.' },
+    { page: 4, text: 'Platform angle sensor diagnostics.' }
+  ];
+  assert.ok(findRelevantPages(pages, 'hydraulic filter', { manualType: 'service' }).some(p => p.page === 2));
+  assert.ok(findRelevantPages(pages, 'kalibrace', { manualType: 'service' }).some(p => p.page === 3));
+  assert.ok(findRelevantPages(pages, 'angle sensor', { manualType: 'service' }).some(p => p.page === 4));
+});
+
+test('handler continues past operator manual and returns debug for service manual', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [
+          { title: "Operator's Manual GS-3384 CE GS-3390 GS-4390 GS-5390 with Maintenance", url: 'https://manuals.genielift.com/operators/english/133553.pdf', description: 'operator manual' },
+          { title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }
+        ] } });
+      }
+      if (u.includes('operators')) return responseBuffer(fakePdf(['Operator manual only', 'No service procedure here']), 200, { 'content-type': 'application/pdf' });
+      return responseBuffer(fakePdf(['Genie GS-4390 service manual serial number GS90D-101 and up', 'Function calibration procedure']), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.json.status, 'warn');
+  assert.match(res.json.manualTitle, /Service Manual/i);
+  assert.ok(res.json.debug.triedCandidates.some(x => /Service Manual/.test(x.title) && x.downloaded && x.textPages > 0));
 });
 
 test('unsupported maker is rejected', async () => {

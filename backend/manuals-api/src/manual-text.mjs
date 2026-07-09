@@ -1,11 +1,30 @@
 const TASK_MAP = [
-  ['kalibrace uhloveho senzoru', ['angle sensor calibration', 'angle sensor', 'calibration']],
-  ['nastaveni naklonoveho cidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor']],
-  ['vymena hydraulickeho filtru', ['hydraulic filter', 'filter replacement', 'replace filter']],
+  ['kalibrace uhloveho senzoru', [
+    'angle sensor', 'angle sensor calibration', 'calibrate angle sensor',
+    'angle sensor adjustment', 'angle sensor zero', 'platform angle sensor',
+    'boom angle sensor', 'level sensor', 'tilt sensor', 'calibration',
+    'calibration procedure', 'machine calibration', 'function calibration',
+    'service calibration', 'controller calibration', 'ECM calibration'
+  ]],
+  ['kalibrace', [
+    'calibration', 'calibrate', 'calibration procedure', 'function calibration',
+    'machine calibration', 'service calibration', 'controller calibration',
+    'ECM calibration', 'sensor calibration', 'adjustment', 'zero'
+  ]],
+  ['nastaveni naklonoveho cidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor', 'angle sensor']],
+  ['vymena hydraulickeho filtru', [
+    'hydraulic filter', 'hydraulic oil filter', 'return filter', 'filter element',
+    'filter replacement', 'replace filter', 'changing the filter',
+    'hydraulic system maintenance', 'maintenance schedule', 'scheduled maintenance',
+    'maintenance procedure'
+  ]],
   ['kontrola nouzoveho spousteni', ['emergency lowering', 'emergency descent', 'manual lowering']],
   ['kontrola nabijece', ['charger', 'battery charger', 'charging']],
   ['diagnostika zavady', ['diagnostic', 'troubleshooting', 'fault code']]
 ];
+
+const SERVICE_TASK_RE = /\b(kalibrace|calibration|calibrate|sensor|senzor|cidlo|uhlovy|angle|tilt|level|serizeni|nastaveni|hydraulic|filter|filtr|udrzba|maintenance|vymena|replace|replacement)\b/i;
+const PARTS_TASK_RE = /\b(part number|parts|nahradni dil|nahradni dily|cislo dilu|objednat dil)\b/i;
 
 export function taskTerms(task) {
   const normalized = normalizeText(task);
@@ -13,13 +32,33 @@ export function taskTerms(task) {
   for (const [cz, en] of TASK_MAP) {
     if (normalized.includes(cz)) en.forEach(x => terms.add(x));
   }
+  if (isCalibrationTask(task)) TASK_MAP[1][1].forEach(x => terms.add(x));
+  if (isHydraulicFilterTask(task)) TASK_MAP[3][1].forEach(x => terms.add(x));
   return [...terms];
 }
 
-export function findRelevantPages(pages, task, limit = 4) {
+export function isServiceTask(task) {
+  return SERVICE_TASK_RE.test(normalizeText(task)) && !PARTS_TASK_RE.test(normalizeText(task));
+}
+
+export function isPartsTask(task) {
+  return PARTS_TASK_RE.test(normalizeText(task));
+}
+
+export function isCalibrationTask(task) {
+  return /\b(kalibrace|calibration|calibrate)\b/i.test(normalizeText(task));
+}
+
+export function isHydraulicFilterTask(task) {
+  const text = normalizeText(task);
+  return /\b(hydraulic|hydraulick|filter|filtr)\b/i.test(text) && (text.includes('filter') || text.includes('filtr'));
+}
+
+export function findRelevantPages(pages, task, options = {}) {
   const terms = taskTerms(task);
+  const limit = options.limit || (options.manualType === 'service' ? 15 : 6);
   return pages
-    .map(page => ({ ...page, score: scoreText(page.text, terms) }))
+    .map(page => ({ ...page, score: scoreText(page.text, terms, task) }))
     .filter(page => page.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
@@ -59,9 +98,17 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
   };
 }
 
-function scoreText(text, terms) {
+function scoreText(text, terms, task) {
   const hay = normalizeText(text);
-  return terms.reduce((sum, term) => sum + (hay.includes(normalizeText(term)) ? 1 : 0), 0);
+  let score = terms.reduce((sum, term) => sum + (hay.includes(normalizeText(term)) ? 1 : 0), 0);
+  if (hay.includes('hydraulic') && hay.includes('filter')) score += 4;
+  if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) score += 3;
+  if (hay.includes('angle') && hay.includes('sensor')) score += 4;
+  if (hay.includes('sensor') && hay.includes('calibration')) score += 3;
+  if (hay.includes('tilt') && hay.includes('sensor')) score += 3;
+  if (hay.includes('level') && hay.includes('sensor')) score += 3;
+  if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) score += 2;
+  return score;
 }
 
 function normalizeText(value) {
