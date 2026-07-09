@@ -1,4 +1,5 @@
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { WorkerMessageHandler } from 'pdfjs-dist/legacy/build/pdf.worker.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateOfficialUrl } from './official-domains.mjs';
@@ -6,6 +7,8 @@ import { validateOfficialUrl } from './official-domains.mjs';
 const PDFJS_DIST_DIR = dirname(fileURLToPath(import.meta.resolve('pdfjs-dist/package.json')));
 const CMAP_URL = join(PDFJS_DIST_DIR, 'cmaps') + '/';
 const STANDARD_FONT_DATA_URL = join(PDFJS_DIST_DIR, 'standard_fonts') + '/';
+
+globalThis.pdfjsWorker ||= { WorkerMessageHandler };
 
 export async function downloadPdf(candidate, request, config, deps = {}) {
   const fetchImpl = deps.fetch || fetch;
