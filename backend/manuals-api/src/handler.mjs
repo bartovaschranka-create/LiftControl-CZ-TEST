@@ -23,14 +23,14 @@ export function createManualsHandler(deps = {}) {
       return sendJson(res, 405, { status: 'error', message: 'Povolen je pouze POST.' });
     }
     if (!isOriginAllowed(req, config)) {
-      return sendJson(res, 403, { status: 'error', message: 'Origin není povolen.' });
+      return sendJson(res, 403, { status: 'error', message: 'Origin neni povolen.' });
     }
 
     let body;
     try {
       body = await readJsonBody(req, config.maxBodyBytes);
     } catch {
-      return sendJson(res, 400, { status: 'error', message: 'Neplatný nebo příliš velký JSON request.' });
+      return sendJson(res, 400, { status: 'error', message: 'Neplatny nebo prilis velky JSON request.' });
     }
 
     const validation = validateManualRequest(body);
@@ -47,43 +47,93 @@ export function createManualsHandler(deps = {}) {
     }
 
     const candidates = rankCandidates(rawCandidates, request);
-    const variants = candidates.slice(0, 5).map(toVariant);
+    const variants = candidates.slice(0, 8).map(toVariant);
+    const triedCandidates = [];
     if (!candidates.length) {
-      return sendJson(res, 200, emptyResponse('not_found', request, 'Nebyl nalezen oficiální manuál výrobce.', []));
+      return sendJson(res, 200, emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []));
     }
 
-    for (const candidate of candidates.slice(0, 3)) {
+    for (const candidate of candidates.slice(0, 8)) {
+      const debug = {
+        title: candidate.title || '',
+        type: candidate.type || '',
+        url: candidate.url || '',
+        downloaded: false,
+        finalUrl: '',
+        textPages: 0,
+        matchedPages: [],
+        matchedTerms: [],
+        skippedReason: ''
+      };
+      triedCandidates.push(debug);
+
       try {
         const { buffer, finalUrl } = await downloadPdf(candidate, request, config, deps);
+        debug.downloaded = true;
+        debug.finalUrl = finalUrl || candidate.url || '';
         const pages = await extractPdfTextPages(buffer);
+        debug.textPages = pages.length;
         if (!pages.length) {
+          debug.skippedReason = 'PDF nema citelnou textovou vrstvu.';
           continue;
         }
+
         const fit = evaluateManualFit({ request, pages });
         if (fit.status === 'not_found') {
+          debug.skippedReason = 'Model nebo vyrobni cislo neodpovida rozsahu manualu.';
           continue;
         }
-        const relevantPages = findRelevantPages(pages, request.task);
+
+        const relevantPages = findRelevantPages(pages, request.task, { manualType: candidate.type });
+        debug.matchedPages = relevantPages.map(p => p.page);
+        debug.matchedTerms = collectMatchedTerms(relevantPages, request.task);
         if (!relevantPages.length) {
+          debug.skippedReason = 'Nenalezeny relevantni stranky pro zadany ukon.';
           continue;
         }
+
         const aiPages = mergePages(relevantPages, pages, fit.sources);
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit });
+        result.debug = { triedCandidates };
         result.variants = result.variants?.length ? result.variants : variants;
-        if (!result.message.includes('Při rozporu má vždy přednost originální manuál výrobce.')) {
-          result.message = `${result.message} Při rozporu má vždy přednost originální manuál výrobce.`;
+        if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
+          result.message = `${result.message} Pri rozporu ma vzdy prednost originalni manual vyrobce.`;
         }
         return sendJson(res, 200, result);
       } catch (error) {
+        debug.skippedReason = error?.message || 'Chyba pri stazeni nebo zpracovani manualu.';
         if (error?.code === 'blocked_url') {
-          return sendJson(res, 200, emptyResponse('warn', request, 'Nalezený odkaz byl odmítnut bezpečnostní kontrolou domény.', variants));
+          return sendJson(res, 200, emptyResponse('warn', request, 'Nalezeny odkaz byl odmitnut bezpecnostni kontrolou domeny.', variants));
         }
       }
     }
 
-    return sendJson(res, 200, emptyResponse('not_found', request, 'Oficiální manuál byl nalezen, ale relevantní doložitelný postup v textu PDF nalezen nebyl. Při rozporu má vždy přednost originální manuál výrobce.', variants));
+    const serviceTried = triedCandidates.some(x => x.type === 'service' && x.downloaded && x.textPages > 0);
+    const message = serviceTried
+      ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
+      : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
+    const response = emptyResponse('not_found', request, message, variants);
+    response.debug = { triedCandidates };
+    return sendJson(res, 200, response);
   };
+}
+
+function collectMatchedTerms(pages, task) {
+  const hay = pages.map(p => p.text || '').join('\n').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const checks = [
+    'hydraulic filter', 'hydraulic oil filter', 'return filter', 'filter element',
+    'filter replacement', 'replace filter', 'maintenance schedule', 'scheduled maintenance',
+    'maintenance procedure', 'calibration', 'calibration procedure', 'function calibration',
+    'angle sensor', 'tilt sensor', 'level sensor', 'controller calibration', 'ECM calibration'
+  ];
+  const found = new Set(checks.filter(term => hay.includes(term.toLowerCase())));
+  const q = String(task || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  if (q.includes('kalibrace') && hay.includes('calibration')) found.add('calibration');
+  if (hay.includes('hydraulic') && hay.includes('filter')) found.add('hydraulic + filter');
+  if (hay.includes('angle') && hay.includes('sensor')) found.add('angle + sensor');
+  if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) found.add('filter + replace/replacement/element');
+  return [...found];
 }
 
 function mergePages(relevantPages, allPages, fitSources = []) {

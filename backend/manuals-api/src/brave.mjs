@@ -1,11 +1,15 @@
 import { emptyResponse } from './validation.mjs';
+import { isCalibrationTask, isHydraulicFilterTask, isServiceTask } from './manual-text.mjs';
 
 const BRAVE_WEB_ENDPOINT = 'https://api.search.brave.com/res/v1/web/search';
 
-export function buildManualQueries({ maker, model }) {
+export function buildManualQueries(request = {}) {
+  const { maker, model } = request;
   if (maker === 'Genie') {
     const models = genieModelQueries(model);
+    const serviceQueries = isServiceTask(request.task) ? genieServiceQueries(model, request.task) : [];
     return [
+      ...serviceQueries,
       { type: 'service', q: `site:manuals.genielift.com (${models}) service maintenance manual filetype:pdf` },
       { type: 'service', q: `site:genielift.com (${models}) service maintenance manual filetype:pdf` },
       { type: 'parts', q: `site:manuals.genielift.com (${models}) parts manual filetype:pdf` },
@@ -18,6 +22,30 @@ export function buildManualQueries({ maker, model }) {
     { type: 'parts', q: `site:jlg.com ${model} parts manual filetype:pdf` },
     { type: 'operator', q: `site:jlg.com ${model} operator manual filetype:pdf` }
   ];
+}
+
+function genieServiceQueries(model = '', task = '') {
+  const clean = String(model || '').replace(/\bRT\b/gi, '').replace(/\s+/g, ' ').trim();
+  const quoted = clean ? `"${clean}"` : '';
+  const plain = clean || String(model || '').trim();
+  const topic = isHydraulicFilterTask(task)
+    ? 'hydraulic filter'
+    : isCalibrationTask(task)
+      ? 'calibration'
+      : 'service procedure';
+  const queries = [
+    { type: 'service', q: `site:manuals.genielift.com ${plain} service manual ${topic} filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${plain} service maintenance manual ${topic} filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${quoted} "${topic}" "service manual" filetype:pdf` },
+    { type: 'service', q: `site:manuals.genielift.com ${quoted} "service and maintenance" "${topic}" filetype:pdf` }
+  ];
+  if (isCalibrationTask(task)) {
+    queries.push(
+      { type: 'service', q: `site:manuals.genielift.com ${plain} service manual angle sensor filetype:pdf` },
+      { type: 'service', q: `site:manuals.genielift.com ${quoted} "angle sensor" "calibration" filetype:pdf` }
+    );
+  }
+  return queries.filter(item => item.q.replace(/"/g, '').trim());
 }
 
 function genieModelQueries(model = '') {
