@@ -17,6 +17,19 @@ const TASK_MAP = [
     'controller calibration',
     'ECM calibration'
   ]],
+  ['kalibrace', [
+    'calibration',
+    'calibrate',
+    'calibration procedure',
+    'function calibration',
+    'machine calibration',
+    'service calibration',
+    'controller calibration',
+    'ECM calibration',
+    'sensor calibration',
+    'adjustment',
+    'zero'
+  ]],
   ['nastaveni naklonoveho cidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor', 'angle sensor']],
   ['vymena hydraulickeho filtru', ['hydraulic filter', 'filter replacement', 'replace filter']],
   ['kontrola nouzoveho spousteni', ['emergency lowering', 'emergency descent', 'manual lowering']],
@@ -33,6 +46,7 @@ export function taskTerms(task) {
     if (normalized.includes(cz)) en.forEach(x => terms.add(x));
   }
   if (isServiceCalibrationTask(task)) TASK_MAP[0][1].forEach(x => terms.add(x));
+  if (normalized.includes('kalibrace')) TASK_MAP[1][1].forEach(x => terms.add(x));
   return [...terms];
 }
 
@@ -50,7 +64,7 @@ export function findRelevantPages(pages, task, options = {}) {
     .slice(0, limit);
 }
 
-export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {} }) {
+export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {}, openaiDebug = null }) {
   const base = {
     maker: request.maker,
     model: request.model,
@@ -68,13 +82,13 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
     return {
       ...base,
       status: 'not_found',
-      message: 'V textu manualu nebyl nalezen dolozitelny postup pro zadany ukon.'
+      message: 'V textu manuálu nebyl nalezen doložitelný postup pro zadaný úkon.'
     };
   }
   return {
     ...base,
     status: 'warn',
-    message: 'Relevantni text byl v manualu nalezen, ale bez OpenAI nejsou vraceny zadne ceske servisni kroky. Pri rozporu ma vzdy prednost originalni manual vyrobce.',
+    message: sourceOnlyMessage(openaiDebug),
     variants: [{
       title: candidate.title || '',
       type: candidate.type || '',
@@ -82,6 +96,19 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
       confidence: Number(candidate.confidence?.toFixed(2) || 0)
     }]
   };
+}
+
+function sourceOnlyMessage(openaiDebug) {
+  if (!openaiDebug?.configured || openaiDebug?.errorCode === 'openai_missing_key') {
+    return 'OpenAI API klíč není nastavený, proto nelze vytvořit české servisní kroky.';
+  }
+  if (openaiDebug?.errorCode === 'openai_validation_rejected') {
+    return 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.';
+  }
+  if (openaiDebug?.requestSent || openaiDebug?.errorCode) {
+    return 'OpenAI API je nastavené, ale zpracování kroků selhalo. Viz debug.openai.';
+  }
+  return 'Relevantní text byl v manuálu nalezen, ale české servisní kroky nebyly vytvořeny.';
 }
 
 function scoreText(text, terms) {
