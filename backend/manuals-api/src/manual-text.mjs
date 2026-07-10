@@ -96,12 +96,20 @@ export function taskIntentDebug(task) {
 
 export function findRelevantPages(pages, task, options = {}) {
   const terms = taskTerms(task);
-  const limit = options.limit || (options.manualType === 'service' ? 15 : 6);
+  const limit = options.limit || relevantPageLimit(task, options.manualType);
   return pages
     .map(page => ({ ...page, score: scoreText(page.text, terms, task) }))
     .filter(page => page.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
+}
+
+function relevantPageLimit(task, manualType) {
+  if (manualType !== 'service') return 6;
+  if (isAngleSensorCalibrationTask(task)) return 12;
+  if (isCalibrationTask(task)) return 8;
+  if (isHydraulicFilterTask(task)) return 8;
+  return 10;
 }
 
 export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {}, openaiDebug = null }) {
