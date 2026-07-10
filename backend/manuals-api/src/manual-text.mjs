@@ -64,7 +64,7 @@ export function findRelevantPages(pages, task, options = {}) {
     .slice(0, limit);
 }
 
-export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {} }) {
+export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {}, openaiDebug = null }) {
   const base = {
     maker: request.maker,
     model: request.model,
@@ -88,7 +88,7 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
   return {
     ...base,
     status: 'warn',
-    message: 'Relevantni text byl v manualu nalezen, ale bez OpenAI nejsou vraceny zadne ceske servisni kroky. Pri rozporu ma vzdy prednost originalni manual vyrobce.',
+    message: sourceOnlyMessage(openaiDebug),
     variants: [{
       title: candidate.title || '',
       type: candidate.type || '',
@@ -96,6 +96,19 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
       confidence: Number(candidate.confidence?.toFixed(2) || 0)
     }]
   };
+}
+
+function sourceOnlyMessage(openaiDebug) {
+  if (!openaiDebug?.configured || openaiDebug?.errorCode === 'openai_missing_key') {
+    return 'OpenAI API klíč není nastavený, proto nelze vytvořit české servisní kroky.';
+  }
+  if (openaiDebug?.errorCode === 'openai_validation_rejected') {
+    return 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.';
+  }
+  if (openaiDebug?.requestSent || openaiDebug?.errorCode) {
+    return 'OpenAI API je nastavené, ale zpracování kroků selhalo. Viz debug.openai.';
+  }
+  return 'Relevantní text byl v manuálu nalezen, ale české servisní kroky nebyly vytvořeny.';
 }
 
 function scoreText(text, terms, task) {

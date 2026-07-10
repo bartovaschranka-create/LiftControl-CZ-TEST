@@ -12,61 +12,125 @@ const RESULT_SCHEMA = {
   }
 };
 
-export async function structureWithOpenAI({ request, candidate, finalUrl, pages, config, deps = {}, fit = {} }) {
-  if (!config.openaiApiKey) return null;
+export async function structureWithOpenAI({ request, candidate, finalUrl, pages, config, deps = {}, fit = {}, openaiDebug = null }) {
+  if (!config.openaiApiKey) {
+    setOpenAiDebug(openaiDebug, {
+      configured: false,
+      errorCode: 'openai_missing_key',
+      errorMessage: 'OPENAI_API_KEY is not configured.'
+    });
+    return null;
+  }
   const fetchImpl = deps.fetch || fetch;
   const sourceText = pages.map(p => `PAGE ${p.page}\n${p.text.slice(0, 5000)}`).join('\n\n---\n\n');
-  const res = await fetchImpl('https://api.openai.com/v1/responses', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.openaiApiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: config.openaiModel,
-      input: [
-        {
-          role: 'system',
-          content: [
-            'Return only structured JSON matching the schema.',
-            'Do not invent service procedures, safety warnings, serial ranges, page numbers, or sources.',
-            'Every step and safety warning must be a Czech translation or tight paraphrase of its exact English sourceQuote from the stated page.',
-            'If a procedure is not explicitly supported by the source text, return empty arrays.'
-          ].join(' ')
-        },
-        {
-          role: 'user',
-          content: JSON.stringify({
-            task: request.task,
-            maker: request.maker,
-            model: request.model,
-            serial: request.serial || '',
-            verifiedSerialRange: fit.serialRange || '',
-            sourceText
-          })
-        }
-      ],
-      text: {
-        format: {
-          type: 'json_schema',
-          name: 'manual_procedure_result',
-          strict: true,
-          schema: RESULT_SCHEMA
-        }
-      }
-    })
+  setOpenAiDebug(openaiDebug, {
+    configured: true,
+    model: config.openaiModel,
+    requestSent: true,
+    errorCode: null,
+    errorMessage: null
   });
-  if (!res.ok) return null;
-  const data = await res.json();
+  let res;
+  try {
+    res = await fetchImpl('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.openaiApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: config.openaiModel,
+        input: [
+          {
+            role: 'system',
+            content: [
+              'Return only structured JSON matching the schema.',
+              'Do not invent service procedures, safety warnings, serial ranges, page numbers, or sources.',
+              'Every step and safety warning must be a Czech translation or tight paraphrase of its exact English sourceQuote from the stated page.',
+              'If a procedure is not explicitly supported by the source text, return empty arrays.'
+            ].join(' ')
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              task: request.task,
+              maker: request.maker,
+              model: request.model,
+              serial: request.serial || '',
+              verifiedSerialRange: fit.serialRange || '',
+              sourceText
+            })
+          }
+        ],
+        text: {
+          format: {
+            type: 'json_schema',
+            name: 'manual_procedure_result',
+            strict: true,
+            schema: RESULT_SCHEMA
+          }
+        }
+      })
+    });
+  } catch (error) {
+    setOpenAiDebug(openaiDebug, {
+      responseStatus: null,
+      errorCode: 'openai_unknown_error',
+      errorMessage: safeOpenAiErrorMessage(error)
+    });
+    return null;
+  }
+  setOpenAiDebug(openaiDebug, { responseStatus: Number(res.status) || null });
+  if (!res.ok) {
+    const errorText = await readOpenAiErrorText(res);
+    setOpenAiDebug(openaiDebug, {
+      errorCode: classifyOpenAiError(res.status, errorText),
+      errorMessage: safeOpenAiErrorMessage(errorText || `OpenAI HTTP ${res.status}`)
+    });
+    return null;
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch (error) {
+    setOpenAiDebug(openaiDebug, {
+      errorCode: 'openai_response_invalid',
+      errorMessage: safeOpenAiErrorMessage(error)
+    });
+    return null;
+  }
   const text = extractResponseText(data);
-  if (!text) return null;
+  if (!text) {
+    setOpenAiDebug(openaiDebug, {
+      errorCode: 'openai_response_invalid',
+      errorMessage: 'OpenAI response did not contain output text.'
+    });
+    return null;
+  }
   let parsed;
   try {
     parsed = JSON.parse(text);
-  } catch {
+    setOpenAiDebug(openaiDebug, { parsed: true });
+  } catch (error) {
+    setOpenAiDebug(openaiDebug, {
+      errorCode: 'openai_response_invalid',
+      errorMessage: safeOpenAiErrorMessage(error)
+    });
     return null;
   }
+  const rawItemCount = countSourceItems(parsed);
   const validated = await validateAiOutput(parsed, pages, request, { config, deps, requireSemanticValidation: true });
+  const acceptedCount = validated.steps.length + validated.safety.length;
+  setOpenAiDebug(openaiDebug, {
+    acceptedSteps: acceptedCount,
+    validationRejectedSteps: Math.max(0, rawItemCount - acceptedCount)
+  });
+  if (!acceptedCount && rawItemCount > 0) {
+    setOpenAiDebug(openaiDebug, {
+      errorCode: 'openai_validation_rejected',
+      errorMessage: 'OpenAI returned source items, but source validation rejected them.'
+    });
+  }
   const sources = uniqueSources([...(fit.sources || []), ...validated.sources]);
   return {
     status: validated.steps.length ? (fit.status === 'ok' ? 'ok' : 'warn') : 'not_found',
@@ -80,7 +144,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     steps: validated.steps,
     safety: validated.safety,
     sources,
-    message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Postup nebyl v ověřeném textu manuálu doložen.'),
+    message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.'),
     variants: []
   };
 }
@@ -248,6 +312,47 @@ function sourceItemSchema() {
       page: { type: 'integer' }
     }
   };
+}
+
+function countSourceItems(parsed) {
+  const steps = Array.isArray(parsed?.steps) ? parsed.steps.length : 0;
+  const safety = Array.isArray(parsed?.safety) ? parsed.safety.length : 0;
+  return steps + safety;
+}
+
+function setOpenAiDebug(debug, patch) {
+  if (!debug) return;
+  Object.assign(debug, patch);
+}
+
+async function readOpenAiErrorText(res) {
+  try {
+    if (typeof res.text === 'function') return await res.text();
+    if (typeof res.json === 'function') return JSON.stringify(await res.json());
+  } catch {
+    return '';
+  }
+  return '';
+}
+
+function classifyOpenAiError(status, errorText) {
+  const text = normalizeText(errorText);
+  if (status === 401 || status === 403 || text.includes('invalid_api_key') || text.includes('incorrect api key')) {
+    return 'openai_auth_failed';
+  }
+  if (status === 429 || text.includes('insufficient_quota') || text.includes('billing') || text.includes('quota')) {
+    return 'openai_quota_or_billing';
+  }
+  if (status === 404 || text.includes('model_not_found') || (text.includes('model') && (text.includes('not found') || text.includes('not available')))) {
+    return 'openai_model_not_available';
+  }
+  if (text.includes('invalid json') || text.includes('schema')) return 'openai_response_invalid';
+  return 'openai_unknown_error';
+}
+
+function safeOpenAiErrorMessage(value) {
+  const raw = value instanceof Error ? value.message : String(value || '');
+  return raw.replace(/sk-[A-Za-z0-9_-]+/g, 'sk-***').slice(0, 500);
 }
 
 function normalizeForQuote(value) {

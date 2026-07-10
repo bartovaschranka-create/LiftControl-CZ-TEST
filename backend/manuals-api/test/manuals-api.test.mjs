@@ -108,6 +108,82 @@ test('handler continues past operator manual and returns debug for service manua
   assert.ok(res.json.debug.triedCandidates.some(x => /Service Manual/.test(x.title) && x.downloaded && x.textPages > 0));
 });
 
+test('OpenAI debug explains missing API key', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    fetch: genieFetch(fakePdf([
+      'Genie GS-4390 service manual serial number GS90D-101 and up',
+      'Function calibration procedure'
+    ]))
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.debug.openai.configured, false);
+  assert.equal(res.json.debug.openai.requestSent, false);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_missing_key');
+  assert.match(res.json.message, /OpenAI API klíč není nastavený/);
+});
+
+test('OpenAI debug classifies authentication failure', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    env: { OPENAI_API_KEY: 'sk-test-secret', OPENAI_MODEL: 'gpt-4.1-mini' },
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
+      }
+      if (u.includes('api.openai.com')) {
+        return responseJson({ error: { code: 'invalid_api_key', message: 'Incorrect API key provided: sk-test-secret' } }, 401);
+      }
+      return responseBuffer(fakePdf([
+        'Genie GS-4390 service manual serial number GS90D-101 and up',
+        'Function calibration procedure'
+      ]), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.json.debug.openai.configured, true);
+  assert.equal(res.json.debug.openai.requestSent, true);
+  assert.equal(res.json.debug.openai.responseStatus, 401);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_auth_failed');
+  assert.doesNotMatch(res.json.debug.openai.errorMessage, /sk-test-secret/);
+  assert.match(res.json.message, /OpenAI API je nastavené/);
+});
+
+test('OpenAI debug reports source validation rejection', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    env: { OPENAI_API_KEY: 'sk-test-secret', OPENAI_MODEL: 'gpt-4.1-mini' },
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
+      }
+      if (u.includes('api.openai.com')) {
+        return responseJson({
+          output_text: JSON.stringify({
+            steps: [{
+              text: 'Proveď kalibraci úhlového senzoru.',
+              sourceQuote: 'Battery charger green light indicates charging is complete.',
+              page: 2
+            }],
+            safety: [],
+            serialRange: '',
+            message: ''
+          })
+        });
+      }
+      return responseBuffer(fakePdf([
+        'Genie GS-4390 service manual serial number GS90D-101 and up',
+        'Battery charger green light indicates charging is complete. Function calibration procedure.'
+      ]), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.json.status, 'not_found');
+  assert.equal(res.json.debug.openai.configured, true);
+  assert.equal(res.json.debug.openai.parsed, true);
+  assert.equal(res.json.debug.openai.acceptedSteps, 0);
+  assert.equal(res.json.debug.openai.validationRejectedSteps, 1);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_validation_rejected');
+  assert.match(res.json.message, /žádný krok neprošel zdrojovou validací/);
+});
+
 test('unsupported maker is rejected', async () => {
   const validation = validateManualRequest({ maker: 'Haulotte', model: 'X', task: 'test' });
   assert.equal(validation.ok, false);
@@ -317,7 +393,8 @@ async function callApi(body, options = {}) {
   const handler = createManualsHandler({
     env: {
       BRAVE_SEARCH_API_KEY: 'test-key',
-      ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io'
+      ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
+      ...(options.env || {})
     },
     fetch: options.fetch || jlgFetch()
   });
@@ -386,11 +463,13 @@ function escapePdfText(text) {
 }
 
 function responseJson(json, status = 200) {
+  const body = JSON.stringify(json);
   return {
     ok: status >= 200 && status < 300,
     status,
     headers: new Map([['content-type', 'application/json']]),
-    async json() { return json; }
+    async json() { return json; },
+    async text() { return body; }
   };
 }
 

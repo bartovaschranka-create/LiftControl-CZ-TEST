@@ -49,8 +49,11 @@ export function createManualsHandler(deps = {}) {
     const candidates = rankCandidates(rawCandidates, request);
     const variants = candidates.slice(0, 8).map(toVariant);
     const triedCandidates = [];
+    const openaiDebug = createOpenAiDebug(config);
     if (!candidates.length) {
-      return sendJson(res, 200, emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []));
+      const response = emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []);
+      response.debug = { triedCandidates, openai: openaiDebug };
+      return sendJson(res, 200, response);
     }
 
     for (const candidate of candidates.slice(0, 8)) {
@@ -93,9 +96,9 @@ export function createManualsHandler(deps = {}) {
         }
 
         const aiPages = mergePages(relevantPages, pages, fit.sources);
-        const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit });
-        const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit });
-        result.debug = { triedCandidates };
+        const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug });
+        const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit, openaiDebug });
+        result.debug = { triedCandidates, openai: openaiDebug };
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
           result.message = `${result.message} Pri rozporu ma vzdy prednost originalni manual vyrobce.`;
@@ -114,8 +117,22 @@ export function createManualsHandler(deps = {}) {
       ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
     const response = emptyResponse('not_found', request, message, variants);
-    response.debug = { triedCandidates };
+    response.debug = { triedCandidates, openai: openaiDebug };
     return sendJson(res, 200, response);
+  };
+}
+
+function createOpenAiDebug(config) {
+  return {
+    configured: !!config.openaiApiKey,
+    model: config.openaiModel,
+    requestSent: false,
+    responseStatus: null,
+    errorCode: config.openaiApiKey ? null : 'openai_missing_key',
+    errorMessage: config.openaiApiKey ? null : 'OPENAI_API_KEY is not configured.',
+    parsed: false,
+    validationRejectedSteps: 0,
+    acceptedSteps: 0
   };
 }
 
