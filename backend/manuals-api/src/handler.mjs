@@ -5,7 +5,7 @@ import { emptyResponse, validateManualRequest } from './validation.mjs';
 import { searchManualCandidates, braveErrorResponse } from './brave.mjs';
 import { rankCandidates, toVariant } from './candidates.mjs';
 import { downloadPdf, extractPdfTextPages } from './pdf.mjs';
-import { buildSourceOnlyResult, findRelevantPages } from './manual-text.mjs';
+import { buildSourceOnlyResult, findRelevantPages, isAngleSensorCalibrationTask, isCalibrationTask, isHydraulicFilterTask, taskIntentDebug, taskTerms } from './manual-text.mjs';
 import { structureWithOpenAI } from './openai.mjs';
 import { evaluateManualFit } from './manual-fit.mjs';
 
@@ -50,9 +50,10 @@ export function createManualsHandler(deps = {}) {
     const variants = candidates.slice(0, 8).map(toVariant);
     const triedCandidates = [];
     const openaiDebug = createOpenAiDebug(config);
+    const taskIntent = taskIntentDebug(request.task);
     if (!candidates.length) {
       const response = emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []);
-      response.debug = { triedCandidates, openai: openaiDebug };
+      response.debug = { triedCandidates, openai: openaiDebug, taskIntent };
       return sendJson(res, 200, response);
     }
 
@@ -98,7 +99,7 @@ export function createManualsHandler(deps = {}) {
         const aiPages = mergePages(relevantPages, pages, fit.sources);
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit, openaiDebug });
-        result.debug = { triedCandidates, openai: openaiDebug };
+        result.debug = { triedCandidates, openai: openaiDebug, taskIntent };
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
           result.message = `${result.message} Pri rozporu ma vzdy prednost originalni manual vyrobce.`;
@@ -117,7 +118,7 @@ export function createManualsHandler(deps = {}) {
       ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
     const response = emptyResponse('not_found', request, message, variants);
-    response.debug = { triedCandidates, openai: openaiDebug };
+    response.debug = { triedCandidates, openai: openaiDebug, taskIntent };
     return sendJson(res, 200, response);
   };
 }
@@ -138,18 +139,20 @@ function createOpenAiDebug(config) {
 
 function collectMatchedTerms(pages, task) {
   const hay = pages.map(p => p.text || '').join('\n').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const checks = [
-    'hydraulic filter', 'hydraulic oil filter', 'return filter', 'filter element',
-    'filter replacement', 'replace filter', 'maintenance schedule', 'scheduled maintenance',
-    'maintenance procedure', 'calibration', 'calibration procedure', 'function calibration',
-    'angle sensor', 'tilt sensor', 'level sensor', 'controller calibration', 'ECM calibration'
-  ];
+  const checks = taskTerms(task);
   const found = new Set(checks.filter(term => hay.includes(term.toLowerCase())));
   const q = String(task || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   if (q.includes('kalibrace') && hay.includes('calibration')) found.add('calibration');
-  if (hay.includes('hydraulic') && hay.includes('filter')) found.add('hydraulic + filter');
-  if (hay.includes('angle') && hay.includes('sensor')) found.add('angle + sensor');
-  if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) found.add('filter + replace/replacement/element');
+  if (isHydraulicFilterTask(task)) {
+    if (hay.includes('hydraulic') && hay.includes('filter')) found.add('hydraulic + filter');
+    if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) found.add('filter + replace/replacement/element');
+  }
+  if (isAngleSensorCalibrationTask(task) || /angle|tilt|level|sensor|senzor|cidlo/.test(q)) {
+    if (hay.includes('angle') && hay.includes('sensor')) found.add('angle + sensor');
+    if (hay.includes('tilt') && hay.includes('sensor')) found.add('tilt + sensor');
+    if (hay.includes('level') && hay.includes('sensor')) found.add('level + sensor');
+  }
+  if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) found.add('calibration/calibrate/adjustment/zero');
   return [...found];
 }
 

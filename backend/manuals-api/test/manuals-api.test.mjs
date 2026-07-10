@@ -9,7 +9,7 @@ import { validateAiOutput } from '../src/openai.mjs';
 import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
 import { buildManualQueries } from '../src/brave.mjs';
 import { rankCandidates } from '../src/candidates.mjs';
-import { findRelevantPages, taskTerms } from '../src/manual-text.mjs';
+import { findRelevantPages, taskIntentDebug, taskTerms } from '../src/manual-text.mjs';
 
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
@@ -42,6 +42,32 @@ test('generic calibration expands to service calibration terms', () => {
   for (const term of ['calibration', 'calibration procedure', 'function calibration', 'controller calibration', 'ECM calibration']) {
     assert.ok(terms.includes(term), term);
   }
+  for (const term of ['hydraulic filter', 'return filter', 'filter element']) {
+    assert.equal(terms.includes(term), false, term);
+  }
+});
+
+test('task intent keeps calibration separate from hydraulic filter terms', () => {
+  const calibration = taskIntentDebug('kalibrace');
+  assert.equal(calibration.detectedIntent, 'calibration');
+  assert.ok(calibration.taskTerms.includes('calibration'));
+  assert.equal(calibration.taskTerms.includes('hydraulic filter'), false);
+  assert.equal(calibration.taskTerms.includes('return filter'), false);
+  assert.equal(calibration.taskTerms.includes('filter element'), false);
+
+  const angle = taskIntentDebug('kalibrace úhlového senzoru');
+  assert.equal(angle.detectedIntent, 'angle_sensor_calibration');
+  assert.ok(angle.taskTerms.includes('angle sensor'));
+  assert.ok(angle.taskTerms.includes('tilt sensor'));
+  assert.ok(angle.taskTerms.includes('level sensor'));
+  assert.ok(angle.taskTerms.includes('calibration'));
+  assert.equal(angle.taskTerms.includes('hydraulic filter'), false);
+
+  const filter = taskIntentDebug('výměna hydraulického filtru');
+  assert.equal(filter.detectedIntent, 'hydraulic_filter');
+  assert.ok(filter.taskTerms.includes('hydraulic filter'));
+  assert.ok(filter.taskTerms.includes('return filter'));
+  assert.ok(filter.taskTerms.includes('filter element'));
 });
 
 test('hydraulic filter expands to maintenance terms', () => {
@@ -86,7 +112,25 @@ test('service findRelevantPages matches word combinations', () => {
   ];
   assert.ok(findRelevantPages(pages, 'hydraulic filter', { manualType: 'service' }).some(p => p.page === 2));
   assert.ok(findRelevantPages(pages, 'kalibrace', { manualType: 'service' }).some(p => p.page === 3));
+  assert.equal(findRelevantPages(pages, 'kalibrace', { manualType: 'service' }).some(p => p.page === 2), false);
   assert.ok(findRelevantPages(pages, 'angle sensor', { manualType: 'service' }).some(p => p.page === 4));
+});
+
+test('handler debug matchedTerms follows detected task intent', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    fetch: genieFetch(fakePdf([
+      'Genie GS-4390 service manual serial number GS90D-101 and up',
+      'Hydraulic system maintenance includes replacing the return filter element.',
+      'Function calibration procedure and controller calibration.'
+    ]))
+  });
+  const tried = res.json.debug.triedCandidates[0];
+  assert.equal(res.json.debug.taskIntent.detectedIntent, 'calibration');
+  assert.deepEqual(tried.matchedPages, [3]);
+  assert.equal(tried.matchedTerms.includes('hydraulic filter'), false);
+  assert.equal(tried.matchedTerms.includes('return filter'), false);
+  assert.equal(tried.matchedTerms.includes('filter element'), false);
+  assert.ok(tried.matchedTerms.some(term => term.includes('calibration')));
 });
 
 test('handler continues past operator manual and returns debug for service manual', async () => {

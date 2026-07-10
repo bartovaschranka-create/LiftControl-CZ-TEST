@@ -9,7 +9,8 @@ const TASK_MAP = [
   ['kalibrace', [
     'calibration', 'calibrate', 'calibration procedure', 'function calibration',
     'machine calibration', 'service calibration', 'controller calibration',
-    'ECM calibration', 'sensor calibration', 'adjustment', 'zero'
+    'ECM calibration', 'sensor calibration', 'adjustment', 'setup',
+    'service mode', 'zero point', 'set zero', 'teach', 'learn', 'zero'
   ]],
   ['nastaveni naklonoveho cidla', ['tilt sensor', 'tilt alarm', 'tilt calibration', 'level sensor', 'angle sensor']],
   ['vymena hydraulickeho filtru', [
@@ -27,14 +28,38 @@ const SERVICE_TASK_RE = /\b(kalibrace|calibration|calibrate|sensor|senzor|cidlo|
 const PARTS_TASK_RE = /\b(part number|parts|nahradni dil|nahradni dily|cislo dilu|objednat dil)\b/i;
 
 export function taskTerms(task) {
-  const normalized = normalizeText(task);
-  const terms = new Set(normalized.split(/[^\p{L}\p{N}]+/u).filter(x => x.length >= 3));
-  for (const [cz, en] of TASK_MAP) {
-    if (normalized.includes(cz)) en.forEach(x => terms.add(x));
+  const { normalizedTask, detectedIntent } = getTaskIntent(task);
+  const terms = new Set(normalizedTask.split(/[^\p{L}\p{N}]+/u).filter(x => x.length >= 3));
+  if (detectedIntent === 'angle_sensor_calibration') {
+    TASK_MAP[0][1].forEach(x => terms.add(x));
+    TASK_MAP[1][1].forEach(x => terms.add(x));
+  } else if (detectedIntent === 'calibration') {
+    TASK_MAP[1][1].forEach(x => terms.add(x));
+  } else if (detectedIntent === 'hydraulic_filter') {
+    TASK_MAP[3][1].forEach(x => terms.add(x));
+  } else {
+    for (const [cz, en] of TASK_MAP) {
+      if (normalizedTask.includes(cz)) en.forEach(x => terms.add(x));
+    }
   }
-  if (isCalibrationTask(task)) TASK_MAP[1][1].forEach(x => terms.add(x));
-  if (isHydraulicFilterTask(task)) TASK_MAP[3][1].forEach(x => terms.add(x));
   return [...terms];
+}
+
+export function getTaskIntent(task) {
+  const normalizedTask = normalizeText(task);
+  let detectedIntent = 'general';
+  if (isHydraulicFilterTask(task)) {
+    detectedIntent = 'hydraulic_filter';
+  } else if (isAngleSensorCalibrationTask(task)) {
+    detectedIntent = 'angle_sensor_calibration';
+  } else if (isCalibrationTask(task)) {
+    detectedIntent = 'calibration';
+  }
+  return {
+    normalizedTask,
+    detectedIntent,
+    taskTerms: []
+  };
 }
 
 export function isServiceTask(task) {
@@ -51,7 +76,22 @@ export function isCalibrationTask(task) {
 
 export function isHydraulicFilterTask(task) {
   const text = normalizeText(task);
-  return /\b(hydraulic|hydraulick|filter|filtr)\b/i.test(text) && (text.includes('filter') || text.includes('filtr'));
+  return /\b(hydraulic|hydraulick\w*|filter\w*|filtr\w*)\b/i.test(text) && (text.includes('filter') || text.includes('filtr'));
+}
+
+export function isAngleSensorCalibrationTask(task) {
+  const text = normalizeText(task);
+  const hasSensor = /\b(angle|uhlov\w*|tilt|level|senzor\w*|cidl\w*|cidlo|sensor)\b/.test(text);
+  const hasCalibration = /\b(kalibrace|calibration|calibrate|serizeni|nastaveni|adjustment|zero)\b/.test(text);
+  return hasSensor && hasCalibration;
+}
+
+export function taskIntentDebug(task) {
+  const intent = getTaskIntent(task);
+  return {
+    ...intent,
+    taskTerms: taskTerms(task)
+  };
 }
 
 export function findRelevantPages(pages, task, options = {}) {
@@ -114,12 +154,16 @@ function sourceOnlyMessage(openaiDebug) {
 function scoreText(text, terms, task) {
   const hay = normalizeText(text);
   let score = terms.reduce((sum, term) => sum + (hay.includes(normalizeText(term)) ? 1 : 0), 0);
-  if (hay.includes('hydraulic') && hay.includes('filter')) score += 4;
-  if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) score += 3;
-  if (hay.includes('angle') && hay.includes('sensor')) score += 4;
-  if (hay.includes('sensor') && hay.includes('calibration')) score += 3;
-  if (hay.includes('tilt') && hay.includes('sensor')) score += 3;
-  if (hay.includes('level') && hay.includes('sensor')) score += 3;
+  if (isHydraulicFilterTask(task)) {
+    if (hay.includes('hydraulic') && hay.includes('filter')) score += 4;
+    if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) score += 3;
+  }
+  if (isAngleSensorCalibrationTask(task) || /angle|tilt|level|sensor|senzor|cidlo/.test(normalizeText(task))) {
+    if (hay.includes('angle') && hay.includes('sensor')) score += 4;
+    if (hay.includes('sensor') && hay.includes('calibration')) score += 3;
+    if (hay.includes('tilt') && hay.includes('sensor')) score += 3;
+    if (hay.includes('level') && hay.includes('sensor')) score += 3;
+  }
   if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) score += 2;
   return score;
 }
