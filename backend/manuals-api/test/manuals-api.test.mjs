@@ -131,7 +131,7 @@ test('OpenAI debug classifies authentication failure', async () => {
         return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
       }
       if (u.includes('api.openai.com')) {
-        return responseJson({ error: { code: 'invalid_api_key', message: 'Incorrect API key provided: sk-test-secret' } }, 401);
+        return responseJson({ error: { code: 'invalid_api_key', message: 'Incorrect API key provided: BSAICDVM1234567890abcdef' } }, 401);
       }
       return responseBuffer(fakePdf([
         'Genie GS-4390 service manual serial number GS90D-101 and up',
@@ -143,7 +143,7 @@ test('OpenAI debug classifies authentication failure', async () => {
   assert.equal(res.json.debug.openai.requestSent, true);
   assert.equal(res.json.debug.openai.responseStatus, 401);
   assert.equal(res.json.debug.openai.errorCode, 'openai_auth_failed');
-  assert.doesNotMatch(res.json.debug.openai.errorMessage, /sk-test-secret/);
+  assert.doesNotMatch(res.json.debug.openai.errorMessage, /BSAICDVM1234567890abcdef|sk-test-secret/);
   assert.match(res.json.message, /OpenAI API je nastavené/);
 });
 

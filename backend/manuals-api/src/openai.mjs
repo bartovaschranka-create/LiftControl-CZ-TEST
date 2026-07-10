@@ -352,7 +352,12 @@ function classifyOpenAiError(status, errorText) {
 
 function safeOpenAiErrorMessage(value) {
   const raw = value instanceof Error ? value.message : String(value || '');
-  return raw.replace(/sk-[A-Za-z0-9_-]+/g, 'sk-***').slice(0, 500);
+  return raw
+    .replace(/sk-[A-Za-z0-9_-]+/g, 'sk-***')
+    .replace(/(api key provided:\s*)[^"'\s.]+/gi, '$1***')
+    .replace(/(incorrect api key provided:\s*)[^"'\s.]+/gi, '$1***')
+    .replace(/[A-Za-z0-9_-]{16,}/g, '***')
+    .slice(0, 500);
 }
 
 function normalizeForQuote(value) {
