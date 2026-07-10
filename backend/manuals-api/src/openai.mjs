@@ -22,7 +22,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     return null;
   }
   const fetchImpl = deps.fetch || fetch;
-  const sourceText = pages.map(p => `PAGE ${p.page}\n${p.text.slice(0, 5000)}`).join('\n\n---\n\n');
+  const sourceText = pages.map(p => `PAGE ${p.page}\n${p.text.slice(0, 2500)}`).join('\n\n---\n\n');
   setOpenAiDebug(openaiDebug, {
     configured: true,
     model: config.openaiModel,
@@ -34,6 +34,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   try {
     res = await fetchImpl('https://api.openai.com/v1/responses', {
       method: 'POST',
+      signal: openAiTimeoutSignal(config),
       headers: {
         Authorization: `Bearer ${config.openaiApiKey}`,
         'Content-Type': 'application/json'
@@ -203,6 +204,7 @@ async function validateMeaningWithOpenAI({ item, kind, request, config, deps = {
   try {
     res = await fetchImpl('https://api.openai.com/v1/responses', {
       method: 'POST',
+      signal: openAiTimeoutSignal(config),
       headers: {
         Authorization: `Bearer ${config.openaiApiKey}`,
         'Content-Type': 'application/json'
@@ -358,6 +360,16 @@ function safeOpenAiErrorMessage(value) {
     .replace(/(incorrect api key provided:\s*)[^"'\s.]+/gi, '$1***')
     .replace(/[A-Za-z0-9_-]{16,}/g, '***')
     .slice(0, 500);
+}
+
+function openAiTimeoutSignal(config) {
+  const ms = Number(config?.openaiTimeoutMs || 10000);
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return AbortSignal.timeout(ms);
+  }
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms).unref?.();
+  return controller.signal;
 }
 
 function normalizeForQuote(value) {

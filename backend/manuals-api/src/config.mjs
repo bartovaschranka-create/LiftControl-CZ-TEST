@@ -4,6 +4,7 @@ export function getConfig(env = process.env) {
     allowedOrigins: parseList(env.ALLOWED_ORIGINS || 'https://bartovaschranka-create.github.io'),
     openaiApiKey: env.OPENAI_API_KEY || '',
     openaiModel: env.OPENAI_MODEL || 'gpt-4.1-mini',
+    openaiTimeoutMs: numberEnv(env.OPENAI_TIMEOUT_MS, 10000),
     maxPdfBytes: numberEnv(env.MAX_PDF_BYTES, 15 * 1024 * 1024),
     downloadTimeoutMs: numberEnv(env.DOWNLOAD_TIMEOUT_MS, 15000),
     maxRedirects: numberEnv(env.MAX_REDIRECTS, 4),
