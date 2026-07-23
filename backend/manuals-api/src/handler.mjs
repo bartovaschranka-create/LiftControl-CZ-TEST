@@ -170,17 +170,27 @@ export function createManualsHandler(deps = {}) {
     const serviceTried = triedCandidates.some(x => x.type === 'service' && x.downloaded && x.textPages > 0);
     const allCatalogTooLarge = triedCandidates.length > 0
       && triedCandidates.every(x => x.sourceType === 'firebase_catalog' && x.skippedCode === 'pdf_too_large_for_serverless');
-    const message = allCatalogTooLarge
-      ? 'JLG service manual je ve Firebase katalogu nalezeny, ale PDF je prilis velke pro prime serverless zpracovani. Je potreba pripravit index textu po strankach nebo mensi rozdelene PDF. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
+    const catalogNeedsIndex = allCatalogTooLarge || triedCandidates.some(x =>
+      x.sourceType === 'firebase_catalog'
+      && x.indexLoaded === false
+      && x.skippedCode === 'pdf_too_large_for_serverless'
+      && Array.isArray(x.indexTried)
+      && x.indexTried.some(source => source.source === 'firebase')
+    );
+    const adminMessage = allCatalogTooLarge
+      ? 'Servisni manual je ve Firebase katalogu nalezeny, ale PDF je prilis velke pro prime serverless zpracovani. Je potreba pripravit nebo zpristupnit textovy .pages.json index vedle PDF.'
+      : '';
+    const message = catalogNeedsIndex
+      ? 'Manual byl nalezen, ale zatim neni pripraven pro inteligentni vyhledavani. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : serviceTried
       ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
-    const response = emptyResponse('not_found', request, message, variants);
+    const response = emptyResponse(catalogNeedsIndex ? 'warn' : 'not_found', request, message, variants);
     if (mustUseJlgCatalog) {
       response.sourceType = 'firebase_catalog';
       response.selectionReason = 'Byly prohledány pouze přesné JLG katalogové service manuály pro zadaný model; Brave Search nebyl použit.';
     }
-    response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
+    response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, adminMessage };
     return sendJson(res, 200, response);
   };
 }

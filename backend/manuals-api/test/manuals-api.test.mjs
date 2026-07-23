@@ -221,8 +221,10 @@ test('oversized Firebase catalog PDF returns JSON instead of timing out', async 
       }
     );
     assert.equal(res.statusCode, 200);
-    assert.equal(res.json.status, 'not_found');
-    assert.match(res.json.message, /prilis velke pro prime serverless zpracovani/);
+    assert.equal(res.json.status, 'warn');
+    assert.match(res.json.message, /Manual byl nalezen, ale zatim neni pripraven pro inteligentni vyhledavani/);
+    assert.doesNotMatch(res.json.message, /serverless|PDF je prilis velke/i);
+    assert.match(res.json.debug.adminMessage, /PDF je prilis velke pro prime serverless zpracovani|PDF je prilis velke|textovy \.pages\.json index/);
     assert.equal(res.json.debug.triedCandidates[0].skippedCode, 'pdf_too_large_for_serverless');
     assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
   } finally {
@@ -609,6 +611,81 @@ test('OpenAI plain text response is shown as fallback instead of failing', async
   assert.equal(typeof res.json.debug.openai.responseBody, 'string');
   assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
   assert.ok(res.json.debug.openai.parseException);
+});
+
+test('OpenAI prompt is limited to configured page and character budget', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-openai-budget-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Indexed Service Manual',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    let openAiBody = null;
+    const pages = Array.from({ length: 8 }, (_, i) => ({
+      page: 400 + i,
+      text: `JLG 450AJ service manual serial number B300000000 and up. Tilt sensor calibration procedure ${i}. ${'calibration adjustment '.repeat(180)}`
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret',
+          OPENAI_MAX_PAGES: '3',
+          OPENAI_MAX_CHARS: '5000'
+        },
+        fetch: async (url, options = {}) => {
+          const u = String(url);
+          if (u.includes('.pages.json')) return responseText(JSON.stringify({ pages }));
+          if (u.includes('api.openai.com')) {
+            openAiBody = JSON.parse(options.body);
+            return responseJson({ output_text: JSON.stringify({ steps: [], safety: [], serialRange: '', message: '' }) });
+          }
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.ok(res.json.debug.openai.sentPages <= 3);
+    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [400, 401]);
+    assert.ok(res.json.debug.openai.sentCharacters <= 5000);
+    assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
+    assert.ok(openAiBody);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('OpenAI timeout returns found pages message instead of generic failure', async () => {
+  const err = new Error('The operation was aborted due to timeout');
+  err.name = 'AbortError';
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    env: { OPENAI_API_KEY: 'sk-test-secret', OPENAI_TIMEOUT_MS: '60000' },
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
+      }
+      if (u.includes('api.openai.com')) throw err;
+      return responseBuffer(fakePdf([
+        'Genie GS-4390 service manual serial number GS90D-101 and up',
+        'Function calibration procedure. Select service mode and follow the on-screen calibration instructions.'
+      ]), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.json.status, 'partial_procedure_found');
+  assert.match(res.json.message, /AI nestihla dokoncit zpracovani v casovem limitu/);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_timeout');
+  assert.equal(res.json.debug.openai.timeoutMs, 60000);
+  assert.ok(res.json.debug.openai.elapsedMs >= 0);
+  assert.ok(res.json.debug.openai.sentPages > 0);
 });
 
 test('service procedure PDF generator creates readable PDF bytes', async () => {
