@@ -100,7 +100,7 @@ test('JLG catalog prefers Firebase URL over local path', async () => {
         source: 'local',
         type: 'service',
         title: 'JLG 450AJ Firebase Service Manual',
-        storagePath: 'manuals/jlg/service/450AJ_pvc2307.pdf',
+        storagePath: '450AJ pvc2307.pdf',
         path: 'missing-local-file.pdf',
         models: ['450 AJ', '450AJ'],
         aliases: ['JLG 450AJ']
@@ -125,7 +125,7 @@ test('JLG catalog prefers Firebase URL over local path', async () => {
     );
     assert.match(fetchedUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
     assert.match(fetchedUrl, /doctype-test\.firebasestorage\.app/);
-    assert.match(fetchedUrl, /manuals%2Fjlg%2Fservice%2F450AJ_pvc2307\.pdf/);
+    assert.match(fetchedUrl, /450AJ%20pvc2307\.pdf/);
     assert.equal(res.json.manualType, 'service');
     assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
     assert.equal(res.json.debug.triedCandidates[0].source, 'local');

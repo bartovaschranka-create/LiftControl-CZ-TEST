@@ -86,11 +86,15 @@ LOCAL_MAX_PDF_BYTES=157286400
 ## Firebase Storage manuals
 
 JLG PDF manuals are referenced from the catalog `manuals/jlg/index.json` by `storagePath`.
-The expected Firebase Storage layout is:
+The current Firebase Storage upload keeps the selected JLG PDF files in the bucket root, for example:
 
 ```text
-manuals/jlg/service/<file>.pdf
+450AJ bez pvc.pdf
+450AJ pvc2307.pdf
+520aj pvc2207.pdf
 ```
+
+A future cleaner layout can use `manuals/jlg/service/<file>.pdf`, but the catalog should match the real uploaded `gs://` object paths so the PDFs do not need to be uploaded again.
 
 The backend resolves each `storagePath` to:
 

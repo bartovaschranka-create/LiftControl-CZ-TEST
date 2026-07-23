@@ -1,6 +1,6 @@
 {
   "maker": "JLG",
-  "rootHint": "Firebase Storage structure: manuals/jlg/service/<file>.pdf. LOCAL_MANUALS_ROOT is only for local development.",
+  "rootHint": "Current Firebase Storage upload uses bucket root PDF file names. LOCAL_MANUALS_ROOT is only for local development.",
   "manuals": [
     {
       "source": "local",
@@ -17,7 +17,7 @@
         "JLG 450AJ"
       ],
       "pvc": "",
-      "storagePath": "manuals/jlg/service/450AJ_bez_pvc.pdf"
+      "storagePath": "450AJ bez pvc.pdf"
     },
     {
       "source": "local",
@@ -34,7 +34,7 @@
         "JLG 450AJ"
       ],
       "pvc": "2207",
-      "storagePath": "manuals/jlg/service/450AJ_pvc2207.pdf"
+      "storagePath": "450AJ pvc2207.pdf"
     },
     {
       "source": "local",
@@ -51,7 +51,7 @@
         "JLG 450AJ"
       ],
       "pvc": "2307",
-      "storagePath": "manuals/jlg/service/450AJ_pvc2307.pdf"
+      "storagePath": "450AJ pvc2307.pdf"
     },
     {
       "source": "local",
@@ -68,7 +68,7 @@
         "JLG 520AJ"
       ],
       "pvc": "2001",
-      "storagePath": "manuals/jlg/service/520AJ_pvc2001.pdf"
+      "storagePath": "520AJ pvc2001.pdf"
     },
     {
       "source": "local",
@@ -85,7 +85,7 @@
         "JLG 520AJ"
       ],
       "pvc": "2107",
-      "storagePath": "manuals/jlg/service/520AJ_pvc2107.pdf"
+      "storagePath": "520AJ pvc2107.pdf"
     },
     {
       "source": "local",
@@ -102,7 +102,7 @@
         "JLG 520AJ"
       ],
       "pvc": "2207",
-      "storagePath": "manuals/jlg/service/520AJ_pvc2207.pdf"
+      "storagePath": "520aj pvc2207.pdf"
     },
     {
       "source": "local",
@@ -117,7 +117,7 @@
         "JLG ES1932"
       ],
       "pvc": "2110",
-      "storagePath": "manuals/jlg/service/es1932_pvc2110.pdf"
+      "storagePath": "es1932 pvc2110.pdf"
     },
     {
       "source": "local",
@@ -132,7 +132,7 @@
         "JLG ES1932"
       ],
       "pvc": "2204",
-      "storagePath": "manuals/jlg/service/es1932_pvc2204.pdf"
+      "storagePath": "es1932 pvc2204.pdf"
     },
     {
       "source": "local",
@@ -147,7 +147,7 @@
         "JLG ES1932"
       ],
       "pvc": "2304",
-      "storagePath": "manuals/jlg/service/es1932_pvc2304.pdf"
+      "storagePath": "es1932 pvc2304.pdf"
     },
     {
       "source": "local",
@@ -166,7 +166,7 @@
         "2632 ES"
       ],
       "pvc": "2010",
-      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2010.pdf"
+      "storagePath": "ES3246 ES2632 pvc2010.pdf"
     },
     {
       "source": "local",
@@ -185,7 +185,7 @@
         "2632 ES"
       ],
       "pvc": "2204",
-      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2204.pdf"
+      "storagePath": "ES3246 ES2632 pvc2204.pdf"
     },
     {
       "source": "local",
@@ -204,7 +204,7 @@
         "2632 ES"
       ],
       "pvc": "2304",
-      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2304.pdf"
+      "storagePath": "ES3246 ES2632 pvc2304.pdf"
     },
     {
       "source": "local",
@@ -220,7 +220,7 @@
         "JLG Toucan 12E+"
       ],
       "pvc": "",
-      "storagePath": "manuals/jlg/service/Toucan_12E_plus_bez_pvc.pdf"
+      "storagePath": "Toucan 12E+ bez pvc.pdf"
     },
     {
       "source": "local",
@@ -238,7 +238,7 @@
         "JLG Toucan 12E"
       ],
       "pvc": "",
-      "storagePath": "manuals/jlg/service/Toucan_12E_plus_12_bez_pvc1.pdf"
+      "storagePath": "Toucan 12E+, 12 bez pvc1.pdf"
     },
     {
       "source": "local",
@@ -254,7 +254,7 @@
         "JLG Toucan 12E+"
       ],
       "pvc": "2501",
-      "storagePath": "manuals/jlg/service/Toucan_12E_plus_pvc2501.pdf"
+      "storagePath": "toucan 12E+pvc2501.pdf"
     }
   ]
 }
