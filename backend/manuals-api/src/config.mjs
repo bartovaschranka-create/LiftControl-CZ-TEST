@@ -8,7 +8,6 @@ export function getConfig(env = process.env) {
     openaiMaxPages: numberEnv(env.OPENAI_MAX_PAGES, 4),
     openaiMaxChars: numberEnv(env.OPENAI_MAX_CHARS, 9000),
     openaiMaxOutputTokens: numberEnv(env.OPENAI_MAX_OUTPUT_TOKENS, 1600),
-    openaiSemanticValidationTimeoutMs: numberEnv(env.OPENAI_SEMANTIC_VALIDATION_TIMEOUT_MS, 5000),
     maxPdfBytes: numberEnv(env.MAX_PDF_BYTES, 15 * 1024 * 1024),
     downloadTimeoutMs: numberEnv(env.DOWNLOAD_TIMEOUT_MS, 15000),
     maxRedirects: numberEnv(env.MAX_REDIRECTS, 4),

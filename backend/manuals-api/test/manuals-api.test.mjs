@@ -971,17 +971,16 @@ test('AI validation rejects safety warning that is not in the manual', async () 
   assert.deepEqual(out.safety, []);
 });
 
-test('semantic validation rejects unrelated Czech step even with relevant angle sensor quote', async () => {
+test('AI validation accepts freer Czech wording when source quote is exact', async () => {
   const pages = [{ page: 5, text: 'Angle sensor calibration must be performed with the platform fully lowered.' }];
   const out = await validateAiOutput({
-    steps: [{ text: 'Vymen hydraulicky filtr a odvzdusni soustavu.', sourceQuote: 'Angle sensor calibration must be performed with the platform fully lowered.', page: 5 }],
+    steps: [{ text: 'Před kalibrací měj plošinu úplně spuštěnou a pracuj podle postupu výrobce.', sourceQuote: 'Angle sensor calibration must be performed with the platform fully lowered.', page: 5 }],
     safety: [],
     serialRange: '',
     message: ''
-  }, pages, { task: 'kalibrace uhloveho senzoru' }, {
-    semanticValidator: async ({ item }) => item.text.includes('Kalibrace uhlu')
-  });
-  assert.deepEqual(out.steps, []);
+  }, pages, { task: 'kalibrace uhloveho senzoru' });
+  assert.equal(out.steps.length, 1);
+  assert.equal(out.steps[0].page, 5);
 });
 
 async function callApi(body, options = {}) {
