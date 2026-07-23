@@ -2419,7 +2419,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.212</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.213</div>
   </div>
 </aside>
 
@@ -9070,10 +9070,16 @@ const MANUAL_TASK_HINTS = [
   'diagnostika závady'
 ];
 const MANUALS_API_URL_KEY = 'liftcontrol_manuals_api_url';
+let manualLastRequest = null;
+let manualLastResult = null;
 function getManualsApiUrl(){
   const explicit = String(window.LIFTCHECK_MANUALS_API_URL || '').trim();
   if(explicit) return explicit;
   try{ return String(localStorage.getItem(MANUALS_API_URL_KEY) || '').trim(); }catch(e){ return ''; }
+}
+function getManualsServicePdfUrl(){
+  const endpoint=getManualsApiUrl();
+  return endpoint ? endpoint.replace(/\/api\/manuals\/search\/?$/, '/api/manuals/service-pdf') : '';
 }
 function setManualsApiUrl(value){
   const url = String(value || '').trim();
@@ -9197,6 +9203,10 @@ function manualFallbackResult(req){
 function manualResultIsOk(status){
   return ['ok','procedure_found','partial_procedure_found'].includes(String(status||''));
 }
+function manualCanCreateServicePdf(result){
+  const status=String(result?.status||'');
+  return ['ok','procedure_found','partial_procedure_found','reference_found'].includes(status) && (result?.manualTitle || result?.originalUrl) && ((result?.steps||[]).length || (result?.sources||[]).length);
+}
 function manualStepText(step){
   return typeof step === 'string' ? step : (step && step.text ? step.text : String(step||''));
 }
@@ -9206,6 +9216,57 @@ function manualEmptyStepsMessage(result){
   if(status==='reference_found') return 'Byla nalezena pouze zminka nebo odkaz v manualu, ne kompletni pracovni postup.';
   return 'Presny postup pro tento dotaz nebyl v overenem manualu nalezen.';
 }
+function manualServicePdfPayload(){
+  const r=manualLastResult||{};
+  return {
+    request: manualLastRequest||{},
+    result: {
+      status:r.status,
+      maker:r.maker,
+      model:r.model,
+      serial:r.serial,
+      manualTitle:r.manualTitle,
+      manualType:r.manualType,
+      serialRange:r.serialRange,
+      originalUrl:r.originalUrl,
+      steps:r.steps||[],
+      safety:r.safety||[],
+      sources:r.sources||[],
+      images:r.images||[],
+      message:r.message
+    }
+  };
+}
+async function createManualServicePdf(){
+  if(!manualLastResult || !manualLastRequest){ alert('Nejdřív vyhledej ověřený manuál.'); return; }
+  const endpoint=getManualsServicePdfUrl();
+  if(!endpoint){ alert('Není nastavené API pro vytvoření servisního PDF.'); return; }
+  try{
+    const res=await fetch(endpoint,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(manualServicePdfPayload())
+    });
+    if(!res.ok){
+      let msg=`PDF API vrátilo chybu ${res.status}`;
+      try{ const err=await res.json(); if(err?.message) msg=err.message; }catch(_){}
+      throw new Error(msg);
+    }
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const stamp=new Date().toISOString().slice(0,10);
+    a.href=url;
+    a.download=`servisni-postup-${stamp}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 30000);
+  }catch(e){
+    console.error('Service PDF failed', e);
+    alert(`Servisní PDF se nepodařilo vytvořit: ${e.message||e}`);
+  }
+}
 function renderManualResult(result, req){
   const root=document.getElementById('manualResult');
   if(!root) return;
@@ -9214,6 +9275,7 @@ function renderManualResult(result, req){
     return;
   }
   const variants=(result.variants||[]).map(v=>`<a class="secondary mini" target="_blank" rel="noopener" href="${escapeHtml(v.url)}">${escapeHtml(v.title||v.type||'Varianta')}</a>`).join('');
+  const pdfAction=manualCanCreateServicePdf(result) ? '<button type="button" class="primary mini" onclick="createManualServicePdf()">Vytvořit servisní PDF</button>' : '';
   const steps=(result.steps||[]).length
     ? `<ol class="manual-steps">${result.steps.map(s=>`<li>${escapeHtml(manualStepText(s))}</li>`).join('')}</ol>`
     : `<div class="manual-status warn">${escapeHtml(manualEmptyStepsMessage(result))}</div>`;
@@ -9231,6 +9293,7 @@ function renderManualResult(result, req){
         <b>Rozsah v.č.</b><span>${escapeHtml(result.serialRange||'neuvedeno / neověřeno')}</span>
       </div>
       ${result.originalUrl ? `<div class="manual-actions"><a class="primary mini" target="_blank" rel="noopener" href="${escapeHtml(result.originalUrl)}">Otevřít originální zdroj</a>${variants}</div>` : (variants ? `<div class="manual-actions">${variants}</div>` : '')}
+      ${pdfAction ? `<div class="manual-actions">${pdfAction}</div>` : ''}
       <div><strong>Stručný český postup</strong>${steps}</div>
       ${safety}
       <div class="helper">Při rozporu má vždy přednost originální manuál výrobce.</div>
@@ -9244,11 +9307,16 @@ async function lookupManual(){
   if(root) root.innerHTML='<div class="manual-status">Vyhledávám podklady výrobce...</div>';
   try{
     const apiResult=await manualLookupViaApi(req);
-    renderManualResult(apiResult || manualFallbackResult(req), req);
+    const rendered=apiResult || manualFallbackResult(req);
+    manualLastRequest=req;
+    manualLastResult=rendered;
+    renderManualResult(rendered, req);
   }catch(e){
     console.error('Manual lookup failed', e);
     const fallback=manualFallbackResult(req);
     fallback.message='API pro manuály teď neodpovědělo. Postup nebyl ověřen, zobrazují se jen oficiální zdroje k ruční kontrole.';
+    manualLastRequest=req;
+    manualLastResult=fallback;
     renderManualResult(fallback, req);
   }
 }

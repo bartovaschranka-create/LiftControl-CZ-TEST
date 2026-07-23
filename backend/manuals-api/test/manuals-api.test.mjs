@@ -5,6 +5,8 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createManualsHandler } from '../src/handler.mjs';
+import { createServicePdfHandler } from '../src/service-pdf-handler.mjs';
+import { createServiceProcedurePdf } from '../src/service-pdf.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
 import { extractPdfTextPages } from '../src/pdf.mjs';
@@ -461,6 +463,27 @@ test('OpenAI plain text response is shown as fallback instead of failing', async
   assert.ok(res.json.debug.openai.parseException);
 });
 
+test('service procedure PDF generator creates readable PDF bytes', async () => {
+  const pdf = createServiceProcedurePdf(servicePdfPayload());
+  assert.equal(Buffer.isBuffer(pdf), true);
+  assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
+  assert.ok(pdf.length > 1000);
+});
+
+test('service PDF endpoint returns application/pdf', async () => {
+  const res = await callServicePdf(servicePdfPayload());
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.headers['content-type'], 'application/pdf');
+  assert.equal(Buffer.isBuffer(res.bodyBuffer), true);
+  assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
+});
+
+test('service PDF endpoint rejects missing manual result', async () => {
+  const res = await callServicePdf({ request: { maker: 'JLG', model: '450AJ', task: 'kalibrace' }, result: {} });
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.json.status, 'error');
+});
+
 test('unsupported maker is rejected', async () => {
   const validation = validateManualRequest({ maker: 'Haulotte', model: 'X', task: 'test' });
   assert.equal(validation.ok, false);
@@ -682,6 +705,74 @@ async function callApi(body, options = {}) {
     res.json = null;
   }
   return res;
+}
+
+async function callServicePdf(body, options = {}) {
+  const req = Readable.from([JSON.stringify(body || {})]);
+  req.method = options.method || 'POST';
+  req.headers = { origin: options.origin || 'https://bartovaschranka-create.github.io', 'content-type': 'application/json' };
+  const chunks = [];
+  const res = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    bodyBuffer: Buffer.alloc(0),
+    setHeader(k, v) { this.headers[k.toLowerCase()] = v; },
+    end(chunk = '') {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), 'utf8');
+      chunks.push(buf);
+      this.bodyBuffer = Buffer.concat(chunks);
+      this.body = this.bodyBuffer.toString('utf8');
+    }
+  };
+  const handler = createServicePdfHandler({
+    env: {
+      ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
+      ...(options.env || {})
+    }
+  });
+  await handler(req, res);
+  try {
+    res.json = res.body ? JSON.parse(res.body) : null;
+  } catch {
+    res.json = null;
+  }
+  return res;
+}
+
+function servicePdfPayload() {
+  return {
+    request: {
+      maker: 'JLG',
+      model: '450 AJ',
+      serial: 'B300015524',
+      task: 'kalibrace naklonoveho cidla'
+    },
+    result: {
+      status: 'partial_procedure_found',
+      maker: 'JLG',
+      model: '450 AJ',
+      serial: 'B300015524',
+      manualTitle: 'JLG 450AJ Service Manual',
+      manualType: 'service',
+      serialRange: 'B300000000 and up',
+      originalUrl: 'https://firebasestorage.googleapis.com/v0/b/doctype-test.firebasestorage.app/o/450AJ%20pvc2307.pdf?alt=media',
+      steps: [{
+        text: 'Proved kontrolu nastaveni podle servisniho menu a over vysledek podle originalniho manualu.',
+        sourceQuote: 'Perform the adjustment from the service menu and verify the result.',
+        page: 436
+      }],
+      safety: [{
+        text: 'Pred zasahem zajisti stroj proti pohybu.',
+        sourceQuote: 'Secure the machine against movement before service.',
+        page: 435
+      }],
+      sources: [{
+        page: 436,
+        quote: 'Perform the adjustment from the service menu and verify the result.'
+      }]
+    }
+  };
 }
 
 function jlgFetch(pdf = fakePdf([

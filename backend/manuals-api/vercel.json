@@ -2,6 +2,9 @@
   "functions": {
     "api/manuals/search.js": {
       "maxDuration": 30
+    },
+    "api/manuals/service-pdf.js": {
+      "maxDuration": 30
     }
   }
 }
