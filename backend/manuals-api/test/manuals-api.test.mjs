@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { createManualsHandler } from '../src/handler.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
@@ -44,6 +47,48 @@ test('generic calibration expands to service calibration terms', () => {
   }
   for (const term of ['hydraulic filter', 'return filter', 'filter element']) {
     assert.equal(terms.includes(term), false, term);
+  }
+});
+
+test('JLG request can use a local manual catalog without Brave Search', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-local-manuals-'));
+  try {
+    await writeFile(join(root, '450AJ local.pdf'), fakePdf([
+      'JLG 450AJ service maintenance manual serial number 0300000000 and up',
+      'Diagnostic troubleshooting fault code procedure'
+    ]));
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Local Service Manual',
+        file: '450AJ local.pdf',
+        path: '450AJ local.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: '0300123456', task: 'diagnostika zavady' },
+      {
+        env: {
+          BRAVE_SEARCH_API_KEY: '',
+          LOCAL_MANUALS_ROOT: root,
+          LOCAL_MANUALS_INDEX: join(root, 'index.json')
+        },
+        fetch: async () => { throw new Error('Network should not be used for local catalog fallback.'); }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.maker, 'JLG');
+    assert.equal(res.json.manualType, 'service');
+    assert.match(res.json.manualTitle, /Local Service Manual/);
+    assert.match(res.json.originalUrl, /^local-manual:/);
+    assert.equal(res.json.debug.triedCandidates[0].source, 'local');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, true);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [2]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 

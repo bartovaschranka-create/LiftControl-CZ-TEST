@@ -68,11 +68,17 @@ OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 MAX_PDF_BYTES=15728640
 DOWNLOAD_TIMEOUT_MS=15000
+LOCAL_MANUALS_ROOT=C:\Users\bartos\Desktop\manuály
+LOCAL_MAX_PDF_BYTES=157286400
 ```
 
 `BRAVE_SEARCH_API_KEY` je povinný pro hledání manuálu. Nesmí být ve frontendu, v `index.html`, v GitHub Pages ani v repozitáři.
 
 `OPENAI_API_KEY` je fakticky nutný pro vrácení českého strukturovaného postupu. Bez OpenAI backend zůstane v bezpečném fallbacku: zobrazí nalezený manuál, varianty a upozornění, ale nevrátí servisní kroky.
+
+`LOCAL_MANUALS_ROOT` je volitelná backendová cesta ke staženým PDF manuálům. Pro JLG backend nejdřív zkusí lokální katalog `manuals/jlg/index.json` a teprve potom Brave Search. PDF soubory se neukládají do frontendu ani do `index.html`. Velké PDF manuály necommituj do repozitáře; katalog obsahuje jen názvy souborů a modely.
+
+`LOCAL_MAX_PDF_BYTES` je samostatný limit pro lokální PDF, protože některé stažené JLG service manuály mají přes 100 MB. Internetové stahování dál používá `MAX_PDF_BYTES`.
 
 ## PDF Parser
 

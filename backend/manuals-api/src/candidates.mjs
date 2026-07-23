@@ -6,7 +6,7 @@ const TYPE_PRIORITY = { service: 3, parts: 2, operator: 1 };
 export function rankCandidates(rawResults, request) {
   const seen = new Set();
   return rawResults
-    .filter(r => r?.url && isOfficialUrl(r.url, request.maker))
+    .filter(r => r?.localPath || (r?.url && isOfficialUrl(r.url, request.maker)))
     .filter(r => {
       const key = r.url.toLowerCase();
       if (seen.has(key)) return false;
@@ -30,12 +30,15 @@ export function toVariant(candidate) {
     title: candidate.title || '',
     type: candidate.type || '',
     url: candidate.url || '',
+    source: candidate.source || 'web',
+    pvc: candidate.pvc || '',
     confidence: Number(candidate.confidence?.toFixed(2) || 0)
   };
 }
 
 function scoreCandidate(candidate, request) {
   const hay = [candidate.title, candidate.url, candidate.description, ...(candidate.snippets || [])].join(' ').toLowerCase();
+  if (candidate.source === 'local' && candidate.localPath) return Number(candidate.confidence || 0.5);
   const modelTokens = String(request.model || '').toLowerCase().split(/[\s/-]+/).filter(Boolean);
   const serviceTask = isServiceTask(request.task || '');
   const partsTask = isPartsTask(request.task || '');

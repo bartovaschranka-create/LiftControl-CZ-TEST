@@ -3,6 +3,7 @@ import { applyCors, isOriginAllowed } from './cors.mjs';
 import { readJsonBody, sendJson } from './http.mjs';
 import { emptyResponse, validateManualRequest } from './validation.mjs';
 import { searchManualCandidates, braveErrorResponse } from './brave.mjs';
+import { searchLocalManualCandidates } from './local-manuals.mjs';
 import { rankCandidates, toVariant } from './candidates.mjs';
 import { downloadPdf, extractPdfTextPages } from './pdf.mjs';
 import { buildSourceOnlyResult, findRelevantPages, isAngleSensorCalibrationTask, isCalibrationTask, isHydraulicFilterTask, taskIntentDebug, taskTerms } from './manual-text.mjs';
@@ -40,10 +41,18 @@ export function createManualsHandler(deps = {}) {
     const request = validation.value;
 
     let rawCandidates;
+    const localCandidates = await searchLocalManualCandidates(request, config, deps);
     try {
-      rawCandidates = await searchManualCandidates(request, config, deps);
+      rawCandidates = [
+        ...localCandidates,
+        ...await searchManualCandidates(request, config, deps)
+      ];
     } catch (error) {
-      return sendJson(res, 200, braveErrorResponse(error, request));
+      if (localCandidates.length) {
+        rawCandidates = localCandidates;
+      } else {
+        return sendJson(res, 200, braveErrorResponse(error, request));
+      }
     }
 
     const candidates = rankCandidates(rawCandidates, request);
@@ -62,6 +71,9 @@ export function createManualsHandler(deps = {}) {
         title: candidate.title || '',
         type: candidate.type || '',
         url: candidate.url || '',
+        source: candidate.source || 'web',
+        fileName: candidate.fileName || '',
+        pvc: candidate.pvc || '',
         downloaded: false,
         finalUrl: '',
         textPages: 0,
