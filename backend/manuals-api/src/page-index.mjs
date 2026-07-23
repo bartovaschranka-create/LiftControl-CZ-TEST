@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { basename, isAbsolute, relative, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
 
 export async function loadManualPageIndex(candidate, config = {}, deps = {}, debug = null) {
   const sources = buildIndexSources(candidate, config);
@@ -54,10 +54,12 @@ export async function loadManualPageIndex(candidate, config = {}, deps = {}, deb
 }
 
 export function defaultIndexStoragePath(storagePath, candidate = {}) {
-  const name = basename(String(storagePath || candidate.fileName || candidate.file || '').trim());
+  const rawPath = String(storagePath || candidate.fileName || candidate.file || '').trim().replace(/\\/g, '/');
+  const name = basename(rawPath);
   if (!name) return '';
   const indexName = name.replace(/\.pdf$/i, '.pages.json');
-  return `manuals/jlg/index/${indexName}`;
+  const folder = dirname(rawPath);
+  return folder && folder !== '.' ? `${folder}/${indexName}` : indexName;
 }
 
 export function buildFirebaseStorageUrl(storagePath, config = {}) {
