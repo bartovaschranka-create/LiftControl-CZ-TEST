@@ -22,7 +22,16 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     return null;
   }
   const fetchImpl = deps.fetch || fetch;
-  const sourceText = pages.map(p => `PAGE ${p.page}\n${p.text.slice(0, 2500)}`).join('\n\n---\n\n');
+  const sourcePages = limitOpenAiPages(pages, config);
+  const sourceText = sourcePages.map(p => `PAGE ${p.page}\n${p.text}`).join('\n\n---\n\n');
+  const promptTokenEstimate = estimateTokens(JSON.stringify({
+    task: request.task,
+    maker: request.maker,
+    model: request.model,
+    serial: request.serial || '',
+    verifiedSerialRange: fit.serialRange || '',
+    sourceText
+  }));
   const promptInput = [
     {
       role: 'system',
@@ -64,9 +73,15 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     errorCode: null,
     errorMessage: null,
     prompt: requestBody,
-    promptTokenEstimate: estimateTokens(JSON.stringify(promptInput))
+    sentPages: sourcePages.length,
+    sentPageNumbers: sourcePages.map(page => page.page),
+    sentCharacters: sourceText.length,
+    promptTokenEstimate,
+    timeoutMs: config.openaiTimeoutMs,
+    elapsedMs: 0
   });
   let res;
+  const startedAt = Date.now();
   try {
     res = await fetchImpl('https://api.openai.com/v1/responses', {
       method: 'POST',
@@ -78,14 +93,17 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       body: JSON.stringify(requestBody)
     });
   } catch (error) {
+    const elapsedMs = Date.now() - startedAt;
+    const timedOut = isAbortError(error);
     setOpenAiDebug(openaiDebug, {
       responseStatus: null,
-      errorCode: 'openai_unknown_error',
-      errorMessage: safeOpenAiErrorMessage(error)
+      elapsedMs,
+      errorCode: timedOut ? 'openai_timeout' : 'openai_unknown_error',
+      errorMessage: timedOut ? 'The operation was aborted due to timeout' : safeOpenAiErrorMessage(error)
     });
-    return null;
+    return buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages: sourcePages, fit });
   }
-  setOpenAiDebug(openaiDebug, { responseStatus: Number(res.status) || null });
+  setOpenAiDebug(openaiDebug, { responseStatus: Number(res.status) || null, elapsedMs: Date.now() - startedAt });
   if (!res.ok) {
     const errorText = await readOpenAiErrorText(res);
     setOpenAiDebug(openaiDebug, {
@@ -106,7 +124,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       errorMessage: safeOpenAiErrorMessage(error),
       parseException: safeOpenAiErrorMessage(error)
     });
-    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages, fit, openaiDebug, aiText: rawResponseBody });
+    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, aiText: rawResponseBody });
   }
   setOpenAiDebug(openaiDebug, { responseTokenUsage: data?.usage || null });
   const text = extractResponseText(data);
@@ -115,7 +133,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       errorCode: 'openai_response_invalid',
       errorMessage: 'OpenAI response did not contain output text.'
     });
-    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages, fit, openaiDebug });
+    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug });
   }
   let parsed;
   try {
@@ -127,12 +145,12 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       errorMessage: safeOpenAiErrorMessage(error),
       parseException: safeOpenAiErrorMessage(error)
     });
-    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages, fit, openaiDebug, aiText: text });
+    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, aiText: text });
   }
   const rawItemCount = countSourceItems(parsed);
-  const validated = await validateAiOutput(parsed, pages, request, { config, deps, requireSemanticValidation: true });
+  const validated = await validateAiOutput(parsed, sourcePages, request, { config, deps, requireSemanticValidation: true });
   const acceptedCount = validated.steps.length + validated.safety.length;
-  const evidence = classifyProcedureEvidence(pages, request.task);
+  const evidence = classifyProcedureEvidence(sourcePages, request.task);
   setOpenAiDebug(openaiDebug, {
     acceptedSteps: acceptedCount,
     validationRejectedSteps: Math.max(0, rawItemCount - acceptedCount)
@@ -142,9 +160,9 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       errorCode: 'openai_validation_rejected',
       errorMessage: 'OpenAI returned source items, but source validation rejected them.'
     });
-    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages, fit, openaiDebug, parsed });
+    return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, parsed });
   }
-  const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(pages)]);
+  const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(sourcePages)]);
   return {
     status: validated.steps.length ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
     maker: request.maker,
@@ -159,6 +177,43 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     sources,
     message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.'),
     message: validated.steps.length ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
+    variants: []
+  };
+}
+
+function limitOpenAiPages(pages, config = {}) {
+  const maxPages = Math.max(1, Number(config.openaiMaxPages || 5));
+  const maxChars = Math.max(2000, Number(config.openaiMaxChars || 12000));
+  const out = [];
+  let usedChars = 0;
+  for (const page of (pages || []).slice(0, maxPages)) {
+    const prefix = `PAGE ${page?.page || ''}\n`;
+    const separator = out.length ? '\n\n---\n\n' : '';
+    const overhead = prefix.length + separator.length;
+    const remaining = maxChars - usedChars - overhead;
+    if (remaining <= 0) break;
+    const text = String(page?.text || '').slice(0, remaining);
+    if (!text.trim()) continue;
+    out.push({ ...page, text });
+    usedChars += overhead + text.length;
+  }
+  return out;
+}
+
+function buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages, fit = {} }) {
+  return {
+    status: 'partial_procedure_found',
+    maker: request.maker,
+    model: request.model,
+    serial: request.serial,
+    manualTitle: candidate.title || '',
+    manualType: candidate.type || '',
+    serialRange: fit.serialRange || '',
+    originalUrl: finalUrl || candidate.url,
+    steps: fallbackStepsFromAiOrPages('', pages),
+    safety: [],
+    sources: uniqueSources([...(fit.sources || []), ...evidenceSources(pages)]),
+    message: 'Relevantni stranky byly nalezeny. AI nestihla dokoncit zpracovani v casovem limitu.',
     variants: []
   };
 }
@@ -445,13 +500,18 @@ function safeOpenAiErrorMessage(value) {
 }
 
 function openAiTimeoutSignal(config) {
-  const ms = Number(config?.openaiTimeoutMs || 10000);
+  const ms = Number(config?.openaiTimeoutMs || 90000);
   if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
     return AbortSignal.timeout(ms);
   }
   const controller = new AbortController();
   setTimeout(() => controller.abort(), ms).unref?.();
   return controller.signal;
+}
+
+function isAbortError(error) {
+  const text = String(error?.name || error?.message || error || '').toLowerCase();
+  return text.includes('abort') || text.includes('timeout') || text.includes('timed out');
 }
 
 function normalizeForQuote(value) {
