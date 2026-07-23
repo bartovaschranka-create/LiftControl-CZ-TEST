@@ -194,7 +194,12 @@ function createOpenAiDebug(config) {
     errorMessage: config.openaiApiKey ? null : 'OPENAI_API_KEY is not configured.',
     parsed: false,
     validationRejectedSteps: 0,
-    acceptedSteps: 0
+    acceptedSteps: 0,
+    prompt: null,
+    promptTokenEstimate: 0,
+    responseTokenUsage: null,
+    responseBody: null,
+    parseException: null
   };
 }
 

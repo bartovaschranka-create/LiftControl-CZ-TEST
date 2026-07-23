@@ -426,7 +426,39 @@ test('OpenAI debug reports source validation rejection', async () => {
   assert.equal(res.json.debug.openai.acceptedSteps, 0);
   assert.equal(res.json.debug.openai.validationRejectedSteps, 1);
   assert.equal(res.json.debug.openai.errorCode, 'openai_validation_rejected');
-  assert.match(res.json.message, /relevantni cast postupu/);
+  assert.match(res.json.message, /Zobrazuji alespon nalezeny text z manualu/);
+  assert.ok(res.json.steps.length > 0);
+  assert.equal(res.json.debug.openai.responseStatus, 200);
+  assert.equal(typeof res.json.debug.openai.responseBody, 'string');
+  assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
+});
+
+test('OpenAI plain text response is shown as fallback instead of failing', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    env: { OPENAI_API_KEY: 'sk-test-secret', OPENAI_MODEL: 'gpt-4.1-mini' },
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
+      }
+      if (u.includes('api.openai.com')) {
+        return responseJson({ output_text: 'Najdi v manualu cast Function calibration procedure a postup over podle originalu.' });
+      }
+      return responseBuffer(fakePdf([
+        'Genie GS-4390 service manual serial number GS90D-101 and up',
+        'Function calibration procedure. Select service mode and follow the on-screen calibration instructions.'
+      ]), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'partial_procedure_found');
+  assert.match(res.json.message, /mimo ocekavany validni JSON/);
+  assert.match(res.json.steps[0].text, /Function calibration procedure|Najdi v manualu/);
+  assert.equal(res.json.debug.openai.responseStatus, 200);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_response_invalid');
+  assert.equal(typeof res.json.debug.openai.responseBody, 'string');
+  assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
+  assert.ok(res.json.debug.openai.parseException);
 });
 
 test('unsupported maker is rejected', async () => {
