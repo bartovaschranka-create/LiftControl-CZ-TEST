@@ -6,6 +6,7 @@ import { searchManualCandidates, braveErrorResponse } from './brave.mjs';
 import { searchLocalManualCandidates } from './local-manuals.mjs';
 import { rankCandidates, toVariant } from './candidates.mjs';
 import { downloadPdf, extractPdfTextPages } from './pdf.mjs';
+import { loadManualPageIndex } from './page-index.mjs';
 import { buildSourceOnlyResult, findRelevantPages, isAngleSensorCalibrationTask, isCalibrationTask, isHydraulicFilterTask, isServiceTask, taskIntentDebug, taskTerms } from './manual-text.mjs';
 import { structureWithOpenAI } from './openai.mjs';
 import { evaluateManualFit } from './manual-fit.mjs';
@@ -100,16 +101,30 @@ export function createManualsHandler(deps = {}) {
         textPages: 0,
         matchedPages: [],
         matchedTerms: [],
+        textSource: '',
+        indexLoaded: false,
         skippedCode: '',
         skippedReason: ''
       };
       triedCandidates.push(debug);
 
       try {
-        const { buffer, finalUrl } = await downloadPdf(candidate, request, config, deps);
-        debug.downloaded = true;
-        debug.finalUrl = finalUrl || candidate.url || '';
-        const pages = await extractPdfTextPages(buffer, debug);
+        let finalUrl = candidate.url || '';
+        let pages = [];
+        const pageIndex = await loadManualPageIndex(candidate, config, deps, debug);
+        if (pageIndex?.pages?.length) {
+          pages = pageIndex.pages;
+          debug.finalUrl = finalUrl;
+          debug.textPages = pages.length;
+          debug.indexMetadata = pageIndex.metadata || {};
+        } else {
+          const downloaded = await downloadPdf(candidate, request, config, deps);
+          finalUrl = downloaded.finalUrl || candidate.url || '';
+          debug.downloaded = true;
+          debug.finalUrl = finalUrl;
+          debug.textSource = 'pdf_text_layer';
+          pages = await extractPdfTextPages(downloaded.buffer, debug);
+        }
         debug.textPages = pages.length;
         if (!pages.length) {
           debug.skippedReason = 'PDF nema citelnou textovou vrstvu.';

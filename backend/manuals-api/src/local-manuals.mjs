@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isServiceTask, isPartsTask } from './manual-text.mjs';
+import { buildFirebaseStorageUrl, defaultIndexStoragePath } from './page-index.mjs';
 
 const MODULE_DIR = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_INDEX = join(MODULE_DIR, '..', 'manuals', 'jlg', 'index.json');
@@ -30,6 +31,7 @@ export async function searchLocalManualCandidates(request, config = {}, deps = {
 
 function localCandidateScore(manual, request, config = {}) {
   const model = normalizeModel(request?.model);
+  const fileName = manual.file || manual.storagePath || '';
   const modelEntries = [...(manual.models || []), ...(manual.aliases || [])]
     .map(value => ({ raw: value, normalized: normalizeModel(value) }))
     .filter(item => item.normalized);
@@ -46,16 +48,16 @@ function localCandidateScore(manual, request, config = {}) {
   if (Number.isFinite(pvcNumber) && pvcNumber > 0) score += Math.min(pvcNumber / 100000, 0.05);
 
   return {
-    title: manual.title || manual.file || '',
-    url: manual.url || buildFirebaseManualUrl(manual.storagePath, config) || `local-manual://${encodeURIComponent(manual.file || '')}`,
+    title: manual.title || fileName || '',
+    url: manual.url || buildFirebaseManualUrl(manual.storagePath, config) || `local-manual://${encodeURIComponent(fileName)}`,
     description: manual.description || 'Local JLG manual catalog',
     snippets: manual.pvc ? [`PVC ${manual.pvc}`] : [],
     type: manual.type || 'service',
     maker: 'JLG',
     source: 'local',
     sourceType: 'firebase_catalog',
-    localPath: manual.path || manual.file,
-    fileName: manual.file || '',
+    localPath: manual.path || fileName,
+    fileName,
     models: manual.models || [],
     aliases: manual.aliases || [],
     matchedModel: matchedEntry?.raw || '',
@@ -66,17 +68,16 @@ function localCandidateScore(manual, request, config = {}) {
       : 'Model nebyl přesně potvrzen JLG katalogem.',
     pvc: manual.pvc || '',
     storagePath: manual.storagePath || '',
+    indexStoragePath: manual.indexStoragePath || defaultIndexStoragePath(manual.storagePath || fileName, manual),
+    indexUrl: manual.indexUrl || buildFirebaseStorageUrl(manual.indexStoragePath || defaultIndexStoragePath(manual.storagePath || fileName, manual), config),
+    indexPath: manual.indexPath || (manual.path || fileName).replace(/\.pdf$/i, '.pages.json'),
     confidence: Math.max(0, Math.min(score, 0.99))
   };
 }
 
 function buildFirebaseManualUrl(storagePath, config = {}) {
   if (!storagePath) return '';
-  const base = String(config.firebaseManualsUrlBase || '').trim();
-  if (base) return `${base.replace(/\/+$/, '')}/${encodeURIComponent(storagePath)}`;
-  const bucket = String(config.firebaseStorageBucket || '').trim();
-  if (!bucket) return '';
-  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(storagePath)}?alt=media`;
+  return buildFirebaseStorageUrl(storagePath, config);
 }
 
 function normalizeModel(value) {

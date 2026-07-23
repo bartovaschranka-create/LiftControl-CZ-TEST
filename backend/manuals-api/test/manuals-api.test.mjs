@@ -230,6 +230,112 @@ test('oversized Firebase catalog PDF returns JSON instead of timing out', async 
   }
 });
 
+test('JLG catalog uses page index before downloading oversized PDF', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-indexed-firebase-manual-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Indexed Service Manual',
+        file: '450AJ huge.pdf',
+        storagePath: '450AJ huge.pdf',
+        indexStoragePath: 'manuals/jlg/index/450AJ huge.pages.json',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    const fetched = [];
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          FIREBASE_MANUALS_PROCESSING_MAX_BYTES: String(10 * 1024 * 1024)
+        },
+        fetch: async url => {
+          const u = String(url);
+          fetched.push(u);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              manual: 'JLG 450AJ Indexed Service Manual',
+              pages: [
+                { page: 1, text: 'JLG 450AJ service maintenance manual serial number B300000000 and up' },
+                { page: 436, text: 'Tilt sensor calibration procedure. Set the platform level and perform the adjustment from the service menu.' }
+              ]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          throw new Error('PDF should not be downloaded when a page index is available.');
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.sourceType, 'firebase_catalog');
+    assert.equal(res.json.debug.triedCandidates[0].indexLoaded, true);
+    assert.equal(res.json.debug.triedCandidates[0].textSource, 'page_index');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
+    assert.equal(res.json.debug.triedCandidates[0].textPages, 2);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [436]);
+    assert.equal(fetched.some(url => url.includes('.pdf')), false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('page index metadata participates in search without replacing source text', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-metadata-index-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Metadata Service Manual',
+        storagePath: '450AJ metadata.pdf',
+        indexStoragePath: 'manuals/jlg/index/450AJ metadata.pages.json',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: { LOCAL_MANUALS_INDEX: join(root, 'index.json') },
+        fetch: async url => {
+          if (String(url).includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              maker: 'JLG',
+              models: ['450 AJ'],
+              manualType: 'service',
+              edition: 'PVC 2307',
+              serialRange: 'B300000000 and up',
+              pages: [{
+                page: 436,
+                title: 'Tilt Sensor Calibration',
+                chapter: 'JLG Control System',
+                keywords: ['tilt sensor', 'calibration', 'level sensor', 'angle sensor'],
+                text: 'JLG 450AJ service manual serial number B300000000 and up. Set the platform level and perform the adjustment from the service menu.',
+                images: [{ figure: 'Figure 7-18', bbox: '', caption: 'Tilt Sensor' }],
+                embedding: [0.1, 0.2, 0.3]
+              }]
+            }));
+          }
+          throw new Error('PDF should not be downloaded when metadata index is available.');
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    const tried = res.json.debug.triedCandidates[0];
+    assert.equal(tried.indexLoaded, true);
+    assert.equal(tried.indexMetadata.edition, 'PVC 2307');
+    assert.deepEqual(tried.matchedPages, [436]);
+    assert.match(res.json.sources[0].quote, /Set the platform level/);
+    assert.doesNotMatch(res.json.sources[0].quote, /Tilt Sensor Calibration/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
@@ -838,6 +944,17 @@ function responseJson(json, status = 200) {
     headers: new Map([['content-type', 'application/json']]),
     async json() { return json; },
     async text() { return body; }
+  };
+}
+
+function responseText(text, status = 200, headers = {}) {
+  const map = new Map(Object.entries(headers));
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: { get: key => map.get(String(key).toLowerCase()) || map.get(key) || '' },
+    async text() { return String(text); },
+    async arrayBuffer() { return Buffer.from(String(text), 'utf8'); }
   };
 }
 

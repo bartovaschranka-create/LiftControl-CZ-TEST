@@ -16,7 +16,8 @@ export function getConfig(env = process.env) {
     firebaseStorageBucket: env.FIREBASE_STORAGE_BUCKET || 'doctype-test.firebasestorage.app',
     firebaseManualsUrlBase: env.FIREBASE_MANUALS_URL_BASE || '',
     firebaseManualsMaxPdfBytes: numberEnv(env.FIREBASE_MANUALS_MAX_PDF_BYTES, numberEnv(env.LOCAL_MAX_PDF_BYTES, 150 * 1024 * 1024)),
-    firebaseManualsProcessingMaxBytes: numberEnv(env.FIREBASE_MANUALS_PROCESSING_MAX_BYTES, 30 * 1024 * 1024)
+    firebaseManualsProcessingMaxBytes: numberEnv(env.FIREBASE_MANUALS_PROCESSING_MAX_BYTES, 30 * 1024 * 1024),
+    manualIndexMaxBytes: numberEnv(env.MANUAL_INDEX_MAX_BYTES, 25 * 1024 * 1024)
   };
 }
 
