@@ -39,6 +39,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
         'Return only structured JSON matching the schema.',
         'Do not invent service procedures, safety warnings, serial ranges, page numbers, or sources.',
         'Every step and safety warning must be a Czech translation or tight paraphrase of its exact English sourceQuote from the stated page.',
+        'Return at most 8 concise work steps and at most 5 safety warnings.',
         'If a procedure is not explicitly supported by the source text, return empty arrays.'
       ].join(' ')
     },
@@ -56,6 +57,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   ];
   const requestBody = {
     model: config.openaiModel,
+    max_output_tokens: config.openaiMaxOutputTokens,
     input: promptInput,
     text: {
       format: {
@@ -73,11 +75,13 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     errorCode: null,
     errorMessage: null,
     prompt: requestBody,
+    foundPages: Array.isArray(pages) ? pages.length : 0,
     sentPages: sourcePages.length,
     sentPageNumbers: sourcePages.map(page => page.page),
     sentCharacters: sourceText.length,
     promptTokenEstimate,
     timeoutMs: config.openaiTimeoutMs,
+    maxOutputTokens: config.openaiMaxOutputTokens,
     elapsedMs: 0
   });
   let res;
@@ -175,18 +179,17 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     steps: validated.steps,
     safety: validated.safety,
     sources,
-    message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.'),
     message: validated.steps.length ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
     variants: []
   };
 }
 
 function limitOpenAiPages(pages, config = {}) {
-  const maxPages = Math.max(1, Number(config.openaiMaxPages || 5));
-  const maxChars = Math.max(2000, Number(config.openaiMaxChars || 12000));
+  const maxPages = Math.max(1, Number(config.openaiMaxPages || 4));
+  const maxChars = Math.max(2000, Number(config.openaiMaxChars || 9000));
   const out = [];
   let usedChars = 0;
-  for (const page of (pages || []).slice(0, maxPages)) {
+  for (const page of rankPagesForOpenAi(pages).slice(0, maxPages)) {
     const prefix = `PAGE ${page?.page || ''}\n`;
     const separator = out.length ? '\n\n---\n\n' : '';
     const overhead = prefix.length + separator.length;
@@ -198,6 +201,15 @@ function limitOpenAiPages(pages, config = {}) {
     usedChars += overhead + text.length;
   }
   return out;
+}
+
+function rankPagesForOpenAi(pages) {
+  return [...(pages || [])].sort((a, b) => {
+    const scoreA = Number(a?.score || a?.relevanceScore || 0);
+    const scoreB = Number(b?.score || b?.relevanceScore || 0);
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    return Number(a?.page || 0) - Number(b?.page || 0);
+  });
 }
 
 function buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages, fit = {} }) {
@@ -246,11 +258,11 @@ async function validateItems(items, pageMap, terms, kind, request, options) {
     .filter(item => pageContainsQuote(pageMap.get(item.page), item.sourceQuote))
     .filter(item => quoteMatchesPurpose(item.sourceQuote, terms, kind));
 
-  const out = [];
-  for (const item of structurallyValid) {
-    if (await semanticSupportsItem(item, kind, request, options)) out.push(item);
-  }
-  return out;
+  const checks = await Promise.all(structurallyValid.map(async item => ({
+    item,
+    supported: await semanticSupportsItem(item, kind, request, options)
+  })));
+  return checks.filter(check => check.supported).map(check => check.item);
 }
 
 async function semanticSupportsItem(item, kind, request, options = {}) {
@@ -272,13 +284,14 @@ async function validateMeaningWithOpenAI({ item, kind, request, config, deps = {
   try {
     res = await fetchImpl('https://api.openai.com/v1/responses', {
       method: 'POST',
-      signal: openAiTimeoutSignal(config),
+      signal: openAiTimeoutSignal({ openaiTimeoutMs: config.openaiSemanticValidationTimeoutMs || 5000 }),
       headers: {
         Authorization: `Bearer ${config.openaiApiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: config.openaiModel,
+        max_output_tokens: 300,
         input: [
           {
             role: 'system',
@@ -500,7 +513,7 @@ function safeOpenAiErrorMessage(value) {
 }
 
 function openAiTimeoutSignal(config) {
-  const ms = Number(config?.openaiTimeoutMs || 90000);
+  const ms = Number(config?.openaiTimeoutMs || 120000);
   if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
     return AbortSignal.timeout(ms);
   }
