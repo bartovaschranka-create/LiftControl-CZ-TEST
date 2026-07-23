@@ -32,6 +32,7 @@ export function toVariant(candidate) {
     url: candidate.url || '',
     source: candidate.source || 'web',
     pvc: candidate.pvc || '',
+    storagePath: candidate.storagePath || '',
     confidence: Number(candidate.confidence?.toFixed(2) || 0)
   };
 }

@@ -92,6 +92,49 @@ test('JLG request can use a local manual catalog without Brave Search', async ()
   }
 });
 
+test('JLG catalog prefers Firebase URL over local path', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-firebase-manuals-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Firebase Service Manual',
+        url: 'https://firebasestorage.googleapis.com/v0/b/doctype-test.firebasestorage.app/o/manuals%2Fjlg%2Fservice%2F450AJ_pvc2307.pdf?alt=media&token=test',
+        storagePath: 'manuals/jlg/service/450AJ_pvc2307.pdf',
+        path: 'missing-local-file.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    let fetchedUrl = '';
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: '0300123456', task: 'diagnostika zavady' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          MAX_PDF_BYTES: String(2 * 1024 * 1024)
+        },
+        fetch: async url => {
+          fetchedUrl = String(url);
+          return responseBuffer(fakePdf([
+            'JLG 450AJ service maintenance manual serial number 0300000000 and up',
+            'Diagnostic troubleshooting fault code procedure'
+          ]), 200, { 'content-type': 'application/pdf' });
+        }
+      }
+    );
+    assert.match(fetchedUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.equal(res.json.manualType, 'service');
+    assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.equal(res.json.debug.triedCandidates[0].source, 'local');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, true);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [2]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');

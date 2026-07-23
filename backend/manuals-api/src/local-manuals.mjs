@@ -8,7 +8,6 @@ const DEFAULT_INDEX = join(MODULE_DIR, '..', 'manuals', 'jlg', 'index.json');
 
 export async function searchLocalManualCandidates(request, config = {}, deps = {}) {
   if (String(request?.maker || '').toLowerCase() !== 'jlg') return [];
-  if (!config.localManualsRoot) return [];
   const indexPath = config.localManualsIndex || DEFAULT_INDEX;
   let index;
   try {
@@ -19,6 +18,7 @@ export async function searchLocalManualCandidates(request, config = {}, deps = {
   }
   const manuals = Array.isArray(index?.manuals) ? index.manuals : [];
   return manuals
+    .filter(manual => manual.url || config.localManualsRoot)
     .map(manual => localCandidateScore(manual, request))
     .filter(item => item.confidence >= 0.35)
     .sort((a, b) => {
@@ -54,6 +54,7 @@ function localCandidateScore(manual, request) {
     models: manual.models || [],
     aliases: manual.aliases || [],
     pvc: manual.pvc || '',
+    storagePath: manual.storagePath || '',
     confidence: Math.max(0, Math.min(score, 0.99))
   };
 }
