@@ -159,12 +159,14 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, aiText: text });
   }
   const rawItemCount = countSourceItems(parsed);
-  const validated = await validateAiOutput(parsed, sourcePages, request, { config, deps });
+  const validationDetails = [];
+  const validated = await validateAiOutput(parsed, sourcePages, request, { config, deps, validationDetails });
   const acceptedCount = validated.steps.length + validated.safety.length;
   const evidence = classifyProcedureEvidence(sourcePages, request.task);
   setOpenAiDebug(openaiDebug, {
     acceptedSteps: acceptedCount,
-    validationRejectedSteps: Math.max(0, rawItemCount - acceptedCount)
+    validationRejectedSteps: Math.max(0, rawItemCount - acceptedCount),
+    validationDetails
   });
   if (!acceptedCount && rawItemCount > 0) {
     setOpenAiDebug(openaiDebug, {
@@ -251,8 +253,8 @@ function buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages, fit = {
 export async function validateAiOutput(parsed, pages, request = {}, options = {}) {
   const pageMap = new Map(pages.map(p => [Number(p.page), p.text || '']));
   const terms = taskTerms(request.task || '').map(normalizeText).filter(x => x.length >= 3);
-  const validSteps = await validateItems(parsed.steps, pageMap, terms, 'step', request, options);
-  const validSafety = await validateItems(parsed.safety, pageMap, terms, 'safety', request, options);
+  const validSteps = await validateItems(parsed.steps, pageMap, terms, 'step', options);
+  const validSafety = await validateItems(parsed.safety, pageMap, terms, 'safety', options);
   const sources = [...validSteps, ...validSafety].map(item => ({ page: item.page, quote: item.sourceQuote }));
   return {
     steps: validSteps,
@@ -263,18 +265,57 @@ export async function validateAiOutput(parsed, pages, request = {}, options = {}
   };
 }
 
-async function validateItems(items, pageMap, terms, kind, request, options) {
-  return (Array.isArray(items) ? items : [])
-    .filter(item => item?.text && item?.sourceQuote && Number.isInteger(Number(item.page)))
-    .map(item => ({
-      text: String(item.text).trim(),
-      sourceQuote: String(item.sourceQuote).replace(/\s+/g, ' ').trim(),
-      page: Number(item.page)
-    }))
-    .filter(item => item.text && quoteIsSpecific(item.sourceQuote))
-    .filter(item => pageMap.has(item.page))
-    .filter(item => pageContainsQuote(pageMap.get(item.page), item.sourceQuote))
-    .filter(item => quoteMatchesPurpose(item.sourceQuote, terms, kind));
+async function validateItems(items, pageMap, terms, kind, options = {}) {
+  const out = [];
+  for (const [index, rawItem] of (Array.isArray(items) ? items : []).entries()) {
+    const result = validateSourceItem(rawItem, pageMap, terms, kind);
+    if (options.validationDetails) {
+      options.validationDetails.push({
+        index,
+        kind,
+        page: result.item?.page ?? null,
+        sourceQuote: String(result.item?.sourceQuote || '').slice(0, 300),
+        text: String(result.item?.text || '').slice(0, 300),
+        tests: result.tests,
+        accepted: result.accepted,
+        rejectReason: result.rejectReason
+      });
+    }
+    if (result.accepted) out.push(result.item);
+  }
+  return out;
+}
+
+function validateSourceItem(rawItem, pageMap, terms, kind) {
+  const tests = {};
+  const fail = rejectReason => ({ item: normalizeSourceItem(rawItem), tests, accepted: false, rejectReason });
+
+  tests.hasText = Boolean(rawItem?.text && String(rawItem.text).trim());
+  tests.hasSourceQuote = Boolean(rawItem?.sourceQuote && String(rawItem.sourceQuote).trim());
+  tests.pageIsInteger = Number.isInteger(Number(rawItem?.page));
+  if (!tests.hasText) return fail('missing_text');
+  if (!tests.hasSourceQuote) return fail('missing_source_quote');
+  if (!tests.pageIsInteger) return fail('invalid_page');
+
+  const item = normalizeSourceItem(rawItem);
+  tests.quoteSpecific = quoteIsSpecific(item.sourceQuote);
+  tests.pageExists = pageMap.has(item.page);
+  tests.sourceQuoteFoundOnPage = tests.pageExists && pageContainsQuote(pageMap.get(item.page), item.sourceQuote);
+  tests.thematicMatch = quoteMatchesPurpose(item.sourceQuote, terms, kind);
+
+  if (!tests.quoteSpecific) return { item, tests, accepted: false, rejectReason: 'source_quote_too_short_or_generic' };
+  if (!tests.pageExists) return { item, tests, accepted: false, rejectReason: 'source_page_not_sent_to_openai' };
+  if (!tests.sourceQuoteFoundOnPage) return { item, tests, accepted: false, rejectReason: 'source_quote_not_found_on_page' };
+  if (!tests.thematicMatch) return { item, tests, accepted: false, rejectReason: 'source_quote_not_related_to_task' };
+  return { item, tests, accepted: true, rejectReason: '' };
+}
+
+function normalizeSourceItem(item) {
+  return {
+    text: String(item?.text || '').trim(),
+    sourceQuote: String(item?.sourceQuote || '').replace(/\s+/g, ' ').trim(),
+    page: Number(item?.page)
+  };
 }
 
 function quoteIsSpecific(quote) {
