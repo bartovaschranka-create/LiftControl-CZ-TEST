@@ -78,6 +78,13 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     foundPages: Array.isArray(pages) ? pages.length : 0,
     sentPages: sourcePages.length,
     sentPageNumbers: sourcePages.map(page => page.page),
+    sentPageDetails: sourcePages.map(page => ({
+      page: page.page,
+      score: page.score || 0,
+      matchedTerms: page.matchedTerms || [],
+      title: page.title || '',
+      chapter: page.chapter || ''
+    })),
     sentCharacters: sourceText.length,
     promptTokenEstimate,
     timeoutMs: config.openaiTimeoutMs,
@@ -204,12 +211,23 @@ function limitOpenAiPages(pages, config = {}) {
 }
 
 function rankPagesForOpenAi(pages) {
-  return [...(pages || [])].sort((a, b) => {
+  return [...(pages || [])].filter(page => !isOpenAiFrontMatter(page)).sort((a, b) => {
     const scoreA = Number(a?.score || a?.relevanceScore || 0);
     const scoreB = Number(b?.score || b?.relevanceScore || 0);
     if (scoreA !== scoreB) return scoreB - scoreA;
     return Number(a?.page || 0) - Number(b?.page || 0);
   });
+}
+
+function isOpenAiFrontMatter(page) {
+  const hay = normalizeText([
+    page?.title || '',
+    page?.chapter || '',
+    page?.text || ''
+  ].join('\n'));
+  const pageNumber = Number(page?.page || 0);
+  if (pageNumber > 30) return false;
+  return /\b(copyright|table of contents|contents|foreword|revision history|list of figures|list of tables|cover|introduction|specifications|general specifications)\b/.test(hay);
 }
 
 function buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages, fit = {} }) {

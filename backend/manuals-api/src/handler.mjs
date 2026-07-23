@@ -103,6 +103,7 @@ export function createManualsHandler(deps = {}) {
         finalUrl: '',
         textPages: 0,
         matchedPages: [],
+        matchedPageDetails: [],
         matchedTerms: [],
         textSource: '',
         indexLoaded: false,
@@ -142,6 +143,13 @@ export function createManualsHandler(deps = {}) {
 
         const relevantPages = findRelevantPages(pages, request.task, { manualType: candidate.type });
         debug.matchedPages = relevantPages.map(p => p.page);
+        debug.matchedPageDetails = relevantPages.map(page => ({
+          page: page.page,
+          score: page.score || 0,
+          matchedTerms: page.matchedTerms || [],
+          title: page.title || '',
+          chapter: page.chapter || ''
+        }));
         debug.matchedTerms = collectMatchedTerms(relevantPages, request.task);
         if (!relevantPages.length) {
           debug.skippedReason = 'Nenalezeny relevantni stranky pro zadany ukon.';
@@ -252,6 +260,7 @@ function collectMatchedTerms(pages, task) {
 
 function mergePages(relevantPages, allPages, fitSources = []) {
   const pageNumbers = new Set(relevantPages.map(p => p.page));
+  const relevantByPage = new Map((relevantPages || []).map(page => [page.page, page]));
   for (const page of relevantPages || []) {
     pageNumbers.add(page.page - 1);
     pageNumbers.add(page.page + 1);
@@ -259,7 +268,7 @@ function mergePages(relevantPages, allPages, fitSources = []) {
   }
   for (const source of fitSources || []) pageNumbers.add(source.page);
   return [...pageNumbers]
-    .map(page => allPages.find(p => p.page === page))
+    .map(page => relevantByPage.get(page) || allPages.find(p => p.page === page))
     .filter(Boolean)
     .sort((a, b) => a.page - b.page);
 }
