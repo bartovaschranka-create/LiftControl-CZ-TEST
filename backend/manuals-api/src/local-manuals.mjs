@@ -30,10 +30,14 @@ export async function searchLocalManualCandidates(request, config = {}, deps = {
 
 function localCandidateScore(manual, request, config = {}) {
   const model = normalizeModel(request?.model);
-  const aliases = new Set([...(manual.models || []), ...(manual.aliases || [])].map(normalizeModel).filter(Boolean));
+  const modelEntries = [...(manual.models || []), ...(manual.aliases || [])]
+    .map(value => ({ raw: value, normalized: normalizeModel(value) }))
+    .filter(item => item.normalized);
+  const aliases = new Set(modelEntries.map(item => item.normalized));
+  const matchedEntry = modelEntries.find(item => item.normalized === model);
   let score = 0.15;
-  if (aliases.has(model)) score += 0.6;
-  else if ([...aliases].some(alias => alias && (model.includes(alias) || alias.includes(model)))) score += 0.35;
+  if (matchedEntry) score += 0.7;
+  else if ([...aliases].some(alias => alias && model && alias.includes(model) && alias.length <= model.length + 2)) score += 0.12;
   if (isServiceTask(request?.task) && manual.type === 'service') score += 0.35;
   if (isPartsTask(request?.task) && manual.type === 'parts') score += 0.35;
   if (!isPartsTask(request?.task) && manual.type === 'parts') score -= 0.2;
@@ -49,10 +53,17 @@ function localCandidateScore(manual, request, config = {}) {
     type: manual.type || 'service',
     maker: 'JLG',
     source: 'local',
+    sourceType: 'firebase_catalog',
     localPath: manual.path || manual.file,
     fileName: manual.file || '',
     models: manual.models || [],
     aliases: manual.aliases || [],
+    matchedModel: matchedEntry?.raw || '',
+    modelMatch: matchedEntry ? 'exact' : 'none',
+    serialRange: manual.serialRange || '',
+    selectionReason: matchedEntry
+      ? `Přesná shoda modelu v JLG katalogu: ${matchedEntry.raw}.`
+      : 'Model nebyl přesně potvrzen JLG katalogem.',
     pvc: manual.pvc || '',
     storagePath: manual.storagePath || '',
     confidence: Math.max(0, Math.min(score, 0.99))

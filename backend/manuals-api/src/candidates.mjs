@@ -35,8 +35,13 @@ export function toVariant(candidate) {
     type: candidate.type || '',
     url: candidate.url || '',
     source: candidate.source || 'web',
+    sourceType: candidate.sourceType || (candidate.source === 'local' ? 'firebase_catalog' : 'brave_search'),
     pvc: candidate.pvc || '',
     storagePath: candidate.storagePath || '',
+    selectedManualFile: candidate.fileName || '',
+    matchedModel: candidate.matchedModel || '',
+    matchedSerialRange: candidate.serialRange || '',
+    selectionReason: candidate.selectionReason || '',
     confidence: Number(candidate.confidence?.toFixed(2) || 0)
   };
 }

@@ -136,6 +136,61 @@ test('JLG catalog prefers Firebase URL over local path', async () => {
   }
 });
 
+test('JLG 450AJ service task uses Firebase catalog and rejects unrelated 40H Brave result', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-jlg-450aj-catalog-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        file: '450AJ pvc2307.pdf',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up',
+        pvc: '2307'
+      }]
+    }));
+    const fetched = [];
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          MAX_PDF_BYTES: String(2 * 1024 * 1024)
+        },
+        fetch: async url => {
+          const u = String(url);
+          fetched.push(u);
+          if (u.includes('api.search.brave.com')) {
+            return responseJson({ web: { results: [{
+              title: 'JLG 40H/40H+ Service Manual',
+              url: 'https://www.jlg.com/manuals/40h-service.pdf',
+              description: 'service manual 40H 40H+'
+            }] } });
+          }
+          return responseBuffer(fakePdf([
+            'JLG 450AJ service maintenance manual serial number B300000000 and up',
+            'Tilt sensor calibration procedure and troubleshooting test'
+          ]), 200, { 'content-type': 'application/pdf' });
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.sourceType, 'firebase_catalog');
+    assert.equal(res.json.manualType, 'service');
+    assert.equal(res.json.selectedManualFile, '450AJ pvc2307.pdf');
+    assert.match(res.json.selectedManualUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.equal(res.json.matchedModel, '450 AJ');
+    assert.match(res.json.selectionReason, /Přesná shoda modelu/);
+    assert.equal(fetched.some(url => url.includes('api.search.brave.com')), false);
+    assert.doesNotMatch(JSON.stringify(res.json), /40H/i);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
