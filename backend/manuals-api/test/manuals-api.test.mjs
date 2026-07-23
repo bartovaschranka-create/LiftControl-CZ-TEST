@@ -460,6 +460,86 @@ test('angle sensor calibration sends procedure pages to OpenAI instead of front 
   }
 });
 
+test('procedure context continues until the next chapter heading', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-procedure-continuation-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    let manualPrompt = null;
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret',
+          OPENAI_MAX_PAGES: '4',
+          OPENAI_MAX_CHARS: '12000'
+        },
+        fetch: async (url, options = {}) => {
+          const u = String(url);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              manual: 'JLG 450AJ Service Manual PVC 2307',
+              pages: [
+                {
+                  page: 129,
+                  title: '4.3.8 Calibrating Platform Angle Sensor',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  keywords: ['platform angle sensor', 'angle sensor calibration'],
+                  text: [
+                    'JLG 450AJ service manual serial number B300000000 and up.',
+                    '4.3.8 Calibrating Platform Angle Sensor',
+                    '1. Position the Platform/Ground select switch to Ground.',
+                    '2. Plug the analyzer into the connector at the ground control station.'
+                  ].join('\n')
+                },
+                { page: 130, text: '3. Select ACCESS LEVEL 2. 4. Enter the access code. 5. Select CALIBRATIONS from the analyzer menu.' },
+                { page: 131, text: '6. Select PLATFORM ANGLE SENSOR. 7. Press ENTER to save the calibration. 8. Cycle machine power.' },
+                { page: 132, title: '4.3.9 Drive Speed Cutout Test', text: '4.3.9 Drive Speed Cutout Test. This is a different procedure.' }
+              ]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          if (u.includes('api.openai.com')) {
+            const body = JSON.parse(options.body);
+            manualPrompt = body;
+            return responseJson({ output_text: JSON.stringify({
+              steps: [{
+                text: 'Zvolte PLATFORM ANGLE SENSOR a potvrďte uložení kalibrace.',
+                sourceQuote: '6. Select PLATFORM ANGLE SENSOR. 7. Press ENTER to save the calibration.',
+                page: 131
+              }],
+              safety: [],
+              serialRange: 'B300000000 and up',
+              message: 'Postup nalezen v originalnim manualu.'
+            }) });
+          }
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131]);
+    assert.equal(res.json.debug.openai.sentPageDetails.some(page => page.page === 132), false);
+    const sourceText = JSON.parse(manualPrompt.input[1].content).sourceText;
+    assert.match(sourceText, /1\. Position the Platform\/Ground/);
+    assert.match(sourceText, /5\. Select CALIBRATIONS/);
+    assert.match(sourceText, /7\. Press ENTER to save the calibration/);
+    assert.doesNotMatch(sourceText, /4\.3\.9 Drive Speed Cutout Test/);
+    assert.equal(res.json.steps.length, 1);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
@@ -739,7 +819,7 @@ test('OpenAI prompt is limited to configured page and character budget', async (
     );
     assert.equal(res.statusCode, 200);
     assert.ok(res.json.debug.openai.sentPages <= 3);
-    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [400, 401]);
+    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [400]);
     assert.ok(res.json.debug.openai.sentCharacters <= 5000);
     assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
     assert.ok(openAiBody);
