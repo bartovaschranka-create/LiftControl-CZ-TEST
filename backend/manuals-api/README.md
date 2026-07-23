@@ -66,11 +66,13 @@ BRAVE_SEARCH_API_KEY=
 ALLOWED_ORIGINS=https://bartovaschranka-create.github.io
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 MAX_PDF_BYTES=15728640
 DOWNLOAD_TIMEOUT_MS=15000
 FIREBASE_STORAGE_BUCKET=doctype-test.firebasestorage.app
 FIREBASE_MANUALS_URL_BASE=
 FIREBASE_MANUALS_MAX_PDF_BYTES=157286400
+MANUAL_INDEX_MAX_BYTES=26214400
 LOCAL_MANUALS_ROOT=C:\Users\bartos\Desktop\manuály
 LOCAL_MAX_PDF_BYTES=157286400
 ```
@@ -111,6 +113,75 @@ Source priority:
 Do not store PDF files in GitHub, GitHub Pages, the frontend build, or `index.html`.
 `FIREBASE_MANUALS_URL_BASE` is optional and only needed if the manuals are later served through a custom Firebase/Google Storage download base.
 `FIREBASE_MANUALS_MAX_PDF_BYTES` sets the trusted Firebase catalog PDF size limit; JLG service manuals can be much larger than the generic web-search PDF limit.
+
+## Textové indexy velkých manuálů
+
+Velké JLG service manuály mohou být příliš velké pro přímé PDF zpracování ve Vercel serverless funkci. Backend proto před stažením PDF nejdřív zkusí načíst textový index po stránkách.
+
+Výchozí umístění indexu k PDF v katalogu:
+
+```text
+PDF storagePath: 450AJ pvc2307.pdf
+Index storagePath: manuals/jlg/index/450AJ pvc2307.pages.json
+```
+
+Formát JSON:
+
+```json
+{
+  "version": 1,
+  "manual": "JLG 450AJ Service Manual PVC 2307",
+  "maker": "JLG",
+  "model": "450AJ",
+  "models": ["450 AJ", "450AJ"],
+  "manualType": "service",
+  "edition": "PVC 2307",
+  "issueDate": "",
+  "serialRange": "B300000000 and up",
+  "pages": [
+    {
+      "page": 436,
+      "title": "Tilt Sensor Calibration",
+      "chapter": "JLG Control System",
+      "keywords": ["tilt sensor", "calibration", "level sensor", "angle sensor"],
+      "text": "...",
+      "images": [
+        {
+          "figure": "Figure 7-18",
+          "bbox": "",
+          "caption": "Tilt Sensor"
+        }
+      ],
+      "embedding": []
+    }
+  ]
+}
+```
+
+`text` zůstává čistý text vytažený z PDF stránky a používá se pro citace. `title`, `chapter` a `keywords` pomáhají rychleji najít správnou stránku, ale nenahrazují zdrojovou citaci z manuálu.
+
+Pokud bude index uložen jinde, přidej do záznamu v `manuals/jlg/index.json` pole `indexStoragePath` nebo `indexUrl`.
+
+Jednorázové vytvoření indexu z lokálně staženého PDF:
+
+```bash
+node scripts/build-manual-index.mjs "C:\Users\bartos\Desktop\manualy_JLG_k_nahrani\450AJ pvc2307.pdf" "450AJ pvc2307.pages.json" --manual "JLG 450AJ Service Manual PVC 2307" --maker JLG --model 450AJ --models "450 AJ,450AJ" --manual-type service --edition "PVC 2307" --serial-range "B300000000 and up"
+```
+
+Volitelné vytvoření embeddingů při indexaci:
+
+```bash
+set OPENAI_API_KEY=<klic>
+node scripts/build-manual-index.mjs "C:\Users\bartos\Desktop\manualy_JLG_k_nahrani\450AJ pvc2307.pdf" "450AJ pvc2307.pages.json" --manual "JLG 450AJ Service Manual PVC 2307" --maker JLG --model 450AJ --embeddings
+```
+
+Vytvořený `.pages.json` nahraj do Firebase Storage například sem:
+
+```text
+manuals/jlg/index/450AJ pvc2307.pages.json
+```
+
+Za běhu backend vyhledává nejdřív v indexu. Originální PDF stáhne až ve chvíli, kdy index neexistuje, nebo když budoucí PDF výstup bude potřebovat originální obrázky/stránky.
 
 ## PDF Parser
 

@@ -98,7 +98,7 @@ export function findRelevantPages(pages, task, options = {}) {
   const terms = taskTerms(task);
   const limit = options.limit || relevantPageLimit(task, options.manualType);
   return pages
-    .map(page => ({ ...page, score: scoreText(page.text, terms, task) }))
+    .map(page => ({ ...page, score: scoreText(searchablePageText(page), terms, task) }))
     .filter(page => page.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
@@ -204,6 +204,17 @@ function scoreText(text, terms, task) {
   }
   if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) score += 2;
   return score;
+}
+
+function searchablePageText(page) {
+  if (typeof page === 'string') return page;
+  const keywords = Array.isArray(page?.keywords) ? page.keywords.join(' ') : '';
+  return [
+    page?.title || '',
+    page?.chapter || '',
+    keywords,
+    page?.text || ''
+  ].filter(Boolean).join('\n');
 }
 
 function looksLikeReferenceOnly(text) {
