@@ -104,6 +104,35 @@ export function findRelevantPages(pages, task, options = {}) {
     .slice(0, limit);
 }
 
+export function classifyProcedureEvidence(pages, task = '') {
+  const usablePages = Array.isArray(pages) ? pages.filter(page => page?.text) : [];
+  if (!usablePages.length) {
+    return {
+      status: 'not_found',
+      message: 'V textu manualu nebyl nalezen dolozitelny postup pro zadany ukon.'
+    };
+  }
+  const combined = normalizeText(usablePages.map(page => page.text).join('\n'));
+  const referenceOnly = looksLikeReferenceOnly(combined);
+  const hasProcedureSignal = hasProcedureText(combined, task);
+  if (referenceOnly && !hasProcedureSignal) {
+    return {
+      status: 'reference_found',
+      message: 'V manualu byla nalezena pouze zminka nebo odkaz na hledany ukon, ne pouzitelny servisni postup.'
+    };
+  }
+  if (hasProcedureSignal) {
+    return {
+      status: 'partial_procedure_found',
+      message: 'Byla nalezena relevantni cast postupu. Pred provedenim prace overte uplny postup v originalnim manualu.'
+    };
+  }
+  return {
+    status: 'reference_found',
+    message: 'V manualu byla nalezena relevantni stranka, ale automaticky nebyl potvrzen kompletni pracovni postup.'
+  };
+}
+
 function relevantPageLimit(task, manualType) {
   if (manualType !== 'service') return 6;
   if (isAngleSensorCalibrationTask(task)) return 12;
@@ -113,6 +142,7 @@ function relevantPageLimit(task, manualType) {
 }
 
 export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit = {}, openaiDebug = null }) {
+  const evidence = classifyProcedureEvidence(pages, request.task);
   const base = {
     maker: request.maker,
     model: request.model,
@@ -123,7 +153,7 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
     originalUrl: finalUrl || candidate.url,
     steps: [],
     safety: [],
-    sources: fit.sources || [],
+    sources: uniqueSources([...(fit.sources || []), ...sourceSnippetsFromPages(pages)]),
     variants: []
   };
   if (!pages.length) {
@@ -135,8 +165,8 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
   }
   return {
     ...base,
-    status: 'warn',
-    message: sourceOnlyMessage(openaiDebug),
+    status: evidence.status,
+    message: sourceOnlyMessage(openaiDebug, evidence),
     variants: [{
       title: candidate.title || '',
       type: candidate.type || '',
@@ -146,17 +176,17 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
   };
 }
 
-function sourceOnlyMessage(openaiDebug) {
+function sourceOnlyMessage(openaiDebug, evidence) {
   if (!openaiDebug?.configured || openaiDebug?.errorCode === 'openai_missing_key') {
-    return 'OpenAI API klíč není nastavený, proto nelze vytvořit české servisní kroky.';
+    return `${evidence.message} OpenAI API klic neni nastaveny, proto nelze vytvorit ceske servisni kroky.`;
   }
   if (openaiDebug?.errorCode === 'openai_validation_rejected') {
-    return 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.';
+    return evidence.message;
   }
   if (openaiDebug?.requestSent || openaiDebug?.errorCode) {
-    return 'OpenAI API je nastavené, ale zpracování kroků selhalo. Viz debug.openai.';
+    return `${evidence.message} OpenAI API je nastavene, ale zpracovani kroku selhalo. Viz debug.openai.`;
   }
-  return 'Relevantní text byl v manuálu nalezen, ale české servisní kroky nebyly vytvořeny.';
+  return evidence.message;
 }
 
 function scoreText(text, terms, task) {
@@ -174,6 +204,45 @@ function scoreText(text, terms, task) {
   }
   if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) score += 2;
   return score;
+}
+
+function looksLikeReferenceOnly(text) {
+  const hasReferenceWords = /\b(contents|table of contents|index|list of figures|page\s+\d+|section\s+\d+)\b/.test(text);
+  const hasActionWords = /\b(remove|install|adjust|calibrate|connect|disconnect|press|hold|select|set|check|verify|perform|measure|test)\b/.test(text);
+  return hasReferenceWords && !hasActionWords;
+}
+
+function hasProcedureText(text, task = '') {
+  const taskText = normalizeText(task);
+  const procedureWords = /\b(procedure|calibration|calibrate|adjustment|setup|service mode|analyzer|select|press|hold|set|zero|teach|learn|verify|check|test|measure|remove|install|disconnect|connect|warning|caution|note)\b/.test(text);
+  const numberedSteps = /(^|\n|\s)(\d+[\.)]\s+|step\s+\d+)/.test(text);
+  const taskSpecific = (isAngleSensorCalibrationTask(taskText) || /tilt|angle|level|sensor|cidlo|senzor/.test(taskText))
+    && /\b(tilt|angle|level|sensor|calibration|calibrate|adjustment|zero)\b/.test(text);
+  return procedureWords || numberedSteps || taskSpecific;
+}
+
+function sourceSnippetsFromPages(pages) {
+  return (pages || [])
+    .slice(0, 4)
+    .map(page => ({ page: page.page, quote: firstUsefulQuote(page.text) }))
+    .filter(source => source.page && source.quote);
+}
+
+function firstUsefulQuote(text) {
+  const cleaned = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return '';
+  const match = cleaned.match(/(?:[^.!?]*\b(?:calibration|calibrate|tilt|angle|level|sensor|procedure|adjustment|service mode|warning|caution)\b[^.!?]*[.!?]?)/i);
+  return (match?.[0] || cleaned).trim().slice(0, 300);
+}
+
+function uniqueSources(sources) {
+  const seen = new Set();
+  return (sources || []).filter(source => {
+    const key = `${source.page}:${source.quote}`;
+    if (!source.page || !source.quote || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function normalizeText(value) {

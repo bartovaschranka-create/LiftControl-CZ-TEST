@@ -5,6 +5,8 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createManualsHandler } from '../src/handler.mjs';
+import { createServicePdfHandler } from '../src/service-pdf-handler.mjs';
+import { createServiceProcedurePdf } from '../src/service-pdf.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
 import { extractPdfTextPages } from '../src/pdf.mjs';
@@ -17,7 +19,7 @@ import { findRelevantPages, taskIntentDebug, taskTerms } from '../src/manual-tex
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
   assert.equal(res.statusCode, 200);
-  assert.equal(res.json.status, 'warn');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.equal(res.json.maker, 'JLG');
   assert.equal(res.json.manualType, 'service');
   assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
@@ -191,6 +193,43 @@ test('JLG 450AJ service task uses Firebase catalog and rejects unrelated 40H Bra
   }
 });
 
+test('oversized Firebase catalog PDF returns JSON instead of timing out', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-large-firebase-manual-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Huge Service Manual',
+        file: '450AJ huge.pdf',
+        storagePath: '450AJ huge.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          FIREBASE_MANUALS_PROCESSING_MAX_BYTES: String(10 * 1024 * 1024)
+        },
+        fetch: async () => responseBuffer(Buffer.from('%PDF-1.7\n%%EOF', 'latin1'), 200, {
+          'content-type': 'application/pdf',
+          'content-length': String(119 * 1024 * 1024)
+        })
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.status, 'not_found');
+    assert.match(res.json.message, /prilis velke pro prime serverless zpracovani/);
+    assert.equal(res.json.debug.triedCandidates[0].skippedCode, 'pdf_too_large_for_serverless');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
@@ -311,7 +350,7 @@ test('handler continues past operator manual and returns debug for service manua
       return responseBuffer(fakePdf(['Genie GS-4390 service manual serial number GS90D-101 and up', 'Function calibration procedure']), 200, { 'content-type': 'application/pdf' });
     }
   });
-  assert.equal(res.json.status, 'warn');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.match(res.json.manualTitle, /Service Manual/i);
   assert.ok(res.json.debug.triedCandidates.some(x => /Service Manual/.test(x.title) && x.downloaded && x.textPages > 0));
 });
@@ -327,7 +366,7 @@ test('OpenAI debug explains missing API key', async () => {
   assert.equal(res.json.debug.openai.configured, false);
   assert.equal(res.json.debug.openai.requestSent, false);
   assert.equal(res.json.debug.openai.errorCode, 'openai_missing_key');
-  assert.match(res.json.message, /OpenAI API klíč není nastavený/);
+  assert.match(res.json.message, /OpenAI API klic neni nastaveny/);
 });
 
 test('OpenAI debug classifies authentication failure', async () => {
@@ -352,7 +391,7 @@ test('OpenAI debug classifies authentication failure', async () => {
   assert.equal(res.json.debug.openai.responseStatus, 401);
   assert.equal(res.json.debug.openai.errorCode, 'openai_auth_failed');
   assert.doesNotMatch(res.json.debug.openai.errorMessage, /BSAICDVM1234567890abcdef|sk-test-secret/);
-  assert.match(res.json.message, /OpenAI API je nastavené/);
+  assert.match(res.json.message, /OpenAI API je nastavene/);
 });
 
 test('OpenAI debug reports source validation rejection', async () => {
@@ -383,13 +422,66 @@ test('OpenAI debug reports source validation rejection', async () => {
       ]), 200, { 'content-type': 'application/pdf' });
     }
   });
-  assert.equal(res.json.status, 'not_found');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.equal(res.json.debug.openai.configured, true);
   assert.equal(res.json.debug.openai.parsed, true);
   assert.equal(res.json.debug.openai.acceptedSteps, 0);
   assert.equal(res.json.debug.openai.validationRejectedSteps, 1);
   assert.equal(res.json.debug.openai.errorCode, 'openai_validation_rejected');
-  assert.match(res.json.message, /žádný krok neprošel zdrojovou validací/);
+  assert.match(res.json.message, /Zobrazuji alespon nalezeny text z manualu/);
+  assert.ok(res.json.steps.length > 0);
+  assert.equal(res.json.debug.openai.responseStatus, 200);
+  assert.equal(typeof res.json.debug.openai.responseBody, 'string');
+  assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
+});
+
+test('OpenAI plain text response is shown as fallback instead of failing', async () => {
+  const res = await callApi({ maker: 'Genie', model: 'GS-4390 RT', serial: 'GS90D-6564', task: 'kalibrace' }, {
+    env: { OPENAI_API_KEY: 'sk-test-secret', OPENAI_MODEL: 'gpt-4.1-mini' },
+    fetch: async url => {
+      const u = String(url);
+      if (u.includes('api.search.brave.com')) {
+        return responseJson({ web: { results: [{ title: 'Genie GS-3390 GS-4390 and GS-5390 Service Manual', url: 'https://manuals.genielift.com/Parts%20And%20Service%20Manuals/gs4390-service.pdf', description: 'service manual calibration' }] } });
+      }
+      if (u.includes('api.openai.com')) {
+        return responseJson({ output_text: 'Najdi v manualu cast Function calibration procedure a postup over podle originalu.' });
+      }
+      return responseBuffer(fakePdf([
+        'Genie GS-4390 service manual serial number GS90D-101 and up',
+        'Function calibration procedure. Select service mode and follow the on-screen calibration instructions.'
+      ]), 200, { 'content-type': 'application/pdf' });
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'partial_procedure_found');
+  assert.match(res.json.message, /mimo ocekavany validni JSON/);
+  assert.match(res.json.steps[0].text, /Function calibration procedure|Najdi v manualu/);
+  assert.equal(res.json.debug.openai.responseStatus, 200);
+  assert.equal(res.json.debug.openai.errorCode, 'openai_response_invalid');
+  assert.equal(typeof res.json.debug.openai.responseBody, 'string');
+  assert.ok(res.json.debug.openai.promptTokenEstimate > 0);
+  assert.ok(res.json.debug.openai.parseException);
+});
+
+test('service procedure PDF generator creates readable PDF bytes', async () => {
+  const pdf = createServiceProcedurePdf(servicePdfPayload());
+  assert.equal(Buffer.isBuffer(pdf), true);
+  assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
+  assert.ok(pdf.length > 1000);
+});
+
+test('service PDF endpoint returns application/pdf', async () => {
+  const res = await callServicePdf(servicePdfPayload());
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.headers['content-type'], 'application/pdf');
+  assert.equal(Buffer.isBuffer(res.bodyBuffer), true);
+  assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
+});
+
+test('service PDF endpoint rejects missing manual result', async () => {
+  const res = await callServicePdf({ request: { maker: 'JLG', model: '450AJ', task: 'kalibrace' }, result: {} });
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.json.status, 'error');
 });
 
 test('unsupported maker is rejected', async () => {
@@ -613,6 +705,74 @@ async function callApi(body, options = {}) {
     res.json = null;
   }
   return res;
+}
+
+async function callServicePdf(body, options = {}) {
+  const req = Readable.from([JSON.stringify(body || {})]);
+  req.method = options.method || 'POST';
+  req.headers = { origin: options.origin || 'https://bartovaschranka-create.github.io', 'content-type': 'application/json' };
+  const chunks = [];
+  const res = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    bodyBuffer: Buffer.alloc(0),
+    setHeader(k, v) { this.headers[k.toLowerCase()] = v; },
+    end(chunk = '') {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), 'utf8');
+      chunks.push(buf);
+      this.bodyBuffer = Buffer.concat(chunks);
+      this.body = this.bodyBuffer.toString('utf8');
+    }
+  };
+  const handler = createServicePdfHandler({
+    env: {
+      ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
+      ...(options.env || {})
+    }
+  });
+  await handler(req, res);
+  try {
+    res.json = res.body ? JSON.parse(res.body) : null;
+  } catch {
+    res.json = null;
+  }
+  return res;
+}
+
+function servicePdfPayload() {
+  return {
+    request: {
+      maker: 'JLG',
+      model: '450 AJ',
+      serial: 'B300015524',
+      task: 'kalibrace naklonoveho cidla'
+    },
+    result: {
+      status: 'partial_procedure_found',
+      maker: 'JLG',
+      model: '450 AJ',
+      serial: 'B300015524',
+      manualTitle: 'JLG 450AJ Service Manual',
+      manualType: 'service',
+      serialRange: 'B300000000 and up',
+      originalUrl: 'https://firebasestorage.googleapis.com/v0/b/doctype-test.firebasestorage.app/o/450AJ%20pvc2307.pdf?alt=media',
+      steps: [{
+        text: 'Proved kontrolu nastaveni podle servisniho menu a over vysledek podle originalniho manualu.',
+        sourceQuote: 'Perform the adjustment from the service menu and verify the result.',
+        page: 436
+      }],
+      safety: [{
+        text: 'Pred zasahem zajisti stroj proti pohybu.',
+        sourceQuote: 'Secure the machine against movement before service.',
+        page: 435
+      }],
+      sources: [{
+        page: 436,
+        quote: 'Perform the adjustment from the service menu and verify the result.'
+      }]
+    }
+  };
 }
 
 function jlgFetch(pdf = fakePdf([
