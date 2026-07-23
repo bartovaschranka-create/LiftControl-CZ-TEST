@@ -115,13 +115,28 @@ async function downloadCatalogPdf(candidate, config, deps = {}) {
     throw err;
   }
   const maxBytes = config.firebaseManualsMaxPdfBytes || config.maxPdfBytes;
+  const processingMaxBytes = config.firebaseManualsProcessingMaxBytes || maxBytes;
   const contentLength = Number(res.headers.get('content-length') || 0);
+  if (contentLength && contentLength > processingMaxBytes) {
+    const err = new Error(`PDF je prilis velke pro serverless zpracovani (${contentLength} B > ${processingMaxBytes} B).`);
+    err.code = 'pdf_too_large_for_serverless';
+    err.contentLength = contentLength;
+    err.processingMaxBytes = processingMaxBytes;
+    throw err;
+  }
   if (contentLength && contentLength > maxBytes) {
     const err = new Error('PDF je vetsi nez povoleny limit.');
     err.code = 'pdf_too_large';
     throw err;
   }
   const buffer = Buffer.from(await res.arrayBuffer());
+  if (buffer.length > processingMaxBytes) {
+    const err = new Error(`PDF je prilis velke pro serverless zpracovani (${buffer.length} B > ${processingMaxBytes} B).`);
+    err.code = 'pdf_too_large_for_serverless';
+    err.contentLength = buffer.length;
+    err.processingMaxBytes = processingMaxBytes;
+    throw err;
+  }
   if (buffer.length > maxBytes) {
     const err = new Error('PDF je vetsi nez povoleny limit.');
     err.code = 'pdf_too_large';

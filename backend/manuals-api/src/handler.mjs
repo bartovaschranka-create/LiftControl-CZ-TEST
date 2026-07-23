@@ -100,6 +100,7 @@ export function createManualsHandler(deps = {}) {
         textPages: 0,
         matchedPages: [],
         matchedTerms: [],
+        skippedCode: '',
         skippedReason: ''
       };
       triedCandidates.push(debug);
@@ -140,6 +141,7 @@ export function createManualsHandler(deps = {}) {
         }
         return sendJson(res, 200, result);
       } catch (error) {
+        debug.skippedCode = error?.code || '';
         debug.skippedReason = error?.message || 'Chyba pri stazeni nebo zpracovani manualu.';
         if (error?.code === 'blocked_url') {
           return sendJson(res, 200, emptyResponse('warn', request, 'Nalezeny odkaz byl odmitnut bezpecnostni kontrolou domeny.', variants));
@@ -148,7 +150,11 @@ export function createManualsHandler(deps = {}) {
     }
 
     const serviceTried = triedCandidates.some(x => x.type === 'service' && x.downloaded && x.textPages > 0);
-    const message = serviceTried
+    const allCatalogTooLarge = triedCandidates.length > 0
+      && triedCandidates.every(x => x.sourceType === 'firebase_catalog' && x.skippedCode === 'pdf_too_large_for_serverless');
+    const message = allCatalogTooLarge
+      ? 'JLG service manual je ve Firebase katalogu nalezeny, ale PDF je prilis velke pro prime serverless zpracovani. Je potreba pripravit index textu po strankach nebo mensi rozdelene PDF. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
+      : serviceTried
       ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
     const response = emptyResponse('not_found', request, message, variants);

@@ -191,6 +191,43 @@ test('JLG 450AJ service task uses Firebase catalog and rejects unrelated 40H Bra
   }
 });
 
+test('oversized Firebase catalog PDF returns JSON instead of timing out', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-large-firebase-manual-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Huge Service Manual',
+        file: '450AJ huge.pdf',
+        storagePath: '450AJ huge.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          FIREBASE_MANUALS_PROCESSING_MAX_BYTES: String(10 * 1024 * 1024)
+        },
+        fetch: async () => responseBuffer(Buffer.from('%PDF-1.7\n%%EOF', 'latin1'), 200, {
+          'content-type': 'application/pdf',
+          'content-length': String(119 * 1024 * 1024)
+        })
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.status, 'not_found');
+    assert.match(res.json.message, /prilis velke pro prime serverless zpracovani/);
+    assert.equal(res.json.debug.triedCandidates[0].skippedCode, 'pdf_too_large_for_serverless');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
