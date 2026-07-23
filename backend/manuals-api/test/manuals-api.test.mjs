@@ -657,6 +657,11 @@ test('OpenAI debug reports source validation rejection', async () => {
   assert.equal(res.json.debug.openai.parsed, true);
   assert.equal(res.json.debug.openai.acceptedSteps, 0);
   assert.equal(res.json.debug.openai.validationRejectedSteps, 1);
+  assert.equal(res.json.debug.openai.validationDetails.length, 1);
+  assert.equal(res.json.debug.openai.validationDetails[0].rejectReason, 'source_quote_not_related_to_task');
+  assert.equal(res.json.debug.openai.validationDetails[0].tests.pageExists, true);
+  assert.equal(res.json.debug.openai.validationDetails[0].tests.sourceQuoteFoundOnPage, true);
+  assert.equal(res.json.debug.openai.validationDetails[0].tests.thematicMatch, false);
   assert.equal(res.json.debug.openai.errorCode, 'openai_validation_rejected');
   assert.match(res.json.message, /Zobrazuji alespon nalezeny text z manualu/);
   assert.ok(res.json.steps.length > 0);
