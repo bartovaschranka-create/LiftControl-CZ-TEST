@@ -118,11 +118,18 @@ Do not store PDF files in GitHub, GitHub Pages, the frontend build, or `index.ht
 
 Velké JLG service manuály mohou být příliš velké pro přímé PDF zpracování ve Vercel serverless funkci. Backend proto před stažením PDF nejdřív zkusí načíst textový index po stránkách.
 
-Výchozí umístění indexu k PDF v katalogu:
+Výchozí umístění indexu k PDF v katalogu je vždy vedle skutečného `storagePath` PDF:
 
 ```text
 PDF storagePath: 450AJ pvc2307.pdf
-Index storagePath: manuals/jlg/index/450AJ pvc2307.pages.json
+Index storagePath: 450AJ pvc2307.pages.json
+```
+
+Pokud budou PDF později přesunuta do složky, index se odvodí stejně:
+
+```text
+PDF storagePath: manuals/jlg/service/450AJ pvc2307.pdf
+Index storagePath: manuals/jlg/service/450AJ pvc2307.pages.json
 ```
 
 Formát JSON:
@@ -178,7 +185,7 @@ node scripts/build-manual-index.mjs "C:\Users\bartos\Desktop\manualy_JLG_k_nahra
 Vytvořený `.pages.json` nahraj do Firebase Storage například sem:
 
 ```text
-manuals/jlg/index/450AJ pvc2307.pages.json
+450AJ pvc2307.pages.json
 ```
 
 Za běhu backend vyhledává nejdřív v indexu. Originální PDF stáhne až ve chvíli, kdy index neexistuje, nebo když budoucí PDF výstup bude potřebovat originální obrázky/stránky.
