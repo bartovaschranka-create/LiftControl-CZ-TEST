@@ -221,8 +221,10 @@ test('oversized Firebase catalog PDF returns JSON instead of timing out', async 
       }
     );
     assert.equal(res.statusCode, 200);
-    assert.equal(res.json.status, 'not_found');
-    assert.match(res.json.message, /prilis velke pro prime serverless zpracovani/);
+    assert.equal(res.json.status, 'warn');
+    assert.match(res.json.message, /Manual byl nalezen, ale zatim neni pripraven pro inteligentni vyhledavani/);
+    assert.doesNotMatch(res.json.message, /serverless|PDF je prilis velke/i);
+    assert.match(res.json.debug.adminMessage, /PDF je prilis velke pro prime serverless zpracovani|PDF je prilis velke|textovy \.pages\.json index/);
     assert.equal(res.json.debug.triedCandidates[0].skippedCode, 'pdf_too_large_for_serverless');
     assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
   } finally {
