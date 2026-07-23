@@ -24,7 +24,7 @@ const TASK_MAP = [
   ['diagnostika zavady', ['diagnostic', 'troubleshooting', 'fault code']]
 ];
 
-const SERVICE_TASK_RE = /\b(kalibrace|calibration|calibrate|sensor|senzor|cidlo|uhlovy|angle|tilt|level|serizeni|nastaveni|hydraulic|filter|filtr|udrzba|maintenance|vymena|replace|replacement)\b/i;
+const SERVICE_TASK_RE = /\b(kalibrace|calibration|calibrate|sensor|senzor|cidlo|uhlovy|angle|tilt|level|serizeni|nastaveni|adjustment|diagnostika|diagnostic|troubleshooting|fault|hydraulic|filter|filtr|udrzba|maintenance|vymena|replace|replacement|oprava|repair|mereni|measurement|measure|test)\b/i;
 const PARTS_TASK_RE = /\b(part number|parts|nahradni dil|nahradni dily|cislo dilu|objednat dil)\b/i;
 
 export function taskTerms(task) {

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "node test/manuals-api.test.mjs",
-    "check": "node --check api/manuals/search.js && node --check api/stats/intent.js && node --check src/handler.mjs && node --check src/brave.mjs && node --check src/pdf.mjs && node --check src/official-domains.mjs && node --check src/manual-fit.mjs && node --check src/openai.mjs && node --check src/stats-intent.mjs",
+    "check": "node --check api/manuals/search.js && node --check api/stats/intent.js && node --check src/handler.mjs && node --check src/brave.mjs && node --check src/local-manuals.mjs && node --check src/pdf.mjs && node --check src/official-domains.mjs && node --check src/manual-fit.mjs && node --check src/openai.mjs && node --check src/stats-intent.mjs",
     "audit": "npm audit --omit=dev"
   },
   "dependencies": {

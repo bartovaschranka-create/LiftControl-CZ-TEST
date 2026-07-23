@@ -1,6 +1,7 @@
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { WorkerMessageHandler } from 'pdfjs-dist/legacy/build/pdf.worker.mjs';
-import { dirname, join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { dirname, join, resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateOfficialUrl } from './official-domains.mjs';
 
@@ -11,6 +12,22 @@ const STANDARD_FONT_DATA_URL = join(PDFJS_DIST_DIR, 'standard_fonts') + '/';
 globalThis.pdfjsWorker ||= { WorkerMessageHandler };
 
 export async function downloadPdf(candidate, request, config, deps = {}) {
+  if (candidate.source === 'local' && candidate.url && /^https:\/\//i.test(candidate.url)) {
+    try {
+      return await downloadCatalogPdf(candidate, config, deps);
+    } catch (error) {
+      if (!candidate.localPath) throw error;
+      try {
+        return await readLocalPdf(candidate, config);
+      } catch {
+        throw error;
+      }
+    }
+  }
+  if (candidate.localPath) {
+    return readLocalPdf(candidate, config);
+  }
+
   const fetchImpl = deps.fetch || fetch;
   let currentUrl = candidate.url;
   for (let redirect = 0; redirect <= config.maxRedirects; redirect += 1) {
@@ -70,6 +87,92 @@ export async function downloadPdf(candidate, request, config, deps = {}) {
   const err = new Error('Prekrocen maximalni pocet presmerovani.');
   err.code = 'too_many_redirects';
   throw err;
+}
+
+async function downloadCatalogPdf(candidate, config, deps = {}) {
+  const validated = validateCatalogPdfUrl(candidate.url);
+  if (!validated.ok) {
+    const err = new Error(validated.reason);
+    err.code = 'blocked_url';
+    throw err;
+  }
+  const fetchImpl = deps.fetch || fetch;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), config.downloadTimeoutMs);
+  let res;
+  try {
+    res = await fetchImpl(validated.url, {
+      redirect: 'follow',
+      signal: controller.signal,
+      headers: { Accept: 'application/pdf,*/*;q=0.8' }
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!res.ok) {
+    const err = new Error(`Stazeni PDF selhalo (${res.status}).`);
+    err.code = 'download_failed';
+    throw err;
+  }
+  const maxBytes = config.firebaseManualsMaxPdfBytes || config.maxPdfBytes;
+  const contentLength = Number(res.headers.get('content-length') || 0);
+  if (contentLength && contentLength > maxBytes) {
+    const err = new Error('PDF je vetsi nez povoleny limit.');
+    err.code = 'pdf_too_large';
+    throw err;
+  }
+  const buffer = Buffer.from(await res.arrayBuffer());
+  if (buffer.length > maxBytes) {
+    const err = new Error('PDF je vetsi nez povoleny limit.');
+    err.code = 'pdf_too_large';
+    throw err;
+  }
+  return { buffer, finalUrl: validated.url };
+}
+
+function validateCatalogPdfUrl(value) {
+  let url;
+  try {
+    url = new URL(value);
+  } catch {
+    return { ok: false, reason: 'Neplatna URL lokalniho katalogu.' };
+  }
+  if (url.protocol !== 'https:') return { ok: false, reason: 'Manual musi byt dostupny pres HTTPS.' };
+  const host = url.hostname.toLowerCase();
+  const allowed = host === 'firebasestorage.googleapis.com' || host === 'storage.googleapis.com';
+  if (!allowed) return { ok: false, reason: 'Katalog manualu smi ukazovat jen na Firebase/Google Storage.' };
+  if (/github\.io|githubusercontent\.com|github\.com/i.test(url.toString())) {
+    return { ok: false, reason: 'PDF manual nesmi byt stahovan z GitHubu.' };
+  }
+  return { ok: true, url: url.toString() };
+}
+
+async function readLocalPdf(candidate, config) {
+  if (!config.localManualsRoot) {
+    const err = new Error('LOCAL_MANUALS_ROOT neni nastaveny.');
+    err.code = 'local_manuals_root_missing';
+    throw err;
+  }
+  const root = resolve(config.localManualsRoot);
+  const requested = isAbsolute(candidate.localPath)
+    ? resolve(candidate.localPath)
+    : resolve(root, candidate.localPath);
+  const rel = relative(root, requested);
+  if (rel.startsWith('..') || isAbsolute(rel)) {
+    const err = new Error('Lokalni manual je mimo povoleny adresar.');
+    err.code = 'local_manual_blocked';
+    throw err;
+  }
+  const buffer = await readFile(requested);
+  if (buffer.length > config.localMaxPdfBytes) {
+    const err = new Error('PDF je vetsi nez povoleny limit.');
+    err.code = 'pdf_too_large';
+    throw err;
+  }
+  return {
+    buffer,
+    finalUrl: candidate.url || `local-manual://${encodeURIComponent(candidate.fileName || rel)}`
+  };
 }
 
 export async function extractPdfTextPages(buffer, debug = null) {

@@ -1,1 +1,2 @@
 backend/manuals-api/node_modules/
+backend/manuals-api/manuals/**/*.pdf

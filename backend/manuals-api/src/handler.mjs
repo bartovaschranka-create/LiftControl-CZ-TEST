@@ -3,9 +3,10 @@ import { applyCors, isOriginAllowed } from './cors.mjs';
 import { readJsonBody, sendJson } from './http.mjs';
 import { emptyResponse, validateManualRequest } from './validation.mjs';
 import { searchManualCandidates, braveErrorResponse } from './brave.mjs';
+import { searchLocalManualCandidates } from './local-manuals.mjs';
 import { rankCandidates, toVariant } from './candidates.mjs';
 import { downloadPdf, extractPdfTextPages } from './pdf.mjs';
-import { buildSourceOnlyResult, findRelevantPages, isAngleSensorCalibrationTask, isCalibrationTask, isHydraulicFilterTask, taskIntentDebug, taskTerms } from './manual-text.mjs';
+import { buildSourceOnlyResult, findRelevantPages, isAngleSensorCalibrationTask, isCalibrationTask, isHydraulicFilterTask, isServiceTask, taskIntentDebug, taskTerms } from './manual-text.mjs';
 import { structureWithOpenAI } from './openai.mjs';
 import { evaluateManualFit } from './manual-fit.mjs';
 
@@ -40,10 +41,33 @@ export function createManualsHandler(deps = {}) {
     const request = validation.value;
 
     let rawCandidates;
+    const localCandidates = await searchLocalManualCandidates(request, config, deps);
+    const exactCatalogServiceCandidates = localCandidates.filter(candidate => candidate.type === 'service' && candidate.modelMatch === 'exact');
+    const mustUseJlgCatalog = isJlgCatalogServiceRequest(request);
+    if (mustUseJlgCatalog && !exactCatalogServiceCandidates.length) {
+      const response = emptyResponse('not_found', request, 'manual_not_in_catalog: Pro zadaný model není ve Firebase katalogu potvrzený JLG service manual.', []);
+      response.sourceType = 'firebase_catalog';
+      response.selectedManualFile = '';
+      response.selectedManualUrl = '';
+      response.matchedModel = '';
+      response.matchedSerialRange = '';
+      response.selectionReason = 'JLG servisní dotaz vyžaduje přesnou shodu modelu ve Firebase katalogu; Brave Search nebyl použit, aby se nevybral nesouvisející manuál.';
+      response.debug = { triedCandidates: [], openai: createOpenAiDebug(config), taskIntent: taskIntentDebug(request.task), catalogCandidates: localCandidates.map(toVariant) };
+      return sendJson(res, 200, response);
+    }
     try {
-      rawCandidates = await searchManualCandidates(request, config, deps);
+      rawCandidates = mustUseJlgCatalog
+        ? exactCatalogServiceCandidates
+        : [
+            ...localCandidates,
+            ...await searchManualCandidates(request, config, deps)
+          ];
     } catch (error) {
-      return sendJson(res, 200, braveErrorResponse(error, request));
+      if (localCandidates.length) {
+        rawCandidates = localCandidates;
+      } else {
+        return sendJson(res, 200, braveErrorResponse(error, request));
+      }
     }
 
     const candidates = rankCandidates(rawCandidates, request);
@@ -62,6 +86,15 @@ export function createManualsHandler(deps = {}) {
         title: candidate.title || '',
         type: candidate.type || '',
         url: candidate.url || '',
+        source: candidate.source || 'web',
+        sourceType: candidate.sourceType || (candidate.source === 'local' ? 'firebase_catalog' : 'brave_search'),
+        fileName: candidate.fileName || '',
+        pvc: candidate.pvc || '',
+        selectedManualFile: candidate.fileName || '',
+        selectedManualUrl: candidate.url || '',
+        matchedModel: candidate.matchedModel || '',
+        matchedSerialRange: candidate.serialRange || '',
+        selectionReason: candidate.selectionReason || '',
         downloaded: false,
         finalUrl: '',
         textPages: 0,
@@ -99,6 +132,7 @@ export function createManualsHandler(deps = {}) {
         const aiPages = mergePages(relevantPages, pages, fit.sources);
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit, openaiDebug });
+        applySelectionDiagnostics(result, candidate, finalUrl, fit);
         result.debug = { triedCandidates, openai: openaiDebug, taskIntent };
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
@@ -118,9 +152,30 @@ export function createManualsHandler(deps = {}) {
       ? 'Service manual byl prohledan, ale konkretni dolozitelny postup nebyl nalezen. Pri rozporu ma vzdy prednost originalni manual vyrobce.'
       : 'Oficialni manual byl nalezen, ale relevantni dolozitelny postup v textu PDF nalezen nebyl. Pri rozporu ma vzdy prednost originalni manual vyrobce.';
     const response = emptyResponse('not_found', request, message, variants);
+    if (mustUseJlgCatalog) {
+      response.sourceType = 'firebase_catalog';
+      response.selectionReason = 'Byly prohledány pouze přesné JLG katalogové service manuály pro zadaný model; Brave Search nebyl použit.';
+    }
     response.debug = { triedCandidates, openai: openaiDebug, taskIntent };
     return sendJson(res, 200, response);
   };
+}
+
+function isJlgCatalogServiceRequest(request) {
+  return String(request?.maker || '').toLowerCase() === 'jlg' && isServiceTask(request?.task || '');
+}
+
+function applySelectionDiagnostics(result, candidate, finalUrl, fit = {}) {
+  result.sourceType = candidate.sourceType || (candidate.source === 'local' ? 'firebase_catalog' : 'brave_search');
+  result.selectedManualFile = candidate.fileName || '';
+  result.selectedManualUrl = finalUrl || candidate.url || '';
+  result.matchedModel = candidate.matchedModel || '';
+  result.matchedSerialRange = fit.serialRange || candidate.serialRange || '';
+  result.selectionReason = candidate.selectionReason || (
+    result.sourceType === 'firebase_catalog'
+      ? 'Vybráno z interního Firebase katalogu.'
+      : 'Vybráno ze Brave Search fallbacku.'
+  );
 }
 
 function createOpenAiDebug(config) {

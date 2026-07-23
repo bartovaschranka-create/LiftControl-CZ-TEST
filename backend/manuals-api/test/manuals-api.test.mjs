@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { createManualsHandler } from '../src/handler.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
@@ -17,7 +20,7 @@ test('valid JLG request returns a JSON result from official PDF candidate', asyn
   assert.equal(res.json.status, 'warn');
   assert.equal(res.json.maker, 'JLG');
   assert.equal(res.json.manualType, 'service');
-  assert.match(res.json.originalUrl, /^https:\/\/www\.jlg\.com/);
+  assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
   assert.match(res.json.serialRange, /0300000000 and up/i);
 });
 
@@ -44,6 +47,147 @@ test('generic calibration expands to service calibration terms', () => {
   }
   for (const term of ['hydraulic filter', 'return filter', 'filter element']) {
     assert.equal(terms.includes(term), false, term);
+  }
+});
+
+test('JLG request can use a local manual catalog without Brave Search', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-local-manuals-'));
+  try {
+    await writeFile(join(root, '450AJ local.pdf'), fakePdf([
+      'JLG 450AJ service maintenance manual serial number 0300000000 and up',
+      'Diagnostic troubleshooting fault code procedure'
+    ]));
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Local Service Manual',
+        file: '450AJ local.pdf',
+        path: '450AJ local.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: '0300123456', task: 'diagnostika zavady' },
+      {
+        env: {
+          BRAVE_SEARCH_API_KEY: '',
+          LOCAL_MANUALS_ROOT: root,
+          LOCAL_MANUALS_INDEX: join(root, 'index.json')
+        },
+        fetch: async () => { throw new Error('Network should not be used for local catalog fallback.'); }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.maker, 'JLG');
+    assert.equal(res.json.manualType, 'service');
+    assert.match(res.json.manualTitle, /Local Service Manual/);
+    assert.match(res.json.originalUrl, /^local-manual:/);
+    assert.equal(res.json.debug.triedCandidates[0].source, 'local');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, true);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [2]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('JLG catalog prefers Firebase URL over local path', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-firebase-manuals-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Firebase Service Manual',
+        storagePath: '450AJ pvc2307.pdf',
+        path: 'missing-local-file.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    let fetchedUrl = '';
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: '0300123456', task: 'diagnostika zavady' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          MAX_PDF_BYTES: String(2 * 1024 * 1024)
+        },
+        fetch: async url => {
+          fetchedUrl = String(url);
+          return responseBuffer(fakePdf([
+            'JLG 450AJ service maintenance manual serial number 0300000000 and up',
+            'Diagnostic troubleshooting fault code procedure'
+          ]), 200, { 'content-type': 'application/pdf' });
+        }
+      }
+    );
+    assert.match(fetchedUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.match(fetchedUrl, /doctype-test\.firebasestorage\.app/);
+    assert.match(fetchedUrl, /450AJ%20pvc2307\.pdf/);
+    assert.equal(res.json.manualType, 'service');
+    assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.equal(res.json.debug.triedCandidates[0].source, 'local');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, true);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [2]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('JLG 450AJ service task uses Firebase catalog and rejects unrelated 40H Brave result', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-jlg-450aj-catalog-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        file: '450AJ pvc2307.pdf',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up',
+        pvc: '2307'
+      }]
+    }));
+    const fetched = [];
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          MAX_PDF_BYTES: String(2 * 1024 * 1024)
+        },
+        fetch: async url => {
+          const u = String(url);
+          fetched.push(u);
+          if (u.includes('api.search.brave.com')) {
+            return responseJson({ web: { results: [{
+              title: 'JLG 40H/40H+ Service Manual',
+              url: 'https://www.jlg.com/manuals/40h-service.pdf',
+              description: 'service manual 40H 40H+'
+            }] } });
+          }
+          return responseBuffer(fakePdf([
+            'JLG 450AJ service maintenance manual serial number B300000000 and up',
+            'Tilt sensor calibration procedure and troubleshooting test'
+          ]), 200, { 'content-type': 'application/pdf' });
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.sourceType, 'firebase_catalog');
+    assert.equal(res.json.manualType, 'service');
+    assert.equal(res.json.selectedManualFile, '450AJ pvc2307.pdf');
+    assert.match(res.json.selectedManualUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.equal(res.json.matchedModel, '450 AJ');
+    assert.match(res.json.selectionReason, /Přesná shoda modelu/);
+    assert.equal(fetched.some(url => url.includes('api.search.brave.com')), false);
+    assert.doesNotMatch(JSON.stringify(res.json), /40H/i);
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 
@@ -101,6 +245,26 @@ test('service tasks rank service manual before operator and parts fallback', () 
   assert.match(ranked[0].title, /Service Manual/i);
   assert.equal(ranked[0].type, 'service');
   assert.equal(ranked.find(x => /Operator/.test(x.title))?.type, 'operator');
+});
+
+test('JLG angle sensor calibration prioritizes service manual over operator model match', () => {
+  const ranked = rankCandidates([
+    {
+      title: 'JLG 450AJ Operator Manual 450AJ 450AJ 450AJ',
+      url: 'https://www.jlg.com/manuals/450aj-operator.pdf',
+      description: 'operator manual for model 450AJ operation controls',
+      type: 'operator'
+    },
+    {
+      title: 'JLG 450AJ Service and Maintenance Manual',
+      url: 'https://www.jlg.com/manuals/450aj-service-maintenance.pdf',
+      description: 'service manual maintenance calibration angle sensor troubleshooting adjustment',
+      type: 'service'
+    }
+  ], { maker: 'JLG', model: '450AJ', task: 'kalibrace uhloveho senzoru' });
+  assert.equal(ranked[0].type, 'service');
+  assert.match(ranked[0].title, /Service and Maintenance/i);
+  assert.equal(ranked[1].type, 'operator');
 });
 
 test('service findRelevantPages matches word combinations', () => {
@@ -244,7 +408,7 @@ test('missing task is rejected', async () => {
 });
 
 test('bad Brave API key returns safe error without leaking secrets', async () => {
-  const res = await callApi({ maker: 'JLG', model: '450AJ', task: 'diagnostika' }, { fetch: async () => responseJson({}, 401) });
+  const res = await callApi({ maker: 'Genie', model: 'GS-1930', task: 'diagnostika' }, { fetch: async () => responseJson({}, 401) });
   assert.equal(res.statusCode, 200);
   assert.equal(res.json.status, 'error');
   assert.doesNotMatch(JSON.stringify(res.json), /test-key/);
@@ -253,7 +417,7 @@ test('bad Brave API key returns safe error without leaking secrets', async () =>
 test('Brave timeout returns safe error', async () => {
   const err = new Error('timeout');
   err.name = 'AbortError';
-  const res = await callApi({ maker: 'JLG', model: '450AJ', task: 'diagnostika' }, { fetch: async () => { throw err; } });
+  const res = await callApi({ maker: 'Genie', model: 'GS-1930', task: 'diagnostika' }, { fetch: async () => { throw err; } });
   assert.equal(res.json.status, 'error');
 });
 

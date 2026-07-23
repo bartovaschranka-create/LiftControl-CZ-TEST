@@ -9,7 +9,13 @@ export function getConfig(env = process.env) {
     downloadTimeoutMs: numberEnv(env.DOWNLOAD_TIMEOUT_MS, 15000),
     maxRedirects: numberEnv(env.MAX_REDIRECTS, 4),
     maxSearchResults: numberEnv(env.MAX_SEARCH_RESULTS, 8),
-    maxBodyBytes: numberEnv(env.MAX_BODY_BYTES, 16 * 1024)
+    maxBodyBytes: numberEnv(env.MAX_BODY_BYTES, 16 * 1024),
+    localManualsRoot: env.LOCAL_MANUALS_ROOT || '',
+    localManualsIndex: env.LOCAL_MANUALS_INDEX || '',
+    localMaxPdfBytes: numberEnv(env.LOCAL_MAX_PDF_BYTES, 150 * 1024 * 1024),
+    firebaseStorageBucket: env.FIREBASE_STORAGE_BUCKET || 'doctype-test.firebasestorage.app',
+    firebaseManualsUrlBase: env.FIREBASE_MANUALS_URL_BASE || '',
+    firebaseManualsMaxPdfBytes: numberEnv(env.FIREBASE_MANUALS_MAX_PDF_BYTES, numberEnv(env.LOCAL_MAX_PDF_BYTES, 150 * 1024 * 1024))
   };
 }
 
