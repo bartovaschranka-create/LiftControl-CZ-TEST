@@ -18,8 +18,8 @@ export async function searchLocalManualCandidates(request, config = {}, deps = {
   }
   const manuals = Array.isArray(index?.manuals) ? index.manuals : [];
   return manuals
-    .filter(manual => manual.url || config.localManualsRoot)
-    .map(manual => localCandidateScore(manual, request))
+    .filter(manual => manual.url || manual.storagePath || config.localManualsRoot)
+    .map(manual => localCandidateScore(manual, request, config))
     .filter(item => item.confidence >= 0.35)
     .sort((a, b) => {
       const byConfidence = b.confidence - a.confidence;
@@ -28,7 +28,7 @@ export async function searchLocalManualCandidates(request, config = {}, deps = {
     });
 }
 
-function localCandidateScore(manual, request) {
+function localCandidateScore(manual, request, config = {}) {
   const model = normalizeModel(request?.model);
   const aliases = new Set([...(manual.models || []), ...(manual.aliases || [])].map(normalizeModel).filter(Boolean));
   let score = 0.15;
@@ -43,7 +43,7 @@ function localCandidateScore(manual, request) {
 
   return {
     title: manual.title || manual.file || '',
-    url: manual.url || `local-manual://${encodeURIComponent(manual.file || '')}`,
+    url: manual.url || buildFirebaseManualUrl(manual.storagePath, config) || `local-manual://${encodeURIComponent(manual.file || '')}`,
     description: manual.description || 'Local JLG manual catalog',
     snippets: manual.pvc ? [`PVC ${manual.pvc}`] : [],
     type: manual.type || 'service',
@@ -57,6 +57,15 @@ function localCandidateScore(manual, request) {
     storagePath: manual.storagePath || '',
     confidence: Math.max(0, Math.min(score, 0.99))
   };
+}
+
+function buildFirebaseManualUrl(storagePath, config = {}) {
+  if (!storagePath) return '';
+  const base = String(config.firebaseManualsUrlBase || '').trim();
+  if (base) return `${base.replace(/\/+$/, '')}/${encodeURIComponent(storagePath)}`;
+  const bucket = String(config.firebaseStorageBucket || '').trim();
+  if (!bucket) return '';
+  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(storagePath)}?alt=media`;
 }
 
 function normalizeModel(value) {

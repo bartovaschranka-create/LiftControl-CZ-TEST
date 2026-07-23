@@ -20,7 +20,7 @@ test('valid JLG request returns a JSON result from official PDF candidate', asyn
   assert.equal(res.json.status, 'warn');
   assert.equal(res.json.maker, 'JLG');
   assert.equal(res.json.manualType, 'service');
-  assert.match(res.json.originalUrl, /^https:\/\/www\.jlg\.com/);
+  assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
   assert.match(res.json.serialRange, /0300000000 and up/i);
 });
 
@@ -100,7 +100,6 @@ test('JLG catalog prefers Firebase URL over local path', async () => {
         source: 'local',
         type: 'service',
         title: 'JLG 450AJ Firebase Service Manual',
-        url: 'https://firebasestorage.googleapis.com/v0/b/doctype-test.firebasestorage.app/o/manuals%2Fjlg%2Fservice%2F450AJ_pvc2307.pdf?alt=media&token=test',
         storagePath: 'manuals/jlg/service/450AJ_pvc2307.pdf',
         path: 'missing-local-file.pdf',
         models: ['450 AJ', '450AJ'],
@@ -125,6 +124,8 @@ test('JLG catalog prefers Firebase URL over local path', async () => {
       }
     );
     assert.match(fetchedUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
+    assert.match(fetchedUrl, /doctype-test\.firebasestorage\.app/);
+    assert.match(fetchedUrl, /manuals%2Fjlg%2Fservice%2F450AJ_pvc2307\.pdf/);
     assert.equal(res.json.manualType, 'service');
     assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
     assert.equal(res.json.debug.triedCandidates[0].source, 'local');
@@ -332,7 +333,7 @@ test('missing task is rejected', async () => {
 });
 
 test('bad Brave API key returns safe error without leaking secrets', async () => {
-  const res = await callApi({ maker: 'JLG', model: '450AJ', task: 'diagnostika' }, { fetch: async () => responseJson({}, 401) });
+  const res = await callApi({ maker: 'Genie', model: 'GS-1930', task: 'diagnostika' }, { fetch: async () => responseJson({}, 401) });
   assert.equal(res.statusCode, 200);
   assert.equal(res.json.status, 'error');
   assert.doesNotMatch(JSON.stringify(res.json), /test-key/);
@@ -341,7 +342,7 @@ test('bad Brave API key returns safe error without leaking secrets', async () =>
 test('Brave timeout returns safe error', async () => {
   const err = new Error('timeout');
   err.name = 'AbortError';
-  const res = await callApi({ maker: 'JLG', model: '450AJ', task: 'diagnostika' }, { fetch: async () => { throw err; } });
+  const res = await callApi({ maker: 'Genie', model: 'GS-1930', task: 'diagnostika' }, { fetch: async () => { throw err; } });
   assert.equal(res.json.status, 'error');
 });
 

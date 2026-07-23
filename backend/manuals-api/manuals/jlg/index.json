@@ -1,6 +1,6 @@
 {
   "maker": "JLG",
-  "rootHint": "Set LOCAL_MANUALS_ROOT to the folder that contains these PDF files, for example C:\\Users\\bartos\\Desktop\\manuály.",
+  "rootHint": "Firebase Storage structure: manuals/jlg/service/<file>.pdf. LOCAL_MANUALS_ROOT is only for local development.",
   "manuals": [
     {
       "source": "local",
@@ -8,9 +8,16 @@
       "title": "JLG 450AJ Service Manual",
       "file": "450AJ bez pvc.pdf",
       "path": "450AJ bez pvc.pdf",
-      "models": ["450 AJ", "450AJ"],
-      "aliases": ["JLG 450 AJ", "JLG 450AJ"],
-      "pvc": ""
+      "models": [
+        "450 AJ",
+        "450AJ"
+      ],
+      "aliases": [
+        "JLG 450 AJ",
+        "JLG 450AJ"
+      ],
+      "pvc": "",
+      "storagePath": "manuals/jlg/service/450AJ_bez_pvc.pdf"
     },
     {
       "source": "local",
@@ -18,9 +25,16 @@
       "title": "JLG 450AJ Service Manual PVC 2207",
       "file": "450AJ pvc2207.pdf",
       "path": "450AJ pvc2207.pdf",
-      "models": ["450 AJ", "450AJ"],
-      "aliases": ["JLG 450 AJ", "JLG 450AJ"],
-      "pvc": "2207"
+      "models": [
+        "450 AJ",
+        "450AJ"
+      ],
+      "aliases": [
+        "JLG 450 AJ",
+        "JLG 450AJ"
+      ],
+      "pvc": "2207",
+      "storagePath": "manuals/jlg/service/450AJ_pvc2207.pdf"
     },
     {
       "source": "local",
@@ -28,9 +42,16 @@
       "title": "JLG 450AJ Service Manual PVC 2307",
       "file": "450AJ pvc2307.pdf",
       "path": "450AJ pvc2307.pdf",
-      "models": ["450 AJ", "450AJ"],
-      "aliases": ["JLG 450 AJ", "JLG 450AJ"],
-      "pvc": "2307"
+      "models": [
+        "450 AJ",
+        "450AJ"
+      ],
+      "aliases": [
+        "JLG 450 AJ",
+        "JLG 450AJ"
+      ],
+      "pvc": "2307",
+      "storagePath": "manuals/jlg/service/450AJ_pvc2307.pdf"
     },
     {
       "source": "local",
@@ -38,9 +59,16 @@
       "title": "JLG 520AJ Service Manual PVC 2001",
       "file": "520AJ pvc2001.pdf",
       "path": "520AJ pvc2001.pdf",
-      "models": ["520 AJ", "520AJ"],
-      "aliases": ["JLG 520 AJ", "JLG 520AJ"],
-      "pvc": "2001"
+      "models": [
+        "520 AJ",
+        "520AJ"
+      ],
+      "aliases": [
+        "JLG 520 AJ",
+        "JLG 520AJ"
+      ],
+      "pvc": "2001",
+      "storagePath": "manuals/jlg/service/520AJ_pvc2001.pdf"
     },
     {
       "source": "local",
@@ -48,9 +76,16 @@
       "title": "JLG 520AJ Service Manual PVC 2107",
       "file": "520AJ pvc2107.pdf",
       "path": "520AJ pvc2107.pdf",
-      "models": ["520 AJ", "520AJ"],
-      "aliases": ["JLG 520 AJ", "JLG 520AJ"],
-      "pvc": "2107"
+      "models": [
+        "520 AJ",
+        "520AJ"
+      ],
+      "aliases": [
+        "JLG 520 AJ",
+        "JLG 520AJ"
+      ],
+      "pvc": "2107",
+      "storagePath": "manuals/jlg/service/520AJ_pvc2107.pdf"
     },
     {
       "source": "local",
@@ -58,9 +93,16 @@
       "title": "JLG 520AJ Service Manual PVC 2207",
       "file": "520aj pvc2207.pdf",
       "path": "520aj pvc2207.pdf",
-      "models": ["520 AJ", "520AJ"],
-      "aliases": ["JLG 520 AJ", "JLG 520AJ"],
-      "pvc": "2207"
+      "models": [
+        "520 AJ",
+        "520AJ"
+      ],
+      "aliases": [
+        "JLG 520 AJ",
+        "JLG 520AJ"
+      ],
+      "pvc": "2207",
+      "storagePath": "manuals/jlg/service/520AJ_pvc2207.pdf"
     },
     {
       "source": "local",
@@ -68,9 +110,14 @@
       "title": "JLG ES1932 Service Manual PVC 2110",
       "file": "es1932 pvc2110.pdf",
       "path": "es1932 pvc2110.pdf",
-      "models": ["ES1932"],
-      "aliases": ["JLG ES1932"],
-      "pvc": "2110"
+      "models": [
+        "ES1932"
+      ],
+      "aliases": [
+        "JLG ES1932"
+      ],
+      "pvc": "2110",
+      "storagePath": "manuals/jlg/service/es1932_pvc2110.pdf"
     },
     {
       "source": "local",
@@ -78,9 +125,14 @@
       "title": "JLG ES1932 Service Manual PVC 2204",
       "file": "es1932 pvc2204.pdf",
       "path": "es1932 pvc2204.pdf",
-      "models": ["ES1932"],
-      "aliases": ["JLG ES1932"],
-      "pvc": "2204"
+      "models": [
+        "ES1932"
+      ],
+      "aliases": [
+        "JLG ES1932"
+      ],
+      "pvc": "2204",
+      "storagePath": "manuals/jlg/service/es1932_pvc2204.pdf"
     },
     {
       "source": "local",
@@ -88,9 +140,14 @@
       "title": "JLG ES1932 Service Manual PVC 2304",
       "file": "es1932 pvc2304.pdf",
       "path": "es1932 pvc2304.pdf",
-      "models": ["ES1932"],
-      "aliases": ["JLG ES1932"],
-      "pvc": "2304"
+      "models": [
+        "ES1932"
+      ],
+      "aliases": [
+        "JLG ES1932"
+      ],
+      "pvc": "2304",
+      "storagePath": "manuals/jlg/service/es1932_pvc2304.pdf"
     },
     {
       "source": "local",
@@ -98,9 +155,18 @@
       "title": "JLG ES3246 / ES2632 Service Manual PVC 2010",
       "file": "ES3246 ES2632 pvc2010.pdf",
       "path": "ES3246 ES2632 pvc2010.pdf",
-      "models": ["ES3246", "ES2632"],
-      "aliases": ["JLG ES3246", "JLG ES2632", "3246 ES", "2632 ES"],
-      "pvc": "2010"
+      "models": [
+        "ES3246",
+        "ES2632"
+      ],
+      "aliases": [
+        "JLG ES3246",
+        "JLG ES2632",
+        "3246 ES",
+        "2632 ES"
+      ],
+      "pvc": "2010",
+      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2010.pdf"
     },
     {
       "source": "local",
@@ -108,9 +174,18 @@
       "title": "JLG ES3246 / ES2632 Service Manual PVC 2204",
       "file": "ES3246 ES2632 pvc2204.pdf",
       "path": "ES3246 ES2632 pvc2204.pdf",
-      "models": ["ES3246", "ES2632"],
-      "aliases": ["JLG ES3246", "JLG ES2632", "3246 ES", "2632 ES"],
-      "pvc": "2204"
+      "models": [
+        "ES3246",
+        "ES2632"
+      ],
+      "aliases": [
+        "JLG ES3246",
+        "JLG ES2632",
+        "3246 ES",
+        "2632 ES"
+      ],
+      "pvc": "2204",
+      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2204.pdf"
     },
     {
       "source": "local",
@@ -118,9 +193,18 @@
       "title": "JLG ES3246 / ES2632 Service Manual PVC 2304",
       "file": "ES3246 ES2632 pvc2304.pdf",
       "path": "ES3246 ES2632 pvc2304.pdf",
-      "models": ["ES3246", "ES2632"],
-      "aliases": ["JLG ES3246", "JLG ES2632", "3246 ES", "2632 ES"],
-      "pvc": "2304"
+      "models": [
+        "ES3246",
+        "ES2632"
+      ],
+      "aliases": [
+        "JLG ES3246",
+        "JLG ES2632",
+        "3246 ES",
+        "2632 ES"
+      ],
+      "pvc": "2304",
+      "storagePath": "manuals/jlg/service/ES3246_ES2632_pvc2304.pdf"
     },
     {
       "source": "local",
@@ -128,9 +212,15 @@
       "title": "JLG Toucan 12E+ Service Manual",
       "file": "Toucan 12E+ bez pvc.pdf",
       "path": "Toucan 12E+ bez pvc.pdf",
-      "models": ["Toucan 12E+"],
-      "aliases": ["Toucan 12E Plus", "JLG Toucan 12E+"],
-      "pvc": ""
+      "models": [
+        "Toucan 12E+"
+      ],
+      "aliases": [
+        "Toucan 12E Plus",
+        "JLG Toucan 12E+"
+      ],
+      "pvc": "",
+      "storagePath": "manuals/jlg/service/Toucan_12E_plus_bez_pvc.pdf"
     },
     {
       "source": "local",
@@ -138,9 +228,17 @@
       "title": "JLG Toucan 12E+ / 12E Service Manual",
       "file": "Toucan 12E+, 12 bez pvc1.pdf",
       "path": "Toucan 12E+, 12 bez pvc1.pdf",
-      "models": ["Toucan 12E+", "Toucan 12E"],
-      "aliases": ["Toucan 12E Plus", "JLG Toucan 12E+", "JLG Toucan 12E"],
-      "pvc": ""
+      "models": [
+        "Toucan 12E+",
+        "Toucan 12E"
+      ],
+      "aliases": [
+        "Toucan 12E Plus",
+        "JLG Toucan 12E+",
+        "JLG Toucan 12E"
+      ],
+      "pvc": "",
+      "storagePath": "manuals/jlg/service/Toucan_12E_plus_12_bez_pvc1.pdf"
     },
     {
       "source": "local",
@@ -148,9 +246,15 @@
       "title": "JLG Toucan 12E+ Service Manual PVC 2501",
       "file": "toucan 12E+pvc2501.pdf",
       "path": "toucan 12E+pvc2501.pdf",
-      "models": ["Toucan 12E+"],
-      "aliases": ["Toucan 12E Plus", "JLG Toucan 12E+"],
-      "pvc": "2501"
+      "models": [
+        "Toucan 12E+"
+      ],
+      "aliases": [
+        "Toucan 12E Plus",
+        "JLG Toucan 12E+"
+      ],
+      "pvc": "2501",
+      "storagePath": "manuals/jlg/service/Toucan_12E_plus_pvc2501.pdf"
     }
   ]
 }

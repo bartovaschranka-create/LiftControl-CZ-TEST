@@ -68,6 +68,9 @@ OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 MAX_PDF_BYTES=15728640
 DOWNLOAD_TIMEOUT_MS=15000
+FIREBASE_STORAGE_BUCKET=doctype-test.firebasestorage.app
+FIREBASE_MANUALS_URL_BASE=
+FIREBASE_MANUALS_MAX_PDF_BYTES=157286400
 LOCAL_MANUALS_ROOT=C:\Users\bartos\Desktop\manuály
 LOCAL_MAX_PDF_BYTES=157286400
 ```
@@ -79,6 +82,31 @@ LOCAL_MAX_PDF_BYTES=157286400
 `LOCAL_MANUALS_ROOT` je volitelná backendová cesta ke staženým PDF manuálům. Pro JLG backend nejdřív zkusí lokální katalog `manuals/jlg/index.json` a teprve potom Brave Search. PDF soubory se neukládají do frontendu ani do `index.html`. Velké PDF manuály necommituj do repozitáře; katalog obsahuje jen názvy souborů a modely.
 
 `LOCAL_MAX_PDF_BYTES` je samostatný limit pro lokální PDF, protože některé stažené JLG service manuály mají přes 100 MB. Internetové stahování dál používá `MAX_PDF_BYTES`.
+
+## Firebase Storage manuals
+
+JLG PDF manuals are referenced from the catalog `manuals/jlg/index.json` by `storagePath`.
+The expected Firebase Storage layout is:
+
+```text
+manuals/jlg/service/<file>.pdf
+```
+
+The backend resolves each `storagePath` to:
+
+```text
+https://firebasestorage.googleapis.com/v0/b/<FIREBASE_STORAGE_BUCKET>/o/<encoded-storage-path>?alt=media
+```
+
+Source priority:
+
+1. Firebase URL from the catalog or generated from `storagePath`.
+2. Local file from `LOCAL_MANUALS_ROOT` for development only.
+3. Brave Search as fallback.
+
+Do not store PDF files in GitHub, GitHub Pages, the frontend build, or `index.html`.
+`FIREBASE_MANUALS_URL_BASE` is optional and only needed if the manuals are later served through a custom Firebase/Google Storage download base.
+`FIREBASE_MANUALS_MAX_PDF_BYTES` sets the trusted Firebase catalog PDF size limit; JLG service manuals can be much larger than the generic web-search PDF limit.
 
 ## PDF Parser
 

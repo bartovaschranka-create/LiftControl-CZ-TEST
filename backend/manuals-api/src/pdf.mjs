@@ -13,7 +13,16 @@ globalThis.pdfjsWorker ||= { WorkerMessageHandler };
 
 export async function downloadPdf(candidate, request, config, deps = {}) {
   if (candidate.source === 'local' && candidate.url && /^https:\/\//i.test(candidate.url)) {
-    return downloadCatalogPdf(candidate, config, deps);
+    try {
+      return await downloadCatalogPdf(candidate, config, deps);
+    } catch (error) {
+      if (!candidate.localPath) throw error;
+      try {
+        return await readLocalPdf(candidate, config);
+      } catch {
+        throw error;
+      }
+    }
   }
   if (candidate.localPath) {
     return readLocalPdf(candidate, config);
@@ -105,14 +114,15 @@ async function downloadCatalogPdf(candidate, config, deps = {}) {
     err.code = 'download_failed';
     throw err;
   }
+  const maxBytes = config.firebaseManualsMaxPdfBytes || config.maxPdfBytes;
   const contentLength = Number(res.headers.get('content-length') || 0);
-  if (contentLength && contentLength > config.maxPdfBytes) {
+  if (contentLength && contentLength > maxBytes) {
     const err = new Error('PDF je vetsi nez povoleny limit.');
     err.code = 'pdf_too_large';
     throw err;
   }
   const buffer = Buffer.from(await res.arrayBuffer());
-  if (buffer.length > config.maxPdfBytes) {
+  if (buffer.length > maxBytes) {
     const err = new Error('PDF je vetsi nez povoleny limit.');
     err.code = 'pdf_too_large';
     throw err;
