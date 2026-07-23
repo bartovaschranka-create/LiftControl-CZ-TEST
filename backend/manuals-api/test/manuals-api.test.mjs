@@ -17,7 +17,7 @@ import { findRelevantPages, taskIntentDebug, taskTerms } from '../src/manual-tex
 test('valid JLG request returns a JSON result from official PDF candidate', async () => {
   const res = await callApi({ maker: 'JLG', model: '450AJ', serial: '0300123456', task: 'diagnostika zavady' }, { fetch: jlgFetch() });
   assert.equal(res.statusCode, 200);
-  assert.equal(res.json.status, 'warn');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.equal(res.json.maker, 'JLG');
   assert.equal(res.json.manualType, 'service');
   assert.match(res.json.originalUrl, /^https:\/\/firebasestorage\.googleapis\.com/);
@@ -348,7 +348,7 @@ test('handler continues past operator manual and returns debug for service manua
       return responseBuffer(fakePdf(['Genie GS-4390 service manual serial number GS90D-101 and up', 'Function calibration procedure']), 200, { 'content-type': 'application/pdf' });
     }
   });
-  assert.equal(res.json.status, 'warn');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.match(res.json.manualTitle, /Service Manual/i);
   assert.ok(res.json.debug.triedCandidates.some(x => /Service Manual/.test(x.title) && x.downloaded && x.textPages > 0));
 });
@@ -364,7 +364,7 @@ test('OpenAI debug explains missing API key', async () => {
   assert.equal(res.json.debug.openai.configured, false);
   assert.equal(res.json.debug.openai.requestSent, false);
   assert.equal(res.json.debug.openai.errorCode, 'openai_missing_key');
-  assert.match(res.json.message, /OpenAI API klíč není nastavený/);
+  assert.match(res.json.message, /OpenAI API klic neni nastaveny/);
 });
 
 test('OpenAI debug classifies authentication failure', async () => {
@@ -389,7 +389,7 @@ test('OpenAI debug classifies authentication failure', async () => {
   assert.equal(res.json.debug.openai.responseStatus, 401);
   assert.equal(res.json.debug.openai.errorCode, 'openai_auth_failed');
   assert.doesNotMatch(res.json.debug.openai.errorMessage, /BSAICDVM1234567890abcdef|sk-test-secret/);
-  assert.match(res.json.message, /OpenAI API je nastavené/);
+  assert.match(res.json.message, /OpenAI API je nastavene/);
 });
 
 test('OpenAI debug reports source validation rejection', async () => {
@@ -420,13 +420,13 @@ test('OpenAI debug reports source validation rejection', async () => {
       ]), 200, { 'content-type': 'application/pdf' });
     }
   });
-  assert.equal(res.json.status, 'not_found');
+  assert.equal(res.json.status, 'partial_procedure_found');
   assert.equal(res.json.debug.openai.configured, true);
   assert.equal(res.json.debug.openai.parsed, true);
   assert.equal(res.json.debug.openai.acceptedSteps, 0);
   assert.equal(res.json.debug.openai.validationRejectedSteps, 1);
   assert.equal(res.json.debug.openai.errorCode, 'openai_validation_rejected');
-  assert.match(res.json.message, /žádný krok neprošel zdrojovou validací/);
+  assert.match(res.json.message, /relevantni cast postupu/);
 });
 
 test('unsupported maker is rejected', async () => {

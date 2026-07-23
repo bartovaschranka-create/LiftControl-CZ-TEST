@@ -219,6 +219,11 @@ function collectMatchedTerms(pages, task) {
 
 function mergePages(relevantPages, allPages, fitSources = []) {
   const pageNumbers = new Set(relevantPages.map(p => p.page));
+  for (const page of relevantPages || []) {
+    pageNumbers.add(page.page - 1);
+    pageNumbers.add(page.page + 1);
+    pageNumbers.add(page.page + 2);
+  }
   for (const source of fitSources || []) pageNumbers.add(source.page);
   return [...pageNumbers]
     .map(page => allPages.find(p => p.page === page))

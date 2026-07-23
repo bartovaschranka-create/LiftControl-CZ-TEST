@@ -1,4 +1,4 @@
-import { taskTerms } from './manual-text.mjs';
+import { classifyProcedureEvidence, taskTerms } from './manual-text.mjs';
 
 const RESULT_SCHEMA = {
   type: 'object',
@@ -122,6 +122,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   const rawItemCount = countSourceItems(parsed);
   const validated = await validateAiOutput(parsed, pages, request, { config, deps, requireSemanticValidation: true });
   const acceptedCount = validated.steps.length + validated.safety.length;
+  const evidence = classifyProcedureEvidence(pages, request.task);
   setOpenAiDebug(openaiDebug, {
     acceptedSteps: acceptedCount,
     validationRejectedSteps: Math.max(0, rawItemCount - acceptedCount)
@@ -132,9 +133,9 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       errorMessage: 'OpenAI returned source items, but source validation rejected them.'
     });
   }
-  const sources = uniqueSources([...(fit.sources || []), ...validated.sources]);
+  const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(pages)]);
   return {
-    status: validated.steps.length ? (fit.status === 'ok' ? 'ok' : 'warn') : 'not_found',
+    status: validated.steps.length ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
     maker: request.maker,
     model: request.model,
     serial: request.serial,
@@ -146,6 +147,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     safety: validated.safety,
     sources,
     message: validated.message || (validated.steps.length ? 'Postup nalezen v originálním manuálu.' : 'Relevantní text byl v manuálu nalezen, ale žádný krok neprošel zdrojovou validací.'),
+    message: validated.steps.length ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
     variants: []
   };
 }
@@ -289,6 +291,20 @@ function uniqueSources(sources) {
     seen.add(key);
     return true;
   });
+}
+
+function evidenceSources(pages) {
+  return (pages || [])
+    .slice(0, 4)
+    .map(page => ({ page: page.page, quote: firstEvidenceQuote(page.text) }))
+    .filter(source => source.page && source.quote);
+}
+
+function firstEvidenceQuote(text) {
+  const cleaned = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return '';
+  const match = cleaned.match(/(?:[^.!?]*\b(?:calibration|calibrate|tilt|angle|level|sensor|procedure|adjustment|service mode|warning|caution)\b[^.!?]*[.!?]?)/i);
+  return (match?.[0] || cleaned).trim().slice(0, 300);
 }
 
 function extractResponseText(data) {

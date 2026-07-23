@@ -9194,6 +9194,18 @@ function manualFallbackResult(req){
     variants
   };
 }
+function manualResultIsOk(status){
+  return ['ok','procedure_found','partial_procedure_found'].includes(String(status||''));
+}
+function manualStepText(step){
+  return typeof step === 'string' ? step : (step && step.text ? step.text : String(step||''));
+}
+function manualEmptyStepsMessage(result){
+  const status=String(result?.status||'');
+  if(status==='partial_procedure_found') return 'Byla nalezena relevantni cast postupu, ale ceske kroky nebyly bezpecne sestaveny. Over uplny postup v originalnim manualu.';
+  if(status==='reference_found') return 'Byla nalezena pouze zminka nebo odkaz v manualu, ne kompletni pracovni postup.';
+  return 'Presny postup pro tento dotaz nebyl v overenem manualu nalezen.';
+}
 function renderManualResult(result, req){
   const root=document.getElementById('manualResult');
   if(!root) return;
@@ -9203,12 +9215,12 @@ function renderManualResult(result, req){
   }
   const variants=(result.variants||[]).map(v=>`<a class="secondary mini" target="_blank" rel="noopener" href="${escapeHtml(v.url)}">${escapeHtml(v.title||v.type||'Varianta')}</a>`).join('');
   const steps=(result.steps||[]).length
-    ? `<ol class="manual-steps">${result.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol>`
-    : '<div class="manual-status warn">Přesný postup pro tento dotaz nebyl v ověřeném manuálu nalezen.</div>';
+    ? `<ol class="manual-steps">${result.steps.map(s=>`<li>${escapeHtml(manualStepText(s))}</li>`).join('')}</ol>`
+    : `<div class="manual-status warn">${escapeHtml(manualEmptyStepsMessage(result))}</div>`;
   const safety=(result.safety||[]).length
     ? `<div class="manual-safety">${result.safety.map(escapeHtml).join('<br>')}</div>`
     : '<div class="manual-safety">Před prací zajisti stroj proti pohybu, postupuj podle originálního manuálu a interních bezpečnostních pravidel.</div>';
-  root.innerHTML=`<div class="manual-status ${result.status==='ok'?'ok':'warn'}">${escapeHtml(result.message||'Výsledek vyhledání manuálu.')}</div>
+  root.innerHTML=`<div class="manual-status ${manualResultIsOk(result.status)?'ok':'warn'}">${escapeHtml(result.message||'Výsledek vyhledání manuálu.')}</div>
     <div class="manual-result-card">
       <div class="manual-kv">
         <b>Výrobce</b><span>${escapeHtml(result.maker||req.maker||'')}</span>
