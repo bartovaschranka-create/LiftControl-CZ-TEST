@@ -251,7 +251,7 @@ function buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages, fit = {
 }
 
 export async function validateAiOutput(parsed, pages, request = {}, options = {}) {
-  const pageMap = new Map(pages.map(p => [Number(p.page), p.text || '']));
+  const pageMap = new Map(pages.map(p => [Number(p.page), p]));
   const terms = taskTerms(request.task || '').map(normalizeText).filter(x => x.length >= 3);
   const validSteps = await validateItems(parsed.steps, pageMap, terms, 'step', options);
   const validSafety = await validateItems(parsed.safety, pageMap, terms, 'safety', options);
@@ -300,8 +300,10 @@ function validateSourceItem(rawItem, pageMap, terms, kind) {
   const item = normalizeSourceItem(rawItem);
   tests.quoteSpecific = quoteIsSpecific(item.sourceQuote);
   tests.pageExists = pageMap.has(item.page);
-  tests.sourceQuoteFoundOnPage = tests.pageExists && pageContainsQuote(pageMap.get(item.page), item.sourceQuote);
-  tests.thematicMatch = quoteMatchesPurpose(item.sourceQuote, terms, kind);
+  const page = pageMap.get(item.page);
+  tests.sourceQuoteFoundOnPage = tests.pageExists && pageContainsQuote(pageText(page), item.sourceQuote);
+  tests.thematicMatch = quoteMatchesPurpose(item.sourceQuote, terms, kind, page);
+  tests.thematicContext = tests.thematicMatch ? thematicContext(page, item.sourceQuote, terms, kind) : '';
 
   if (!tests.quoteSpecific) return { item, tests, accepted: false, rejectReason: 'source_quote_too_short_or_generic' };
   if (!tests.pageExists) return { item, tests, accepted: false, rejectReason: 'source_page_not_sent_to_openai' };
@@ -327,13 +329,47 @@ function pageContainsQuote(pageText, quote) {
   return normalizeForQuote(pageText).includes(normalizeForQuote(quote));
 }
 
-function quoteMatchesPurpose(quote, terms, kind) {
+function quoteMatchesPurpose(quote, terms, kind, page = null) {
   const q = normalizeText(quote);
   if (kind === 'safety') {
-    return /\b(warning|caution|danger|injury|death|hazard|disconnect|support|lockout|ppe|fall|crush|electric|battery|hydraulic)\b/.test(q);
+    const safetyContext = normalizeText([q, pageContext(page)].join(' '));
+    return /\b(warning|caution|danger|injury|death|hazard|disconnect|support|lockout|ppe|fall|crush|electric|battery|hydraulic)\b/.test(safetyContext);
   }
   if (!terms.length) return true;
-  return terms.some(term => q.includes(term));
+  if (terms.some(term => q.includes(term))) return true;
+  const context = normalizeText([pageContext(page), q].join(' '));
+  return terms.some(term => context.includes(term));
+}
+
+function pageText(page) {
+  if (typeof page === 'string') return page;
+  return page?.text || '';
+}
+
+function pageContext(page) {
+  if (!page || typeof page === 'string') return '';
+  const keywords = Array.isArray(page.keywords) ? page.keywords.join(' ') : '';
+  return [
+    page.title || '',
+    page.chapter || '',
+    keywords,
+    previousHeadingText(page.text || '')
+  ].filter(Boolean).join('\n');
+}
+
+function previousHeadingText(text) {
+  const value = String(text || '');
+  const matches = [...value.matchAll(/(?:^|\n)\s*(?:\d+(?:\.\d+)*\s+)?[A-Z][A-Za-z0-9 /,-]{6,90}(?:\n|$)/g)];
+  return matches.slice(0, 5).map(match => match[0]).join('\n');
+}
+
+function thematicContext(page, quote, terms, kind) {
+  const q = normalizeText(quote);
+  if (kind === 'safety') return 'safety_context';
+  if (terms.some(term => q.includes(term))) return 'source_quote';
+  const context = normalizeText(pageContext(page));
+  const match = terms.find(term => context.includes(term));
+  return match ? `page_context:${match}` : '';
 }
 
 function uniqueSources(sources) {

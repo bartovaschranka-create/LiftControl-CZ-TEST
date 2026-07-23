@@ -988,6 +988,30 @@ test('AI validation accepts freer Czech wording when source quote is exact', asy
   assert.equal(out.steps[0].page, 5);
 });
 
+test('AI validation accepts procedure steps using page title context', async () => {
+  const pages = [{
+    page: 129,
+    title: '4.3.8 Calibrating Platform Angle Sensor',
+    chapter: 'Testing, Calibrations and Special Procedures',
+    keywords: ['platform angle sensor', 'angle sensor calibration'],
+    text: [
+      '4.3.8 Calibrating Platform Angle Sensor',
+      '1. Position the Platform/Ground select switch to Ground.',
+      '2. Plug the analyzer into the connector at the ground control station.'
+    ].join('\n')
+  }];
+  const out = await validateAiOutput({
+    steps: [
+      { text: 'Přepněte přepínač Platform/Ground do polohy Ground.', sourceQuote: '1. Position the Platform/Ground select switch to Ground.', page: 129 },
+      { text: 'Zapojte analyzer do konektoru u pozemního ovládání.', sourceQuote: '2. Plug the analyzer into the connector at the ground control station.', page: 129 }
+    ],
+    safety: [],
+    serialRange: '',
+    message: ''
+  }, pages, { task: 'kalibrace uhloveho senzoru' });
+  assert.equal(out.steps.length, 2);
+});
+
 async function callApi(body, options = {}) {
   const req = Readable.from(options.rawBody ? [options.rawBody] : [JSON.stringify(body || {})]);
   req.method = options.method || 'POST';
