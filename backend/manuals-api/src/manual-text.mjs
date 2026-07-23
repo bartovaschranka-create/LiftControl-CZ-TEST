@@ -97,8 +97,18 @@ export function taskIntentDebug(task) {
 export function findRelevantPages(pages, task, options = {}) {
   const terms = taskTerms(task);
   const limit = options.limit || relevantPageLimit(task, options.manualType);
+  const tocTargets = findTocTargetPages(pages, terms, task);
   return pages
-    .map(page => ({ ...page, score: scoreText(searchablePageText(page), terms, task) }))
+    .map(page => {
+      const scoring = scorePage(page, terms, task);
+      const tocBonus = tocTargets.has(Number(page.page)) ? 18 : 0;
+      return {
+        ...page,
+        score: scoring.score + tocBonus,
+        matchedTerms: [...new Set([...scoring.matchedTerms, ...(tocBonus ? ['toc target page'] : [])])],
+        scoreBreakdown: scoring.scoreBreakdown
+      };
+    })
     .filter(page => page.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
@@ -189,21 +199,90 @@ function sourceOnlyMessage(openaiDebug, evidence) {
   return evidence.message;
 }
 
-function scoreText(text, terms, task) {
+function scorePage(page, terms, task) {
+  const text = searchablePageText(page);
   const hay = normalizeText(text);
-  let score = terms.reduce((sum, term) => sum + (hay.includes(normalizeText(term)) ? 1 : 0), 0);
+  const matchedTerms = [];
+  const scoreBreakdown = [];
+  let score = 0;
+  for (const term of terms) {
+    if (hay.includes(normalizeText(term))) {
+      matchedTerms.push(term);
+      score += 1;
+    }
+  }
+
+  const add = (points, label) => {
+    score += points;
+    matchedTerms.push(label);
+    scoreBreakdown.push({ label, points });
+  };
+
   if (isHydraulicFilterTask(task)) {
-    if (hay.includes('hydraulic') && hay.includes('filter')) score += 4;
-    if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) score += 3;
+    if (hay.includes('hydraulic') && hay.includes('filter')) add(4, 'hydraulic + filter');
+    if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) add(3, 'filter replacement procedure');
   }
   if (isAngleSensorCalibrationTask(task) || /angle|tilt|level|sensor|senzor|cidlo/.test(normalizeText(task))) {
-    if (hay.includes('angle') && hay.includes('sensor')) score += 4;
-    if (hay.includes('sensor') && hay.includes('calibration')) score += 3;
-    if (hay.includes('tilt') && hay.includes('sensor')) score += 3;
-    if (hay.includes('level') && hay.includes('sensor')) score += 3;
+    if (hay.includes('angle sensor calibration')) add(30, 'angle sensor calibration');
+    if (hay.includes('calibrate angle sensor')) add(28, 'calibrate angle sensor');
+    if (hay.includes('platform angle sensor')) add(18, 'platform angle sensor');
+    if (hay.includes('boom angle sensor')) add(18, 'boom angle sensor');
+    if (hay.includes('tilt sensor calibration')) add(30, 'tilt sensor calibration');
+    if (hay.includes('level sensor calibration')) add(30, 'level sensor calibration');
+    if (hay.includes('angle') && hay.includes('sensor')) add(4, 'angle + sensor');
+    if (hay.includes('sensor') && hay.includes('calibration')) add(4, 'sensor + calibration');
+    if (hay.includes('tilt') && hay.includes('sensor')) add(4, 'tilt + sensor');
+    if (hay.includes('level') && hay.includes('sensor')) add(4, 'level + sensor');
   }
-  if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) score += 2;
-  return score;
+  if (isCalibrationTask(task) && /\b(calibration|calibrate|adjustment|zero)\b/.test(hay)) add(2, 'calibration/calibrate/adjustment/zero');
+  if (/\btesting,\s*calibrations\s+and\s+special\s+procedures\b/.test(hay)) add(18, 'Testing, Calibrations and Special Procedures');
+  if (/\bsection\s+4\b/.test(hay) && /\b(calibration|calibrations|special procedures|test procedures)\b/.test(hay)) add(8, 'section 4 calibration chapter');
+  if (hasProcedureText(hay, task)) add(10, 'explicit procedure text');
+
+  const penalty = pagePenalty(page, hay, task);
+  if (penalty) {
+    score -= penalty.points;
+    scoreBreakdown.push({ label: penalty.label, points: -penalty.points });
+  }
+  return { score, matchedTerms: [...new Set(matchedTerms)], scoreBreakdown };
+}
+
+function pagePenalty(page, hay, task) {
+  const pageNumber = Number(page?.page || 0);
+  if (isFrontMatterPage(page, hay)) return { points: 100, label: 'front matter/title/copyright/table of contents penalty' };
+  if (looksLikeReferenceOnly(hay)) return { points: 100, label: 'reference-only/table-of-contents penalty' };
+  if (/\b(specifications|general specifications|machine specifications|serial number locations|revision log|list of figures|list of tables)\b/.test(hay)) {
+    return { points: 80, label: 'general specifications/listing penalty' };
+  }
+  if (pageNumber > 0 && pageNumber <= 30 && isAngleSensorCalibrationTask(task) && !hasProcedureText(hay, task)) {
+    return { points: 20, label: 'early non-procedure page penalty' };
+  }
+  return null;
+}
+
+function isFrontMatterPage(page, hay) {
+  const pageNumber = Number(page?.page || 0);
+  if (pageNumber > 30) return false;
+  return /\b(copyright|table of contents|contents|foreword|revision history|list of figures|list of tables|cover|introduction)\b/.test(hay);
+}
+
+function findTocTargetPages(pages, terms, task) {
+  const out = new Set();
+  const normalizedTerms = terms.map(normalizeText).filter(term => term.length >= 5);
+  for (const page of pages || []) {
+    const text = normalizeText(page?.text || '');
+    if (!looksLikeReferenceOnly(text) && !/\b(table of contents|contents)\b/.test(text)) continue;
+    const lines = text.split(/\n+/).map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    for (const line of lines) {
+      const hasTerm = normalizedTerms.some(term => line.includes(term))
+        || (isAngleSensorCalibrationTask(task) && /\b(tilt|angle|level)\b/.test(line) && /\bsensor\b/.test(line));
+      if (!hasTerm) continue;
+      const pageMatch = line.match(/(?:page\s*)?(\d{2,4})\s*$/);
+      const target = Number(pageMatch?.[1] || 0);
+      if (target > 0) out.add(target);
+    }
+  }
+  return out;
 }
 
 function searchablePageText(page) {

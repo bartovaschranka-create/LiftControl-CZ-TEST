@@ -380,6 +380,86 @@ test('page index metadata participates in search without replacing source text',
   }
 });
 
+test('angle sensor calibration sends procedure pages to OpenAI instead of front matter', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-angle-page-ranking-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    const sentBodies = [];
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret',
+          OPENAI_MAX_PAGES: '4',
+          OPENAI_MAX_CHARS: '9000'
+        },
+        fetch: async (url, options = {}) => {
+          const u = String(url);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              manual: 'JLG 450AJ Service Manual PVC 2307',
+              pages: [
+                { page: 1, title: 'Cover', text: 'Copyright JLG 450AJ service manual angle sensor calibration.' },
+                { page: 7, title: 'Table of Contents', text: 'Contents\nTesting, Calibrations and Special Procedures\nTilt Sensor Calibration ........ 436\nAngle sensor calibration ........ 436' },
+                { page: 19, title: 'List of Figures', text: 'List of figures angle sensor location calibration page 436.' },
+                { page: 30, title: 'General Specifications', text: 'General specifications include tilt sensor and level sensor calibration references.' },
+                { page: 435, chapter: 'Testing, Calibrations and Special Procedures', text: 'Section 4 Testing, Calibrations and Special Procedures. Before calibration, park the machine on a firm level surface.' },
+                {
+                  page: 436,
+                  title: 'Tilt Sensor Calibration',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  keywords: ['tilt sensor calibration', 'angle sensor calibration', 'level sensor calibration'],
+                  text: 'JLG 450AJ service manual serial number B300000000 and up. Tilt sensor calibration procedure. Connect the analyzer. Select CALIBRATIONS. Select TILT SENSOR CALIBRATION. Press ENTER and follow the analyzer prompts.'
+                },
+                { page: 437, chapter: 'Testing, Calibrations and Special Procedures', text: 'Verify the tilt sensor calibration by checking the analyzer display and machine level indication.' }
+              ]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          if (u.includes('api.openai.com')) {
+            const body = JSON.parse(options.body);
+            sentBodies.push(body);
+            if (body?.text?.format?.name === 'manual_source_support_check') {
+              return responseJson({ output_text: JSON.stringify({ supported: true, reason: '' }) });
+            }
+            return responseJson({ output_text: JSON.stringify({
+              steps: [{
+                text: 'Připojte analyzátor, zvolte CALIBRATIONS a poté TILT SENSOR CALIBRATION.',
+                sourceQuote: 'Connect the analyzer. Select CALIBRATIONS. Select TILT SENSOR CALIBRATION.',
+                page: 436
+              }],
+              safety: [],
+              serialRange: 'B300000000 and up',
+              message: 'Postup nalezen v originalnim manualu.'
+            }) });
+          }
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.debug.triedCandidates[0].indexLoaded, true);
+    assert.equal(res.json.debug.openai.sentPageNumbers.includes(436), true);
+    assert.equal(res.json.debug.openai.sentPageNumbers.some(page => [1, 7, 19, 30].includes(page)), false);
+    assert.ok(res.json.debug.triedCandidates[0].matchedPageDetails.some(page => page.page === 436 && page.score > 0));
+    assert.ok(res.json.debug.openai.sentPageDetails.some(page => page.page === 436 && page.matchedTerms.includes('tilt sensor calibration')));
+    assert.ok(sentBodies.some(body => body?.text?.format?.name === 'manual_procedure_result'));
+    assert.ok(res.json.steps.length > 0);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
