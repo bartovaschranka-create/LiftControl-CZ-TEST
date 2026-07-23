@@ -230,6 +230,48 @@ test('oversized Firebase catalog PDF returns JSON instead of timing out', async 
   }
 });
 
+test('index download HTTP status is exposed in debug', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-index-403-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Protected Index Manual',
+        file: '450AJ pvc2307.pdf',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ']
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          FIREBASE_MANUALS_PROCESSING_MAX_BYTES: String(10 * 1024 * 1024),
+          VERCEL_GIT_COMMIT_SHA: 'test-sha'
+        },
+        fetch: async url => {
+          const u = String(url);
+          if (u.includes('.pages.json')) return responseText('Forbidden', 403);
+          return responseBuffer(Buffer.from('%PDF-1.7\n%%EOF', 'latin1'), 200, {
+            'content-type': 'application/pdf',
+            'content-length': String(119 * 1024 * 1024)
+          });
+        }
+      }
+    );
+    const tried = res.json.debug.triedCandidates[0];
+    assert.equal(tried.storagePath, '450AJ pvc2307.pdf');
+    assert.equal(tried.derivedIndexStoragePath, '450AJ pvc2307.pages.json');
+    assert.equal(tried.indexErrors[0].httpStatus, 403);
+    assert.equal(res.json.debug.deployment.vercelGitCommitSha, 'test-sha');
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('JLG catalog uses page index before downloading oversized PDF', async () => {
   const root = await mkdtemp(join(tmpdir(), 'liftcontrol-indexed-firebase-manual-'));
   try {

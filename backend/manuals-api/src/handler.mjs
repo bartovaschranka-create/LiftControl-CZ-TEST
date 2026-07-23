@@ -53,7 +53,7 @@ export function createManualsHandler(deps = {}) {
       response.matchedModel = '';
       response.matchedSerialRange = '';
       response.selectionReason = 'JLG servisní dotaz vyžaduje přesnou shodu modelu ve Firebase katalogu; Brave Search nebyl použit, aby se nevybral nesouvisející manuál.';
-      response.debug = { triedCandidates: [], openai: createOpenAiDebug(config), taskIntent: taskIntentDebug(request.task), catalogCandidates: localCandidates.map(toVariant) };
+      response.debug = { triedCandidates: [], openai: createOpenAiDebug(config), taskIntent: taskIntentDebug(request.task), deployment: config.deployment, catalogCandidates: localCandidates.map(toVariant) };
       return sendJson(res, 200, response);
     }
     try {
@@ -78,7 +78,7 @@ export function createManualsHandler(deps = {}) {
     const taskIntent = taskIntentDebug(request.task);
     if (!candidates.length) {
       const response = emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []);
-      response.debug = { triedCandidates, openai: openaiDebug, taskIntent };
+      response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
       return sendJson(res, 200, response);
     }
 
@@ -90,6 +90,9 @@ export function createManualsHandler(deps = {}) {
         source: candidate.source || 'web',
         sourceType: candidate.sourceType || (candidate.source === 'local' ? 'firebase_catalog' : 'brave_search'),
         fileName: candidate.fileName || '',
+        storagePath: candidate.storagePath || '',
+        indexStoragePath: candidate.indexStoragePath || '',
+        indexUrl: candidate.indexUrl || '',
         pvc: candidate.pvc || '',
         selectedManualFile: candidate.fileName || '',
         selectedManualUrl: candidate.url || '',
@@ -149,7 +152,7 @@ export function createManualsHandler(deps = {}) {
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit, openaiDebug });
         applySelectionDiagnostics(result, candidate, finalUrl, fit);
-        result.debug = { triedCandidates, openai: openaiDebug, taskIntent };
+        result.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
           result.message = `${result.message} Pri rozporu ma vzdy prednost originalni manual vyrobce.`;
@@ -177,7 +180,7 @@ export function createManualsHandler(deps = {}) {
       response.sourceType = 'firebase_catalog';
       response.selectionReason = 'Byly prohledány pouze přesné JLG katalogové service manuály pro zadaný model; Brave Search nebyl použit.';
     }
-    response.debug = { triedCandidates, openai: openaiDebug, taskIntent };
+    response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
     return sendJson(res, 200, response);
   };
 }

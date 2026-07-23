@@ -4,6 +4,8 @@ import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
 export async function loadManualPageIndex(candidate, config = {}, deps = {}, debug = null) {
   const sources = buildIndexSources(candidate, config);
   if (debug) {
+    debug.storagePath = candidate.storagePath || '';
+    debug.derivedIndexStoragePath = defaultIndexStoragePath(candidate.storagePath || candidate.fileName || candidate.localPath, candidate);
     debug.indexTried = sources.map(source => ({
       source: source.kind,
       url: source.url || '',
@@ -26,7 +28,7 @@ export async function loadManualPageIndex(candidate, config = {}, deps = {}, deb
         debug.indexLoaded = true;
         debug.indexSource = source.kind;
         debug.indexUrl = source.url || '';
-        debug.indexPath = source.path || '';
+        debug.indexPath = source.storagePath || source.path || '';
         debug.textSource = 'page_index';
       }
       return {
@@ -43,6 +45,8 @@ export async function loadManualPageIndex(candidate, config = {}, deps = {}, deb
           source: source.kind,
           url: source.url || '',
           path: source.path || '',
+          storagePath: source.storagePath || '',
+          httpStatus: error?.httpStatus || null,
           code: error?.code || '',
           message: error?.message || String(error)
         });
@@ -127,6 +131,7 @@ async function fetchIndexJson(url, config, deps = {}) {
   if (!res.ok) {
     const err = new Error(`Stazeni indexu selhalo (${res.status}).`);
     err.code = res.status === 404 ? 'index_not_found' : 'index_download_failed';
+    err.httpStatus = res.status;
     throw err;
   }
   const contentLength = Number(getHeader(res.headers, 'content-length') || 0);
