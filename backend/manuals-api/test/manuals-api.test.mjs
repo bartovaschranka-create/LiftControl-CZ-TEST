@@ -192,6 +192,26 @@ test('service tasks rank service manual before operator and parts fallback', () 
   assert.equal(ranked.find(x => /Operator/.test(x.title))?.type, 'operator');
 });
 
+test('JLG angle sensor calibration prioritizes service manual over operator model match', () => {
+  const ranked = rankCandidates([
+    {
+      title: 'JLG 450AJ Operator Manual 450AJ 450AJ 450AJ',
+      url: 'https://www.jlg.com/manuals/450aj-operator.pdf',
+      description: 'operator manual for model 450AJ operation controls',
+      type: 'operator'
+    },
+    {
+      title: 'JLG 450AJ Service and Maintenance Manual',
+      url: 'https://www.jlg.com/manuals/450aj-service-maintenance.pdf',
+      description: 'service manual maintenance calibration angle sensor troubleshooting adjustment',
+      type: 'service'
+    }
+  ], { maker: 'JLG', model: '450AJ', task: 'kalibrace uhloveho senzoru' });
+  assert.equal(ranked[0].type, 'service');
+  assert.match(ranked[0].title, /Service and Maintenance/i);
+  assert.equal(ranked[1].type, 'operator');
+});
+
 test('service findRelevantPages matches word combinations', () => {
   const pages = [
     { page: 1, text: 'General safety only.' },
