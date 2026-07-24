@@ -316,20 +316,33 @@ class Layout {
       const bh = Math.max(7, block.height * sy);
       const by = y + h - (block.y + block.height) * sy;
       const bw = Math.max(16, block.width * sx);
-      if (image?.dataUrl) this.doc.fillRect(bx - 1.5, by - 1.5, bw + 3, bh + 3);
-      const fontSize = Math.max(5.2, Math.min(9.5, (block.fontSize || block.height || 8) * sy * 0.92));
-      this.textInBox(block.text, bx, by + bh - 2, bw, bh, fontSize);
+      const pad = image?.dataUrl ? 2.8 : 1.2;
+      const boxH = Math.max(bh + pad * 2, Math.min(34, bh * 1.85));
+      if (image?.dataUrl) this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
+      const fontSize = Math.max(6.1, Math.min(9.8, (block.fontSize || block.height || 8) * sy * 1.02));
+      this.textInBox(block.text, bx, by + boxH - pad - 1.2, bw, boxH - pad * 1.3, fontSize);
     }
     this.doc.text(x, M - 12, sourceLabel(data, page.page), 7, FONT);
     this.y = M;
   }
   textInBox(text, x, topY, width, height, size) {
-    const lineHeight = size * 1.12;
-    const lines = wrap(clean(text), width, size);
-    let y = topY - size;
-    const maxLines = Math.max(1, Math.floor(height / lineHeight));
-    lines.slice(0, maxLines).forEach(line => {
-      this.doc.text(x, y, line, size, FONT);
+    const value = clean(text);
+    let fontSize = size;
+    let lineHeight = fontSize * 1.12;
+    let lines = wrap(value, width, fontSize);
+    let maxLines = Math.max(1, Math.floor(height / lineHeight));
+    while (lines.length > maxLines && fontSize > 4.6) {
+      fontSize -= 0.35;
+      lineHeight = fontSize * 1.12;
+      lines = wrap(value, width, fontSize);
+      maxLines = Math.max(1, Math.floor(height / lineHeight));
+    }
+    let y = topY - fontSize;
+    const visible = lines.slice(0, maxLines);
+    visible.forEach((line, index) => {
+      const suffix = index === visible.length - 1 && lines.length > visible.length && line.length > 3 ? '...' : '';
+      const out = suffix ? `${line.slice(0, Math.max(1, line.length - 3))}${suffix}` : line;
+      this.doc.text(x, y, out, fontSize, FONT);
       y -= lineHeight;
     });
   }
