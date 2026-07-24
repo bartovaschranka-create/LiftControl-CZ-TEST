@@ -21,9 +21,10 @@ export function createServiceProcedurePdf(input = {}) {
 
   layout.heading('Ceska servisni kapitola');
   if (data.steps.length) {
+    const insertedImagePages = new Set();
     data.steps.forEach((step, index) => {
       layout.stepBlock(index + 1, step, data);
-      imagesForStep(data.images, step).forEach(image => layout.imageBlock(image, data));
+      imagesForStep(data.images, step, insertedImagePages).forEach(image => layout.imageBlock(image, data));
     });
   } else {
     layout.paragraph('Ceska servisni kapitola nebyla bezpecne sestavena. Nize je uveden nalezeny zdrojovy text z manualu.');
@@ -81,9 +82,14 @@ function sourceLabel(data, page) {
   return `Zdroj: ${manual}, str. ${page || '?'}`;
 }
 
-function imagesForStep(images, step) {
+function imagesForStep(images, step, insertedImagePages = new Set()) {
   const page = Number(step?.page || 0);
-  return (images || []).filter(image => Number(image.stepPage || image.page || 0) === page);
+  if (!page || insertedImagePages.has(page)) return [];
+  const pageImages = (images || []).filter(image => Number(image.stepPage || image.page || 0) === page);
+  const renderedImages = pageImages.filter(image => image.dataUrl);
+  const selected = renderedImages.length ? renderedImages : pageImages;
+  if (selected.length) insertedImagePages.add(page);
+  return selected;
 }
 
 function normalizeImages(images) {

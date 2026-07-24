@@ -179,6 +179,14 @@ Jednorázové vytvoření indexu z lokálně staženého PDF:
 node scripts/build-manual-index.mjs "C:\Users\bartos\Desktop\manualy_JLG_k_nahrani\450AJ pvc2307.pdf" "450AJ pvc2307.pages.json" --manual "JLG 450AJ Service Manual PVC 2307" --maker JLG --model 450AJ --models "450 AJ,450AJ" --manual-type service --edition "PVC 2307" --serial-range "B300000000 and up"
 ```
 
+Volitelne vlozeni originalnich obrazku/stran z PDF do indexu pro servisni PDF:
+
+```bash
+node scripts/build-manual-index.mjs "C:\Users\bartos\Desktop\manualy_JLG_k_nahrani\450AJ pvc2307.pdf" "450AJ pvc2307.pages.json" --manual "JLG 450AJ Service Manual PVC 2307" --maker JLG --model 450AJ --models "450 AJ,450AJ" --manual-type service --edition "PVC 2307" --serial-range "B300000000 and up" --page-images --image-pages 129-131 --pdftoppm "C:\Users\bartos\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin\pdftoppm.exe"
+```
+
+`--page-images` ulozi JPEG obrazova data do `.pages.json`. Pouzivej idealne spolecne s `--image-pages`, aby se do indexu nevkladaly stovky zbytecnych stran manualu. Vystupni servisni PDF pak vlozi originalni anglicky obrazek/stranu primo za prvni krok z odpovidajici strany. Text obrazku se nepreklada.
+
 Volitelné vytvoření embeddingů při indexaci:
 
 ```bash

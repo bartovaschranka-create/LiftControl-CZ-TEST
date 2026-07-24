@@ -935,6 +935,8 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.doesNotMatch(raw, /Typ manualu/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
   assert.match(raw, /Pripojte servisni analyzer/);
+  assert.match(raw, /\/Subtype \/Image/);
+  assert.doesNotMatch(raw, /Obrazova data nejsou v indexu ulozena/);
 });
 
 test('service PDF endpoint returns application/pdf', async () => {
@@ -1265,7 +1267,11 @@ function servicePdfPayload() {
         page: 436,
         stepPage: 436,
         figure: 'Figure 4-12',
-        caption: 'Analyzer connector and platform angle sensor menu'
+        caption: 'Analyzer connector and platform angle sensor menu',
+        mimeType: 'image/jpeg',
+        width: 1,
+        height: 1,
+        dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/ASP/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/ASP/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAY/Al//xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAE/IV//2gAMAwEAAgADAAAAEP/EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQMBAT8QH//EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QH//EFBABAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8QH//Z'
       }]
     }
   };
