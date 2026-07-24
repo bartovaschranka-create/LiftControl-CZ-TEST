@@ -327,6 +327,54 @@ test('JLG catalog uses page index before downloading oversized PDF', async () =>
   }
 });
 
+test('JLG catalog accepts a 12 MB Firebase page index', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-large-page-index-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Large Indexed Service Manual',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    const largeText = [
+      'JLG 450AJ service manual serial number B300000000 and up.',
+      '4.3.8 Calibrating Platform Angle Sensor.',
+      'Tilt sensor calibration procedure. Set the platform level and perform the adjustment from the service menu.',
+      'x'.repeat(12 * 1024 * 1024)
+    ].join('\n');
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          MANUAL_INDEX_MAX_BYTES: String(25 * 1024 * 1024)
+        },
+        fetch: async url => {
+          if (String(url).includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              manual: 'JLG 450AJ Large Indexed Service Manual',
+              pages: [{ page: 129, title: '4.3.8 Calibrating Platform Angle Sensor', text: largeText }]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          throw new Error('PDF should not be downloaded when a large page index is available.');
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.debug.triedCandidates[0].indexLoaded, true);
+    assert.equal(res.json.debug.triedCandidates[0].textSource, 'page_index');
+    assert.equal(res.json.debug.triedCandidates[0].downloaded, false);
+    assert.deepEqual(res.json.debug.triedCandidates[0].matchedPages, [129]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('page index metadata participates in search without replacing source text', async () => {
   const root = await mkdtemp(join(tmpdir(), 'liftcontrol-metadata-index-'));
   try {
@@ -1018,6 +1066,15 @@ test('service PDF endpoint returns application/pdf', async () => {
   assert.equal(res.statusCode, 200);
   assert.equal(res.headers['content-type'], 'application/pdf');
   assert.equal(Buffer.isBuffer(res.bodyBuffer), true);
+  assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
+});
+
+test('service PDF endpoint accepts translated manual payload over 2 MB', async () => {
+  const payload = servicePdfPayload();
+  payload.result.unusedLargeDiagnostic = 'x'.repeat(3 * 1024 * 1024);
+  const res = await callServicePdf(payload);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.headers['content-type'], 'application/pdf');
   assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
 });
 
