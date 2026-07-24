@@ -595,6 +595,156 @@ test('procedure context continues until the next chapter heading', async () => {
   }
 });
 
+test('platform angle sensor manual page images are selected before late display-only pages', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-platform-angle-page-images-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    let manualPrompt = null;
+    const pageImage = {
+      figure: '',
+      bbox: 'page',
+      caption: 'Originalni strana manualu 129',
+      page: 129,
+      mimeType: 'image/jpeg',
+      dataUrl: tinyJpegDataUrl(),
+      width: 1020,
+      height: 1320
+    };
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret',
+          OPENAI_MAX_PAGES: '6',
+          OPENAI_MAX_CHARS: '12000'
+        },
+        fetch: async (url, options = {}) => {
+          const u = String(url);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              manual: 'JLG 450AJ Service Manual PVC 2307',
+              pages: [
+                {
+                  page: 110,
+                  title: 'Figure 43. Tilt Sensor Location',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  text: 'Tilt Sensor Location. Park the machine on a firm and level surface.',
+                  textBlocks: [{ text: 'Tilt Sensor Location', x: 60, y: 70, width: 180, height: 18, fontSize: 12 }],
+                  images: [{ figure: 'Figure 43', caption: 'Tilt Sensor Location', page: 110 }]
+                },
+                {
+                  page: 129,
+                  title: 'Calibrating Platform Angle Sensor',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  keywords: ['platform angle sensor', 'angle sensor calibration'],
+                  width: 612,
+                  height: 792,
+                  text: 'JLG 450AJ service manual serial number B300000000 and up.\n4.3.8 Calibrating Platform Angle Sensor\n1. Position the Platform/Ground select switch to Ground.',
+                  textBlocks: [
+                    { text: '4.3.8 Calibrating Platform Angle Sensor', x: 58, y: 72, width: 260, height: 18, fontSize: 12 },
+                    { text: '1. Position the Platform/Ground select switch to Ground.', x: 72, y: 120, width: 360, height: 14, fontSize: 10 }
+                  ],
+                  images: [pageImage]
+                },
+                {
+                  page: 130,
+                  title: 'Use the right Arrow key to reach CALIBRATIONS. Hit Enter.',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  width: 612,
+                  height: 792,
+                  text: '2. Plug the analyzer into the connector. 3. Use the right Arrow key to reach CALIBRATIONS. Hit Enter.',
+                  textBlocks: [{ text: 'Use the right Arrow key to reach CALIBRATIONS. Hit Enter.', x: 72, y: 140, width: 360, height: 14, fontSize: 10 }],
+                  images: [{ ...pageImage, page: 130, caption: 'Originalni strana manualu 130' }]
+                },
+                {
+                  page: 131,
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  width: 612,
+                  height: 792,
+                  text: '4. Select PLATFORM ANGLE. 5. Press ENTER to continue.',
+                  textBlocks: [{ text: 'Select PLATFORM ANGLE. Press ENTER to continue.', x: 72, y: 160, width: 330, height: 14, fontSize: 10 }],
+                  images: [{ ...pageImage, page: 131, caption: 'Originalni strana manualu 131' }]
+                },
+                {
+                  page: 132,
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  width: 612,
+                  height: 792,
+                  text: '6. Verify the platform angle sensor calibration before returning the machine to service.',
+                  textBlocks: [{ text: 'Verify the platform angle sensor calibration.', x: 72, y: 180, width: 320, height: 14, fontSize: 10 }],
+                  images: [{ ...pageImage, page: 132, caption: 'Originalni strana manualu 132' }]
+                },
+                {
+                  page: 133,
+                  title: 'UGM will confirm Platform Angle Max sensor readings. The screen will read:',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  text: '12. UGM will confirm Platform Angle Max sensor readings. The screen will read:'
+                },
+                {
+                  page: 134,
+                  title: 'UGM will confirm Platform Angle Min sensor readings. The screen will read:',
+                  chapter: 'Testing, Calibrations and Special Procedures',
+                  text: '15. UGM will confirm Platform Angle Min sensor readings. The screen will read:'
+                }
+              ]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          if (u.includes('api.openai.com')) {
+            const body = JSON.parse(options.body);
+            manualPrompt = body;
+            return responseJson({ output_text: JSON.stringify({
+              steps: [],
+              safety: [],
+              translatedPages: [{
+                page: 129,
+                width: 612,
+                height: 792,
+                blocks: [{
+                  blockId: '1',
+                  text: '4.3.8 Kalibrace snimace uhlu plosiny',
+                  sourceQuote: '4.3.8 Calibrating Platform Angle Sensor'
+                }]
+              }, {
+                page: 130,
+                width: 612,
+                height: 792,
+                blocks: [{
+                  blockId: '1',
+                  text: 'Pomoci sipky prejdete na CALIBRATIONS. Stisknete Enter.',
+                  sourceQuote: 'Use the right Arrow key to reach CALIBRATIONS. Hit Enter.'
+                }]
+              }],
+              serialRange: 'B300000000 and up',
+              message: 'Prelozena kapitola byla vytvorena.'
+            }) });
+          }
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.debug.triedCandidates[0].indexLoaded, true);
+    assert.ok(Array.isArray(res.json.debug.openai.sentPageNumbers), JSON.stringify(res.json, null, 2));
+    assert.deepEqual(res.json.debug.openai.sentPageNumbers.slice(0, 4), [129, 130, 131, 132]);
+    assert.equal(res.json.translatedPages.length, 2);
+    assert.equal(res.json.images.some(image => image.page === 129 && image.dataUrl), true);
+    assert.match(JSON.stringify(manualPrompt), /TEXT_BLOCKS/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('validated OpenAI steps keep Czech text and English source quote separate', async () => {
   const root = await mkdtemp(join(tmpdir(), 'liftcontrol-czech-openai-step-'));
   try {
@@ -1377,6 +1527,10 @@ async function callServicePdf(body, options = {}) {
     res.json = null;
   }
   return res;
+}
+
+function tinyJpegDataUrl() {
+  return 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/ASP/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/ASP/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAY/Al//xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAE/IV//2gAMAwEAAgADAAAAEP/EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQMBAT8QH//EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QH//EFBABAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8QH//Z';
 }
 
 function servicePdfPayload() {

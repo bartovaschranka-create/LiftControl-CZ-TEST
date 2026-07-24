@@ -2419,7 +2419,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.214</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.215</div>
   </div>
 </aside>
 
@@ -9238,6 +9238,14 @@ function manualServicePdfPayload(){
     }
   };
 }
+function manualResultDiagnostics(result){
+  const translatedPages=Array.isArray(result?.translatedPages) ? result.translatedPages : [];
+  const images=Array.isArray(result?.images) ? result.images : [];
+  const translatedBlocks=translatedPages.reduce((sum,p)=>sum+(Array.isArray(p?.blocks)?p.blocks.length:0),0);
+  const pageImages=images.filter(img=>String(img?.bbox||'').toLowerCase()==='page' || /originalni strana manualu|original manual page/i.test(String(img?.caption||'')));
+  const pageImagesWithDataUrl=pageImages.filter(img=>!!img?.dataUrl).length;
+  return `translatedPages: ${translatedPages.length}, translatedBlocks: ${translatedBlocks}, pageImages: ${pageImages.length}, pageImagesWithDataUrl: ${pageImagesWithDataUrl}`;
+}
 async function createManualServicePdf(){
   if(!manualLastResult || !manualLastRequest){ alert('Nejdřív vyhledej ověřený manuál.'); return; }
   const endpoint=getManualsServicePdfUrl();
@@ -9295,6 +9303,7 @@ function renderManualResult(result, req){
       </div>
       ${result.originalUrl ? `<div class="manual-actions"><a class="primary mini" target="_blank" rel="noopener" href="${escapeHtml(result.originalUrl)}">Otevřít originální zdroj</a>${variants}</div>` : (variants ? `<div class="manual-actions">${variants}</div>` : '')}
       ${pdfAction ? `<div class="manual-actions">${pdfAction}</div>` : ''}
+      <div class="helper">${escapeHtml(manualResultDiagnostics(result))}</div>
       <div><strong>Stručný český postup</strong>${steps}</div>
       ${safety}
       <div class="helper">Při rozporu má vždy přednost originální manuál výrobce.</div>
@@ -10812,7 +10821,7 @@ setTimeout(() => retryPendingFaultSync().catch(err => console.warn('Pending faul
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  const APP_UPDATE_VERSION = '5.214';
+  const APP_UPDATE_VERSION = '5.215';
   const APP_UPDATE_ACCEPT_KEY = 'liftcontrol_update_accepted_version';
   let appUpdateRegistration = null;
   let appUpdateWorker = null;

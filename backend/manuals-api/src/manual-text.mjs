@@ -224,6 +224,8 @@ function scorePage(page, terms, task) {
     if (hay.includes('filter') && /\b(replace|replacement|element|changing|change)\b/.test(hay)) add(3, 'filter replacement procedure');
   }
   if (isAngleSensorCalibrationTask(task) || /angle|tilt|level|sensor|senzor|cidlo/.test(normalizeText(task))) {
+    if (/\bcalibrating\s+platform\s+angle\s+sensor\b/.test(hay)) add(90, 'calibrating platform angle sensor');
+    if (/\bcalibrating\s+(?:boom|tilt|level)\s+sensor\b/.test(hay)) add(75, 'calibrating specific sensor');
     if (hay.includes('angle sensor calibration')) add(30, 'angle sensor calibration');
     if (hay.includes('calibrate angle sensor')) add(28, 'calibrate angle sensor');
     if (hay.includes('platform angle sensor')) add(18, 'platform angle sensor');
