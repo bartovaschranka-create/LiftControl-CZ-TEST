@@ -1049,14 +1049,14 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
   assert.ok(pdf.length > 1000);
   const raw = pdf.toString('latin1');
-  assert.match(raw, /Ceska servisni prirucka vyrobce/);
-  assert.match(raw, /Ceska servisni kapitola/);
+  assert.match(raw, /Cesky preklad servisni kapitoly/);
+  assert.match(raw, /Prelozene strany originalniho manualu/);
   assert.match(raw, /Pouzity manual/);
   assert.doesNotMatch(raw, /Typ manualu/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
-  assert.match(raw, /Pripojte servisni analyzer/);
-  assert.match(raw, /Prelozene strany originalniho manualu/);
   assert.match(raw, /Cesky text prekryty na puvodni strane manualu/);
+  assert.doesNotMatch(raw, /Ceska servisni kapitola/);
+  assert.doesNotMatch(raw, /Zdrojove citace/);
   assert.match(raw, /\/Subtype \/Image/);
   assert.doesNotMatch(raw, /Obrazova data nejsou v indexu ulozena/);
 });

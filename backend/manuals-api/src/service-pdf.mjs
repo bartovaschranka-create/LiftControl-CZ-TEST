@@ -10,7 +10,7 @@ export function createServiceProcedurePdf(input = {}) {
 
   const doc = new PdfDoc();
   const layout = new Layout(doc);
-  layout.title('Ceska servisni prirucka vyrobce');
+  layout.title(data.translatedPages.length ? 'Cesky preklad servisni kapitoly' : 'Ceska servisni prirucka vyrobce');
   layout.kv('Vyrobce', data.result.maker || data.request.maker);
   layout.kv('Model', data.result.model || data.request.model);
   layout.kv('Vyrobni cislo', data.result.serial || data.request.serial || 'neuvedeno');
@@ -19,14 +19,12 @@ export function createServiceProcedurePdf(input = {}) {
   layout.kv('Rozsah pouzitych stran', data.sourcePages.join(', ') || 'neuvedeno');
   layout.hr();
 
-  if (data.translatedPages.length && data.images.some(image => image.dataUrl)) {
+  if (data.translatedPages.length) {
     layout.heading('Prelozene strany originalniho manualu');
-    layout.paragraph('Nasledujici strany zachovavaji vizual originalniho manualu. Obrazky, tabulky a ramecky zustavaji z originalu; prelozeny je pouze text, ktery prosel zdrojovou kontrolou.');
+    layout.paragraph('Nasledujici strany zachovavaji rozlozeni originalni kapitoly manualu. Prelozen je pouze overeny text; menu, hodnoty displeje a oznaceni zustavaji v puvodnim odbornem tvaru.');
     data.translatedPages.forEach(page => layout.translatedManualPage(page, data));
-  }
-
-  layout.heading('Ceska servisni kapitola');
-  if (data.steps.length) {
+  } else if (data.steps.length) {
+    layout.heading('Ceska servisni kapitola');
     const insertedImagePages = new Set();
     data.steps.forEach((step, index) => {
       layout.stepBlock(index + 1, step, data);
@@ -36,21 +34,26 @@ export function createServiceProcedurePdf(input = {}) {
     layout.paragraph('Ceska servisni kapitola nebyla bezpecne sestavena. Nize je uveden nalezeny zdrojovy text z manualu.');
   }
 
-  if (data.safety.length) {
+  if (!data.translatedPages.length && data.safety.length) {
     layout.heading('Bezpecnostni upozorneni vyrobce');
     data.safety.forEach((item, index) => {
       layout.callout('BEZPECNOSTNI UPOZORNENI', `${index + 1}. ${item.text}`, data, item);
     });
   }
 
-  if (data.sources.length) {
+  if (!data.translatedPages.length && data.sources.length) {
     layout.heading('Zdrojove citace');
     data.sources.forEach(source => {
       layout.small(`${sourceLabel(data, source.page)} - "${source.quote}"`);
     });
   }
 
-  const unusedImages = data.images.filter(image => !data.steps.some(step => Number(step.page) === Number(image.stepPage || image.page)));
+  const usedTranslatedPages = new Set(data.translatedPages.map(page => Number(page.page)));
+  const unusedImages = data.images.filter(image => {
+    const page = Number(image.stepPage || image.page || 0);
+    if (usedTranslatedPages.has(page)) return false;
+    return !data.steps.some(step => Number(step.page) === page);
+  });
   if (unusedImages.length) {
     layout.heading('Dalsi obrazky / schemata z manualu');
     unusedImages.forEach(image => layout.imageBlock(image, data));
@@ -70,12 +73,13 @@ function normalizeInput(input) {
   const sources = normalizeSources(result.sources);
   const images = normalizeImages(result.images);
   const translatedPages = normalizeTranslatedPages(result.translatedPages);
-  const sourcePages = [...new Set([
-    ...steps.map(x => x.page).filter(Boolean),
-    ...safety.map(x => x.page).filter(Boolean),
-    ...sources.map(x => x.page).filter(Boolean),
-    ...translatedPages.map(x => x.page).filter(Boolean)
-  ])].sort((a, b) => Number(a) - Number(b));
+  const sourcePages = translatedPages.length
+    ? translatedPages.map(x => x.page).filter(Boolean)
+    : [...new Set([
+      ...steps.map(x => x.page).filter(Boolean),
+      ...safety.map(x => x.page).filter(Boolean),
+      ...sources.map(x => x.page).filter(Boolean)
+    ])].sort((a, b) => Number(a) - Number(b));
   return { request, result, steps, safety, sources, images, translatedPages, sourcePages };
 }
 
@@ -282,10 +286,12 @@ class Layout {
   }
   translatedManualPage(page, data) {
     const image = bestPageImage(data.images, page.page);
-    if (!image?.dataUrl) return;
     this.doc.newPage();
     this.y = PAGE.h - M;
-    const size = imageSize(image);
+    const size = image?.dataUrl ? imageSize(image) : {
+      w: page.width || 612,
+      h: page.height || 792
+    };
     const maxW = PAGE.w - M * 2;
     const maxH = PAGE.h - M * 2 - 20;
     const scale = Math.min(maxW / size.w, maxH / size.h);
@@ -293,7 +299,14 @@ class Layout {
     const h = size.h * scale;
     const x = (PAGE.w - w) / 2;
     const y = PAGE.h - M - h;
-    this.doc.image(x, y, w, h, image);
+    if (image?.dataUrl) {
+      this.doc.image(x, y, w, h, image);
+    } else {
+      this.doc.rect(x, y, w, h, 0.9);
+      this.doc.line(x, y + h - 24, x + w, y + h - 24, 0.45);
+      this.doc.text(x + 10, y + h - 16, conciseManualName(data.result), 8, BOLD);
+      this.doc.text(x + w - 70, y + h - 16, `Str. ${page.page}`, 8, FONT);
+    }
     const sourceW = page.width || size.w;
     const sourceH = page.height || size.h;
     const sx = w / sourceW;
@@ -303,7 +316,7 @@ class Layout {
       const bh = Math.max(7, block.height * sy);
       const by = y + h - (block.y + block.height) * sy;
       const bw = Math.max(16, block.width * sx);
-      this.doc.fillRect(bx - 1.5, by - 1.5, bw + 3, bh + 3);
+      if (image?.dataUrl) this.doc.fillRect(bx - 1.5, by - 1.5, bw + 3, bh + 3);
       const fontSize = Math.max(5.2, Math.min(9.5, (block.fontSize || block.height || 8) * sy * 0.92));
       this.textInBox(block.text, bx, by + bh - 2, bw, bh, fontSize);
     }
