@@ -236,9 +236,15 @@ function imagesForResult(pages, steps, translatedPages = []) {
 function limitOpenAiPages(pages, config = {}) {
   const maxPages = Math.min(Math.max(1, Number(config.openaiMaxPages || 4)), 6);
   const maxChars = Math.max(2000, Number(config.openaiMaxChars || 12000));
+  const rankedPages = rankPagesForOpenAi(pages);
+  const procedurePages = leadingProcedureGroup(rankedPages, pages);
+  const orderedPages = procedurePages.length ? [
+    ...procedurePages,
+    ...rankedPages.filter(page => !procedurePages.some(procPage => Number(procPage.page) === Number(page.page)))
+  ] : rankedPages;
   const out = [];
   let usedChars = 0;
-  for (const page of rankPagesForOpenAi(pages).slice(0, maxPages)) {
+  for (const page of orderedPages.slice(0, maxPages)) {
     const originalText = String(page?.text || '');
     const metaText = formatSourcePage({ ...page, text: '' });
     const separator = out.length ? '\n\n---\n\n' : '';
@@ -259,6 +265,22 @@ function limitOpenAiPages(pages, config = {}) {
     usedChars += separator.length + formatted.length;
   }
   return out;
+}
+
+function leadingProcedureGroup(rankedPages, allPages = []) {
+  const first = rankedPages?.[0];
+  const start = Number(first?.procedureStartPage || first?.page || 0);
+  if (!start) return [];
+  const sourcePages = Array.isArray(allPages) && allPages.length ? allPages : rankedPages;
+  const group = (sourcePages || [])
+    .filter(page => {
+      const pageNumber = Number(page.page || 0);
+      if (pageNumber < start || pageNumber > start + 5) return false;
+      const procedureStart = Number(page.procedureStartPage || 0);
+      return pageNumber === start || procedureStart === start || pageNumber <= start + 5;
+    })
+    .sort((a, b) => Number(a.page || 0) - Number(b.page || 0));
+  return group.length > 1 ? group : [];
 }
 
 function formatSourcePage(page) {
