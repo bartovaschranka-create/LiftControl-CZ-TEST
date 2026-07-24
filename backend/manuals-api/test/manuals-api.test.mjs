@@ -456,6 +456,10 @@ test('angle sensor calibration sends procedure pages to OpenAI instead of front 
     assert.ok(res.json.debug.triedCandidates[0].matchedPageDetails.some(page => page.page === 436 && page.score > 0));
     assert.ok(res.json.debug.openai.sentPageDetails.some(page => page.page === 436 && page.matchedTerms.includes('tilt sensor calibration')));
     assert.ok(sentBodies.some(body => body?.text?.format?.name === 'manual_procedure_result'));
+    const procedurePrompt = sentBodies.find(body => body?.text?.format?.name === 'manual_procedure_result');
+    assert.match(procedurePrompt.input[0].content, /Do not summarize or shorten the procedure/);
+    assert.match(procedurePrompt.input[0].content, /Preserve all supported steps, warnings, cautions, notices, notes, tables/);
+    assert.doesNotMatch(procedurePrompt.input[0].content, /at most 8 concise/i);
     assert.ok(res.json.steps.length > 0);
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -925,8 +929,8 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
   assert.ok(pdf.length > 1000);
   const raw = pdf.toString('latin1');
-  assert.match(raw, /Servisni instrukce vyrobce/);
-  assert.match(raw, /Cesky servisni postup/);
+  assert.match(raw, /Ceska servisni prirucka vyrobce/);
+  assert.match(raw, /Ceska servisni kapitola/);
   assert.match(raw, /Pouzity manual/);
   assert.doesNotMatch(raw, /Typ manualu/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);

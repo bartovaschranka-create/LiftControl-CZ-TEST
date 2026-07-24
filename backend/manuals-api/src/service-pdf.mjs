@@ -10,7 +10,7 @@ export function createServiceProcedurePdf(input = {}) {
 
   const doc = new PdfDoc();
   const layout = new Layout(doc);
-  layout.title('Servisni instrukce vyrobce');
+  layout.title('Ceska servisni prirucka vyrobce');
   layout.kv('Vyrobce', data.result.maker || data.request.maker);
   layout.kv('Model', data.result.model || data.request.model);
   layout.kv('Vyrobni cislo', data.result.serial || data.request.serial || 'neuvedeno');
@@ -19,14 +19,14 @@ export function createServiceProcedurePdf(input = {}) {
   layout.kv('Rozsah pouzitych stran', data.sourcePages.join(', ') || 'neuvedeno');
   layout.hr();
 
-  layout.heading('Cesky servisni postup');
+  layout.heading('Ceska servisni kapitola');
   if (data.steps.length) {
     data.steps.forEach((step, index) => {
       layout.stepBlock(index + 1, step, data);
       imagesForStep(data.images, step).forEach(image => layout.imageBlock(image, data));
     });
   } else {
-    layout.paragraph('Cesky postup nebyl bezpecne sestaven. Nize je uveden nalezeny zdrojovy text z manualu.');
+    layout.paragraph('Ceska servisni kapitola nebyla bezpecne sestavena. Nize je uveden nalezeny zdrojovy text z manualu.');
   }
 
   if (data.safety.length) {
@@ -107,8 +107,8 @@ function normalizeItems(items) {
       ? { text: item, sourceQuote: '', page: '' }
       : { text: item?.text || '', sourceQuote: item?.sourceQuote || '', page: item?.page || '' })
     .map(item => ({
-      text: clean(item.text).slice(0, 3000),
-      sourceQuote: clean(item.sourceQuote).slice(0, 800),
+      text: clean(item.text).slice(0, 8000),
+      sourceQuote: clean(item.sourceQuote).slice(0, 1600),
       page: item.page
     }))
     .filter(item => item.text);
