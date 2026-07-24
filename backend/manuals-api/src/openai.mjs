@@ -39,6 +39,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
         'Return only structured JSON matching the schema.',
         'Do not invent service procedures, safety warnings, serial ranges, page numbers, or sources.',
         'Every step and safety warning must be based on its exact English sourceQuote from the stated page.',
+        'The text field must always be Czech. Never copy the English sourceQuote into the text field.',
         'Return at most 8 concise work steps and at most 5 safety warnings.',
         'If a procedure is not explicitly supported by the source text, return empty arrays.'
       ].join(' ')

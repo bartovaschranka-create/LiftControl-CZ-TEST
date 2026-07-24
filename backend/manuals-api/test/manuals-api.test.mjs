@@ -540,6 +540,70 @@ test('procedure context continues until the next chapter heading', async () => {
   }
 });
 
+test('validated OpenAI steps keep Czech text and English source quote separate', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-czech-openai-step-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        aliases: ['JLG 450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret'
+        },
+        fetch: async (url, options = {}) => {
+          const u = String(url);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              pages: [{
+                page: 129,
+                title: '4.3.8 Calibrating Platform Angle Sensor',
+                chapter: 'Testing, Calibrations and Special Procedures',
+                keywords: ['platform angle sensor', 'angle sensor calibration'],
+                text: [
+                  'JLG 450AJ service manual serial number B300000000 and up.',
+                  '4.3.8 Calibrating Platform Angle Sensor',
+                  '1. Position the Platform/Ground select switch to Ground.'
+                ].join('\n')
+              }]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          if (u.includes('api.openai.com')) {
+            return responseJson({ output_text: JSON.stringify({
+              steps: [{
+                text: 'Přepněte přepínač Platform/Ground do polohy Ground.',
+                sourceQuote: '1. Position the Platform/Ground select switch to Ground.',
+                page: 129
+              }],
+              safety: [],
+              serialRange: 'B300000000 and up',
+              message: 'Postup nalezen v originalnim manualu.'
+            }) });
+          }
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.debug.openai.acceptedSteps, 1);
+    assert.equal(res.json.steps[0].text, 'Přepněte přepínač Platform/Ground do polohy Ground.');
+    assert.equal(res.json.steps[0].sourceQuote, '1. Position the Platform/Ground select switch to Ground.');
+    assert.notEqual(res.json.steps[0].text, res.json.steps[0].sourceQuote);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
