@@ -375,6 +375,8 @@ test('page index metadata participates in search without replacing source text',
     assert.deepEqual(tried.matchedPages, [436]);
     assert.match(res.json.sources[0].quote, /Set the platform level/);
     assert.doesNotMatch(res.json.sources[0].quote, /Tilt Sensor Calibration/);
+    assert.equal(Array.isArray(res.json.images), true);
+    assert.equal(res.json.images[0].caption, 'Tilt Sensor');
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -922,6 +924,13 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.equal(Buffer.isBuffer(pdf), true);
   assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
   assert.ok(pdf.length > 1000);
+  const raw = pdf.toString('latin1');
+  assert.match(raw, /Servisni instrukce vyrobce/);
+  assert.match(raw, /Cesky servisni postup/);
+  assert.match(raw, /Pouzity manual/);
+  assert.doesNotMatch(raw, /Typ manualu/);
+  assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
+  assert.match(raw, /Pripojte servisni analyzer/);
 });
 
 test('service PDF endpoint returns application/pdf', async () => {
@@ -1235,7 +1244,7 @@ function servicePdfPayload() {
       serialRange: 'B300000000 and up',
       originalUrl: 'https://firebasestorage.googleapis.com/v0/b/doctype-test.firebasestorage.app/o/450AJ%20pvc2307.pdf?alt=media',
       steps: [{
-        text: 'Proved kontrolu nastaveni podle servisniho menu a over vysledek podle originalniho manualu.',
+        text: 'Pripojte servisni analyzer do diagnostickeho konektoru a v menu CALIBRATIONS zvolte PLATFORM ANGLE. Po provedeni nastaveni overte vysledek podle displeje.',
         sourceQuote: 'Perform the adjustment from the service menu and verify the result.',
         page: 436
       }],
@@ -1247,6 +1256,12 @@ function servicePdfPayload() {
       sources: [{
         page: 436,
         quote: 'Perform the adjustment from the service menu and verify the result.'
+      }],
+      images: [{
+        page: 436,
+        stepPage: 436,
+        figure: 'Figure 4-12',
+        caption: 'Analyzer connector and platform angle sensor menu'
       }]
     }
   };
