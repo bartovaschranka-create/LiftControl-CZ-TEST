@@ -3,14 +3,14 @@ import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promis
 import { basename, dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
-import { extractPdfTextPages } from '../src/pdf.mjs';
+import { extractPdfLayoutPages, extractPdfTextPages } from '../src/pdf.mjs';
 
 const args = process.argv.slice(2);
 const input = args[0];
 const output = args[1];
 
 if (!input || !output) {
-  console.error('Usage: node scripts/build-manual-index.mjs <manual.pdf> <manual.pages.json> [--manual "Manual title"] [--page-images] [--pdftoppm <path>]');
+  console.error('Usage: node scripts/build-manual-index.mjs <manual.pdf> <manual.pages.json> [--manual "Manual title"] [--page-images] [--translated-pages] [--pdftoppm <path>]');
   process.exit(1);
 }
 
@@ -24,6 +24,7 @@ const issueDate = optionValue('--issue-date');
 const serialRange = optionValue('--serial-range');
 const shouldEmbed = args.includes('--embeddings');
 const shouldRenderPageImages = args.includes('--page-images');
+const shouldStoreLayout = shouldRenderPageImages || args.includes('--layout') || args.includes('--translated-pages');
 const pdftoppmPath = optionValue('--pdftoppm') || process.env.PDFTOPPM_PATH || 'pdftoppm';
 const imageDpi = numberOption('--image-dpi', 120);
 const imageQuality = numberOption('--image-quality', 85);
@@ -33,7 +34,9 @@ const sourcePath = resolve(input);
 const outputPath = resolve(output);
 const buffer = await readFile(sourcePath);
 const debug = {};
-let pages = await extractPdfTextPages(buffer, debug);
+let pages = shouldStoreLayout
+  ? await extractPdfLayoutPages(buffer, debug)
+  : await extractPdfTextPages(buffer, debug);
 
 if (!pages.length) {
   console.error('PDF nema citelnou textovou vrstvu nebo parser nevratil zadne stranky.');
@@ -137,6 +140,9 @@ function enrichPage(page, previousPage = null, pageImage = null) {
     chapter,
     keywords,
     text: page.text,
+    width: page.width || 0,
+    height: page.height || 0,
+    textBlocks: Array.isArray(page.textBlocks) ? page.textBlocks : [],
     images
   };
 }

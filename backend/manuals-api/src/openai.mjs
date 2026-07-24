@@ -3,10 +3,11 @@ import { classifyProcedureEvidence, taskTerms } from './manual-text.mjs';
 const RESULT_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['steps', 'safety', 'serialRange', 'message'],
+  required: ['steps', 'safety', 'translatedPages', 'serialRange', 'message'],
   properties: {
     steps: { type: 'array', items: sourceItemSchema() },
     safety: { type: 'array', items: sourceItemSchema() },
+    translatedPages: { type: 'array', items: translatedPageSchema() },
     serialRange: { type: 'string' },
     message: { type: 'string' }
   }
@@ -47,6 +48,9 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
         'Keep machine display/menu labels in English, for example ACCESS LEVEL 2, CALIBRATIONS, or PLATFORM ANGLE.',
         'Use the steps array for every translated procedural paragraph, numbered action, table row explanation, or supported note in the original order.',
         'Use the safety array only for explicit WARNING, CAUTION, NOTICE, danger, injury, electrical, hydraulic, fall, crush, or lockout warnings.',
+        'Also fill translatedPages when TEXT_BLOCKS are provided.',
+        'For translatedPages, translate every original text block provided in TEXT_BLOCKS without shortening; keep its blockId and exact sourceQuote.',
+        'Do not translate machine display labels or menu labels; keep them in English inside the Czech text.',
         'If a procedure is not explicitly supported by the source text, return empty arrays.'
       ].join(' ')
     },
@@ -173,7 +177,8 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   const rawItemCount = countSourceItems(parsed);
   const validationDetails = [];
   const validated = await validateAiOutput(parsed, sourcePages, request, { config, deps, validationDetails });
-  const acceptedCount = validated.steps.length + validated.safety.length;
+  const translatedPages = validateTranslatedPages(parsed.translatedPages, sourcePages);
+  const acceptedCount = validated.steps.length + validated.safety.length + translatedPages.reduce((sum, page) => sum + page.blocks.length, 0);
   const evidence = classifyProcedureEvidence(sourcePages, request.task);
   setOpenAiDebug(openaiDebug, {
     acceptedSteps: acceptedCount,
@@ -190,7 +195,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(sourcePages)]);
   const images = imagesForSteps(sourcePages, validated.steps);
   return {
-    status: validated.steps.length ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
+    status: (validated.steps.length || translatedPages.length) ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
     maker: request.maker,
     model: request.model,
     serial: request.serial,
@@ -200,9 +205,10 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     originalUrl: finalUrl || candidate.url,
     steps: validated.steps,
     safety: validated.safety,
+    translatedPages,
     sources,
     images,
-    message: validated.steps.length ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
+    message: (validated.steps.length || translatedPages.length) ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
     variants: []
   };
 }
@@ -254,15 +260,35 @@ function limitOpenAiPages(pages, config = {}) {
 
 function formatSourcePage(page) {
   const keywords = Array.isArray(page?.keywords) ? page.keywords.join(', ') : '';
+  const textBlocks = formatTextBlocks(page);
   return [
     `PAGE ${page?.page || ''}`,
     page?.title ? `TITLE: ${page.title}` : '',
     page?.chapter ? `CHAPTER: ${page.chapter}` : '',
     keywords ? `KEYWORDS: ${keywords}` : '',
     page?.procedureContinuation ? `PROCEDURE CONTINUATION FROM PAGE: ${page.procedureStartPage || ''}` : '',
+    textBlocks ? `TEXT_BLOCKS:\n${textBlocks}` : '',
     'TEXT:',
     page?.text || ''
   ].filter(line => line !== '').join('\n');
+}
+
+function formatTextBlocks(page) {
+  const blocks = Array.isArray(page?.textBlocks) ? page.textBlocks : [];
+  if (!blocks.length) return '';
+  return blocks
+    .filter(block => String(block.text || '').trim().length >= 2)
+    .slice(0, 160)
+    .map((block, index) => JSON.stringify({
+      blockId: String(index + 1),
+      page: Number(page.page),
+      x: Number(block.x) || 0,
+      y: Number(block.y) || 0,
+      width: Number(block.width) || 0,
+      height: Number(block.height) || 0,
+      text: String(block.text || '').slice(0, 500)
+    }))
+    .join('\n');
 }
 
 function rankPagesForOpenAi(pages) {
@@ -525,10 +551,91 @@ function sourceItemSchema() {
   };
 }
 
+function translatedPageSchema() {
+  return {
+    type: 'object',
+    additionalProperties: false,
+    required: ['page', 'blocks'],
+    properties: {
+      page: { type: 'integer' },
+      blocks: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['blockId', 'text', 'sourceQuote'],
+          properties: {
+            blockId: { type: 'string' },
+            text: { type: 'string' },
+            sourceQuote: { type: 'string' }
+          }
+        }
+      }
+    }
+  };
+}
+
+function validateTranslatedPages(translatedPages, pages) {
+  if (!Array.isArray(translatedPages)) return [];
+  const pageMap = new Map((pages || []).map(page => [Number(page.page), page]));
+  const out = [];
+  for (const translatedPage of translatedPages) {
+    const pageNumber = Number(translatedPage?.page);
+    const sourcePage = pageMap.get(pageNumber);
+    if (!sourcePage) continue;
+    const sourceBlocks = Array.isArray(sourcePage.textBlocks) ? sourcePage.textBlocks : [];
+    const blocks = [];
+    for (const rawBlock of Array.isArray(translatedPage?.blocks) ? translatedPage.blocks : []) {
+      const text = String(rawBlock?.text || '').trim();
+      const sourceQuote = String(rawBlock?.sourceQuote || '').replace(/\s+/g, ' ').trim();
+      const blockIndex = Math.max(0, Number(rawBlock?.blockId) - 1);
+      const sourceBlock = sourceBlocks[blockIndex] || findSourceBlockForQuote(sourceBlocks, sourceQuote);
+      if (!text || !sourceQuote || !sourceBlock) continue;
+      if (!blockContainsQuote(sourceBlock, sourceQuote) && !pageContainsQuote(pageText(sourcePage), sourceQuote)) continue;
+      blocks.push({
+        blockId: String(rawBlock.blockId || blockIndex + 1),
+        text: text.slice(0, 1600),
+        sourceQuote: sourceQuote.slice(0, 1000),
+        x: sourceBlock.x,
+        y: sourceBlock.y,
+        width: sourceBlock.width,
+        height: sourceBlock.height,
+        fontSize: sourceBlock.fontSize
+      });
+    }
+    if (blocks.length) {
+      out.push({
+        page: pageNumber,
+        width: Number(sourcePage.width) || 0,
+        height: Number(sourcePage.height) || 0,
+        blocks
+      });
+    }
+  }
+  return out;
+}
+
+function findSourceBlockForQuote(blocks, quote) {
+  const normalized = normalizeForQuote(quote);
+  return (blocks || []).find(block => {
+    const blockText = normalizeForQuote(block.text);
+    return blockText.includes(normalized) || normalized.includes(blockText);
+  });
+}
+
+function blockContainsQuote(block, quote) {
+  const blockText = normalizeForQuote(block?.text || '');
+  const normalized = normalizeForQuote(quote);
+  return Boolean(blockText && normalized && (blockText.includes(normalized) || normalized.includes(blockText)));
+}
+
 function countSourceItems(parsed) {
   const steps = Array.isArray(parsed?.steps) ? parsed.steps.length : 0;
   const safety = Array.isArray(parsed?.safety) ? parsed.safety.length : 0;
-  return steps + safety;
+  const translated = Array.isArray(parsed?.translatedPages)
+    ? parsed.translatedPages.reduce((sum, page) => sum + (Array.isArray(page?.blocks) ? page.blocks.length : 0), 0)
+    : 0;
+  return steps + safety + translated;
 }
 
 function setOpenAiDebug(debug, patch) {

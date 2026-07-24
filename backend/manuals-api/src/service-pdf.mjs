@@ -6,7 +6,7 @@ const BOLD = 'F2';
 export function createServiceProcedurePdf(input = {}) {
   const data = normalizeInput(input);
   if (!data.result.manualTitle && !data.result.originalUrl) throw new Error('Chybi overeny vysledek manualu.');
-  if (!data.steps.length && !data.sources.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
+  if (!data.steps.length && !data.sources.length && !data.translatedPages.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
 
   const doc = new PdfDoc();
   const layout = new Layout(doc);
@@ -18,6 +18,12 @@ export function createServiceProcedurePdf(input = {}) {
   layout.kv('Pouzity manual', conciseManualName(data.result));
   layout.kv('Rozsah pouzitych stran', data.sourcePages.join(', ') || 'neuvedeno');
   layout.hr();
+
+  if (data.translatedPages.length && data.images.some(image => image.dataUrl)) {
+    layout.heading('Prelozene strany originalniho manualu');
+    layout.paragraph('Nasledujici strany zachovavaji vizual originalniho manualu. Obrazky, tabulky a ramecky zustavaji z originalu; prelozeny je pouze text, ktery prosel zdrojovou kontrolou.');
+    data.translatedPages.forEach(page => layout.translatedManualPage(page, data));
+  }
 
   layout.heading('Ceska servisni kapitola');
   if (data.steps.length) {
@@ -63,12 +69,14 @@ function normalizeInput(input) {
   const safety = normalizeItems(result.safety);
   const sources = normalizeSources(result.sources);
   const images = normalizeImages(result.images);
+  const translatedPages = normalizeTranslatedPages(result.translatedPages);
   const sourcePages = [...new Set([
     ...steps.map(x => x.page).filter(Boolean),
     ...safety.map(x => x.page).filter(Boolean),
-    ...sources.map(x => x.page).filter(Boolean)
+    ...sources.map(x => x.page).filter(Boolean),
+    ...translatedPages.map(x => x.page).filter(Boolean)
   ])].sort((a, b) => Number(a) - Number(b));
-  return { request, result, steps, safety, sources, images, sourcePages };
+  return { request, result, steps, safety, sources, images, translatedPages, sourcePages };
 }
 
 function conciseManualName(result) {
@@ -98,6 +106,7 @@ function normalizeImages(images) {
       page: image?.page || '',
       stepPage: image?.stepPage || image?.page || '',
       figure: clean(image?.figure || '').slice(0, 80),
+      bbox: clean(image?.bbox || '').slice(0, 80),
       caption: clean(image?.caption || '').slice(0, 240),
       dataUrl: String(image?.dataUrl || '').trim(),
       mimeType: clean(image?.mimeType || image?.mime || '').slice(0, 60),
@@ -118,6 +127,27 @@ function normalizeItems(items) {
       page: item.page
     }))
     .filter(item => item.text);
+}
+
+function normalizeTranslatedPages(pages) {
+  return (Array.isArray(pages) ? pages : [])
+    .map(page => ({
+      page: Number(page?.page) || 0,
+      width: Number(page?.width) || 0,
+      height: Number(page?.height) || 0,
+      blocks: (Array.isArray(page?.blocks) ? page.blocks : [])
+        .map(block => ({
+          text: clean(block?.text || '').slice(0, 1600),
+          sourceQuote: clean(block?.sourceQuote || '').slice(0, 1000),
+          x: Number(block?.x) || 0,
+          y: Number(block?.y) || 0,
+          width: Number(block?.width) || 0,
+          height: Number(block?.height) || 0,
+          fontSize: Number(block?.fontSize) || 0
+        }))
+        .filter(block => block.text && block.width > 0 && block.height > 0)
+    }))
+    .filter(page => page.page && page.blocks.length);
 }
 
 function normalizeSources(sources) {
@@ -250,6 +280,46 @@ class Layout {
     }
     this.box(`${title}\nObrazova data nejsou v indexu ulozena. Otevri originalni manual na uvedene strane.`);
   }
+  translatedManualPage(page, data) {
+    const image = bestPageImage(data.images, page.page);
+    if (!image?.dataUrl) return;
+    this.doc.newPage();
+    this.y = PAGE.h - M;
+    const size = imageSize(image);
+    const maxW = PAGE.w - M * 2;
+    const maxH = PAGE.h - M * 2 - 20;
+    const scale = Math.min(maxW / size.w, maxH / size.h);
+    const w = size.w * scale;
+    const h = size.h * scale;
+    const x = (PAGE.w - w) / 2;
+    const y = PAGE.h - M - h;
+    this.doc.image(x, y, w, h, image);
+    const sourceW = page.width || size.w;
+    const sourceH = page.height || size.h;
+    const sx = w / sourceW;
+    const sy = h / sourceH;
+    for (const block of page.blocks) {
+      const bx = x + block.x * sx;
+      const bh = Math.max(7, block.height * sy);
+      const by = y + h - (block.y + block.height) * sy;
+      const bw = Math.max(16, block.width * sx);
+      this.doc.fillRect(bx - 1.5, by - 1.5, bw + 3, bh + 3);
+      const fontSize = Math.max(5.2, Math.min(9.5, (block.fontSize || block.height || 8) * sy * 0.92));
+      this.textInBox(block.text, bx, by + bh - 2, bw, bh, fontSize);
+    }
+    this.doc.text(x, M - 12, sourceLabel(data, page.page), 7, FONT);
+    this.y = M;
+  }
+  textInBox(text, x, topY, width, height, size) {
+    const lineHeight = size * 1.12;
+    const lines = wrap(clean(text), width, size);
+    let y = topY - size;
+    const maxLines = Math.max(1, Math.floor(height / lineHeight));
+    lines.slice(0, maxLines).forEach(line => {
+      this.doc.text(x, y, line, size, FONT);
+      y -= lineHeight;
+    });
+  }
   small(text) {
     const lines = wrap(clean(text), this.width, 8);
     this.ensure(lines.length * 10 + 4);
@@ -316,6 +386,11 @@ function imageSize(image) {
   return { w: 360, h: 180 };
 }
 
+function bestPageImage(images, page) {
+  const samePage = (images || []).filter(image => Number(image.page || image.stepPage || 0) === Number(page) && image.dataUrl);
+  return samePage.find(image => image.bbox === 'page' || /originalni strana manualu/i.test(image.caption || '')) || samePage[0] || null;
+}
+
 class PdfDoc {
   constructor() {
     this.pages = [];
@@ -336,6 +411,9 @@ class PdfDoc {
   }
   rect(x, y, w, h, width = 0.8) {
     this.current.push(`${fmt(width)} w ${fmt(x)} ${fmt(y)} ${fmt(w)} ${fmt(h)} re S`);
+  }
+  fillRect(x, y, w, h, gray = 1) {
+    this.current.push(`${fmt(gray)} g ${fmt(x)} ${fmt(y)} ${fmt(w)} ${fmt(h)} re f 0 g`);
   }
   image(x, y, w, h, image) {
     const parsed = parseJpegDataUrl(image?.dataUrl || '');

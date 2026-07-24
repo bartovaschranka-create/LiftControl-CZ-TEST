@@ -234,6 +234,60 @@ export async function extractPdfTextPages(buffer, debug = null) {
   return pages;
 }
 
+export async function extractPdfLayoutPages(buffer, debug = null) {
+  if (!Buffer.isBuffer(buffer) || !buffer.includes(Buffer.from('%PDF'))) return [];
+  let doc;
+  try {
+    const task = getDocument({
+      data: new Uint8Array(buffer),
+      cMapUrl: CMAP_URL,
+      cMapPacked: true,
+      standardFontDataUrl: STANDARD_FONT_DATA_URL,
+      useWorkerFetch: false,
+      disableFontFace: true,
+      useSystemFonts: true,
+      stopAtErrors: false,
+      isEvalSupported: false
+    });
+    doc = await task.promise;
+    if (debug) debug.pdfPages = doc.numPages;
+  } catch (error) {
+    if (debug) debug.extractError = error?.message || String(error);
+    return [];
+  }
+
+  const pages = [];
+  try {
+    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber += 1) {
+      try {
+        const page = await doc.getPage(pageNumber);
+        const viewport = page.getViewport({ scale: 1 });
+        const content = await page.getTextContent({ includeMarkedContent: false, disableNormalization: false });
+        const items = normalizeTextBlocks(content.items || [], viewport);
+        const text = normalizeExtractedText(textContentToString(content.items || []));
+        if (text) {
+          pages.push({
+            page: pageNumber,
+            width: Number(viewport.width) || 0,
+            height: Number(viewport.height) || 0,
+            text,
+            textBlocks: items
+          });
+        }
+        page.cleanup?.();
+      } catch (error) {
+        if (debug) {
+          debug.pageErrors = debug.pageErrors || [];
+          debug.pageErrors.push({ page: pageNumber, error: error?.message || String(error) });
+        }
+      }
+    }
+  } finally {
+    await doc.destroy?.();
+  }
+  return pages;
+}
+
 function textContentToString(items) {
   const pieces = [];
   let lastY = null;
@@ -256,4 +310,53 @@ function normalizeExtractedText(text) {
     .replace(/[ \t]{2,}/g, ' ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+function normalizeTextBlocks(items, viewport) {
+  const blocks = [];
+  for (const item of items) {
+    if (!item || typeof item.str !== 'string') continue;
+    const text = item.str.replace(/\s+/g, ' ').trim();
+    if (!text) continue;
+    const transform = Array.isArray(item.transform) ? item.transform : [];
+    const x = Number(transform[4]) || 0;
+    const baseY = Number(transform[5]) || 0;
+    const width = Math.max(1, Number(item.width) || text.length * 4);
+    const height = Math.max(5, Number(item.height) || Math.abs(Number(transform[3]) || 8));
+    const topY = Math.max(0, (Number(viewport.height) || 0) - baseY - height);
+    blocks.push({
+      text,
+      x: round2(x),
+      y: round2(topY),
+      width: round2(width),
+      height: round2(height),
+      fontSize: round2(height),
+      dir: item.dir || ''
+    });
+  }
+  return mergeTextBlocks(blocks);
+}
+
+function mergeTextBlocks(items) {
+  const out = [];
+  for (const item of items) {
+    const last = out[out.length - 1];
+    const sameLine = last && Math.abs((last.y + last.height / 2) - (item.y + item.height / 2)) <= Math.max(3, item.height * 0.35);
+    const close = last && item.x >= last.x && item.x - (last.x + last.width) <= Math.max(16, item.height * 1.5);
+    if (sameLine && close) {
+      last.text = `${last.text} ${item.text}`.replace(/\s+/g, ' ').trim();
+      const right = Math.max(last.x + last.width, item.x + item.width);
+      last.y = round2(Math.min(last.y, item.y));
+      last.height = round2(Math.max(last.y + last.height, item.y + item.height) - last.y);
+      last.width = round2(right - last.x);
+      last.fontSize = round2(Math.max(last.fontSize || 0, item.fontSize || 0));
+    } else {
+      out.push({ ...item });
+    }
+  }
+  return out.filter(item => item.text.length >= 2).slice(0, 400);
+}
+
+function round2(value) {
+  return Math.round(Number(value || 0) * 100) / 100;
 }
