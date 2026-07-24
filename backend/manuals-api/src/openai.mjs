@@ -193,7 +193,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, parsed });
   }
   const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(sourcePages)]);
-  const images = imagesForSteps(sourcePages, validated.steps);
+  const images = imagesForResult(sourcePages, validated.steps, translatedPages);
   return {
     status: (validated.steps.length || translatedPages.length) ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
     maker: request.maker,
@@ -213,8 +213,11 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   };
 }
 
-function imagesForSteps(pages, steps) {
-  const stepPages = new Set((steps || []).map(step => Number(step.page)).filter(Boolean));
+function imagesForResult(pages, steps, translatedPages = []) {
+  const stepPages = new Set([
+    ...(steps || []).map(step => Number(step.page)).filter(Boolean),
+    ...(translatedPages || []).map(page => Number(page.page)).filter(Boolean)
+  ]);
   if (!stepPages.size) return [];
   const out = [];
   for (const page of pages || []) {
@@ -231,7 +234,7 @@ function imagesForSteps(pages, steps) {
 }
 
 function limitOpenAiPages(pages, config = {}) {
-  const maxPages = Math.max(1, Number(config.openaiMaxPages || 4));
+  const maxPages = Math.min(Math.max(1, Number(config.openaiMaxPages || 4)), 6);
   const maxChars = Math.max(2000, Number(config.openaiMaxChars || 12000));
   const out = [];
   let usedChars = 0;
@@ -292,12 +295,45 @@ function formatTextBlocks(page) {
 }
 
 function rankPagesForOpenAi(pages) {
-  return [...(pages || [])].filter(page => !isOpenAiFrontMatter(page)).sort((a, b) => {
+  const ranked = [...(pages || [])].filter(page => !isOpenAiFrontMatter(page)).sort((a, b) => {
     const scoreA = Number(a?.score || a?.relevanceScore || 0);
     const scoreB = Number(b?.score || b?.relevanceScore || 0);
     if (scoreA !== scoreB) return scoreB - scoreA;
     return Number(a?.page || 0) - Number(b?.page || 0);
   });
+  const procedureGroup = bestProcedureGroup(ranked);
+  if (!procedureGroup.length) return ranked;
+  const selected = new Set(procedureGroup.map(page => Number(page.page)));
+  return [
+    ...procedureGroup,
+    ...ranked.filter(page => !selected.has(Number(page.page)))
+  ];
+}
+
+function bestProcedureGroup(pages) {
+  const byPage = new Map((pages || []).map(page => [Number(page.page), page]));
+  const groups = new Map();
+  for (const page of pages || []) {
+    const pageNumber = Number(page.page || 0);
+    const start = Number(page.procedureStartPage || pageNumber || 0);
+    if (!start) continue;
+    const startPage = byPage.get(start);
+    if (!startPage) continue;
+    if (!groups.has(start)) groups.set(start, []);
+    groups.get(start).push(page);
+  }
+  let best = [];
+  let bestScore = 0;
+  for (const group of groups.values()) {
+    const sorted = group.sort((a, b) => Number(a.page) - Number(b.page));
+    const hasContinuation = sorted.some(page => page.procedureContinuation);
+    const score = Math.max(...sorted.map(page => Number(page.score || page.relevanceScore || 0)));
+    if (hasContinuation && score > bestScore) {
+      best = sorted;
+      bestScore = score;
+    }
+  }
+  return bestScore >= 20 ? best : [];
 }
 
 function isOpenAiFrontMatter(page) {

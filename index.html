@@ -2419,7 +2419,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.213</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.214</div>
   </div>
 </aside>
 
@@ -9205,7 +9205,7 @@ function manualResultIsOk(status){
 }
 function manualCanCreateServicePdf(result){
   const status=String(result?.status||'');
-  return ['ok','procedure_found','partial_procedure_found','reference_found'].includes(status) && (result?.manualTitle || result?.originalUrl) && ((result?.steps||[]).length || (result?.sources||[]).length);
+  return ['ok','procedure_found','partial_procedure_found','reference_found'].includes(status) && (result?.manualTitle || result?.originalUrl) && ((result?.steps||[]).length || (result?.sources||[]).length || (result?.translatedPages||[]).length);
 }
 function manualStepText(step){
   return typeof step === 'string' ? step : (step && step.text ? step.text : String(step||''));
@@ -9233,6 +9233,7 @@ function manualServicePdfPayload(){
       safety:r.safety||[],
       sources:r.sources||[],
       images:r.images||[],
+      translatedPages:r.translatedPages||[],
       message:r.message
     }
   };
@@ -9314,7 +9315,7 @@ async function lookupManual(){
   }catch(e){
     console.error('Manual lookup failed', e);
     const fallback=manualFallbackResult(req);
-    fallback.message='API pro manuály teď neodpovědělo. Postup nebyl ověřen, zobrazují se jen oficiální zdroje k ruční kontrole.';
+    fallback.message=`API pro manuály teď neodpovědělo: ${e?.message||e||'neznámá chyba'}. Postup nebyl ověřen, zobrazují se jen oficiální zdroje k ruční kontrole.`;
     manualLastRequest=req;
     manualLastResult=fallback;
     renderManualResult(fallback, req);
@@ -10811,7 +10812,7 @@ setTimeout(() => retryPendingFaultSync().catch(err => console.warn('Pending faul
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  const APP_UPDATE_VERSION = '5.210';
+  const APP_UPDATE_VERSION = '5.214';
   const APP_UPDATE_ACCEPT_KEY = 'liftcontrol_update_accepted_version';
   let appUpdateRegistration = null;
   let appUpdateWorker = null;

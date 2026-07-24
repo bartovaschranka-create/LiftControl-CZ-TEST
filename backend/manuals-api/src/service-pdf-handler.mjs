@@ -33,14 +33,16 @@ export function createServicePdfHandler(deps = {}) {
     try {
       const servicePdfMaxBodyBytes = Math.max(
         config.maxBodyBytes * 4,
-        2 * 1024 * 1024
+        8 * 1024 * 1024
       );
 
       body = await readJsonBody(req, servicePdfMaxBodyBytes);
-    } catch {
+    } catch (error) {
       return sendJson(res, 400, {
         status: 'error',
-        message: 'Neplatny nebo prilis velky JSON request.'
+        message: error?.code === 'body_too_large'
+          ? 'Servisni PDF obsahuje prilis velky pozadavek. Zkus mensi pocet obrazovych stran nebo zmensi index obrazku.'
+          : 'Neplatny nebo prilis velky JSON request.'
       });
     }
 
