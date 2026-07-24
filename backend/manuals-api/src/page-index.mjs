@@ -192,6 +192,9 @@ function normalizePageIndex(json) {
       chapter: stringValue(item?.chapter),
       keywords: stringArray(item?.keywords),
       text,
+      width: Number(item?.width) || 0,
+      height: Number(item?.height) || 0,
+      textBlocks: normalizeTextBlocks(item?.textBlocks),
       images: normalizeImages(item?.images),
       embedding: numericArray(item?.embedding)
     });
@@ -229,6 +232,21 @@ function normalizeImages(images) {
       height: Number(image?.height) || 0
     }))
     .filter(image => image.figure || image.caption || image.dataUrl);
+}
+
+function normalizeTextBlocks(blocks) {
+  if (!Array.isArray(blocks)) return [];
+  return blocks
+    .map(block => ({
+      text: stringValue(block?.text).slice(0, 1000),
+      x: Number(block?.x) || 0,
+      y: Number(block?.y) || 0,
+      width: Number(block?.width) || 0,
+      height: Number(block?.height) || 0,
+      fontSize: Number(block?.fontSize) || 0
+    }))
+    .filter(block => block.text && block.width > 0 && block.height > 0)
+    .slice(0, 400);
 }
 
 function stringValue(value) {

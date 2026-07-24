@@ -9,8 +9,8 @@ import { createServicePdfHandler } from '../src/service-pdf-handler.mjs';
 import { createServiceProcedurePdf } from '../src/service-pdf.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
-import { extractPdfTextPages } from '../src/pdf.mjs';
-import { validateAiOutput } from '../src/openai.mjs';
+import { extractPdfLayoutPages, extractPdfTextPages } from '../src/pdf.mjs';
+import { structureWithOpenAI, validateAiOutput } from '../src/openai.mjs';
 import { evaluateManualFit, parseSerialRange, parseSerialValue } from '../src/manual-fit.mjs';
 import { buildManualQueries } from '../src/brave.mjs';
 import { rankCandidates } from '../src/candidates.mjs';
@@ -247,7 +247,7 @@ test('index download HTTP status is exposed in debug', async () => {
       }]
     }));
     const res = await callApi(
-      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace naklonoveho cidla' },
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
       {
         env: {
           LOCAL_MANUALS_INDEX: join(root, 'index.json'),
@@ -441,6 +441,7 @@ test('angle sensor calibration sends procedure pages to OpenAI instead of front 
                 page: 436
               }],
               safety: [],
+              translatedPages: [],
               serialRange: 'B300000000 and up',
               message: 'Postup nalezen v originalnim manualu.'
             }) });
@@ -608,6 +609,77 @@ test('validated OpenAI steps keep Czech text and English source quote separate',
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test('OpenAI translated manual pages accept exact short source text blocks', async () => {
+  const openaiDebug = {};
+  const result = await structureWithOpenAI({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    candidate: { title: 'JLG 450AJ Service Manual PVC 2307', type: 'service', url: 'https://example.com/450aj.pdf' },
+    finalUrl: 'https://example.com/450aj.pdf',
+    fit: { status: 'warn', serialRange: 'B300000000 and up', sources: [] },
+    config: {
+      openaiApiKey: 'sk-test-secret',
+      openaiModel: 'gpt-4.1-mini',
+      openaiMaxOutputTokens: 10000,
+      openaiMaxPages: 4,
+      openaiMaxChars: 12000,
+      openaiTimeoutMs: 120000
+    },
+    deps: {
+      fetch: async () => responseJson({ output_text: JSON.stringify({
+        steps: [],
+        safety: [],
+        translatedPages: [{
+          page: 129,
+          blocks: [{
+            blockId: '1',
+            text: '4.3.8',
+            sourceQuote: '4.3.8'
+          }, {
+            blockId: '2',
+            text: 'Kalibrace snimace naklonu plosiny',
+            sourceQuote: 'Calibrating Platform Angle Sensor'
+          }]
+        }],
+        serialRange: 'B300000000 and up',
+        message: 'Prelozena strana manualu byla vytvorena.'
+      }) })
+    },
+    pages: [{
+      page: 129,
+      title: '4.3.8 Calibrating Platform Angle Sensor',
+      chapter: 'Testing, Calibrations and Special Procedures',
+      keywords: ['platform angle sensor', 'angle sensor calibration'],
+      width: 612,
+      height: 792,
+      text: [
+        '4.3.8',
+        'Calibrating Platform Angle Sensor',
+        '1. Position the Platform/Ground select switch to Ground.'
+      ].join('\n'),
+      textBlocks: [{
+        text: '4.3.8',
+        x: 59.5,
+        y: 72.6,
+        width: 21,
+        height: 9.4,
+        fontSize: 9.4
+      }, {
+        text: 'Calibrating Platform Angle Sensor',
+        x: 84,
+        y: 72.6,
+        width: 170,
+        height: 9.4,
+        fontSize: 9.4
+      }]
+    }],
+    openaiDebug
+  });
+  assert.equal(openaiDebug.acceptedSteps, 2);
+  assert.equal(result.translatedPages.length, 1);
+  assert.equal(result.translatedPages[0].blocks.length, 2);
+  assert.equal(result.translatedPages[0].blocks[0].sourceQuote, '4.3.8');
 });
 
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
@@ -935,6 +1007,10 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.doesNotMatch(raw, /Typ manualu/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
   assert.match(raw, /Pripojte servisni analyzer/);
+  assert.match(raw, /Prelozene strany originalniho manualu/);
+  assert.match(raw, /Cesky text prekryty na puvodni strane manualu/);
+  assert.match(raw, /\/Subtype \/Image/);
+  assert.doesNotMatch(raw, /Obrazova data nejsou v indexu ulozena/);
 });
 
 test('service PDF endpoint returns application/pdf', async () => {
@@ -1041,6 +1117,22 @@ test('page-aware PDF extraction keeps text on the real second page', async () =>
   assert.equal(pages[1].page, 2);
   assert.match(pages[1].text, /diagnostic troubleshooting/);
   assert.doesNotMatch(pages[0].text, /diagnostic troubleshooting/);
+});
+
+test('layout-aware PDF extraction keeps source text blocks with coordinates', async () => {
+  const pages = await extractPdfLayoutPages(fakePdf([
+    'JLG 450AJ service manual serial number 0300000000 and up',
+    'Calibrating Platform Angle Sensor service analyzer procedure'
+  ]));
+  assert.equal(pages.length, 2);
+  assert.equal(pages[1].page, 2);
+  assert.match(pages[1].text, /Calibrating Platform Angle Sensor/);
+  assert.ok(Array.isArray(pages[1].textBlocks));
+  assert.ok(pages[1].textBlocks.length > 0);
+  assert.ok(pages[1].textBlocks[0].x >= 0);
+  assert.ok(pages[1].textBlocks[0].y >= 0);
+  assert.ok(pages[1].textBlocks[0].width > 0);
+  assert.ok(pages[1].textBlocks[0].height > 0);
 });
 
 test('serial parser keeps alphanumeric prefix and numeric sequence separate', () => {
@@ -1265,7 +1357,25 @@ function servicePdfPayload() {
         page: 436,
         stepPage: 436,
         figure: 'Figure 4-12',
-        caption: 'Analyzer connector and platform angle sensor menu'
+        caption: 'Analyzer connector and platform angle sensor menu',
+        mimeType: 'image/jpeg',
+        width: 612,
+        height: 792,
+        dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/ASP/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/ASP/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAY/Al//xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAE/IV//2gAMAwEAAgADAAAAEP/EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQMBAT8QH//EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QH//EFBABAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8QH//Z'
+      }],
+      translatedPages: [{
+        page: 436,
+        width: 612,
+        height: 792,
+        blocks: [{
+          text: 'Cesky text prekryty na puvodni strane manualu.',
+          sourceQuote: 'Perform the adjustment from the service menu and verify the result.',
+          x: 72,
+          y: 120,
+          width: 260,
+          height: 36,
+          fontSize: 10
+        }]
       }]
     }
   };
