@@ -23,7 +23,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   }
   const fetchImpl = deps.fetch || fetch;
   const sourcePages = limitOpenAiPages(pages, config);
-  const sourceText = sourcePages.map(p => `PAGE ${p.page}\n${p.text}`).join('\n\n---\n\n');
+  const sourceText = sourcePages.map(formatSourcePage).join('\n\n---\n\n');
   const promptTokenEstimate = estimateTokens(JSON.stringify({
     task: request.task,
     maker: request.maker,
@@ -83,7 +83,12 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
       score: page.score || 0,
       matchedTerms: page.matchedTerms || [],
       title: page.title || '',
-      chapter: page.chapter || ''
+      chapter: page.chapter || '',
+      procedureContinuation: !!page.procedureContinuation,
+      procedureStartPage: page.procedureStartPage || '',
+      originalTextChars: Number(page.originalTextChars || String(page.text || '').length),
+      sentTextChars: String(page.text || '').length,
+      truncated: !!page.truncated
     })),
     sentCharacters: sourceText.length,
     promptTokenEstimate,
@@ -195,21 +200,43 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
 
 function limitOpenAiPages(pages, config = {}) {
   const maxPages = Math.max(1, Number(config.openaiMaxPages || 4));
-  const maxChars = Math.max(2000, Number(config.openaiMaxChars || 9000));
+  const maxChars = Math.max(2000, Number(config.openaiMaxChars || 12000));
   const out = [];
   let usedChars = 0;
   for (const page of rankPagesForOpenAi(pages).slice(0, maxPages)) {
-    const prefix = `PAGE ${page?.page || ''}\n`;
+    const originalText = String(page?.text || '');
+    const metaText = formatSourcePage({ ...page, text: '' });
     const separator = out.length ? '\n\n---\n\n' : '';
-    const overhead = prefix.length + separator.length;
+    const overhead = metaText.length + separator.length;
     const remaining = maxChars - usedChars - overhead;
     if (remaining <= 0) break;
-    const text = String(page?.text || '').slice(0, remaining);
+    const text = originalText.slice(0, remaining);
     if (!text.trim()) continue;
-    out.push({ ...page, text });
-    usedChars += overhead + text.length;
+    const candidate = {
+      ...page,
+      text,
+      originalTextChars: originalText.length,
+      truncated: text.length < originalText.length
+    };
+    const formatted = formatSourcePage(candidate);
+    if (usedChars + separator.length + formatted.length > maxChars) break;
+    out.push(candidate);
+    usedChars += separator.length + formatted.length;
   }
   return out;
+}
+
+function formatSourcePage(page) {
+  const keywords = Array.isArray(page?.keywords) ? page.keywords.join(', ') : '';
+  return [
+    `PAGE ${page?.page || ''}`,
+    page?.title ? `TITLE: ${page.title}` : '',
+    page?.chapter ? `CHAPTER: ${page.chapter}` : '',
+    keywords ? `KEYWORDS: ${keywords}` : '',
+    page?.procedureContinuation ? `PROCEDURE CONTINUATION FROM PAGE: ${page.procedureStartPage || ''}` : '',
+    'TEXT:',
+    page?.text || ''
+  ].filter(line => line !== '').join('\n');
 }
 
 function rankPagesForOpenAi(pages) {

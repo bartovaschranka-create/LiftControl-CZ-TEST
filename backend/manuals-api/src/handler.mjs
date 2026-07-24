@@ -261,14 +261,79 @@ function collectMatchedTerms(pages, task) {
 function mergePages(relevantPages, allPages, fitSources = []) {
   const pageNumbers = new Set(relevantPages.map(p => p.page));
   const relevantByPage = new Map((relevantPages || []).map(page => [page.page, page]));
+  const procedureStarts = (relevantPages || [])
+    .map(page => ({ page: Number(page.page || 0), heading: procedureHeadingText(page) }))
+    .filter(item => item.page && item.heading);
   for (const page of relevantPages || []) {
     pageNumbers.add(page.page - 1);
     pageNumbers.add(page.page + 1);
     pageNumbers.add(page.page + 2);
+    for (const continuation of procedureContinuationPages(page, allPages)) {
+      pageNumbers.add(continuation.page);
+      const inheritedScore = Math.max(1, Number(page.score || 0) - Math.max(1, continuation.page - page.page));
+      relevantByPage.set(continuation.page, {
+        ...continuation,
+        score: Math.max(Number(continuation.score || 0), inheritedScore),
+        matchedTerms: [...new Set([...(continuation.matchedTerms || []), ...(page.matchedTerms || []), 'procedure continuation'])],
+        procedureContinuation: true,
+        procedureStartPage: page.page
+      });
+    }
   }
   for (const source of fitSources || []) pageNumbers.add(source.page);
   return [...pageNumbers]
     .map(page => relevantByPage.get(page) || allPages.find(p => p.page === page))
     .filter(Boolean)
+    .filter(page => !isNextChapterAfterProcedure(page, procedureStarts))
     .sort((a, b) => a.page - b.page);
+}
+
+function procedureContinuationPages(startPage, allPages) {
+  const startNumber = Number(startPage?.page || 0);
+  if (!startNumber) return [];
+  const startHeading = procedureHeadingText(startPage);
+  if (!startHeading) return [];
+  const out = [];
+  for (const page of allPages || []) {
+    const pageNumber = Number(page?.page || 0);
+    if (pageNumber <= startNumber) continue;
+    if (pageNumber > startNumber + 5) break;
+    const heading = procedureHeadingText(page);
+    if (heading && isNextProcedureHeading(startHeading, heading)) break;
+    out.push(page);
+  }
+  return out;
+}
+
+function procedureHeadingText(page) {
+  const title = String(page?.title || '').trim();
+  if (title) return title;
+  const text = String(page?.text || '');
+  const match = text.match(/(?:^|\n)\s*(\d+(?:\.\d+){1,4}\s+[A-Z][^\n]{6,120})/);
+  return match?.[1]?.trim() || '';
+}
+
+function isNextProcedureHeading(startHeading, heading) {
+  const start = headingNumber(startHeading);
+  const next = headingNumber(heading);
+  if (!start || !next || start === next) return false;
+  const startParts = start.split('.');
+  const nextParts = next.split('.');
+  if (startParts.length !== nextParts.length) return false;
+  return startParts.slice(0, -1).join('.') === nextParts.slice(0, -1).join('.');
+}
+
+function headingNumber(value) {
+  return String(value || '').match(/\b(\d+(?:\.\d+){1,4})\b/)?.[1] || '';
+}
+
+function isNextChapterAfterProcedure(page, procedureStarts) {
+  const pageNumber = Number(page?.page || 0);
+  const heading = procedureHeadingText(page);
+  if (!pageNumber || !heading) return false;
+  return procedureStarts.some(start =>
+    pageNumber > start.page
+    && pageNumber <= start.page + 5
+    && isNextProcedureHeading(start.heading, heading)
+  );
 }

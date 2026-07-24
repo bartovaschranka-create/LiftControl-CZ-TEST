@@ -6,7 +6,7 @@ export function getConfig(env = process.env) {
     openaiModel: env.OPENAI_MODEL || 'gpt-4.1-mini',
     openaiTimeoutMs: numberEnv(env.OPENAI_TIMEOUT_MS, 120000),
     openaiMaxPages: numberEnv(env.OPENAI_MAX_PAGES, 4),
-    openaiMaxChars: numberEnv(env.OPENAI_MAX_CHARS, 9000),
+    openaiMaxChars: numberEnv(env.OPENAI_MAX_CHARS, 12000),
     openaiMaxOutputTokens: numberEnv(env.OPENAI_MAX_OUTPUT_TOKENS, 1600),
     maxPdfBytes: numberEnv(env.MAX_PDF_BYTES, 15 * 1024 * 1024),
     downloadTimeoutMs: numberEnv(env.DOWNLOAD_TIMEOUT_MS, 15000),
