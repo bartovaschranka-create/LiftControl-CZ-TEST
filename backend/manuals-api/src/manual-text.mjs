@@ -164,6 +164,7 @@ export function buildSourceOnlyResult({ request, candidate, finalUrl, pages, fit
     steps: [],
     safety: [],
     sources: uniqueSources([...(fit.sources || []), ...sourceSnippetsFromPages(pages)]),
+    images: imagesFromPages(pages),
     variants: []
   };
   if (!pages.length) {
@@ -316,6 +317,20 @@ function sourceSnippetsFromPages(pages) {
     .slice(0, 4)
     .map(page => ({ page: page.page, quote: firstUsefulQuote(page.text) }))
     .filter(source => source.page && source.quote);
+}
+
+function imagesFromPages(pages) {
+  const out = [];
+  for (const page of pages || []) {
+    for (const image of page.images || []) {
+      out.push({
+        ...image,
+        page: Number(image.page || page.page),
+        stepPage: Number(page.page)
+      });
+    }
+  }
+  return out.slice(0, 12);
 }
 
 function firstUsefulQuote(text) {

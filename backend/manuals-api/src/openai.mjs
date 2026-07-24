@@ -182,6 +182,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, parsed });
   }
   const sources = uniqueSources([...(fit.sources || []), ...validated.sources, ...evidenceSources(sourcePages)]);
+  const images = imagesForSteps(sourcePages, validated.steps);
   return {
     status: validated.steps.length ? (fit.status === 'ok' ? 'procedure_found' : 'partial_procedure_found') : evidence.status,
     maker: request.maker,
@@ -194,9 +195,27 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     steps: validated.steps,
     safety: validated.safety,
     sources,
+    images,
     message: validated.steps.length ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
     variants: []
   };
+}
+
+function imagesForSteps(pages, steps) {
+  const stepPages = new Set((steps || []).map(step => Number(step.page)).filter(Boolean));
+  if (!stepPages.size) return [];
+  const out = [];
+  for (const page of pages || []) {
+    if (!stepPages.has(Number(page.page))) continue;
+    for (const image of page.images || []) {
+      out.push({
+        ...image,
+        page: Number(image.page || page.page),
+        stepPage: Number(page.page)
+      });
+    }
+  }
+  return out.slice(0, 12);
 }
 
 function limitOpenAiPages(pages, config = {}) {

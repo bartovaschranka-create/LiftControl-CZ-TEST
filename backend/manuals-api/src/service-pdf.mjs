@@ -10,49 +10,43 @@ export function createServiceProcedurePdf(input = {}) {
 
   const doc = new PdfDoc();
   const layout = new Layout(doc);
-  layout.title('Servisni postup z manualu vyrobce');
+  layout.title('Servisni instrukce vyrobce');
   layout.kv('Vyrobce', data.result.maker || data.request.maker);
   layout.kv('Model', data.result.model || data.request.model);
   layout.kv('Vyrobni cislo', data.result.serial || data.request.serial || 'neuvedeno');
-  layout.kv('Servisni ukon', data.request.task || 'neuvedeno');
-  layout.kv('Manual', data.result.manualTitle || 'neuvedeno');
-  layout.kv('Typ manualu', data.result.manualType || 'neuvedeno');
-  layout.kv('Vydani / rozsah v.c.', data.result.serialRange || 'neuvedeno / neovereno');
-  layout.kv('Pouzite strany', data.sourcePages.join(', ') || 'neuvedeno');
+  layout.kv('Nazev servisniho ukonu', data.request.task || 'neuvedeno');
+  layout.kv('Pouzity manual', conciseManualName(data.result));
+  layout.kv('Rozsah pouzitych stran', data.sourcePages.join(', ') || 'neuvedeno');
   layout.hr();
 
-  layout.heading('Cesky pracovni postup');
+  layout.heading('Cesky servisni postup');
   if (data.steps.length) {
     data.steps.forEach((step, index) => {
-      layout.paragraph(`${index + 1}. ${step.text}`, { indent: 14 });
-      if (step.page || step.sourceQuote) {
-        layout.small(`Zdroj: strana ${step.page || '?'}${step.sourceQuote ? ` - "${step.sourceQuote}"` : ''}`);
-      }
+      layout.stepBlock(index + 1, step, data);
+      imagesForStep(data.images, step).forEach(image => layout.imageBlock(image, data));
     });
   } else {
     layout.paragraph('Cesky postup nebyl bezpecne sestaven. Nize je uveden nalezeny zdrojovy text z manualu.');
   }
 
   if (data.safety.length) {
-    layout.heading('Upozorneni vyrobce');
+    layout.heading('Bezpecnostni upozorneni vyrobce');
     data.safety.forEach((item, index) => {
-      layout.paragraph(`${index + 1}. ${item.text}`, { indent: 14 });
-      if (item.page || item.sourceQuote) layout.small(`Zdroj: strana ${item.page || '?'} - "${item.sourceQuote || ''}"`);
+      layout.callout('BEZPECNOSTNI UPOZORNENI', `${index + 1}. ${item.text}`, data, item);
     });
   }
 
   if (data.sources.length) {
-    layout.heading('Zdrojove strany a text');
+    layout.heading('Zdrojove citace');
     data.sources.forEach(source => {
-      layout.paragraph(`Strana ${source.page}: ${source.quote}`);
+      layout.small(`${sourceLabel(data, source.page)} - "${source.quote}"`);
     });
   }
 
-  if (data.images.length) {
-    layout.heading('Obrazky / schemata z manualu');
-    data.images.forEach((image, index) => {
-      layout.box(`Obrazek ${index + 1} - strana ${image.page || '?'}\n${image.caption || 'Popis obrazku nebyl uveden.'}`);
-    });
+  const unusedImages = data.images.filter(image => !data.steps.some(step => Number(step.page) === Number(image.stepPage || image.page)));
+  if (unusedImages.length) {
+    layout.heading('Dalsi obrazky / schemata z manualu');
+    unusedImages.forEach(image => layout.imageBlock(image, data));
   }
 
   layout.heading('Originalni manual');
@@ -67,13 +61,44 @@ function normalizeInput(input) {
   const steps = normalizeItems(result.steps);
   const safety = normalizeItems(result.safety);
   const sources = normalizeSources(result.sources);
-  const images = Array.isArray(result.images) ? result.images : [];
+  const images = normalizeImages(result.images);
   const sourcePages = [...new Set([
     ...steps.map(x => x.page).filter(Boolean),
     ...safety.map(x => x.page).filter(Boolean),
     ...sources.map(x => x.page).filter(Boolean)
   ])].sort((a, b) => Number(a) - Number(b));
   return { request, result, steps, safety, sources, images, sourcePages };
+}
+
+function conciseManualName(result) {
+  return clean(result.manualTitle || result.originalUrl || 'neuvedeno')
+    .replace(/\s+/g, ' ')
+    .slice(0, 110);
+}
+
+function sourceLabel(data, page) {
+  const manual = conciseManualName(data.result);
+  return `Zdroj: ${manual}, str. ${page || '?'}`;
+}
+
+function imagesForStep(images, step) {
+  const page = Number(step?.page || 0);
+  return (images || []).filter(image => Number(image.stepPage || image.page || 0) === page);
+}
+
+function normalizeImages(images) {
+  return (Array.isArray(images) ? images : [])
+    .map(image => ({
+      page: image?.page || '',
+      stepPage: image?.stepPage || image?.page || '',
+      figure: clean(image?.figure || '').slice(0, 80),
+      caption: clean(image?.caption || '').slice(0, 240),
+      dataUrl: String(image?.dataUrl || '').trim(),
+      mimeType: clean(image?.mimeType || image?.mime || '').slice(0, 60),
+      width: Number(image?.width) || 0,
+      height: Number(image?.height) || 0
+    }))
+    .filter(image => image.figure || image.caption || image.dataUrl);
 }
 
 function normalizeItems(items) {
@@ -138,6 +163,87 @@ class Layout {
     }
     this.y -= 4;
   }
+  stepBlock(number, step, data) {
+    const tags = classifyStep(step.text);
+    const source = sourceLabel(data, step.page);
+    const menu = extractMenuTerms(step.text);
+    const lines = wrap(clean(step.text), this.width - 24, 10);
+    const menuLines = menu.length ? wrap(`Menu / hodnoty: ${menu.join('  |  ')}`, this.width - 34, 9) : [];
+    const sourceLines = wrap(`${source} - "${clean(step.sourceQuote || '')}"`, this.width - 34, 8);
+    const tagLines = tags.length ? wrap(tags.join('   '), this.width - 24, 8) : [];
+    const height = 34 + lines.length * 13 + menuLines.length * 12 + sourceLines.length * 10 + tagLines.length * 10;
+    this.ensure(height + 12);
+    const top = this.y + 8;
+    this.doc.rect(this.x, this.y - height, this.width, height + 10, 1.1);
+    this.doc.text(this.x + 10, this.y, `Krok ${number}`, 11, BOLD);
+    this.y -= 15;
+    for (const line of tagLines) {
+      this.doc.text(this.x + 10, this.y, line, 8, BOLD);
+      this.y -= 10;
+    }
+    for (const line of lines) {
+      this.doc.text(this.x + 12, this.y, line, 10, FONT);
+      this.y -= 13;
+    }
+    if (menuLines.length) {
+      this.y -= 2;
+      const boxH = menuLines.length * 12 + 8;
+      const menuTop = this.y;
+      const menuBottom = menuTop - boxH + 6;
+      this.doc.rect(this.x + 10, menuBottom, this.width - 20, boxH, 0.45);
+      for (const line of menuLines) {
+        this.doc.text(this.x + 17, this.y, line, 9, BOLD);
+        this.y -= 12;
+      }
+      this.y = Math.min(this.y - 2, menuBottom - 6);
+    }
+    this.y -= 2;
+    for (const line of sourceLines) {
+      this.doc.text(this.x + 12, this.y, line, 8, FONT);
+      this.y -= 10;
+    }
+    this.y = Math.min(this.y - 8, top - height - 8);
+  }
+  callout(label, text, data, item = {}) {
+    const lines = wrap(clean(text), this.width - 20, 10);
+    const sourceLines = item.page || item.sourceQuote ? wrap(`${sourceLabel(data, item.page)} - "${clean(item.sourceQuote || '')}"`, this.width - 20, 8) : [];
+    const height = 28 + lines.length * 13 + sourceLines.length * 10;
+    this.ensure(height + 8);
+    const startY = this.y;
+    this.doc.rect(this.x, this.y - height, this.width, height + 8, 1.0);
+    this.doc.text(this.x + 10, this.y, label, 10, BOLD);
+    this.y -= 15;
+    for (const line of lines) {
+      this.doc.text(this.x + 10, this.y, line, 10, FONT);
+      this.y -= 13;
+    }
+    for (const line of sourceLines) {
+      this.doc.text(this.x + 10, this.y, line, 8, FONT);
+      this.y -= 10;
+    }
+    this.y = Math.min(this.y - 10, startY - height - 14);
+  }
+  imageBlock(image, data) {
+    const caption = image.caption || image.figure || 'Obrazek z manualu';
+    const title = `${caption} - ${sourceLabel(data, image.page)}`;
+    const maxW = this.width - 24;
+    const maxH = 210;
+    if (image.dataUrl) {
+      const size = imageSize(image);
+      const scale = Math.min(maxW / size.w, maxH / size.h, 1);
+      const w = Math.max(120, size.w * scale);
+      const h = Math.max(70, size.h * scale);
+      this.ensure(h + 48);
+      this.doc.text(this.x + 12, this.y, title, 9, BOLD);
+      this.y -= 14;
+      if (this.doc.image(this.x + 12, this.y - h, w, h, image)) {
+        this.y -= h + 8;
+        this.small(sourceLabel(data, image.page));
+        return;
+      }
+    }
+    this.box(`${title}\nObrazova data nejsou v indexu ulozena. Otevri originalni manual na uvedene strane.`);
+  }
   small(text) {
     const lines = wrap(clean(text), this.width, 8);
     this.ensure(lines.length * 10 + 4);
@@ -175,10 +281,41 @@ class Layout {
   }
 }
 
+function classifyStep(text) {
+  const value = clean(text).toLowerCase();
+  const tags = [];
+  if (/\b(warning|caution|danger|bezpec|pozor|zajisti|odpoj)\b/.test(value)) tags.push('BEZPECNOSTNI UPOZORNENI');
+  if (/\b(calibration|kalibr|adjustment|nastav|seriz|access level|calibrations)\b/.test(value)) tags.push('NASTAVENI');
+  if (/\b(display|analyzer|menu|access level|calibrations|platform angle|enter)\b/.test(value)) tags.push('HODNOTY NA DISPLEJI');
+  if (/\b(connector|konektor|plug|unplug|electrical|wire|cable)\b/.test(value)) tags.push('ELEKTRICKE KONEKTORY');
+  if (/\b(sensor|senzor|cidlo|location|umisteni|platform angle)\b/.test(value)) tags.push('UMISTENI SENZORU');
+  return tags.slice(0, 3);
+}
+
+function extractMenuTerms(text) {
+  const out = new Set();
+  const value = clean(text);
+  const matches = value.match(/\b[A-Z][A-Z0-9 /-]{3,}\b/g) || [];
+  for (const match of matches) {
+    const cleaned = match.trim();
+    if (cleaned.length >= 4 && !/^(JLG|PDF|PVC)$/.test(cleaned)) out.add(cleaned);
+  }
+  return [...out].slice(0, 6);
+}
+
+function imageSize(image) {
+  if (image.width && image.height) return { w: image.width, h: image.height };
+  const jpeg = parseJpegDataUrl(image.dataUrl);
+  if (jpeg?.width && jpeg?.height) return { w: jpeg.width, h: jpeg.height };
+  return { w: 360, h: 180 };
+}
+
 class PdfDoc {
   constructor() {
     this.pages = [];
     this.current = null;
+    this.images = [];
+    this.imageByKey = new Map();
     this.newPage();
   }
   newPage() {
@@ -188,11 +325,29 @@ class PdfDoc {
   text(x, y, text, size = 10, font = FONT) {
     this.current.push(`BT /${font} ${size} Tf ${fmt(x)} ${fmt(y)} Td ${pdfText(clean(text))} Tj ET`);
   }
-  line(x1, y1, x2, y2) {
-    this.current.push(`0.8 w ${fmt(x1)} ${fmt(y1)} m ${fmt(x2)} ${fmt(y2)} l S`);
+  line(x1, y1, x2, y2, width = 0.8) {
+    this.current.push(`${fmt(width)} w ${fmt(x1)} ${fmt(y1)} m ${fmt(x2)} ${fmt(y2)} l S`);
   }
-  rect(x, y, w, h) {
-    this.current.push(`0.8 w ${fmt(x)} ${fmt(y)} ${fmt(w)} ${fmt(h)} re S`);
+  rect(x, y, w, h, width = 0.8) {
+    this.current.push(`${fmt(width)} w ${fmt(x)} ${fmt(y)} ${fmt(w)} ${fmt(h)} re S`);
+  }
+  image(x, y, w, h, image) {
+    const parsed = parseJpegDataUrl(image?.dataUrl || '');
+    if (!parsed) return false;
+    const key = parsed.buffer.toString('base64');
+    let registered = this.imageByKey.get(key);
+    if (!registered) {
+      registered = {
+        name: `Im${this.images.length + 1}`,
+        buffer: parsed.buffer,
+        width: parsed.width,
+        height: parsed.height
+      };
+      this.images.push(registered);
+      this.imageByKey.set(key, registered);
+    }
+    this.current.push(`q ${fmt(w)} 0 0 ${fmt(h)} ${fmt(x)} ${fmt(y)} cm /${registered.name} Do Q`);
+    return true;
   }
   finish() {
     const objects = [];
@@ -201,11 +356,21 @@ class PdfDoc {
     objects.push('PAGES_PLACEHOLDER');
     objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+    const imageRefs = new Map();
+    for (const image of this.images) {
+      const objNumber = objects.length + 1;
+      imageRefs.set(image.name, objNumber);
+      const stream = image.buffer.toString('latin1');
+      objects.push(`<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.buffer.length} >>\nstream\n${stream}\nendstream`);
+    }
+    const xObject = this.images.length
+      ? `/XObject << ${this.images.map(image => `/${image.name} ${imageRefs.get(image.name)} 0 R`).join(' ')} >>`
+      : '';
     for (const content of this.pages) {
       const pageObj = objects.length + 1;
       const contentObj = pageObj + 1;
       pageRefs.push(`${pageObj} 0 R`);
-      objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PAGE.w} ${PAGE.h}] /Resources << /Font << /${FONT} 3 0 R /${BOLD} 4 0 R >> >> /Contents ${contentObj} 0 R >>`);
+      objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PAGE.w} ${PAGE.h}] /Resources << /Font << /${FONT} 3 0 R /${BOLD} 4 0 R >> ${xObject} >> /Contents ${contentObj} 0 R >>`);
       const stream = content.join('\n');
       objects.push(`<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`);
     }
@@ -256,6 +421,34 @@ function clean(value) {
 
 function pdfText(value) {
   return `(${clean(value).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)')})`;
+}
+
+function parseJpegDataUrl(dataUrl) {
+  const match = String(dataUrl || '').match(/^data:image\/jpe?g;base64,([A-Za-z0-9+/=]+)$/i);
+  if (!match) return null;
+  const buffer = Buffer.from(match[1], 'base64');
+  const size = jpegSize(buffer);
+  if (!size) return null;
+  return { buffer, ...size };
+}
+
+function jpegSize(buffer) {
+  if (!Buffer.isBuffer(buffer) || buffer.length < 4 || buffer[0] !== 0xFF || buffer[1] !== 0xD8) return null;
+  let offset = 2;
+  while (offset + 9 < buffer.length) {
+    if (buffer[offset] !== 0xFF) return null;
+    const marker = buffer[offset + 1];
+    const length = buffer.readUInt16BE(offset + 2);
+    if (length < 2) return null;
+    if ((marker >= 0xC0 && marker <= 0xC3) || (marker >= 0xC5 && marker <= 0xC7) || (marker >= 0xC9 && marker <= 0xCB) || (marker >= 0xCD && marker <= 0xCF)) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7)
+      };
+    }
+    offset += 2 + length;
+  }
+  return null;
 }
 
 function fmt(n) {

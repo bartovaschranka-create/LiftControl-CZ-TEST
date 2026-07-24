@@ -222,9 +222,13 @@ function normalizeImages(images) {
       figure: stringValue(image?.figure),
       bbox: stringValue(image?.bbox),
       caption: stringValue(image?.caption),
-      page: Number(image?.page) || 0
+      page: Number(image?.page) || 0,
+      mimeType: stringValue(image?.mimeType || image?.mime),
+      dataUrl: stringValue(image?.dataUrl),
+      width: Number(image?.width) || 0,
+      height: Number(image?.height) || 0
     }))
-    .filter(image => image.figure || image.caption);
+    .filter(image => image.figure || image.caption || image.dataUrl);
 }
 
 function stringValue(value) {
