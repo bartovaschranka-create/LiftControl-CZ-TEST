@@ -177,7 +177,7 @@ export function createManualsHandler(deps = {}) {
           continue;
         }
 
-        const aiPages = mergePages(relevantPages, pages, fit.sources);
+        const aiPages = mergePages(relevantPages, pages, fit.sources, request.task);
         if (!config.manualSearchTranslate && hasPageLayout(aiPages)) {
           const result = buildFoundPagesResult({ request, candidate, finalUrl, pages: aiPages, relevantPages, fit });
           applySelectionDiagnostics(result, candidate, finalUrl, fit);
@@ -245,6 +245,11 @@ function hasPageLayout(pages) {
 }
 
 function buildFoundPagesResult({ request, candidate, finalUrl, pages, relevantPages, fit = {} }) {
+  const sourcePages = normalizeSourcePagesForClient(pages);
+  const images = imagesFromPages(pages);
+  const selectedPages = sourcePages.map(page => page.page);
+  const layoutBlocksCount = sourcePages.reduce((sum, page) => sum + (page.textBlocks || []).length, 0);
+  const pageImagesAvailable = sourcePages.every(page => (page.images || []).some(image => image.dataUrl));
   return {
     status: 'partial_procedure_found',
     maker: request.maker,
@@ -257,12 +262,32 @@ function buildFoundPagesResult({ request, candidate, finalUrl, pages, relevantPa
     steps: [],
     safety: [],
     translatedPages: [],
-    sourcePages: normalizeSourcePagesForClient(pages),
+    sourcePages,
     sources: sourceSnippetsFromPages(relevantPages.length ? relevantPages : pages),
-    images: imagesFromPages(pages),
+    images,
+    pdfDiagnostics: {
+      selectedPages,
+      contiguousPageRange: contiguousRange(selectedPages),
+      pageImagesAvailable,
+      layoutBlocksCount,
+      translatedBlocksCount: 0,
+      repairedBlocksCount: 0,
+      untranslatedBlocksCount: layoutBlocksCount,
+      fallbackReason: '',
+      finalRenderMode: pageImagesAvailable && layoutBlocksCount ? 'translated_manual_pages_pending_translation' : 'fallback_report'
+    },
     message: 'Manual a relevantni strany byly nalezeny. Preklad se vytvori v dalsim kroku z vybranych stran, aby vyhledani nespadlo na timeout Vercelu. Pri rozporu ma vzdy prednost originalni manual vyrobce.',
     variants: []
   };
+}
+
+function contiguousRange(pages) {
+  const numbers = [...new Set((pages || []).map(Number).filter(Boolean))].sort((a, b) => a - b);
+  if (!numbers.length) return '';
+  for (let i = 1; i < numbers.length; i += 1) {
+    if (numbers[i] !== numbers[i - 1] + 1) return numbers.join(',');
+  }
+  return `${numbers[0]}-${numbers[numbers.length - 1]}`;
 }
 
 function normalizeSourcePagesForClient(pages) {
@@ -402,7 +427,10 @@ function collectMatchedTerms(pages, task) {
   return [...found];
 }
 
-function mergePages(relevantPages, allPages, fitSources = []) {
+function mergePages(relevantPages, allPages, fitSources = [], task = '') {
+  const procedureGroup = preferredProcedureGroup(relevantPages, allPages, task);
+  if (procedureGroup.length) return procedureGroup;
+
   const pageNumbers = new Set(relevantPages.map(p => p.page));
   const relevantByPage = new Map((relevantPages || []).map(page => [page.page, page]));
   const procedureStarts = (relevantPages || [])
@@ -430,6 +458,27 @@ function mergePages(relevantPages, allPages, fitSources = []) {
     .filter(Boolean)
     .filter(page => !isNextChapterAfterProcedure(page, procedureStarts))
     .sort((a, b) => a.page - b.page);
+}
+
+function preferredProcedureGroup(relevantPages, allPages, task = '') {
+  if (!isAngleSensorCalibrationTask(task)) return [];
+  const starts = (relevantPages || [])
+    .filter(page => procedureHeadingText(page))
+    .filter(page => /calibrat/i.test(procedureHeadingText(page)) && /(angle|tilt|level).*sensor|sensor/i.test(procedureHeadingText(page)))
+    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+  const start = starts[0];
+  if (!start) return [];
+  const byPage = new Map((allPages || []).map(page => [Number(page.page || 0), page]));
+  const group = [start, ...procedureContinuationPages(start, allPages)]
+    .map(page => ({
+      ...(byPage.get(Number(page.page || 0)) || page),
+      score: Number(page.score || start.score || 1),
+      matchedTerms: [...new Set([...(page.matchedTerms || []), ...(start.matchedTerms || []), 'contiguous procedure range'])],
+      procedureStartPage: Number(start.page || 0),
+      procedureContinuation: Number(page.page || 0) !== Number(start.page || 0)
+    }))
+    .filter(page => Number(page.page || 0));
+  return group.slice(0, 6).sort((a, b) => Number(a.page) - Number(b.page));
 }
 
 function procedureContinuationPages(startPage, allPages) {

@@ -6,7 +6,15 @@ const BOLD = 'F2';
 export function createServiceProcedurePdf(input = {}) {
   const data = normalizeInput(input);
   if (!data.result.manualTitle && !data.result.originalUrl) throw new Error('Chybi overeny vysledek manualu.');
-  if (!data.steps.length && !data.sources.length && !data.translatedPages.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
+  if (!data.steps.length && !data.sources.length && !data.translatedPages.length && !data.sourcePages.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
+
+  if (data.translatedPages.length && data.pageImagesAvailable) {
+    data.diagnostics.finalRenderMode = 'translated_manual_pages';
+    const doc = new PdfDoc({ autoPage: false });
+    const layout = new Layout(doc);
+    data.translatedPages.forEach(page => layout.translatedManualPage(page, data));
+    return doc.finish();
+  }
 
   const doc = new PdfDoc();
   const layout = new Layout(doc);
@@ -31,6 +39,8 @@ export function createServiceProcedurePdf(input = {}) {
       imagesForStep(data.images, step, insertedImagePages).forEach(image => layout.imageBlock(image, data));
     });
   } else {
+    data.diagnostics.fallbackReason = data.diagnostics.fallbackReason || 'translated_pages_missing';
+    data.diagnostics.finalRenderMode = 'fallback_report';
     layout.paragraph('Ceska servisni kapitola nebyla bezpecne sestavena. Nize je uveden nalezeny zdrojovy text z manualu.');
   }
 
@@ -71,16 +81,24 @@ function normalizeInput(input) {
   const steps = normalizeItems(result.steps);
   const safety = normalizeItems(result.safety);
   const sources = normalizeSources(result.sources);
-  const images = normalizeImages(result.images);
+  const sourcePages = normalizeSourcePages(result.sourcePages);
+  const images = normalizeImages([
+    ...(Array.isArray(result.images) ? result.images : []),
+    ...sourcePages.flatMap(page => page.images || [])
+  ]);
   const translatedPages = normalizeTranslatedPages(result.translatedPages);
-  const sourcePages = translatedPages.length
+  const sourcePageNumbers = translatedPages.length
     ? translatedPages.map(x => x.page).filter(Boolean)
+    : sourcePages.length
+    ? sourcePages.map(x => x.page).filter(Boolean)
     : [...new Set([
       ...steps.map(x => x.page).filter(Boolean),
       ...safety.map(x => x.page).filter(Boolean),
       ...sources.map(x => x.page).filter(Boolean)
     ])].sort((a, b) => Number(a) - Number(b));
-  return { request, result, steps, safety, sources, images, translatedPages, sourcePages };
+  const pageImagesAvailable = translatedPages.every(page => !!bestPageImage(images, page.page));
+  const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable });
+  return { request, result, steps, safety, sources, images, translatedPages, sourcePages: sourcePageNumbers, sourcePageData: sourcePages, pageImagesAvailable, diagnostics };
 }
 
 function conciseManualName(result) {
@@ -152,6 +170,62 @@ function normalizeTranslatedPages(pages) {
         .filter(block => block.text && block.width > 0 && block.height > 0)
     }))
     .filter(page => page.page && page.blocks.length);
+}
+
+function normalizeSourcePages(pages) {
+  return (Array.isArray(pages) ? pages : [])
+    .map(page => ({
+      page: Number(page?.page) || 0,
+      width: Number(page?.width) || 0,
+      height: Number(page?.height) || 0,
+      title: clean(page?.title || '').slice(0, 180),
+      chapter: clean(page?.chapter || '').slice(0, 180),
+      textBlocks: (Array.isArray(page?.textBlocks) ? page.textBlocks : [])
+        .map(block => ({
+          text: clean(block?.text || '').slice(0, 1200),
+          x: Number(block?.x) || 0,
+          y: Number(block?.y) || 0,
+          width: Number(block?.width) || 0,
+          height: Number(block?.height) || 0,
+          fontSize: Number(block?.fontSize) || 0
+        }))
+        .filter(block => block.text && block.width > 0 && block.height > 0),
+      images: normalizeImages((Array.isArray(page?.images) ? page.images : []).map(image => ({
+        ...image,
+        page: Number(image?.page || page?.page) || 0,
+        stepPage: Number(page?.page) || 0
+      })))
+    }))
+    .filter(page => page.page);
+}
+
+function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable }) {
+  const selectedPages = translatedPages.length
+    ? translatedPages.map(page => page.page)
+    : sourcePages.map(page => page.page);
+  const translatedBlocksCount = translatedPages.reduce((sum, page) => sum + page.blocks.length, 0);
+  const layoutBlocksCount = sourcePages.reduce((sum, page) => sum + page.textBlocks.length, 0);
+  return {
+    selectedPages,
+    contiguousPageRange: contiguousRange(selectedPages),
+    pageImagesAvailable,
+    layoutBlocksCount,
+    translatedBlocksCount,
+    repairedBlocksCount: 0,
+    untranslatedBlocksCount: Math.max(0, layoutBlocksCount - translatedBlocksCount),
+    fallbackReason: '',
+    finalRenderMode: translatedPages.length && pageImagesAvailable ? 'translated_manual_pages' : 'fallback_report',
+    pageImagesWithDataUrl: images.filter(image => image.dataUrl && (image.bbox === 'page' || /originalni strana manualu|original manual page/i.test(image.caption || ''))).length
+  };
+}
+
+function contiguousRange(pages) {
+  const numbers = [...new Set((pages || []).map(Number).filter(Boolean))].sort((a, b) => a - b);
+  if (!numbers.length) return '';
+  for (let i = 1; i < numbers.length; i += 1) {
+    if (numbers[i] !== numbers[i - 1] + 1) return numbers.join(',');
+  }
+  return `${numbers[0]}-${numbers[numbers.length - 1]}`;
 }
 
 function normalizeSources(sources) {
@@ -287,18 +361,18 @@ class Layout {
   translatedManualPage(page, data) {
     const image = bestPageImage(data.images, page.page);
     this.doc.newPage();
-    this.y = PAGE.h - M;
+    this.y = PAGE.h;
     const size = image?.dataUrl ? imageSize(image) : {
       w: page.width || 612,
       h: page.height || 792
     };
-    const maxW = PAGE.w - M * 2;
-    const maxH = PAGE.h - M * 2 - 20;
+    const maxW = PAGE.w;
+    const maxH = PAGE.h - 18;
     const scale = Math.min(maxW / size.w, maxH / size.h);
     const w = size.w * scale;
     const h = size.h * scale;
     const x = (PAGE.w - w) / 2;
-    const y = PAGE.h - M - h;
+    const y = PAGE.h - h;
     if (image?.dataUrl) {
       this.doc.image(x, y, w, h, image);
     } else {
@@ -316,13 +390,14 @@ class Layout {
       const bh = Math.max(7, block.height * sy);
       const by = y + h - (block.y + block.height) * sy;
       const bw = Math.max(16, block.width * sx);
-      const pad = image?.dataUrl ? 2.8 : 1.2;
+      const pad = image?.dataUrl ? 2.2 : 1.2;
       const boxH = Math.max(bh + pad * 2, Math.min(34, bh * 1.85));
       if (image?.dataUrl) this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
       const fontSize = Math.max(6.1, Math.min(9.8, (block.fontSize || block.height || 8) * sy * 1.02));
       this.textInBox(block.text, bx, by + boxH - pad - 1.2, bw, boxH - pad * 1.3, fontSize);
     }
-    this.doc.text(x, M - 12, sourceLabel(data, page.page), 7, FONT);
+    this.doc.fillRect(0, 0, PAGE.w, 16, 1);
+    this.doc.text(x + 4, 5, sourceLabel(data, page.page), 7, FONT);
     this.y = M;
   }
   textInBox(text, x, topY, width, height, size) {
@@ -418,12 +493,12 @@ function bestPageImage(images, page) {
 }
 
 class PdfDoc {
-  constructor() {
+  constructor(options = {}) {
     this.pages = [];
     this.current = null;
     this.images = [];
     this.imageByKey = new Map();
-    this.newPage();
+    if (options.autoPage !== false) this.newPage();
   }
   newPage() {
     this.current = [];
@@ -522,15 +597,17 @@ function wrap(text, width, size) {
 
 function clean(value) {
   return String(value || '')
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 function pdfText(value) {
-  return `(${clean(value).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)')})`;
+  const text = clean(value);
+  if (/[^\x20-\x7E]/.test(text)) {
+    return `<FEFF${Buffer.from(text, 'utf16le').swap16().toString('hex').toUpperCase()}>`;
+  }
+  return `(${text.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)')})`;
 }
 
 function parseJpegDataUrl(dataUrl) {
