@@ -1274,7 +1274,8 @@ test('OpenAI timeout returns found pages message instead of generic failure', as
   assert.equal(res.json.status, 'partial_procedure_found');
   assert.match(res.json.message, /AI nestihla dokoncit zpracovani v casovem limitu/);
   assert.equal(res.json.debug.openai.errorCode, 'openai_timeout');
-  assert.equal(res.json.debug.openai.timeoutMs, 60000);
+  assert.ok(res.json.debug.openai.timeoutMs < 26000);
+  assert.ok(res.json.debug.performance.some(event => event.label === 'OpenAI main request sent'));
   assert.ok(res.json.debug.openai.elapsedMs >= 0);
   assert.ok(res.json.debug.openai.sentPages > 0);
 });

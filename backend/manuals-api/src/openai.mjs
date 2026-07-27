@@ -22,7 +22,7 @@ const TRANSLATED_PAGE_REPAIR_SCHEMA = {
   }
 };
 
-export async function structureWithOpenAI({ request, candidate, finalUrl, pages, config, deps = {}, fit = {}, openaiDebug = null }) {
+export async function structureWithOpenAI({ request, candidate, finalUrl, pages, config, deps = {}, fit = {}, openaiDebug = null, perf = null, deadlineAt = 0 }) {
   if (!config.openaiApiKey) {
     setOpenAiDebug(openaiDebug, {
       configured: false,
@@ -118,10 +118,24 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   });
   let res;
   const startedAt = Date.now();
+  const mainTimeoutMs = openAiTimeoutForDeadline(config, deadlineAt, 4000);
+  if (mainTimeoutMs < 1000) {
+    setOpenAiDebug(openaiDebug, {
+      responseStatus: null,
+      elapsedMs: 0,
+      errorCode: 'openai_timeout',
+      errorMessage: 'Not enough serverless time left for OpenAI processing before Vercel timeout.',
+      timeoutMs: mainTimeoutMs
+    });
+    perf?.mark?.('OpenAI skipped before call', { reason: 'deadline_too_close', remainingMs: remainingMs(deadlineAt) });
+    return buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages: sourcePages, fit });
+  }
+  setOpenAiDebug(openaiDebug, { timeoutMs: mainTimeoutMs });
   try {
+    perf?.mark?.('OpenAI main request sent', { timeoutMs: mainTimeoutMs, pages: sourcePages.length, chars: sourceText.length });
     res = await fetchImpl('https://api.openai.com/v1/responses', {
       method: 'POST',
-      signal: openAiTimeoutSignal(config),
+      signal: openAiTimeoutSignal({ openaiTimeoutMs: mainTimeoutMs }),
       headers: {
         Authorization: `Bearer ${config.openaiApiKey}`,
         'Content-Type': 'application/json'
@@ -139,6 +153,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     });
     return buildOpenAiTimeoutResult({ request, candidate, finalUrl, pages: sourcePages, fit });
   }
+  perf?.mark?.('OpenAI main response received', { status: Number(res.status) || null, elapsedMs: Date.now() - startedAt });
   setOpenAiDebug(openaiDebug, { responseStatus: Number(res.status) || null, elapsedMs: Date.now() - startedAt });
   if (!res.ok) {
     const errorText = await readOpenAiErrorText(res);
@@ -189,7 +204,9 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     request,
     config,
     deps,
-    openaiDebug
+    openaiDebug,
+    perf,
+    deadlineAt
   });
   const rawItemCount = countSourceItems({ ...parsed, translatedPages: repairedTranslatedPages });
   const validationDetails = [];
@@ -230,7 +247,7 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   };
 }
 
-async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourcePages, request, config, deps, openaiDebug }) {
+async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourcePages, request, config, deps, openaiDebug, perf = null, deadlineAt = 0 }) {
   const sourcePagesWithBlocks = (sourcePages || [])
     .filter(page => Array.isArray(page?.textBlocks) && page.textBlocks.some(block => String(block?.text || '').trim().length >= 2));
   if (!sourcePagesWithBlocks.length) return Array.isArray(parsedTranslatedPages) ? parsedTranslatedPages : [];
@@ -240,41 +257,83 @@ async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourc
     attempted: false,
     repairedPages: [],
     skippedPages: [],
+    requestedPages: 0,
+    requestedBlocks: 0,
+    timeoutMs: 0,
+    elapsedMs: 0,
     errorCode: null,
     errorMessage: null
   };
   setOpenAiDebug(openaiDebug, { translatedPageRepair: repairDebug });
 
+  const missingByPage = [];
   for (const sourcePage of sourcePagesWithBlocks) {
     const missingBlocks = missingTextBlocksForPage(sourcePage, currentPages.get(Number(sourcePage.page)));
     if (!missingBlocks.length) continue;
-    repairDebug.attempted = true;
-    try {
-      const repairedPage = await translateTextBlocksPage({ sourcePage, missingBlocks, request, config, deps });
-      const validated = normalizeRawTranslatedPages(repairedPage?.translatedPages).get(Number(sourcePage.page));
+    missingByPage.push({ sourcePage, missingBlocks });
+  }
+  if (!missingByPage.length) return [...currentPages.values()].sort((a, b) => Number(a.page) - Number(b.page));
+
+  const remaining = remainingMs(deadlineAt);
+  const minRemaining = Number(config.translatedPageRepairMinRemainingMs || 8000);
+  if (remaining && remaining < minRemaining) {
+    repairDebug.errorCode = 'translated_page_repair_skipped_deadline';
+    repairDebug.errorMessage = `Repair skipped because only ${remaining} ms remained before serverless deadline.`;
+    perf?.mark?.('translated page repair skipped', { reason: 'deadline_too_close', remainingMs: remaining });
+    return [...currentPages.values()].sort((a, b) => Number(a.page) - Number(b.page));
+  }
+
+  const maxPages = Math.max(1, Number(config.translatedPageRepairMaxPages || 4));
+  const maxBlocks = Math.max(1, Number(config.translatedPageRepairMaxBlocks || 80));
+  const repairPages = [];
+  let usedBlocks = 0;
+  for (const item of missingByPage.slice(0, maxPages)) {
+    const blocks = item.missingBlocks.slice(0, Math.max(0, maxBlocks - usedBlocks));
+    if (!blocks.length) break;
+    repairPages.push({ sourcePage: item.sourcePage, missingBlocks: blocks });
+    usedBlocks += blocks.length;
+    if (usedBlocks >= maxBlocks) break;
+  }
+  if (!repairPages.length) return [...currentPages.values()].sort((a, b) => Number(a.page) - Number(b.page));
+
+  repairDebug.attempted = true;
+  repairDebug.requestedPages = repairPages.length;
+  repairDebug.requestedBlocks = usedBlocks;
+  const repairTimeoutMs = Math.max(1000, Math.min(
+    Number(config.translatedPageRepairTimeoutMs || 6000),
+    openAiTimeoutForDeadline(config, deadlineAt, 2000)
+  ));
+  repairDebug.timeoutMs = repairTimeoutMs;
+  const startedAt = Date.now();
+  try {
+    perf?.mark?.('translated page repair request sent', { pages: repairPages.length, blocks: usedBlocks, timeoutMs: repairTimeoutMs });
+    const repaired = await translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs: repairTimeoutMs });
+    repairDebug.elapsedMs = Date.now() - startedAt;
+    const translatedMap = normalizeRawTranslatedPages(repaired?.translatedPages);
+    for (const item of repairPages) {
+      const pageNumber = Number(item.sourcePage.page);
+      const validated = translatedMap.get(pageNumber);
       if (validated?.blocks?.length) {
-        mergeRawTranslatedBlocks(currentPages, Number(sourcePage.page), validated.blocks);
+        mergeRawTranslatedBlocks(currentPages, pageNumber, validated.blocks);
         repairDebug.repairedPages.push({
-          page: Number(sourcePage.page),
-          requestedBlocks: missingBlocks.length,
+          page: pageNumber,
+          requestedBlocks: item.missingBlocks.length,
           returnedBlocks: validated.blocks.length
         });
       } else {
         repairDebug.skippedPages.push({
-          page: Number(sourcePage.page),
-          requestedBlocks: missingBlocks.length,
+          page: pageNumber,
+          requestedBlocks: item.missingBlocks.length,
           reason: 'repair_returned_no_blocks'
         });
       }
-    } catch (error) {
-      repairDebug.errorCode = 'translated_page_repair_failed';
-      repairDebug.errorMessage = safeOpenAiErrorMessage(error);
-      repairDebug.skippedPages.push({
-        page: Number(sourcePage.page),
-        requestedBlocks: missingBlocks.length,
-        reason: safeOpenAiErrorMessage(error)
-      });
     }
+    perf?.mark?.('translated page repair finished', { elapsedMs: repairDebug.elapsedMs, repairedPages: repairDebug.repairedPages.length });
+  } catch (error) {
+    repairDebug.elapsedMs = Date.now() - startedAt;
+    repairDebug.errorCode = isAbortError(error) ? 'translated_page_repair_timeout' : 'translated_page_repair_failed';
+    repairDebug.errorMessage = isAbortError(error) ? 'Translated page repair timed out before serverless deadline.' : safeOpenAiErrorMessage(error);
+    perf?.mark?.('translated page repair failed', { code: repairDebug.errorCode, elapsedMs: repairDebug.elapsedMs });
   }
 
   return [...currentPages.values()].sort((a, b) => Number(a.page) - Number(b.page));
@@ -323,22 +382,24 @@ function sourceTextBlocks(sourcePage) {
     .slice(0, 180);
 }
 
-async function translateTextBlocksPage({ sourcePage, missingBlocks, request, config, deps }) {
+async function translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs }) {
   const fetchImpl = deps.fetch || fetch;
   const input = {
     task: request.task,
     maker: request.maker,
     model: request.model,
-    page: Number(sourcePage.page),
-    title: sourcePage.title || '',
-    chapter: sourcePage.chapter || '',
     rules: [
       'Translate every supplied text block to Czech without shortening.',
       'Keep display/menu labels and diagnostic codes in English.',
       'Do not invent text. Translate only the supplied block text.',
       'Return the same blockId and the exact original text as sourceQuote.'
     ],
-    textBlocks: missingBlocks
+    pages: repairPages.map(item => ({
+      page: Number(item.sourcePage.page),
+      title: item.sourcePage.title || '',
+      chapter: item.sourcePage.chapter || '',
+      textBlocks: item.missingBlocks
+    }))
   };
   const body = {
     model: config.openaiModel,
@@ -361,7 +422,7 @@ async function translateTextBlocksPage({ sourcePage, missingBlocks, request, con
   };
   const res = await fetchImpl('https://api.openai.com/v1/responses', {
     method: 'POST',
-    signal: openAiTimeoutSignal(config),
+    signal: openAiTimeoutSignal({ openaiTimeoutMs: timeoutMs }),
     headers: {
       Authorization: `Bearer ${config.openaiApiKey}`,
       'Content-Type': 'application/json'
@@ -914,6 +975,18 @@ function openAiTimeoutSignal(config) {
   const controller = new AbortController();
   setTimeout(() => controller.abort(), ms).unref?.();
   return controller.signal;
+}
+
+function openAiTimeoutForDeadline(config, deadlineAt = 0, reserveMs = 3000) {
+  const configured = Number(config?.openaiTimeoutMs || 120000);
+  const remaining = remainingMs(deadlineAt);
+  if (!remaining) return configured;
+  return Math.max(0, Math.min(configured, remaining - reserveMs));
+}
+
+function remainingMs(deadlineAt = 0) {
+  const deadline = Number(deadlineAt || 0);
+  return deadline > 0 ? Math.max(0, deadline - Date.now()) : 0;
 }
 
 function isAbortError(error) {
