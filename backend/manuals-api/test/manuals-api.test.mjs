@@ -880,6 +880,92 @@ test('OpenAI translated manual pages accept exact short source text blocks', asy
   assert.equal(result.translatedPages[0].blocks[0].sourceQuote, '4.3.8');
 });
 
+test('OpenAI translated manual pages repair missing source text blocks', async () => {
+  const openaiDebug = {};
+  let calls = 0;
+  const result = await structureWithOpenAI({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    candidate: { title: 'JLG 450AJ Service Manual PVC 2307', type: 'service', url: 'https://example.com/450aj.pdf' },
+    finalUrl: 'https://example.com/450aj.pdf',
+    fit: { status: 'warn', serialRange: 'B300000000 and up', sources: [] },
+    config: {
+      openaiApiKey: 'sk-test-secret',
+      openaiModel: 'gpt-4.1-mini',
+      openaiMaxOutputTokens: 10000,
+      openaiMaxPages: 4,
+      openaiMaxChars: 12000,
+      openaiTimeoutMs: 120000
+    },
+    deps: {
+      fetch: async () => {
+        calls += 1;
+        if (calls === 1) {
+          return responseJson({ output_text: JSON.stringify({
+            steps: [],
+            safety: [],
+            translatedPages: [{
+              page: 129,
+              blocks: [{
+                blockId: '1',
+                text: 'Nastavte prepinac Platform/Ground do polohy Ground.',
+                sourceQuote: '1. Position the Platform/Ground select switch to Ground.'
+              }]
+            }],
+            serialRange: 'B300000000 and up',
+            message: 'Prelozena strana manualu byla vytvorena.'
+          }) });
+        }
+        return responseJson({ output_text: JSON.stringify({
+          translatedPages: [{
+            page: 129,
+            blocks: [{
+              blockId: '2',
+              text: 'Zapojte analyzer do konektoru (2) uvnitr skrine pozemniho ovladani.',
+              sourceQuote: '2. Plug the analyzer into the connector (2) inside the Ground control box.'
+            }]
+          }]
+        }) });
+      }
+    },
+    pages: [{
+      page: 129,
+      title: '4.3.8 Calibrating Platform Angle Sensor',
+      chapter: 'Testing, Calibrations and Special Procedures',
+      keywords: ['platform angle sensor', 'angle sensor calibration'],
+      width: 612,
+      height: 792,
+      text: [
+        '4.3.8 Calibrating Platform Angle Sensor',
+        '1. Position the Platform/Ground select switch to Ground.',
+        '2. Plug the analyzer into the connector (2) inside the Ground control box.'
+      ].join('\n'),
+      textBlocks: [{
+        text: '1. Position the Platform/Ground select switch to Ground.',
+        x: 72,
+        y: 120,
+        width: 360,
+        height: 14,
+        fontSize: 10
+      }, {
+        text: '2. Plug the analyzer into the connector (2) inside the Ground control box.',
+        x: 72,
+        y: 330,
+        width: 390,
+        height: 14,
+        fontSize: 10
+      }]
+    }],
+    openaiDebug
+  });
+  assert.equal(calls, 2);
+  assert.equal(openaiDebug.translatedPageRepair.attempted, true);
+  assert.deepEqual(openaiDebug.translatedPageRepair.repairedPages.map(page => page.page), [129]);
+  assert.equal(openaiDebug.acceptedSteps, 2);
+  assert.equal(result.translatedPages.length, 1);
+  assert.equal(result.translatedPages[0].blocks.length, 2);
+  assert.match(result.translatedPages[0].blocks[1].text, /Zapojte analyzer/);
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
