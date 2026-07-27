@@ -178,6 +178,14 @@ export function createManualsHandler(deps = {}) {
         }
 
         const aiPages = mergePages(relevantPages, pages, fit.sources);
+        if (!config.manualSearchTranslate && hasPageLayout(aiPages)) {
+          const result = buildFoundPagesResult({ request, candidate, finalUrl, pages: aiPages, relevantPages, fit });
+          applySelectionDiagnostics(result, candidate, finalUrl, fit);
+          result.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, performance: perf.events };
+          result.variants = variants;
+          perf.mark('response sent', { status: result.status, mode: 'source_pages_fast_return' });
+          return sendJson(res, 200, result);
+        }
         perf.mark('OpenAI processing started', { pages: aiPages.length });
         const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug, perf, deadlineAt });
         perf.mark('OpenAI processing finished', { status: aiResult?.status || 'fallback' });
@@ -227,6 +235,97 @@ export function createManualsHandler(deps = {}) {
     response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, performance: perf.events, adminMessage };
     return sendJson(res, 200, response);
   };
+}
+
+function hasPageLayout(pages) {
+  return (pages || []).some(page =>
+    (Array.isArray(page?.textBlocks) && page.textBlocks.length)
+    || (Array.isArray(page?.images) && page.images.some(image => image?.dataUrl))
+  );
+}
+
+function buildFoundPagesResult({ request, candidate, finalUrl, pages, relevantPages, fit = {} }) {
+  return {
+    status: 'partial_procedure_found',
+    maker: request.maker,
+    model: request.model,
+    serial: request.serial,
+    manualTitle: candidate.title || '',
+    manualType: candidate.type || '',
+    serialRange: fit.serialRange || candidate.serialRange || '',
+    originalUrl: finalUrl || candidate.url || '',
+    steps: [],
+    safety: [],
+    translatedPages: [],
+    sourcePages: normalizeSourcePagesForClient(pages),
+    sources: sourceSnippetsFromPages(relevantPages.length ? relevantPages : pages),
+    images: imagesFromPages(pages),
+    message: 'Manual a relevantni strany byly nalezeny. Preklad se vytvori v dalsim kroku z vybranych stran, aby vyhledani nespadlo na timeout Vercelu. Pri rozporu ma vzdy prednost originalni manual vyrobce.',
+    variants: []
+  };
+}
+
+function normalizeSourcePagesForClient(pages) {
+  return (pages || []).map(page => ({
+    page: Number(page.page) || 0,
+    title: String(page.title || '').slice(0, 160),
+    chapter: String(page.chapter || '').slice(0, 160),
+    width: Number(page.width) || 0,
+    height: Number(page.height) || 0,
+    text: String(page.text || '').slice(0, 6000),
+    textBlocks: (Array.isArray(page.textBlocks) ? page.textBlocks : [])
+      .map(block => ({
+        text: String(block?.text || '').slice(0, 1000),
+        x: Number(block?.x) || 0,
+        y: Number(block?.y) || 0,
+        width: Number(block?.width) || 0,
+        height: Number(block?.height) || 0,
+        fontSize: Number(block?.fontSize) || 0
+      }))
+      .filter(block => block.text && block.width > 0 && block.height > 0)
+      .slice(0, 180),
+    images: (Array.isArray(page.images) ? page.images : [])
+      .filter(image => image?.dataUrl)
+      .map(image => ({
+        figure: String(image.figure || '').slice(0, 80),
+        bbox: String(image.bbox || '').slice(0, 80),
+        caption: String(image.caption || '').slice(0, 240),
+        page: Number(image.page || page.page) || 0,
+        mimeType: String(image.mimeType || image.mime || '').slice(0, 60),
+        dataUrl: String(image.dataUrl || ''),
+        width: Number(image.width) || 0,
+        height: Number(image.height) || 0
+      }))
+      .slice(0, 4)
+  })).filter(page => page.page);
+}
+
+function sourceSnippetsFromPages(pages) {
+  return (pages || [])
+    .slice(0, 6)
+    .map(page => ({ page: page.page, quote: firstUsefulQuote(page.text) }))
+    .filter(source => source.page && source.quote);
+}
+
+function imagesFromPages(pages) {
+  const out = [];
+  for (const page of pages || []) {
+    for (const image of page.images || []) {
+      out.push({
+        ...image,
+        page: Number(image.page || page.page),
+        stepPage: Number(page.page)
+      });
+    }
+  }
+  return out.slice(0, 16);
+}
+
+function firstUsefulQuote(text) {
+  const cleaned = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return '';
+  const match = cleaned.match(/(?:[^.!?]*\b(?:calibration|calibrate|tilt|angle|level|sensor|procedure|adjustment|service mode|warning|caution)\b[^.!?]*[.!?]?)/i);
+  return (match?.[0] || cleaned).trim().slice(0, 300);
 }
 
 function createPerformanceTrace(scope) {
