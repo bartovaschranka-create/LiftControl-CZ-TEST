@@ -14,6 +14,9 @@ import { evaluateManualFit } from './manual-fit.mjs';
 export function createManualsHandler(deps = {}) {
   return async function manualsHandler(req, res) {
     const config = getConfig(deps.env || process.env);
+    const perf = createPerformanceTrace('manuals/search');
+    const deadlineAt = Date.now() + Number(config.manualSearchBudgetMs || 26000);
+    perf.mark('request received');
     applyCors(req, res, config);
 
     if (req.method === 'OPTIONS') {
@@ -31,6 +34,7 @@ export function createManualsHandler(deps = {}) {
     let body;
     try {
       body = await readJsonBody(req, config.maxBodyBytes);
+      perf.mark('request body read');
     } catch {
       return sendJson(res, 400, { status: 'error', message: 'Neplatny nebo prilis velky JSON request.' });
     }
@@ -40,9 +44,12 @@ export function createManualsHandler(deps = {}) {
       return sendJson(res, 400, emptyResponse('error', validation.value, validation.errors.join(' ')));
     }
     const request = validation.value;
+    perf.mark('request validated', { maker: request.maker, model: request.model, task: request.task });
 
     let rawCandidates;
+    perf.mark('local catalog search started');
     const localCandidates = await searchLocalManualCandidates(request, config, deps);
+    perf.mark('local catalog search finished', { candidates: localCandidates.length });
     const exactCatalogServiceCandidates = localCandidates.filter(candidate => candidate.type === 'service' && candidate.modelMatch === 'exact');
     const mustUseJlgCatalog = isJlgCatalogServiceRequest(request);
     if (mustUseJlgCatalog && !exactCatalogServiceCandidates.length) {
@@ -53,19 +60,23 @@ export function createManualsHandler(deps = {}) {
       response.matchedModel = '';
       response.matchedSerialRange = '';
       response.selectionReason = 'JLG servisní dotaz vyžaduje přesnou shodu modelu ve Firebase katalogu; Brave Search nebyl použit, aby se nevybral nesouvisející manuál.';
-      response.debug = { triedCandidates: [], openai: createOpenAiDebug(config), taskIntent: taskIntentDebug(request.task), deployment: config.deployment, catalogCandidates: localCandidates.map(toVariant) };
+      perf.mark('response sent', { status: 'not_found' });
+      response.debug = { triedCandidates: [], openai: createOpenAiDebug(config), taskIntent: taskIntentDebug(request.task), deployment: config.deployment, performance: perf.events, catalogCandidates: localCandidates.map(toVariant) };
       return sendJson(res, 200, response);
     }
     try {
+      if (!mustUseJlgCatalog) perf.mark('brave search started');
       rawCandidates = mustUseJlgCatalog
         ? exactCatalogServiceCandidates
         : [
             ...localCandidates,
             ...await searchManualCandidates(request, config, deps)
           ];
+      perf.mark('manual candidates ready', { candidates: rawCandidates.length, source: mustUseJlgCatalog ? 'firebase_catalog' : 'catalog_plus_brave' });
     } catch (error) {
       if (localCandidates.length) {
         rawCandidates = localCandidates;
+        perf.mark('brave search failed, using local catalog', { error: error?.message || String(error) });
       } else {
         return sendJson(res, 200, braveErrorResponse(error, request));
       }
@@ -78,7 +89,8 @@ export function createManualsHandler(deps = {}) {
     const taskIntent = taskIntentDebug(request.task);
     if (!candidates.length) {
       const response = emptyResponse('not_found', request, 'Nebyl nalezen oficialni manual vyrobce.', []);
-      response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
+      perf.mark('response sent', { status: 'not_found' });
+      response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, performance: perf.events };
       return sendJson(res, 200, response);
     }
 
@@ -115,19 +127,24 @@ export function createManualsHandler(deps = {}) {
       try {
         let finalUrl = candidate.url || '';
         let pages = [];
+        perf.mark('candidate processing started', { title: candidate.title || '', type: candidate.type || '', sourceType: debug.sourceType });
         const pageIndex = await loadManualPageIndex(candidate, config, deps, debug);
         if (pageIndex?.pages?.length) {
           pages = pageIndex.pages;
           debug.finalUrl = finalUrl;
           debug.textPages = pages.length;
           debug.indexMetadata = pageIndex.metadata || {};
+          perf.mark('manual page index loaded', { pages: pages.length, indexSource: debug.indexSource || '' });
         } else {
+          perf.mark('pdf download started');
           const downloaded = await downloadPdf(candidate, request, config, deps);
           finalUrl = downloaded.finalUrl || candidate.url || '';
           debug.downloaded = true;
           debug.finalUrl = finalUrl;
           debug.textSource = 'pdf_text_layer';
+          perf.mark('pdf downloaded', { bytes: downloaded.buffer?.length || 0 });
           pages = await extractPdfTextPages(downloaded.buffer, debug);
+          perf.mark('pdf parsed', { pages: pages.length });
         }
         debug.textPages = pages.length;
         if (!pages.length) {
@@ -135,13 +152,17 @@ export function createManualsHandler(deps = {}) {
           continue;
         }
 
+        perf.mark('manual fit evaluation started');
         const fit = evaluateManualFit({ request, pages });
+        perf.mark('manual fit evaluation finished', { status: fit.status, serialRange: fit.serialRange || '' });
         if (fit.status === 'not_found') {
           debug.skippedReason = 'Model nebo vyrobni cislo neodpovida rozsahu manualu.';
           continue;
         }
 
+        perf.mark('relevant page search started');
         const relevantPages = findRelevantPages(pages, request.task, { manualType: candidate.type });
+        perf.mark('relevant page search finished', { pages: relevantPages.length, pageNumbers: relevantPages.map(p => p.page).slice(0, 8).join(',') });
         debug.matchedPages = relevantPages.map(p => p.page);
         debug.matchedPageDetails = relevantPages.map(page => ({
           page: page.page,
@@ -157,18 +178,22 @@ export function createManualsHandler(deps = {}) {
         }
 
         const aiPages = mergePages(relevantPages, pages, fit.sources);
-        const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug });
+        perf.mark('OpenAI processing started', { pages: aiPages.length });
+        const aiResult = await structureWithOpenAI({ request, candidate, finalUrl, pages: aiPages, config, deps, fit, openaiDebug, perf, deadlineAt });
+        perf.mark('OpenAI processing finished', { status: aiResult?.status || 'fallback' });
         const result = aiResult || buildSourceOnlyResult({ request, candidate, finalUrl, pages: relevantPages, fit, openaiDebug });
         applySelectionDiagnostics(result, candidate, finalUrl, fit);
-        result.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment };
+        result.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, performance: perf.events };
         result.variants = result.variants?.length ? result.variants : variants;
         if (!result.message.includes('Pri rozporu ma vzdy prednost originalni manual vyrobce.')) {
           result.message = `${result.message} Pri rozporu ma vzdy prednost originalni manual vyrobce.`;
         }
+        perf.mark('response sent', { status: result.status });
         return sendJson(res, 200, result);
       } catch (error) {
         debug.skippedCode = error?.code || '';
         debug.skippedReason = error?.message || 'Chyba pri stazeni nebo zpracovani manualu.';
+        perf.mark('candidate processing failed', { code: debug.skippedCode, reason: debug.skippedReason });
         if (error?.code === 'blocked_url') {
           return sendJson(res, 200, emptyResponse('warn', request, 'Nalezeny odkaz byl odmitnut bezpecnostni kontrolou domeny.', variants));
         }
@@ -198,8 +223,28 @@ export function createManualsHandler(deps = {}) {
       response.sourceType = 'firebase_catalog';
       response.selectionReason = 'Byly prohledány pouze přesné JLG katalogové service manuály pro zadaný model; Brave Search nebyl použit.';
     }
-    response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, adminMessage };
+    perf.mark('response sent', { status: response.status });
+    response.debug = { triedCandidates, openai: openaiDebug, taskIntent, deployment: config.deployment, performance: perf.events, adminMessage };
     return sendJson(res, 200, response);
+  };
+}
+
+function createPerformanceTrace(scope) {
+  const startedAt = Date.now();
+  const events = [];
+  return {
+    events,
+    mark(label, extra = {}) {
+      const ms = Date.now() - startedAt;
+      const event = { ms, label, ...extra };
+      events.push(event);
+      try {
+        console.log(`[${ms} ms] ${scope} ${label}`);
+      } catch {
+        // Logging must never affect the API response.
+      }
+      return event;
+    }
   };
 }
 
