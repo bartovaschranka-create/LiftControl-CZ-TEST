@@ -1391,16 +1391,56 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   assert.equal(pdf.slice(0, 8).toString('latin1'), '%PDF-1.4');
   assert.ok(pdf.length > 1000);
   const raw = pdf.toString('latin1');
-  assert.match(raw, /Cesky preklad servisni kapitoly/);
-  assert.match(raw, /Prelozene strany originalniho manualu/);
-  assert.match(raw, /Pouzity manual/);
-  assert.doesNotMatch(raw, /Typ manualu/);
+  assert.match(raw, /\/Count 1/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
   assert.match(raw, /Cesky text prekryty na puvodni strane manualu/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola/);
   assert.doesNotMatch(raw, /Zdrojove citace/);
+  assert.doesNotMatch(raw, /Ceska servisni prirucka vyrobce/);
   assert.match(raw, /\/Subtype \/Image/);
   assert.doesNotMatch(raw, /Obrazova data nejsou v indexu ulozena/);
+});
+
+test('service PDF renders contiguous translated manual pages without fallback report', async () => {
+  const payload = servicePdfPayload();
+  payload.result.translatedPages = [129, 130, 131, 132].map(page => ({
+    page,
+    width: 612,
+    height: 792,
+    blocks: [{
+      text: `Prelozeny blok strany ${page}`,
+      sourceQuote: `Original block page ${page}`,
+      x: 72,
+      y: 96,
+      width: 260,
+      height: 24,
+      fontSize: 9
+    }]
+  }));
+  payload.result.sourcePages = payload.result.translatedPages.map(page => ({
+    page: page.page,
+    width: 612,
+    height: 792,
+    textBlocks: page.blocks.map(block => ({ ...block, text: block.sourceQuote })),
+    images: [{
+      page: page.page,
+      stepPage: page.page,
+      bbox: 'page',
+      caption: `Originalni strana manualu ${page.page}`,
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }]
+  }));
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  const pdf = createServiceProcedurePdf(payload);
+  const raw = pdf.toString('latin1');
+  assert.match(raw, /\/Count 4/);
+  assert.match(raw, /Prelozeny blok strany 129/);
+  assert.match(raw, /Prelozeny blok strany 132/);
+  assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
+  assert.doesNotMatch(raw, /Zdrojove citace/);
 });
 
 test('service PDF endpoint returns application/pdf', async () => {

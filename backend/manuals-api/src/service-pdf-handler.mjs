@@ -2,6 +2,7 @@ import { getConfig } from './config.mjs';
 import { applyCors, isOriginAllowed } from './cors.mjs';
 import { readJsonBody, sendJson } from './http.mjs';
 import { createServiceProcedurePdf } from './service-pdf.mjs';
+import { translateSourcePagesWithOpenAI } from './openai.mjs';
 
 export function createServicePdfHandler(deps = {}) {
   return async function servicePdfHandler(req, res) {
@@ -47,11 +48,16 @@ export function createServicePdfHandler(deps = {}) {
     }
 
     try {
+      body = await ensureTranslatedManualPages(body, config, deps);
       const pdf = createServiceProcedurePdf(body || {});
 
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Length', String(pdf.length));
+      const diagnostics = body?.result?.pdfDiagnostics || {};
+      if (Object.keys(diagnostics).length) {
+        res.setHeader('X-Manual-Pdf-Debug', encodeURIComponent(JSON.stringify(diagnostics).slice(0, 1800)));
+      }
       res.setHeader(
         'Content-Disposition',
         `attachment; filename="${safePdfName(body)}"`
@@ -63,6 +69,51 @@ export function createServicePdfHandler(deps = {}) {
         status: 'error',
         message: error?.message || 'Servisni PDF se nepodarilo vytvorit.'
       });
+    }
+  };
+}
+
+async function ensureTranslatedManualPages(body, config, deps = {}) {
+  const result = body?.result || {};
+  const hasTranslated = Array.isArray(result.translatedPages) && result.translatedPages.length;
+  const sourcePages = Array.isArray(result.sourcePages) ? result.sourcePages : [];
+  if (hasTranslated || !sourcePages.length) return body;
+  const hasLayout = sourcePages.some(page =>
+    (Array.isArray(page?.textBlocks) && page.textBlocks.length)
+    && (Array.isArray(page?.images) && page.images.some(image => image?.dataUrl))
+  );
+  if (!hasLayout) return body;
+
+  const openaiDebug = {
+    configured: !!config.openaiApiKey,
+    model: config.openaiModel,
+    requestSent: false,
+    responseStatus: null,
+    errorCode: config.openaiApiKey ? null : 'openai_missing_key',
+    errorMessage: config.openaiApiKey ? null : 'OPENAI_API_KEY is not configured.',
+    parsed: false,
+    validationRejectedSteps: 0,
+    acceptedSteps: 0
+  };
+  const translated = await translateSourcePagesWithOpenAI({
+    request: body?.request || {},
+    sourcePages,
+    config,
+    deps,
+    openaiDebug,
+    deadlineAt: Date.now() + 22000
+  });
+  return {
+    ...body,
+    result: {
+      ...result,
+      translatedPages: translated.translatedPages || [],
+      pdfDiagnostics: {
+        ...(result.pdfDiagnostics || {}),
+        servicePdfTranslationAttempted: true,
+        translatedPages: (translated.translatedPages || []).length,
+        openai: openaiDebug
+      }
     }
   };
 }
