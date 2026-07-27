@@ -2419,7 +2419,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.215</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.216</div>
   </div>
 </aside>
 
@@ -9081,6 +9081,10 @@ function getManualsServicePdfUrl(){
   const endpoint=getManualsApiUrl();
   return endpoint ? endpoint.replace(/\/api\/manuals\/search\/?$/, '/api/manuals/service-pdf') : '';
 }
+function getManualsTranslatePagesUrl(){
+  const endpoint=getManualsApiUrl();
+  return endpoint ? endpoint.replace(/\/api\/manuals\/search\/?$/, '/api/manuals/translate-pages') : '';
+}
 function setManualsApiUrl(value){
   const url = String(value || '').trim();
   try{
@@ -9205,7 +9209,7 @@ function manualResultIsOk(status){
 }
 function manualCanCreateServicePdf(result){
   const status=String(result?.status||'');
-  return ['ok','procedure_found','partial_procedure_found','reference_found'].includes(status) && (result?.manualTitle || result?.originalUrl) && ((result?.steps||[]).length || (result?.sources||[]).length || (result?.translatedPages||[]).length);
+  return ['ok','procedure_found','partial_procedure_found','reference_found'].includes(status) && (result?.manualTitle || result?.originalUrl) && ((result?.steps||[]).length || (result?.sources||[]).length || (result?.translatedPages||[]).length || (result?.sourcePages||[]).length);
 }
 function manualStepText(step){
   return typeof step === 'string' ? step : (step && step.text ? step.text : String(step||''));
@@ -9234,23 +9238,45 @@ function manualServicePdfPayload(){
       sources:r.sources||[],
       images:r.images||[],
       translatedPages:r.translatedPages||[],
+      sourcePages:r.sourcePages||[],
       message:r.message
     }
   };
 }
 function manualResultDiagnostics(result){
   const translatedPages=Array.isArray(result?.translatedPages) ? result.translatedPages : [];
+  const sourcePages=Array.isArray(result?.sourcePages) ? result.sourcePages : [];
   const images=Array.isArray(result?.images) ? result.images : [];
   const translatedBlocks=translatedPages.reduce((sum,p)=>sum+(Array.isArray(p?.blocks)?p.blocks.length:0),0);
+  const sourceBlocks=sourcePages.reduce((sum,p)=>sum+(Array.isArray(p?.textBlocks)?p.textBlocks.length:0),0);
   const pageImages=images.filter(img=>String(img?.bbox||'').toLowerCase()==='page' || /originalni strana manualu|original manual page/i.test(String(img?.caption||'')));
   const pageImagesWithDataUrl=pageImages.filter(img=>!!img?.dataUrl).length;
-  return `translatedPages: ${translatedPages.length}, translatedBlocks: ${translatedBlocks}, pageImages: ${pageImages.length}, pageImagesWithDataUrl: ${pageImagesWithDataUrl}`;
+  return `sourcePages: ${sourcePages.length}, sourceBlocks: ${sourceBlocks}, translatedPages: ${translatedPages.length}, translatedBlocks: ${translatedBlocks}, pageImages: ${pageImages.length}, pageImagesWithDataUrl: ${pageImagesWithDataUrl}`;
+}
+async function ensureManualTranslatedPages(){
+  const translated=Array.isArray(manualLastResult?.translatedPages) ? manualLastResult.translatedPages : [];
+  const sourcePages=Array.isArray(manualLastResult?.sourcePages) ? manualLastResult.sourcePages : [];
+  if(translated.length || !sourcePages.length) return;
+  const endpoint=getManualsTranslatePagesUrl();
+  if(!endpoint) throw new Error('Neni nastavene API pro preklad nalezenych stran.');
+  const res=await fetch(endpoint,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({request:manualLastRequest||{}, sourcePages})
+  });
+  let json=null;
+  try{ json=await res.json(); }catch(_){}
+  if(!res.ok) throw new Error(json?.message || `Prekladove API vratilo chybu ${res.status}`);
+  if(!(json?.translatedPages||[]).length) throw new Error(json?.message || 'Preklad nalezenych stran zatim nebyl vytvoren.');
+  manualLastResult={...manualLastResult, translatedPages:json.translatedPages, message:manualLastResult.message};
+  renderManualResult(manualLastResult, manualLastRequest||{});
 }
 async function createManualServicePdf(){
   if(!manualLastResult || !manualLastRequest){ alert('Nejdřív vyhledej ověřený manuál.'); return; }
   const endpoint=getManualsServicePdfUrl();
   if(!endpoint){ alert('Není nastavené API pro vytvoření servisního PDF.'); return; }
   try{
+    await ensureManualTranslatedPages();
     const res=await fetch(endpoint,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -10821,7 +10847,7 @@ setTimeout(() => retryPendingFaultSync().catch(err => console.warn('Pending faul
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  const APP_UPDATE_VERSION = '5.215';
+  const APP_UPDATE_VERSION = '5.216';
   const APP_UPDATE_ACCEPT_KEY = 'liftcontrol_update_accepted_version';
   let appUpdateRegistration = null;
   let appUpdateWorker = null;

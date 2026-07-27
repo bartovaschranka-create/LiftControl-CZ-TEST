@@ -5,6 +5,9 @@
     },
     "api/manuals/service-pdf.js": {
       "maxDuration": 30
+    },
+    "api/manuals/translate-pages.js": {
+      "maxDuration": 30
     }
   }
 }

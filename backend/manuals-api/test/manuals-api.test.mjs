@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createManualsHandler } from '../src/handler.mjs';
 import { createServicePdfHandler } from '../src/service-pdf-handler.mjs';
+import { createTranslatePagesHandler } from '../src/translate-pages-handler.mjs';
 import { createServiceProcedurePdf } from '../src/service-pdf.mjs';
 import { validateOfficialUrl } from '../src/official-domains.mjs';
 import { validateManualRequest } from '../src/validation.mjs';
@@ -745,6 +746,68 @@ test('platform angle sensor manual page images are selected before late display-
   }
 });
 
+test('search returns source pages quickly without waiting for translation when layout index exists', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'liftcontrol-fast-source-pages-'));
+  try {
+    await writeFile(join(root, 'index.json'), JSON.stringify({
+      manuals: [{
+        source: 'local',
+        type: 'service',
+        title: 'JLG 450AJ Service Manual PVC 2307',
+        storagePath: '450AJ pvc2307.pdf',
+        models: ['450 AJ', '450AJ'],
+        serialRange: 'B300000000 and up'
+      }]
+    }));
+    const res = await callApi(
+      { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+      {
+        env: {
+          LOCAL_MANUALS_INDEX: join(root, 'index.json'),
+          OPENAI_API_KEY: 'sk-test-secret',
+          MANUAL_SEARCH_TRANSLATE: '0'
+        },
+        fetch: async url => {
+          const u = String(url);
+          if (u.includes('.pages.json')) {
+            return responseText(JSON.stringify({
+              pages: [{
+                page: 129,
+                title: 'Calibrating Platform Angle Sensor',
+                chapter: 'Testing, Calibrations and Special Procedures',
+                keywords: ['platform angle sensor', 'angle sensor calibration'],
+                width: 612,
+                height: 792,
+                text: 'JLG 450AJ service manual serial number B300000000 and up.\n4.3.8 Calibrating Platform Angle Sensor\n1. Position the Platform/Ground select switch to Ground.',
+                textBlocks: [{
+                  text: '1. Position the Platform/Ground select switch to Ground.',
+                  x: 72,
+                  y: 120,
+                  width: 360,
+                  height: 14,
+                  fontSize: 10
+                }],
+                images: [{ figure: '', bbox: 'page', caption: 'Originalni strana manualu 129', page: 129, dataUrl: tinyJpegDataUrl(), width: 1020, height: 1320 }]
+              }]
+            }), 200, { 'content-type': 'application/json' });
+          }
+          if (u.includes('api.openai.com')) throw new Error('OpenAI should not be called during fast search');
+          throw new Error(`Unexpected fetch ${u}`);
+        }
+      }
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.json.status, 'partial_procedure_found');
+    assert.equal(res.json.translatedPages.length, 0);
+    assert.equal(res.json.sourcePages.length, 1);
+    assert.equal(res.json.sourcePages[0].page, 129);
+    assert.equal(res.json.images.some(image => image.page === 129 && image.dataUrl), true);
+    assert.equal(res.json.debug.openai.requestSent, false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('validated OpenAI steps keep Czech text and English source quote separate', async () => {
   const root = await mkdtemp(join(tmpdir(), 'liftcontrol-czech-openai-step-'));
   try {
@@ -964,6 +1027,48 @@ test('OpenAI translated manual pages repair missing source text blocks', async (
   assert.equal(result.translatedPages.length, 1);
   assert.equal(result.translatedPages[0].blocks.length, 2);
   assert.match(result.translatedPages[0].blocks[1].text, /Zapojte analyzer/);
+});
+
+test('translate-pages endpoint translates only supplied source pages', async () => {
+  const res = await callTranslatePages({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    sourcePages: [{
+      page: 129,
+      title: '4.3.8 Calibrating Platform Angle Sensor',
+      chapter: 'Testing, Calibrations and Special Procedures',
+      width: 612,
+      height: 792,
+      text: '1. Position the Platform/Ground select switch to Ground.',
+      textBlocks: [{
+        text: '1. Position the Platform/Ground select switch to Ground.',
+        x: 72,
+        y: 120,
+        width: 360,
+        height: 14,
+        fontSize: 10
+      }]
+    }]
+  }, {
+    fetch: async url => {
+      if (String(url).includes('api.openai.com')) {
+        return responseJson({ output_text: JSON.stringify({
+          translatedPages: [{
+            page: 129,
+            blocks: [{
+              blockId: '1',
+              text: 'Nastavte prepinac Platform/Ground do polohy Ground.',
+              sourceQuote: '1. Position the Platform/Ground select switch to Ground.'
+            }]
+          }]
+        }) });
+      }
+      throw new Error(`Unexpected fetch ${url}`);
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'ok');
+  assert.equal(res.json.translatedPages.length, 1);
+  assert.equal(res.json.debug.openai.sentPageNumbers[0], 129);
 });
 
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
@@ -1570,6 +1675,7 @@ async function callApi(body, options = {}) {
     env: {
       BRAVE_SEARCH_API_KEY: 'test-key',
       ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
+      MANUAL_SEARCH_TRANSLATE: '1',
       ...(options.env || {})
     },
     fetch: options.fetch || jlgFetch()
@@ -1606,6 +1712,34 @@ async function callServicePdf(body, options = {}) {
       ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
       ...(options.env || {})
     }
+  });
+  await handler(req, res);
+  try {
+    res.json = res.body ? JSON.parse(res.body) : null;
+  } catch {
+    res.json = null;
+  }
+  return res;
+}
+
+async function callTranslatePages(body, options = {}) {
+  const req = Readable.from([JSON.stringify(body || {})]);
+  req.method = options.method || 'POST';
+  req.headers = { origin: options.origin || 'https://bartovaschranka-create.github.io', 'content-type': 'application/json' };
+  const res = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    setHeader(k, v) { this.headers[k.toLowerCase()] = v; },
+    end(chunk = '') { this.body += chunk; }
+  };
+  const handler = createTranslatePagesHandler({
+    env: {
+      ALLOWED_ORIGINS: 'https://bartovaschranka-create.github.io',
+      OPENAI_API_KEY: 'sk-test-secret',
+      ...(options.env || {})
+    },
+    fetch: options.fetch
   });
   await handler(req, res);
   try {

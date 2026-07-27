@@ -247,6 +247,87 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
   };
 }
 
+export async function translateSourcePagesWithOpenAI({ request, sourcePages, config, deps = {}, openaiDebug = null, deadlineAt = 0, perf = null }) {
+  if (!config.openaiApiKey) {
+    setOpenAiDebug(openaiDebug, {
+      configured: false,
+      errorCode: 'openai_missing_key',
+      errorMessage: 'OPENAI_API_KEY is not configured.'
+    });
+    return { translatedPages: [], message: 'OpenAI API klic neni nastaveny.' };
+  }
+  const pages = (Array.isArray(sourcePages) ? sourcePages : [])
+    .filter(page => Number(page?.page) && Array.isArray(page?.textBlocks) && page.textBlocks.length)
+    .slice(0, Math.max(1, Number(config.translatedPageRepairMaxPages || 4)));
+  const repairPages = [];
+  let usedBlocks = 0;
+  const maxBlocks = Math.max(1, Number(config.translatedPageRepairMaxBlocks || 80));
+  for (const sourcePage of pages) {
+    const blocks = sourceTextBlocks(sourcePage).slice(0, Math.max(0, maxBlocks - usedBlocks));
+    if (!blocks.length) continue;
+    repairPages.push({ sourcePage, missingBlocks: blocks });
+    usedBlocks += blocks.length;
+    if (usedBlocks >= maxBlocks) break;
+  }
+  const timeoutMs = Math.max(1000, Math.min(
+    Number(config.translatedPageRepairTimeoutMs || 6000),
+    openAiTimeoutForDeadline(config, deadlineAt, 1500)
+  ));
+  setOpenAiDebug(openaiDebug, {
+    configured: true,
+    model: config.openaiModel,
+    requestSent: true,
+    sentPages: repairPages.length,
+    sentPageNumbers: repairPages.map(item => Number(item.sourcePage.page)),
+    sentCharacters: JSON.stringify(repairPages.map(item => item.missingBlocks)).length,
+    timeoutMs
+  });
+  if (!repairPages.length) {
+    setOpenAiDebug(openaiDebug, {
+      requestSent: false,
+      errorCode: 'no_text_blocks',
+      errorMessage: 'Nebyly predany zadne textove bloky k prekladu.'
+    });
+    return { translatedPages: [], message: 'Nebyly predany zadne textove bloky k prekladu.' };
+  }
+  const startedAt = Date.now();
+  try {
+    perf?.mark?.('manual translate-pages OpenAI request sent', { pages: repairPages.length, blocks: usedBlocks, timeoutMs });
+    const repaired = await translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs });
+    const translatedPages = validateTranslatedPages(repaired?.translatedPages, pages);
+    setOpenAiDebug(openaiDebug, {
+      responseStatus: 200,
+      elapsedMs: Date.now() - startedAt,
+      parsed: true,
+      acceptedSteps: translatedPages.reduce((sum, page) => sum + page.blocks.length, 0),
+      validationRejectedSteps: Math.max(0, usedBlocks - translatedPages.reduce((sum, page) => sum + page.blocks.length, 0))
+    });
+    perf?.mark?.('manual translate-pages OpenAI finished', { translatedPages: translatedPages.length });
+    return {
+      translatedPages,
+      message: translatedPages.length
+        ? 'Preklad nalezenych stran byl vytvoren.'
+        : 'Preklad se nepodarilo bezpecne vytvorit.'
+    };
+  } catch (error) {
+    const elapsedMs = Date.now() - startedAt;
+    const timedOut = isAbortError(error);
+    setOpenAiDebug(openaiDebug, {
+      responseStatus: null,
+      elapsedMs,
+      errorCode: timedOut ? 'openai_timeout' : 'openai_unknown_error',
+      errorMessage: timedOut ? 'Preklad nalezenych stran nestihl dobehnout v casovem limitu.' : safeOpenAiErrorMessage(error)
+    });
+    perf?.mark?.('manual translate-pages OpenAI failed', { elapsedMs, code: timedOut ? 'openai_timeout' : 'openai_unknown_error' });
+    return {
+      translatedPages: [],
+      message: timedOut
+        ? 'Preklad nalezenych stran nestihl dobehnout v casovem limitu.'
+        : 'Preklad nalezenych stran selhal.'
+    };
+  }
+}
+
 async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourcePages, request, config, deps, openaiDebug, perf = null, deadlineAt = 0 }) {
   const sourcePagesWithBlocks = (sourcePages || [])
     .filter(page => Array.isArray(page?.textBlocks) && page.textBlocks.some(block => String(block?.text || '').trim().length >= 2));
