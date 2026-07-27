@@ -13,6 +13,15 @@ const RESULT_SCHEMA = {
   }
 };
 
+const TRANSLATED_PAGE_REPAIR_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['translatedPages'],
+  properties: {
+    translatedPages: { type: 'array', items: translatedPageSchema() }
+  }
+};
+
 export async function structureWithOpenAI({ request, candidate, finalUrl, pages, config, deps = {}, fit = {}, openaiDebug = null }) {
   if (!config.openaiApiKey) {
     setOpenAiDebug(openaiDebug, {
@@ -174,10 +183,18 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     });
     return buildOpenAiFallbackResult({ request, candidate, finalUrl, pages: sourcePages, fit, openaiDebug, aiText: text });
   }
-  const rawItemCount = countSourceItems(parsed);
+  const repairedTranslatedPages = await completeTranslatedPageTranslations({
+    parsedTranslatedPages: parsed.translatedPages,
+    sourcePages,
+    request,
+    config,
+    deps,
+    openaiDebug
+  });
+  const rawItemCount = countSourceItems({ ...parsed, translatedPages: repairedTranslatedPages });
   const validationDetails = [];
   const validated = await validateAiOutput(parsed, sourcePages, request, { config, deps, validationDetails });
-  const translatedPages = validateTranslatedPages(parsed.translatedPages, sourcePages);
+  const translatedPages = validateTranslatedPages(repairedTranslatedPages, sourcePages);
   const acceptedCount = validated.steps.length + validated.safety.length + translatedPages.reduce((sum, page) => sum + page.blocks.length, 0);
   const evidence = classifyProcedureEvidence(sourcePages, request.task);
   setOpenAiDebug(openaiDebug, {
@@ -211,6 +228,155 @@ export async function structureWithOpenAI({ request, candidate, finalUrl, pages,
     message: (validated.steps.length || translatedPages.length) ? (validated.message || 'Postup nalezen v originalnim manualu.') : evidence.message,
     variants: []
   };
+}
+
+async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourcePages, request, config, deps, openaiDebug }) {
+  const sourcePagesWithBlocks = (sourcePages || [])
+    .filter(page => Array.isArray(page?.textBlocks) && page.textBlocks.some(block => String(block?.text || '').trim().length >= 2));
+  if (!sourcePagesWithBlocks.length) return Array.isArray(parsedTranslatedPages) ? parsedTranslatedPages : [];
+
+  const currentPages = normalizeRawTranslatedPages(parsedTranslatedPages);
+  const repairDebug = {
+    attempted: false,
+    repairedPages: [],
+    skippedPages: [],
+    errorCode: null,
+    errorMessage: null
+  };
+  setOpenAiDebug(openaiDebug, { translatedPageRepair: repairDebug });
+
+  for (const sourcePage of sourcePagesWithBlocks) {
+    const missingBlocks = missingTextBlocksForPage(sourcePage, currentPages.get(Number(sourcePage.page)));
+    if (!missingBlocks.length) continue;
+    repairDebug.attempted = true;
+    try {
+      const repairedPage = await translateTextBlocksPage({ sourcePage, missingBlocks, request, config, deps });
+      const validated = normalizeRawTranslatedPages(repairedPage?.translatedPages).get(Number(sourcePage.page));
+      if (validated?.blocks?.length) {
+        mergeRawTranslatedBlocks(currentPages, Number(sourcePage.page), validated.blocks);
+        repairDebug.repairedPages.push({
+          page: Number(sourcePage.page),
+          requestedBlocks: missingBlocks.length,
+          returnedBlocks: validated.blocks.length
+        });
+      } else {
+        repairDebug.skippedPages.push({
+          page: Number(sourcePage.page),
+          requestedBlocks: missingBlocks.length,
+          reason: 'repair_returned_no_blocks'
+        });
+      }
+    } catch (error) {
+      repairDebug.errorCode = 'translated_page_repair_failed';
+      repairDebug.errorMessage = safeOpenAiErrorMessage(error);
+      repairDebug.skippedPages.push({
+        page: Number(sourcePage.page),
+        requestedBlocks: missingBlocks.length,
+        reason: safeOpenAiErrorMessage(error)
+      });
+    }
+  }
+
+  return [...currentPages.values()].sort((a, b) => Number(a.page) - Number(b.page));
+}
+
+function normalizeRawTranslatedPages(pages) {
+  const out = new Map();
+  for (const page of Array.isArray(pages) ? pages : []) {
+    const pageNumber = Number(page?.page);
+    if (!Number.isInteger(pageNumber) || pageNumber < 1) continue;
+    const blocks = (Array.isArray(page?.blocks) ? page.blocks : [])
+      .map(block => ({
+        blockId: String(block?.blockId || '').trim(),
+        text: String(block?.text || '').trim(),
+        sourceQuote: String(block?.sourceQuote || '').replace(/\s+/g, ' ').trim()
+      }))
+      .filter(block => block.blockId && block.text && block.sourceQuote);
+    out.set(pageNumber, { page: pageNumber, blocks });
+  }
+  return out;
+}
+
+function mergeRawTranslatedBlocks(currentPages, pageNumber, blocks) {
+  const current = currentPages.get(pageNumber) || { page: pageNumber, blocks: [] };
+  const byId = new Map(current.blocks.map(block => [String(block.blockId), block]));
+  for (const block of blocks || []) {
+    byId.set(String(block.blockId), block);
+  }
+  current.blocks = [...byId.values()].sort((a, b) => Number(a.blockId) - Number(b.blockId));
+  currentPages.set(pageNumber, current);
+}
+
+function missingTextBlocksForPage(sourcePage, translatedPage) {
+  const translatedIds = new Set((translatedPage?.blocks || []).map(block => String(block.blockId)));
+  return sourceTextBlocks(sourcePage)
+    .filter(block => !translatedIds.has(block.blockId));
+}
+
+function sourceTextBlocks(sourcePage) {
+  return (Array.isArray(sourcePage?.textBlocks) ? sourcePage.textBlocks : [])
+    .map((block, index) => ({
+      blockId: String(index + 1),
+      text: String(block?.text || '').replace(/\s+/g, ' ').trim()
+    }))
+    .filter(block => block.text.length >= 2)
+    .slice(0, 180);
+}
+
+async function translateTextBlocksPage({ sourcePage, missingBlocks, request, config, deps }) {
+  const fetchImpl = deps.fetch || fetch;
+  const input = {
+    task: request.task,
+    maker: request.maker,
+    model: request.model,
+    page: Number(sourcePage.page),
+    title: sourcePage.title || '',
+    chapter: sourcePage.chapter || '',
+    rules: [
+      'Translate every supplied text block to Czech without shortening.',
+      'Keep display/menu labels and diagnostic codes in English.',
+      'Do not invent text. Translate only the supplied block text.',
+      'Return the same blockId and the exact original text as sourceQuote.'
+    ],
+    textBlocks: missingBlocks
+  };
+  const body = {
+    model: config.openaiModel,
+    max_output_tokens: Math.max(4000, Number(config.openaiMaxOutputTokens || 10000)),
+    input: [{
+      role: 'system',
+      content: 'Return only strict JSON. Translate missing service manual TEXT_BLOCKS to Czech. Keep service display/menu labels in English.'
+    }, {
+      role: 'user',
+      content: JSON.stringify(input)
+    }],
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'manual_translated_page_repair',
+        strict: true,
+        schema: TRANSLATED_PAGE_REPAIR_SCHEMA
+      }
+    }
+  };
+  const res = await fetchImpl('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    signal: openAiTimeoutSignal(config),
+    headers: {
+      Authorization: `Bearer ${config.openaiApiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const errorText = await readOpenAiErrorText(res);
+    throw new Error(`OpenAI repair HTTP ${res.status}: ${safeOpenAiErrorMessage(errorText)}`);
+  }
+  const raw = await res.text();
+  const data = JSON.parse(raw);
+  const text = extractResponseText(data);
+  if (!text) throw new Error('OpenAI repair response did not contain output text.');
+  return JSON.parse(text);
 }
 
 function imagesForResult(pages, steps, translatedPages = []) {
