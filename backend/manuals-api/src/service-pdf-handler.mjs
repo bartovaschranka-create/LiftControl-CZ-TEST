@@ -2,7 +2,6 @@ import { getConfig } from './config.mjs';
 import { applyCors, isOriginAllowed } from './cors.mjs';
 import { readJsonBody, sendJson } from './http.mjs';
 import { createServiceProcedurePdf } from './service-pdf.mjs';
-import { translateSourcePagesWithOpenAI } from './openai.mjs';
 
 export function createServicePdfHandler(deps = {}) {
   return async function servicePdfHandler(req, res) {
@@ -48,7 +47,7 @@ export function createServicePdfHandler(deps = {}) {
     }
 
     try {
-      body = await ensureTranslatedManualPages(body, config, deps);
+      body = markMissingTranslatedManualPages(body);
       const pdf = createServiceProcedurePdf(body || {});
 
       res.statusCode = 200;
@@ -73,7 +72,7 @@ export function createServicePdfHandler(deps = {}) {
   };
 }
 
-async function ensureTranslatedManualPages(body, config, deps = {}) {
+function markMissingTranslatedManualPages(body) {
   const result = body?.result || {};
   const hasTranslated = Array.isArray(result.translatedPages) && result.translatedPages.length;
   const sourcePages = Array.isArray(result.sourcePages) ? result.sourcePages : [];
@@ -83,42 +82,17 @@ async function ensureTranslatedManualPages(body, config, deps = {}) {
     && (Array.isArray(page?.images) && page.images.some(image => image?.dataUrl))
   );
   if (!hasLayout) return body;
-
-  const openaiDebug = {
-    configured: !!config.openaiApiKey,
-    model: config.openaiModel,
-    requestSent: false,
-    responseStatus: null,
-    errorCode: config.openaiApiKey ? null : 'openai_missing_key',
-    errorMessage: config.openaiApiKey ? null : 'OPENAI_API_KEY is not configured.',
-    parsed: false,
-    validationRejectedSteps: 0,
-    acceptedSteps: 0
-  };
-  const translated = await translateSourcePagesWithOpenAI({
-    request: body?.request || {},
-    sourcePages,
-    config: {
-      ...config,
-      translatedPageRepairMaxPages: Math.max(4, Number(config.translatedPageRepairMaxPages || 0)),
-      translatedPageRepairMaxBlocks: Math.max(160, Number(config.translatedPageRepairMaxBlocks || 0)),
-      translatedPageRepairTimeoutMs: Math.max(22000, Number(config.translatedPageRepairTimeoutMs || 0)),
-      openaiMaxOutputTokens: Math.max(12000, Number(config.openaiMaxOutputTokens || 0))
-    },
-    deps,
-    openaiDebug,
-    deadlineAt: Date.now() + 27500
-  });
   return {
     ...body,
     result: {
       ...result,
-      translatedPages: translated.translatedPages || [],
+      translatedPages: [],
       pdfDiagnostics: {
         ...(result.pdfDiagnostics || {}),
-        servicePdfTranslationAttempted: true,
-        translatedPages: (translated.translatedPages || []).length,
-        openai: openaiDebug
+        servicePdfTranslationAttempted: false,
+        servicePdfTranslationSkipped: true,
+        servicePdfTranslationSkipReason: 'translate-pages endpoint must prepare translatedPages before PDF render',
+        translatedPages: 0
       }
     }
   };

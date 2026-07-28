@@ -2419,7 +2419,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.217</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.219</div>
   </div>
 </aside>
 
@@ -9257,9 +9257,10 @@ function manualResultDiagnostics(result){
 async function ensureManualTranslatedPages(){
   const translated=Array.isArray(manualLastResult?.translatedPages) ? manualLastResult.translatedPages : [];
   const sourcePages=Array.isArray(manualLastResult?.sourcePages) ? manualLastResult.sourcePages : [];
-  if(translated.length || !sourcePages.length) return;
+  if(translated.length) return {ok:true, message:'Preklad stran je pripraven.'};
+  if(!sourcePages.length) return {ok:false, message:'Nejsou k dispozici zdrojove strany pro preklad.'};
   const endpoint=getManualsTranslatePagesUrl();
-  if(!endpoint) throw new Error('Neni nastavene API pro preklad nalezenych stran.');
+  if(!endpoint) return {ok:false, message:'Neni nastavene API pro preklad nalezenych stran.'};
   const res=await fetch(endpoint,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -9267,17 +9268,27 @@ async function ensureManualTranslatedPages(){
   });
   let json=null;
   try{ json=await res.json(); }catch(_){}
-  if(!res.ok) throw new Error(json?.message || `Prekladove API vratilo chybu ${res.status}`);
-  if(!(json?.translatedPages||[]).length) throw new Error(json?.message || 'Preklad nalezenych stran zatim nebyl vytvoren.');
-  manualLastResult={...manualLastResult, translatedPages:json.translatedPages, pdfDiagnostics:{...(manualLastResult.pdfDiagnostics||{}), ...(json.debug||{})}, message:manualLastResult.message};
+  if(!res.ok) return {ok:false, message:json?.message || `Prekladove API vratilo chybu ${res.status}`};
+  if(!(json?.translatedPages||[]).length) return {ok:false, message:json?.message || 'Preklad nalezenych stran zatim nebyl vytvoren.'};
+  manualLastResult={...manualLastResult, translatedPages:json.translatedPages, pdfDiagnostics:{...(manualLastResult.pdfDiagnostics||{}), translatePages:json.debug||{}, translatePagesMessage:json.message||''}, message:manualLastResult.message};
   renderManualResult(manualLastResult, manualLastRequest||{});
+  return {ok:true, message:'Preklad stran byl pripraven.'};
 }
-async function createManualServicePdf(){
+async function createManualServicePdf(evt){
   if(!manualLastResult || !manualLastRequest){ alert('Nejdřív vyhledej ověřený manuál.'); return; }
   const endpoint=getManualsServicePdfUrl();
   if(!endpoint){ alert('Není nastavené API pro vytvoření servisního PDF.'); return; }
+  const btn=evt?.currentTarget || null;
+  const originalText=btn?.textContent || '';
   try{
-    await ensureManualTranslatedPages();
+    if(btn){ btn.disabled=true; btn.textContent='Pripravuji preklad...'; }
+    try{
+      const translation=await ensureManualTranslatedPages();
+      if(translation && !translation.ok) console.warn('Manual page translation unavailable before PDF render', translation.message);
+    }catch(translationError){
+      console.warn('Manual page translation failed before PDF render', translationError);
+    }
+    if(btn) btn.textContent='Vytvarim PDF...';
     const res=await fetch(endpoint,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -9301,6 +9312,8 @@ async function createManualServicePdf(){
   }catch(e){
     console.error('Service PDF failed', e);
     alert(`Servisní PDF se nepodařilo vytvořit: ${e.message||e}`);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent=originalText || 'Vytvorit servisni PDF'; }
   }
 }
 function renderManualResult(result, req){
@@ -9311,7 +9324,7 @@ function renderManualResult(result, req){
     return;
   }
   const variants=(result.variants||[]).map(v=>`<a class="secondary mini" target="_blank" rel="noopener" href="${escapeHtml(v.url)}">${escapeHtml(v.title||v.type||'Varianta')}</a>`).join('');
-  const pdfAction=manualCanCreateServicePdf(result) ? '<button type="button" class="primary mini" onclick="createManualServicePdf()">Vytvořit servisní PDF</button>' : '';
+  const pdfAction=manualCanCreateServicePdf(result) ? '<button type="button" class="primary mini" onclick="createManualServicePdf(event)">Vytvořit servisní PDF</button>' : '';
   const steps=(result.steps||[]).length
     ? `<ol class="manual-steps">${result.steps.map(s=>`<li>${escapeHtml(manualStepText(s))}</li>`).join('')}</ol>`
     : `<div class="manual-status warn">${escapeHtml(manualEmptyStepsMessage(result))}</div>`;
@@ -10848,7 +10861,7 @@ setTimeout(() => retryPendingFaultSync().catch(err => console.warn('Pending faul
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  const APP_UPDATE_VERSION = '5.217';
+  const APP_UPDATE_VERSION = '5.219';
   const APP_UPDATE_ACCEPT_KEY = 'liftcontrol_update_accepted_version';
   let appUpdateRegistration = null;
   let appUpdateWorker = null;

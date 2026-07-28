@@ -45,11 +45,18 @@ export function createTranslatePagesHandler(deps = {}) {
       return sendJson(res, 400, { status: 'error', message: 'Chybi nalezene strany manualu k prekladu.' });
     }
 
-    const openaiDebug = createOpenAiDebug(config);
+    const translationConfig = {
+      ...config,
+      translatedPageRepairMaxPages: Math.max(4, Number(config.translatedPageRepairMaxPages || 0)),
+      translatedPageRepairMaxBlocks: Math.max(120, Number(config.translatedPageRepairMaxBlocks || 0)),
+      translatedPageRepairTimeoutMs: Math.max(22000, Number(config.translatedPageRepairTimeoutMs || 0)),
+      openaiMaxOutputTokens: Math.max(12000, Number(config.openaiMaxOutputTokens || 0))
+    };
+    const openaiDebug = createOpenAiDebug(translationConfig);
     const result = await translateSourcePagesWithOpenAI({
       request,
       sourcePages,
-      config,
+      config: translationConfig,
       deps,
       openaiDebug,
       deadlineAt,
