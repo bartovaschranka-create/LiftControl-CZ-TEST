@@ -293,7 +293,9 @@ export async function translateSourcePagesWithOpenAI({ request, sourcePages, con
   const startedAt = Date.now();
   try {
     perf?.mark?.('manual translate-pages OpenAI request sent', { pages: repairPages.length, blocks: usedBlocks, timeoutMs });
-    const repaired = await translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs });
+    const repaired = repairPages.length > 1
+      ? await translateTextBlocksPagesInPageBatches({ repairPages, request, config, deps, timeoutMs, openaiDebug, perf })
+      : await translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs });
     const translatedPages = validateTranslatedPages(repaired?.translatedPages, pages);
     setOpenAiDebug(openaiDebug, {
       responseStatus: 200,
@@ -326,6 +328,50 @@ export async function translateSourcePagesWithOpenAI({ request, sourcePages, con
         : 'Preklad nalezenych stran selhal.'
     };
   }
+}
+
+async function translateTextBlocksPagesInPageBatches({ repairPages, request, config, deps, timeoutMs, openaiDebug = null, perf = null }) {
+  const startedAt = Date.now();
+  const settled = await Promise.allSettled(repairPages.map(item =>
+    translateTextBlocksPages({ repairPages: [item], request, config, deps, timeoutMs })
+  ));
+  const translatedPages = [];
+  const pageResults = settled.map((result, index) => {
+    const page = Number(repairPages[index]?.sourcePage?.page || 0);
+    if (result.status === 'fulfilled') {
+      const pages = Array.isArray(result.value?.translatedPages) ? result.value.translatedPages : [];
+      translatedPages.push(...pages);
+      return {
+        page,
+        ok: pages.length > 0,
+        translatedPages: pages.length,
+        translatedBlocks: pages.reduce((sum, translatedPage) => sum + (Array.isArray(translatedPage?.blocks) ? translatedPage.blocks.length : 0), 0),
+        errorCode: pages.length ? null : 'empty_translation_page'
+      };
+    }
+    return {
+      page,
+      ok: false,
+      translatedPages: 0,
+      translatedBlocks: 0,
+      errorCode: isAbortError(result.reason) ? 'openai_timeout' : 'openai_unknown_error',
+      errorMessage: isAbortError(result.reason) ? 'Preklad strany nestihl dobehnout v casovem limitu.' : safeOpenAiErrorMessage(result.reason)
+    };
+  });
+  setOpenAiDebug(openaiDebug, {
+    translationBatches: {
+      mode: 'per_page_parallel',
+      elapsedMs: Date.now() - startedAt,
+      requestedPages: repairPages.map(item => Number(item.sourcePage.page)),
+      pageResults
+    }
+  });
+  perf?.mark?.('manual translate-pages page batches finished', {
+    elapsedMs: Date.now() - startedAt,
+    translatedPages: translatedPages.length,
+    failedPages: pageResults.filter(item => !item.ok).length
+  });
+  return { translatedPages };
 }
 
 async function completeTranslatedPageTranslations({ parsedTranslatedPages, sourcePages, request, config, deps, openaiDebug, perf = null, deadlineAt = 0 }) {

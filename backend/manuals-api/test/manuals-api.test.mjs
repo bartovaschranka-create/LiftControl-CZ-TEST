@@ -1071,6 +1071,54 @@ test('translate-pages endpoint translates only supplied source pages', async () 
   assert.equal(res.json.debug.openai.sentPageNumbers[0], 129);
 });
 
+test('translate-pages endpoint keeps translated pages when another page times out', async () => {
+  const res = await callTranslatePages({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    sourcePages: [129, 130].map(page => ({
+      page,
+      title: '4.3.8 Calibrating Platform Angle Sensor',
+      chapter: 'Testing, Calibrations and Special Procedures',
+      width: 612,
+      height: 792,
+      text: `${page}. Position the Platform/Ground select switch to Ground.`,
+      textBlocks: [{
+        text: `${page}. Position the Platform/Ground select switch to Ground.`,
+        x: 72,
+        y: 120,
+        width: 360,
+        height: 14,
+        fontSize: 10
+      }]
+    }))
+  }, {
+    fetch: async (url, options = {}) => {
+      if (String(url).includes('api.openai.com')) {
+        if (String(options.body || '').includes('130. Position')) {
+          const error = new Error('timeout');
+          error.name = 'AbortError';
+          throw error;
+        }
+        return responseJson({ output_text: JSON.stringify({
+          translatedPages: [{
+            page: 129,
+            blocks: [{
+              blockId: '1',
+              text: 'Nastavte prepinac Platform/Ground do polohy Ground.',
+              sourceQuote: '129. Position the Platform/Ground select switch to Ground.'
+            }]
+          }]
+        }) });
+      }
+      throw new Error(`Unexpected fetch ${url}`);
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'ok');
+  assert.deepEqual(res.json.translatedPages.map(page => page.page), [129]);
+  assert.equal(res.json.debug.openai.translationBatches.mode, 'per_page_parallel');
+  assert.equal(res.json.debug.openai.translationBatches.pageResults.some(page => page.page === 130 && page.errorCode === 'openai_timeout'), true);
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
