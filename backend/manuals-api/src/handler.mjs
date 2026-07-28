@@ -465,7 +465,7 @@ function preferredProcedureGroup(relevantPages, allPages, task = '') {
   const starts = (relevantPages || [])
     .filter(page => procedureHeadingText(page))
     .filter(page => /calibrat/i.test(procedureHeadingText(page)) && /(angle|tilt|level).*sensor|sensor/i.test(procedureHeadingText(page)))
-    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+    .sort((a, b) => procedureStartScore(b, task) - procedureStartScore(a, task));
   const start = starts[0];
   if (!start) return [];
   const byPage = new Map((allPages || []).map(page => [Number(page.page || 0), page]));
@@ -501,9 +501,25 @@ function procedureContinuationPages(startPage, allPages) {
 function procedureHeadingText(page) {
   const title = String(page?.title || '').trim();
   if (title) return title;
+  const blockHeading = (Array.isArray(page?.textBlocks) ? page.textBlocks : [])
+    .slice(0, 12)
+    .map(block => String(block?.text || '').replace(/\s+/g, ' ').trim())
+    .find(text => /\b\d+(?:\.\d+){1,4}\s+[A-Z][A-Za-z0-9 /-]{6,120}/.test(text));
+  if (blockHeading) return blockHeading;
   const text = String(page?.text || '');
   const match = text.match(/(?:^|\n)\s*(\d+(?:\.\d+){1,4}\s+[A-Z][^\n]{6,120})/);
   return match?.[1]?.trim() || '';
+}
+
+function procedureStartScore(page, task = '') {
+  const heading = procedureHeadingText(page).toLowerCase();
+  let score = Number(page?.score || 0);
+  if (/calibrating platform angle sensor/.test(heading)) score += 80;
+  if (/platform angle sensor/.test(heading)) score += 40;
+  if (/calibrating .*angle sensor|angle sensor calibration/.test(heading)) score += 35;
+  if (/refer to figure|location/.test(heading)) score -= 25;
+  if (isAngleSensorCalibrationTask(task) && Number(page?.page) >= 120) score += 8;
+  return score;
 }
 
 function isNextProcedureHeading(startHeading, heading) {

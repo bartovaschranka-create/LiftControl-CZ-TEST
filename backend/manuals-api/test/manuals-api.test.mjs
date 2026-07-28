@@ -1393,7 +1393,8 @@ test('service procedure PDF generator creates readable PDF bytes', async () => {
   const raw = pdf.toString('latin1');
   assert.match(raw, /\/Count 1/);
   assert.match(raw, /Zdroj: JLG 450AJ Service Manual, str\. 436/);
-  assert.match(raw, /Cesky text prekryty na puvodni strane manualu/);
+  assert.match(raw, /Cesky text prekryty na puvodni strane/);
+  assert.match(raw, /manualu\./);
   assert.doesNotMatch(raw, /Ceska servisni kapitola/);
   assert.doesNotMatch(raw, /Zdrojove citace/);
   assert.doesNotMatch(raw, /Ceska servisni prirucka vyrobce/);
@@ -1441,6 +1442,43 @@ test('service PDF renders contiguous translated manual pages without fallback re
   assert.match(raw, /Prelozeny blok strany 132/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
   assert.doesNotMatch(raw, /Zdrojove citace/);
+});
+
+test('service PDF uses full manual pages instead of report when translation is missing', async () => {
+  const payload = servicePdfPayload();
+  payload.result.translatedPages = [];
+  payload.result.sourcePages = [129, 130].map(page => ({
+    page,
+    width: 612,
+    height: 792,
+    textBlocks: [{
+      blockId: '1',
+      text: `Original English block page ${page}`,
+      x: 72,
+      y: 96,
+      width: 260,
+      height: 24,
+      fontSize: 9
+    }],
+    images: [{
+      page,
+      stepPage: page,
+      bbox: 'page',
+      caption: `Originalni strana manualu ${page}`,
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }]
+  }));
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  const pdf = createServiceProcedurePdf(payload);
+  const raw = pdf.toString('latin1');
+  assert.match(raw, /\/Count 2/);
+  assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
+  assert.doesNotMatch(raw, /Dalsi obrazky \/ schemata z manualu/);
+  assert.doesNotMatch(raw, /Original English block page/);
+  assert.match(raw, /\/Subtype \/Image/);
 });
 
 test('service PDF endpoint returns application/pdf', async () => {

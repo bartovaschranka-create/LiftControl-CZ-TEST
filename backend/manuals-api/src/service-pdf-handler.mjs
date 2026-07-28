@@ -98,10 +98,16 @@ async function ensureTranslatedManualPages(body, config, deps = {}) {
   const translated = await translateSourcePagesWithOpenAI({
     request: body?.request || {},
     sourcePages,
-    config,
+    config: {
+      ...config,
+      translatedPageRepairMaxPages: Math.max(4, Number(config.translatedPageRepairMaxPages || 0)),
+      translatedPageRepairMaxBlocks: Math.max(160, Number(config.translatedPageRepairMaxBlocks || 0)),
+      translatedPageRepairTimeoutMs: Math.max(22000, Number(config.translatedPageRepairTimeoutMs || 0)),
+      openaiMaxOutputTokens: Math.max(12000, Number(config.openaiMaxOutputTokens || 0))
+    },
     deps,
     openaiDebug,
-    deadlineAt: Date.now() + 22000
+    deadlineAt: Date.now() + 27500
   });
   return {
     ...body,
