@@ -1492,6 +1492,54 @@ test('service PDF renders contiguous translated manual pages without fallback re
   assert.doesNotMatch(raw, /Zdrojove citace/);
 });
 
+test('service PDF emits readable text instead of UTF-16 font fallback', async () => {
+  const payload = servicePdfPayload();
+  payload.result.translatedPages = [{
+    page: 129,
+    width: 612,
+    height: 792,
+    blocks: [{
+      blockId: '1',
+      text: 'Český překlad: použijte šipky a potvrďte kalibraci.',
+      sourceQuote: 'Use the arrow keys and press enter.',
+      x: 72,
+      y: 120,
+      width: 320,
+      height: 18,
+      fontSize: 10
+    }]
+  }];
+  payload.result.sourcePages = [{
+    page: 129,
+    width: 612,
+    height: 792,
+    textBlocks: [{
+      blockId: '1',
+      text: 'Use the arrow keys and press enter.',
+      x: 72,
+      y: 120,
+      width: 320,
+      height: 18,
+      fontSize: 10
+    }],
+    images: [{
+      page: 129,
+      stepPage: 129,
+      bbox: 'page',
+      caption: 'Originalni strana manualu 129',
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }]
+  }];
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  const raw = createServiceProcedurePdf(payload).toString('latin1');
+  assert.doesNotMatch(raw, /FEFF/);
+  assert.match(raw, /Cesky preklad/);
+  assert.match(raw, /pouzijte sipky/);
+});
+
 test('service PDF uses full manual pages instead of report when translation is missing', async () => {
   const payload = servicePdfPayload();
   payload.result.translatedPages = [];

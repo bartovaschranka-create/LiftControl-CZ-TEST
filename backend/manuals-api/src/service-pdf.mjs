@@ -408,8 +408,8 @@ class Layout {
       const bh = Math.max(7, sourceBlock.height * sy);
       const by = y + h - (sourceBlock.y + sourceBlock.height) * sy;
       const bw = Math.max(16, sourceBlock.width * sx);
-      const pad = image?.dataUrl ? 2.8 : 1.4;
-      const boxH = Math.max(bh + pad * 2, Math.min(44, bh * 2.1));
+      const pad = image?.dataUrl ? 4.8 : 1.4;
+      const boxH = Math.max(bh + pad * 2, Math.min(56, bh * 2.6));
       if (image?.dataUrl) this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
       if (!block?.text) continue;
       const fontSize = Math.max(6.8, Math.min(10.8, (sourceBlock.fontSize || sourceBlock.height || 8) * sy * 1.13));
@@ -648,11 +648,20 @@ function clean(value) {
 }
 
 function pdfText(value) {
-  const text = clean(value);
-  if (/[^\x20-\x7E]/.test(text)) {
-    return `<FEFF${Buffer.from(text, 'utf16le').swap16().toString('hex').toUpperCase()}>`;
-  }
+  const text = pdfReadableText(value);
   return `(${text.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)')})`;
+}
+
+function pdfReadableText(value) {
+  return clean(value)
+    .replace(/–|—/g, '-')
+    .replace(/„|“|”/g, '"')
+    .replace(/‚|‘|’/g, "'")
+    .replace(/×/g, 'x')
+    .replace(/°/g, ' st.')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\x20-\x7E]/g, '');
 }
 
 function parseJpegDataUrl(dataUrl) {
