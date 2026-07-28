@@ -1489,6 +1489,45 @@ test('service PDF endpoint returns application/pdf', async () => {
   assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
 });
 
+test('service PDF endpoint does not run OpenAI translation fallback', async () => {
+  const payload = servicePdfPayload();
+  payload.result.steps = [];
+  payload.result.safety = [];
+  payload.result.sources = [];
+  payload.result.translatedPages = [];
+  payload.result.sourcePages = [{
+    page: 129,
+    width: 612,
+    height: 792,
+    textBlocks: [{
+      text: 'Original English block that is available only as source layout.',
+      x: 72,
+      y: 120,
+      width: 360,
+      height: 14,
+      fontSize: 10
+    }],
+    images: [{
+      page: 129,
+      stepPage: 129,
+      bbox: 'page',
+      caption: 'Originalni strana manualu 129',
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }]
+  }];
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  const res = await callServicePdf(payload);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.headers['content-type'], 'application/pdf');
+  assert.equal(res.bodyBuffer.slice(0, 8).toString('latin1'), '%PDF-1.4');
+  const debug = JSON.parse(decodeURIComponent(res.headers['x-manual-pdf-debug']));
+  assert.equal(debug.servicePdfTranslationAttempted, false);
+  assert.equal(debug.servicePdfTranslationSkipped, true);
+});
+
 test('service PDF endpoint accepts translated manual payload over 2 MB', async () => {
   const payload = servicePdfPayload();
   payload.result.unusedLargeDiagnostic = 'x'.repeat(3 * 1024 * 1024);
