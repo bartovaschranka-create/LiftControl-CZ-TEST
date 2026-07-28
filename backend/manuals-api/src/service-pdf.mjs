@@ -8,11 +8,11 @@ export function createServiceProcedurePdf(input = {}) {
   if (!data.result.manualTitle && !data.result.originalUrl) throw new Error('Chybi overeny vysledek manualu.');
   if (!data.steps.length && !data.sources.length && !data.translatedPages.length && !data.sourcePages.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
 
-  if (data.translatedPages.length && data.pageImagesAvailable) {
+  if (data.manualLayoutPages.length && data.pageImagesAvailable) {
     data.diagnostics.finalRenderMode = 'translated_manual_pages';
     const doc = new PdfDoc({ autoPage: false });
     const layout = new Layout(doc);
-    data.translatedPages.forEach(page => layout.translatedManualPage(page, data));
+    data.manualLayoutPages.forEach(page => layout.translatedManualPage(page, data));
     return doc.finish();
   }
 
@@ -96,9 +96,15 @@ function normalizeInput(input) {
       ...safety.map(x => x.page).filter(Boolean),
       ...sources.map(x => x.page).filter(Boolean)
     ])].sort((a, b) => Number(a) - Number(b));
-  const pageImagesAvailable = translatedPages.every(page => !!bestPageImage(images, page.page));
-  const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable });
-  return { request, result, steps, safety, sources, images, translatedPages, sourcePages: sourcePageNumbers, sourcePageData: sourcePages, pageImagesAvailable, diagnostics };
+  const sourceLayoutPages = sourcePages
+    .filter(page => (page.textBlocks || []).length && !!bestPageImage(images, page.page))
+    .map(page => ({ page: page.page, width: page.width, height: page.height, blocks: [] }));
+  const manualLayoutPages = translatedPages.length ? translatedPages : sourceLayoutPages;
+  const pageImagesAvailable = manualLayoutPages.length
+    ? manualLayoutPages.every(page => !!bestPageImage(images, page.page))
+    : translatedPages.every(page => !!bestPageImage(images, page.page));
+  const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages });
+  return { request, result, steps, safety, sources, images, translatedPages, manualLayoutPages, sourcePages: sourcePageNumbers, sourcePageData: sourcePages, pageImagesAvailable, diagnostics };
 }
 
 function conciseManualName(result) {
@@ -159,6 +165,7 @@ function normalizeTranslatedPages(pages) {
       height: Number(page?.height) || 0,
       blocks: (Array.isArray(page?.blocks) ? page.blocks : [])
         .map(block => ({
+          blockId: clean(block?.blockId || '').slice(0, 40),
           text: clean(block?.text || '').slice(0, 1600),
           sourceQuote: clean(block?.sourceQuote || '').slice(0, 1000),
           x: Number(block?.x) || 0,
@@ -181,7 +188,8 @@ function normalizeSourcePages(pages) {
       title: clean(page?.title || '').slice(0, 180),
       chapter: clean(page?.chapter || '').slice(0, 180),
       textBlocks: (Array.isArray(page?.textBlocks) ? page.textBlocks : [])
-        .map(block => ({
+        .map((block, index) => ({
+          blockId: String(block?.blockId || index + 1),
           text: clean(block?.text || '').slice(0, 1200),
           x: Number(block?.x) || 0,
           y: Number(block?.y) || 0,
@@ -199,9 +207,9 @@ function normalizeSourcePages(pages) {
     .filter(page => page.page);
 }
 
-function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable }) {
-  const selectedPages = translatedPages.length
-    ? translatedPages.map(page => page.page)
+function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages = [] }) {
+  const selectedPages = manualLayoutPages.length
+    ? manualLayoutPages.map(page => page.page)
     : sourcePages.map(page => page.page);
   const translatedBlocksCount = translatedPages.reduce((sum, page) => sum + page.blocks.length, 0);
   const layoutBlocksCount = sourcePages.reduce((sum, page) => sum + page.textBlocks.length, 0);
@@ -213,8 +221,8 @@ function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesA
     translatedBlocksCount,
     repairedBlocksCount: 0,
     untranslatedBlocksCount: Math.max(0, layoutBlocksCount - translatedBlocksCount),
-    fallbackReason: '',
-    finalRenderMode: translatedPages.length && pageImagesAvailable ? 'translated_manual_pages' : 'fallback_report',
+    fallbackReason: manualLayoutPages.length && !translatedPages.length ? 'translation_missing_rendered_as_manual_pages' : '',
+    finalRenderMode: manualLayoutPages.length && pageImagesAvailable ? 'translated_manual_pages' : 'fallback_report',
     pageImagesWithDataUrl: images.filter(image => image.dataUrl && (image.bbox === 'page' || /originalni strana manualu|original manual page/i.test(image.caption || ''))).length
   };
 }
@@ -360,6 +368,7 @@ class Layout {
   }
   translatedManualPage(page, data) {
     const image = bestPageImage(data.images, page.page);
+    const sourcePage = (data.sourcePageData || []).find(item => Number(item.page) === Number(page.page)) || {};
     this.doc.newPage();
     this.y = PAGE.h;
     const size = image?.dataUrl ? imageSize(image) : {
@@ -385,15 +394,25 @@ class Layout {
     const sourceH = page.height || size.h;
     const sx = w / sourceW;
     const sy = h / sourceH;
-    for (const block of page.blocks) {
-      const bx = x + block.x * sx;
-      const bh = Math.max(7, block.height * sy);
-      const by = y + h - (block.y + block.height) * sy;
-      const bw = Math.max(16, block.width * sx);
-      const pad = image?.dataUrl ? 2.2 : 1.2;
-      const boxH = Math.max(bh + pad * 2, Math.min(34, bh * 1.85));
+    const translatedByKey = translatedBlockMap(page.blocks || []);
+    const sourceBlocks = Array.isArray(sourcePage.textBlocks) && sourcePage.textBlocks.length
+      ? sourcePage.textBlocks
+      : page.blocks;
+    for (const sourceBlock of sourceBlocks) {
+      const key = blockKey(sourceBlock);
+      const block = translatedByKey.get(key)
+        || translatedByKey.get(normalizeForBlockMatch(sourceBlock.text))
+        || translatedByKey.get(normalizeForBlockMatch(sourceBlock.sourceQuote))
+        || null;
+      const bx = x + sourceBlock.x * sx;
+      const bh = Math.max(7, sourceBlock.height * sy);
+      const by = y + h - (sourceBlock.y + sourceBlock.height) * sy;
+      const bw = Math.max(16, sourceBlock.width * sx);
+      const pad = image?.dataUrl ? 2.8 : 1.4;
+      const boxH = Math.max(bh + pad * 2, Math.min(44, bh * 2.1));
       if (image?.dataUrl) this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
-      const fontSize = Math.max(6.1, Math.min(9.8, (block.fontSize || block.height || 8) * sy * 1.02));
+      if (!block?.text) continue;
+      const fontSize = Math.max(6.8, Math.min(10.8, (sourceBlock.fontSize || sourceBlock.height || 8) * sy * 1.13));
       this.textInBox(block.text, bx, by + boxH - pad - 1.2, bw, boxH - pad * 1.3, fontSize);
     }
     this.doc.fillRect(0, 0, PAGE.w, 16, 1);
@@ -490,6 +509,32 @@ function imageSize(image) {
 function bestPageImage(images, page) {
   const samePage = (images || []).filter(image => Number(image.page || image.stepPage || 0) === Number(page) && image.dataUrl);
   return samePage.find(image => image.bbox === 'page' || /originalni strana manualu/i.test(image.caption || '')) || samePage[0] || null;
+}
+
+function translatedBlockMap(blocks) {
+  const out = new Map();
+  for (const block of blocks || []) {
+    const keys = [
+      blockKey(block),
+      normalizeForBlockMatch(block.sourceQuote),
+      normalizeForBlockMatch(block.text)
+    ].filter(Boolean);
+    for (const key of keys) out.set(key, block);
+  }
+  return out;
+}
+
+function blockKey(block) {
+  return String(block?.blockId || '').trim();
+}
+
+function normalizeForBlockMatch(value) {
+  return clean(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 220);
 }
 
 class PdfDoc {
