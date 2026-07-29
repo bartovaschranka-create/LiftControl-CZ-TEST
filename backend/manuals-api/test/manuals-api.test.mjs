@@ -1180,6 +1180,74 @@ test('translate-pages endpoint can translate the full six page procedure range',
   assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131, 132, 133, 134]);
 });
 
+test('translate-pages endpoint repairs missing last page text blocks', async () => {
+  const sourcePages = [{
+    page: 135,
+    title: 'Testing, Calibrations and Special Procedures',
+    chapter: 'Testing, Calibrations and Special Procedures',
+    width: 612,
+    height: 792,
+    text: [
+      '17. Hit ESC twice to go back to CALIBRATIONS.',
+      '4.3.9 Resetting the MSSO System',
+      'Use the following procedure to reset the MSSO system.',
+      'Position the Platform/Ground select switch to the desired position.'
+    ].join('\n'),
+    textBlocks: [
+      { text: '17. Hit ESC twice to go back to CALIBRATIONS.', x: 72, y: 120, width: 360, height: 14, fontSize: 10 },
+      { text: '4.3.9 Resetting the MSSO System', x: 72, y: 160, width: 360, height: 16, fontSize: 12 },
+      { text: 'Use the following procedure to reset the MSSO system.', x: 72, y: 190, width: 360, height: 14, fontSize: 10 },
+      { text: 'Position the Platform/Ground select switch to the desired position.', x: 72, y: 220, width: 360, height: 14, fontSize: 10 }
+    ]
+  }];
+  let calls = 0;
+  const res = await callTranslatePages({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    sourcePages
+  }, {
+    fetch: async (url) => {
+      if (String(url).includes('api.openai.com')) {
+        calls += 1;
+        return responseJson({ output_text: JSON.stringify({
+          translatedPages: [{
+            page: 135,
+            blocks: calls === 1 ? [{
+              blockId: '1',
+              text: '17. Stisknete dvakrat ESC pro navrat do CALIBRATIONS.',
+              sourceQuote: '17. Hit ESC twice to go back to CALIBRATIONS.'
+            }] : [
+              {
+                blockId: '2',
+                text: '4.3.9 Resetovani systemu MSSO',
+                sourceQuote: '4.3.9 Resetting the MSSO System'
+              },
+              {
+                blockId: '3',
+                text: 'Pouzijte nasledujici postup pro resetovani systemu MSSO.',
+                sourceQuote: 'Use the following procedure to reset the MSSO system.'
+              },
+              {
+                blockId: '4',
+                text: 'Nastavte prepinac Platform/Ground select do pozadovane polohy.',
+                sourceQuote: 'Position the Platform/Ground select switch to the desired position.'
+              }
+            ]
+          }]
+        }) });
+      }
+      throw new Error(`Unexpected fetch ${url}`);
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'ok');
+  const page = res.json.translatedPages.find(item => item.page === 135);
+  assert.equal(page.blocks.length, 4);
+  assert.match(JSON.stringify(page.blocks), /Resetovani systemu MSSO/);
+  assert.match(JSON.stringify(page.blocks), /Platform\/Ground select/);
+  assert.equal(res.json.debug.openai.translatedPageRepair.attempted, true);
+  assert.equal(calls, 2);
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
@@ -1668,7 +1736,28 @@ test('service PDF renders the full platform angle procedure when every page imag
       width: 260,
       height: 24,
       fontSize: 9
-    }]
+    }, ...(page === 135 ? [
+      {
+        blockId: '2',
+        text: '4.3.9 Resetovani systemu MSSO',
+        sourceQuote: '4.3.9 Resetting the MSSO System',
+        x: 72,
+        y: 140,
+        width: 260,
+        height: 20,
+        fontSize: 12
+      },
+      {
+        blockId: '3',
+        text: 'Pouzijte nasledujici postup pro resetovani systemu MSSO.',
+        sourceQuote: 'Use the following procedure to reset the MSSO system.',
+        x: 72,
+        y: 170,
+        width: 330,
+        height: 18,
+        fontSize: 10
+      }
+    ] : [])]
   }));
   payload.result.sourcePages = payload.result.translatedPages.map(page => ({
     page: page.page,
@@ -1692,7 +1781,8 @@ test('service PDF renders the full platform angle procedure when every page imag
   assert.match(raw, /\/Count 7/);
   assert.match(raw, /Prelozeny blok strany 134/);
   assert.match(raw, /Stisknete ESC dvakrat/);
-  assert.doesNotMatch(raw, /MSSO/);
+  assert.match(raw, /Resetovani systemu MSSO/);
+  assert.doesNotMatch(raw, /Resetting the MSSO System/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
 });
 
