@@ -1136,8 +1136,8 @@ test('translate-pages endpoint keeps translated pages when another page times ou
   assert.equal(res.json.debug.openai.translationBatches.pageResults.some(page => page.page === 130 && page.errorCode === 'openai_timeout'), true);
 });
 
-test('translate-pages endpoint can translate the full six page procedure range', async () => {
-  const sourcePages = [129, 130, 131, 132, 133, 134].map(page => ({
+test('translate-pages endpoint can translate the full seven page angle sensor procedure range', async () => {
+  const sourcePages = [129, 130, 131, 132, 133, 134, 135].map(page => ({
     page,
     title: '4.3.8 Calibrating Platform Angle Sensor',
     chapter: 'Testing, Calibrations and Special Procedures',
@@ -1176,8 +1176,8 @@ test('translate-pages endpoint can translate the full six page procedure range',
   });
   assert.equal(res.statusCode, 200);
   assert.equal(res.json.status, 'ok');
-  assert.deepEqual(res.json.translatedPages.map(page => page.page), [129, 130, 131, 132, 133, 134]);
-  assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131, 132, 133, 134]);
+  assert.deepEqual(res.json.translatedPages.map(page => page.page), [129, 130, 131, 132, 133, 134, 135]);
+  assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131, 132, 133, 134, 135]);
 });
 
 test('translate-pages endpoint repairs missing last page text blocks', async () => {
