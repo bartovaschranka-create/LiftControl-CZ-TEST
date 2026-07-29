@@ -1603,23 +1603,34 @@ test('service PDF emits readable text instead of UTF-16 font fallback', async ()
 
 test('service PDF renders translated pages even when some page images are missing', async () => {
   const payload = servicePdfPayload();
-  payload.result.translatedPages = [129, 130, 131, 132, 133, 134].map(page => ({
+  payload.request.task = 'kalibrace uhloveho senzoru';
+  payload.result.translatedPages = [129, 130, 131, 132, 133, 134, 135, 136].map(page => ({
     page,
     width: 612,
     height: 792,
     blocks: [{
       blockId: '1',
-      text: `Prelozeny blok strany ${page}`,
+      text: page === 135 ? '17. Stisknete ESC dvakrat pro navrat do CALIBRATIONS.' : `Prelozeny blok strany ${page}`,
       sourceQuote: `Original block page ${page}`,
       x: 72,
       y: 96,
       width: 260,
       height: 24,
       fontSize: 9
-    }]
+    }, ...(page === 135 ? [{
+      blockId: '2',
+      text: '4.3.9 Resetovani systemu MSSO',
+      sourceQuote: '4.3.9 MSSO System Reset',
+      x: 72,
+      y: 140,
+      width: 260,
+      height: 20,
+      fontSize: 12
+    }] : [])]
   }));
   payload.result.sourcePages = payload.result.translatedPages.map(page => ({
     page: page.page,
+    title: page.page === 129 ? '4.3.8 Calibrating Platform Angle Sensor' : 'Testing, Calibrations and Special Procedures',
     width: 612,
     height: 792,
     textBlocks: page.blocks.map(block => ({ ...block, text: block.sourceQuote })),
@@ -1636,8 +1647,11 @@ test('service PDF renders translated pages even when some page images are missin
   }));
   payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
   const raw = createServiceProcedurePdf(payload).toString('latin1');
-  assert.match(raw, /\/Count 6/);
+  assert.match(raw, /\/Count 7/);
   assert.match(raw, /Prelozeny blok strany 134/);
+  assert.match(raw, /Stisknete ESC dvakrat/);
+  assert.doesNotMatch(raw, /MSSO/);
+  assert.doesNotMatch(raw, /Prelozeny blok strany 136/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
 });
 

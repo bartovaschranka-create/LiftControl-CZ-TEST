@@ -81,12 +81,19 @@ function normalizeInput(input) {
   const steps = normalizeItems(result.steps);
   const safety = normalizeItems(result.safety);
   const sources = normalizeSources(result.sources);
-  const sourcePages = normalizeSourcePages(result.sourcePages);
+  const rawSourcePages = normalizeSourcePages(result.sourcePages);
   const images = normalizeImages([
     ...(Array.isArray(result.images) ? result.images : []),
-    ...sourcePages.flatMap(page => page.images || [])
+    ...rawSourcePages.flatMap(page => page.images || [])
   ]);
-  const translatedPages = normalizeTranslatedPages(result.translatedPages);
+  const rawTranslatedPages = normalizeTranslatedPages(result.translatedPages);
+  const sanitized = sanitizeProcedurePages({
+    request,
+    sourcePages: rawSourcePages,
+    translatedPages: rawTranslatedPages
+  });
+  const sourcePages = sanitized.sourcePages;
+  const translatedPages = sanitized.translatedPages;
   const sourcePageNumbers = translatedPages.length
     ? translatedPages.map(x => x.page).filter(Boolean)
     : sourcePages.length
@@ -225,6 +232,83 @@ function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesA
     finalRenderMode: manualLayoutPages.length && (translatedPages.length || pageImagesAvailable) ? 'translated_manual_pages' : 'fallback_report',
     pageImagesWithDataUrl: images.filter(image => image.dataUrl && (image.bbox === 'page' || /originalni strana manualu|original manual page/i.test(image.caption || ''))).length
   };
+}
+
+function sanitizeProcedurePages({ request, sourcePages, translatedPages }) {
+  if (!isAngleSensorTask(request?.task)) return { sourcePages, translatedPages };
+  const startPage = sourcePages.find(page => /calibrat/i.test(`${page.title} ${page.text}`) && /angle|platform angle|tilt|level/i.test(`${page.title} ${page.text}`));
+  if (!startPage) return { sourcePages, translatedPages };
+  const startHeading = procedureHeadingText(startPage) || '4.3.8 Calibrating Platform Angle Sensor';
+  const startNumber = Number(startPage.page);
+  const out = [];
+  for (const page of sourcePages) {
+    const pageNumber = Number(page.page);
+    if (!pageNumber || pageNumber < startNumber) continue;
+    if (pageNumber > startNumber + 9) break;
+    const heading = procedureHeadingText(page);
+    const trimmed = trimPageAtNextProcedure(page, startHeading);
+    out.push(trimmed || page);
+    if (trimmed) break;
+    if (pageNumber > startNumber && heading && isNextProcedureHeading(startHeading, heading)) break;
+  }
+  const allowed = new Map(out.map(page => [Number(page.page), new Set((page.textBlocks || []).map(block => block.blockId))]));
+  const translated = translatedPages
+    .filter(page => allowed.has(Number(page.page)))
+    .map(page => {
+      const ids = allowed.get(Number(page.page));
+      return {
+        ...page,
+        blocks: (page.blocks || []).filter(block => !ids?.size || ids.has(block.blockId))
+      };
+    })
+    .filter(page => page.blocks.length);
+  return { sourcePages: out, translatedPages: translated };
+}
+
+function isAngleSensorTask(task) {
+  return /angle|tilt|level|uhlov|senzor|cidlo|sensor/i.test(String(task || ''));
+}
+
+function trimPageAtNextProcedure(page, startHeading) {
+  const blocks = Array.isArray(page?.textBlocks) ? page.textBlocks : [];
+  const index = blocks.findIndex(block => {
+    const text = String(block?.text || '').replace(/\s+/g, ' ').trim();
+    return isNextProcedureHeading(startHeading, text);
+  });
+  if (index > 0) {
+    const textBlocks = blocks.slice(0, index);
+    return {
+      ...page,
+      textBlocks,
+      text: textBlocks.map(block => block.text).join('\n'),
+      images: (page.images || []).filter(image => image.dataUrl)
+    };
+  }
+  return null;
+}
+
+function procedureHeadingText(page) {
+  const title = String(page?.title || '').trim();
+  if (headingNumber(title)) return title;
+  const fromBlocks = (Array.isArray(page?.textBlocks) ? page.textBlocks : [])
+    .map(block => String(block?.text || '').replace(/\s+/g, ' ').trim())
+    .find(text => headingNumber(text));
+  if (fromBlocks) return fromBlocks;
+  return String(page?.text || '').match(/\b\d+(?:\.\d+){1,4}\s+[A-Za-z][^\n]{3,140}/)?.[0] || title;
+}
+
+function isNextProcedureHeading(startHeading, heading) {
+  const start = headingNumber(startHeading);
+  const next = headingNumber(heading);
+  if (!start || !next || start === next) return false;
+  const startParts = start.split('.');
+  const nextParts = next.split('.');
+  return startParts.length === nextParts.length
+    && startParts.slice(0, -1).join('.') === nextParts.slice(0, -1).join('.');
+}
+
+function headingNumber(value) {
+  return String(value || '').match(/\b(\d+(?:\.\d+){1,4})\b/)?.[1] || '';
 }
 
 function contiguousRange(pages) {

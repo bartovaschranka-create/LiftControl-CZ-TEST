@@ -493,12 +493,12 @@ function procedureContinuationPages(startPage, allPages) {
     if (pageNumber <= startNumber) continue;
     if (pageNumber > startNumber + 9) break;
     const heading = procedureHeadingText(page);
-    if (heading && isNextProcedureHeading(startHeading, heading)) break;
     const trimmed = trimPageAtNextProcedureHeading(page, startHeading);
     if (trimmed) {
       out.push(trimmed);
       break;
     }
+    if (heading && isNextProcedureHeading(startHeading, heading)) break;
     out.push(page);
   }
   return out;
