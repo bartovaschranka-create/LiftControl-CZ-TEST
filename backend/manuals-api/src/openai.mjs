@@ -258,7 +258,7 @@ export async function translateSourcePagesWithOpenAI({ request, sourcePages, con
   }
   const pages = (Array.isArray(sourcePages) ? sourcePages : [])
     .filter(page => Number(page?.page) && Array.isArray(page?.textBlocks) && page.textBlocks.length)
-    .slice(0, Math.max(1, Number(config.translatedPageRepairMaxPages || 4)));
+    .slice(0, maxTranslatedPagesForTask(request?.task, config));
   const repairPages = [];
   let usedBlocks = 0;
   const maxBlocks = Math.max(1, Number(config.translatedPageRepairMaxBlocks || 80));
@@ -646,6 +646,21 @@ function leadingProcedureGroup(rankedPages, allPages = []) {
     })
     .sort((a, b) => Number(a.page || 0) - Number(b.page || 0));
   return group.length > 1 ? group : [];
+}
+
+function maxTranslatedPagesForTask(task, config = {}) {
+  const configured = Math.max(1, Number(config.translatedPageRepairMaxPages || 4));
+  const text = normalizeText(task);
+  if (isAngleSensorCalibrationTask(text)) return Math.max(configured, 8);
+  if (/\b(hydraulic|filter|filtr|vymena|replacement)\b/.test(text)) return Math.max(configured, 6);
+  return configured;
+}
+
+function isAngleSensorCalibrationTask(task) {
+  const text = normalizeText(task);
+  const hasSensor = /\b(angle|uhlov|tilt|level|senzor|cidlo|sensor)\b/.test(text);
+  const hasCalibration = /\b(kalibrace|calibration|calibrate|serizeni|nastaveni|adjustment|zero)\b/.test(text);
+  return hasSensor && hasCalibration;
 }
 
 function formatSourcePage(page) {
