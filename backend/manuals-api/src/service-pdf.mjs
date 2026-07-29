@@ -113,7 +113,7 @@ function normalizeInput(input) {
     .filter(Boolean);
   const pageImagesAvailable = manualLayoutPages.length ? missingPageImages.length === 0 : true;
   const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages, missingPageImages });
-  if (translatedPages.length && missingPageImages.length) {
+  if (requiresCompletePageImages(request) && translatedPages.length && missingPageImages.length) {
     const error = new Error(`Chybi obrazove podklady originalnich stran manualu: ${missingPageImages.join(', ')}. Vytvor a nahraj .pages.json index s --translated-pages --page-images pro cely rozsah kapitoly.`);
     error.code = 'manual_page_images_missing';
     error.diagnostics = diagnostics;
@@ -228,12 +228,14 @@ function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesA
     : sourcePages.map(page => page.page);
   const translatedBlocksCount = translatedPages.reduce((sum, page) => sum + page.blocks.length, 0);
   const layoutBlocksCount = sourcePages.reduce((sum, page) => sum + page.textBlocks.length, 0);
+  const maskedBlocksCount = sourcePages.reduce((sum, page) => sum + (page.maskedBlocks || []).length, 0);
   return {
     selectedPages,
     contiguousPageRange: contiguousRange(selectedPages),
     pageImagesAvailable,
     layoutBlocksCount,
     translatedBlocksCount,
+    maskedBlocksCount,
     repairedBlocksCount: 0,
     untranslatedBlocksCount: Math.max(0, layoutBlocksCount - translatedBlocksCount),
     missingPageImages,
@@ -256,7 +258,7 @@ function sanitizeProcedurePages({ request, sourcePages, translatedPages }) {
     if (pageNumber > startNumber + 9) break;
     const heading = procedureHeadingText(page);
     const trimmed = trimPageAtNextProcedure(page, startHeading);
-    out.push(page);
+    out.push(trimmed || page);
     if (trimmed) break;
     if (pageNumber > startNumber && heading && isNextProcedureHeading(startHeading, heading)) break;
   }
@@ -278,6 +280,11 @@ function isAngleSensorTask(task) {
   return /angle|tilt|level|uhlov|senzor|cidlo|sensor/i.test(String(task || ''));
 }
 
+function requiresCompletePageImages(request = {}) {
+  const task = String(request.task || '');
+  return isAngleSensorTask(task) && /kalibr|calibr|nastav|seriz|adjust|zero/i.test(task);
+}
+
 function trimPageAtNextProcedure(page, startHeading) {
   const blocks = Array.isArray(page?.textBlocks) ? page.textBlocks : [];
   const index = blocks.findIndex(block => {
@@ -286,9 +293,11 @@ function trimPageAtNextProcedure(page, startHeading) {
   });
   if (index > 0) {
     const textBlocks = blocks.slice(0, index);
+    const maskedBlocks = blocks.slice(index);
     return {
       ...page,
       textBlocks,
+      maskedBlocks,
       text: textBlocks.map(block => block.text).join('\n'),
       images: (page.images || []).filter(image => image.dataUrl)
     };
@@ -485,6 +494,16 @@ class Layout {
     const sourceBlocks = Array.isArray(sourcePage.textBlocks) && sourcePage.textBlocks.length
       ? sourcePage.textBlocks
       : page.blocks;
+    const maskedBlocks = Array.isArray(sourcePage.maskedBlocks) ? sourcePage.maskedBlocks : [];
+    for (const sourceBlock of maskedBlocks) {
+      const bx = x + sourceBlock.x * sx;
+      const bh = Math.max(7, sourceBlock.height * sy);
+      const by = y + h - (sourceBlock.y + sourceBlock.height) * sy;
+      const bw = Math.max(16, sourceBlock.width * sx);
+      const pad = 5.2;
+      const boxH = Math.max(bh + pad * 2, Math.min(62, bh * 2.8));
+      this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
+    }
     for (const sourceBlock of sourceBlocks) {
       const key = blockKey(sourceBlock);
       const block = translatedByKey.get(key)

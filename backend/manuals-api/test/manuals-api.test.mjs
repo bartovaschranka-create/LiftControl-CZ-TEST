@@ -1781,9 +1781,42 @@ test('service PDF renders the full platform angle procedure when every page imag
   assert.match(raw, /\/Count 7/);
   assert.match(raw, /Prelozeny blok strany 134/);
   assert.match(raw, /Stisknete ESC dvakrat/);
-  assert.match(raw, /Resetovani systemu MSSO/);
+  assert.doesNotMatch(raw, /Resetovani systemu MSSO/);
   assert.doesNotMatch(raw, /Resetting the MSSO System/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
+});
+
+test('service PDF falls back to readable text for non-calibration tasks with missing page images', async () => {
+  const payload = servicePdfPayload();
+  payload.request.task = 'vymena hydraulickeho filtru';
+  payload.result.translatedPages = [54, 55].map(page => ({
+    page,
+    width: 612,
+    height: 792,
+    blocks: [{
+      blockId: '1',
+      text: `Prelozeny postup vymeny hydraulickeho filtru strana ${page}`,
+      sourceQuote: `Hydraulic filter replacement page ${page}`,
+      x: 72,
+      y: 96,
+      width: 320,
+      height: 24,
+      fontSize: 9
+    }]
+  }));
+  payload.result.sourcePages = payload.result.translatedPages.map(page => ({
+    page: page.page,
+    title: 'Hydraulic Filter Replacement',
+    width: 612,
+    height: 792,
+    textBlocks: page.blocks.map(block => ({ ...block, text: block.sourceQuote })),
+    images: []
+  }));
+  payload.result.images = [];
+  const raw = createServiceProcedurePdf(payload).toString('latin1');
+  assert.match(raw, /^%PDF-1\.4/);
+  assert.match(raw, /Prelozeny postup vymeny hydraulickeho filtru/);
+  assert.match(raw, /strana bez obrazoveho podkladu/);
 });
 
 test('service PDF uses full manual pages instead of report when translation is missing', async () => {
