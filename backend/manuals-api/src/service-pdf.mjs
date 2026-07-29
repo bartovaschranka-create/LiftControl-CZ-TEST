@@ -8,7 +8,7 @@ export function createServiceProcedurePdf(input = {}) {
   if (!data.result.manualTitle && !data.result.originalUrl) throw new Error('Chybi overeny vysledek manualu.');
   if (!data.steps.length && !data.sources.length && !data.translatedPages.length && !data.sourcePages.length) throw new Error('Chybi postup nebo zdrojove strany pro PDF.');
 
-  if (data.manualLayoutPages.length && data.pageImagesAvailable) {
+  if (data.manualLayoutPages.length && (data.translatedPages.length || data.pageImagesAvailable)) {
     data.diagnostics.finalRenderMode = 'translated_manual_pages';
     const doc = new PdfDoc({ autoPage: false });
     const layout = new Layout(doc);
@@ -222,7 +222,7 @@ function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesA
     repairedBlocksCount: 0,
     untranslatedBlocksCount: Math.max(0, layoutBlocksCount - translatedBlocksCount),
     fallbackReason: manualLayoutPages.length && !translatedPages.length ? 'translation_missing_rendered_as_manual_pages' : '',
-    finalRenderMode: manualLayoutPages.length && pageImagesAvailable ? 'translated_manual_pages' : 'fallback_report',
+    finalRenderMode: manualLayoutPages.length && (translatedPages.length || pageImagesAvailable) ? 'translated_manual_pages' : 'fallback_report',
     pageImagesWithDataUrl: images.filter(image => image.dataUrl && (image.bbox === 'page' || /originalni strana manualu|original manual page/i.test(image.caption || ''))).length
   };
 }

@@ -47,8 +47,8 @@ export function createTranslatePagesHandler(deps = {}) {
 
     const translationConfig = {
       ...config,
-      translatedPageRepairMaxPages: Math.max(4, Number(config.translatedPageRepairMaxPages || 0)),
-      translatedPageRepairMaxBlocks: Math.max(120, Number(config.translatedPageRepairMaxBlocks || 0)),
+      translatedPageRepairMaxPages: Math.max(10, Number(config.translatedPageRepairMaxPages || 0)),
+      translatedPageRepairMaxBlocks: Math.max(300, Number(config.translatedPageRepairMaxBlocks || 0)),
       translatedPageRepairTimeoutMs: Math.max(22000, Number(config.translatedPageRepairTimeoutMs || 0)),
       openaiMaxOutputTokens: Math.max(12000, Number(config.openaiMaxOutputTokens || 0))
     };
@@ -106,7 +106,7 @@ function normalizeSourcePages(pages) {
         .slice(0, 180)
     }))
     .filter(page => page.page && page.textBlocks.length)
-    .slice(0, 6);
+    .slice(0, 10);
 }
 
 function createOpenAiDebug(config) {

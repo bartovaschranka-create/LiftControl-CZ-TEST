@@ -327,7 +327,7 @@ function normalizeSourcePagesForClient(pages) {
 
 function sourceSnippetsFromPages(pages) {
   return (pages || [])
-    .slice(0, 6)
+    .slice(0, 10)
     .map(page => ({ page: page.page, quote: firstUsefulQuote(page.text) }))
     .filter(source => source.page && source.quote);
 }
@@ -478,7 +478,7 @@ function preferredProcedureGroup(relevantPages, allPages, task = '') {
       procedureContinuation: Number(page.page || 0) !== Number(start.page || 0)
     }))
     .filter(page => Number(page.page || 0));
-  return group.slice(0, 6).sort((a, b) => Number(a.page) - Number(b.page));
+  return group.slice(0, 10).sort((a, b) => Number(a.page) - Number(b.page));
 }
 
 function procedureContinuationPages(startPage, allPages) {
@@ -490,7 +490,7 @@ function procedureContinuationPages(startPage, allPages) {
   for (const page of allPages || []) {
     const pageNumber = Number(page?.page || 0);
     if (pageNumber <= startNumber) continue;
-    if (pageNumber > startNumber + 5) break;
+    if (pageNumber > startNumber + 9) break;
     const heading = procedureHeadingText(page);
     if (heading && isNextProcedureHeading(startHeading, heading)) break;
     out.push(page);
