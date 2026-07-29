@@ -531,6 +531,7 @@ test('procedure context continues until the next chapter heading', async () => {
       }]
     }));
     let manualPrompt = null;
+    let repairPrompt = null;
     const res = await callApi(
       { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
       {
@@ -560,13 +561,24 @@ test('procedure context continues until the next chapter heading', async () => {
                 },
                 { page: 130, text: '3. Select ACCESS LEVEL 2. 4. Enter the access code. 5. Select CALIBRATIONS from the analyzer menu.' },
                 { page: 131, text: '6. Select PLATFORM ANGLE SENSOR. 7. Press ENTER to save the calibration. 8. Cycle machine power.' },
-                { page: 132, title: '4.3.9 Drive Speed Cutout Test', text: '4.3.9 Drive Speed Cutout Test. This is a different procedure.' }
+                {
+                  page: 132,
+                  title: 'Testing, Calibrations and Special Procedures',
+                  text: '9. Press ESC twice to return to CALIBRATIONS.\n4.3.9 Drive Speed Cutout Test. This is a different procedure.',
+                  textBlocks: [
+                    { text: '9. Press ESC twice to return to CALIBRATIONS.', x: 72, y: 120, width: 360, height: 14, fontSize: 10 },
+                    { text: '4.3.9 Drive Speed Cutout Test', x: 72, y: 148, width: 260, height: 16, fontSize: 12 },
+                    { text: 'This is a different procedure.', x: 72, y: 170, width: 260, height: 14, fontSize: 10 }
+                  ]
+                }
               ]
             }), 200, { 'content-type': 'application/json' });
           }
           if (u.includes('api.openai.com')) {
             const body = JSON.parse(options.body);
-            manualPrompt = body;
+            const payload = JSON.parse(body.input[1].content);
+            if (payload.sourceText) manualPrompt = body;
+            else repairPrompt = body;
             return responseJson({ output_text: JSON.stringify({
               steps: [{
                 text: 'Zvolte PLATFORM ANGLE SENSOR a potvrďte uložení kalibrace.',
@@ -583,13 +595,18 @@ test('procedure context continues until the next chapter heading', async () => {
       }
     );
     assert.equal(res.statusCode, 200);
-    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131]);
-    assert.equal(res.json.debug.openai.sentPageDetails.some(page => page.page === 132), false);
-    const sourceText = JSON.parse(manualPrompt.input[1].content).sourceText;
+    assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131, 132]);
+    const promptPayload = JSON.parse(manualPrompt.input[1].content);
+    const sourceText = promptPayload.sourceText || JSON.stringify(promptPayload);
+    const repairText = repairPrompt ? JSON.stringify(JSON.parse(repairPrompt.input[1].content)) : '';
     assert.match(sourceText, /1\. Position the Platform\/Ground/);
     assert.match(sourceText, /5\. Select CALIBRATIONS/);
     assert.match(sourceText, /7\. Press ENTER to save the calibration/);
+    assert.match(sourceText, /9\. Press ESC twice to return to CALIBRATIONS/);
     assert.doesNotMatch(sourceText, /4\.3\.9 Drive Speed Cutout Test/);
+    assert.doesNotMatch(sourceText, /This is a different procedure/);
+    assert.doesNotMatch(repairText, /4\.3\.9 Drive Speed Cutout Test/);
+    assert.doesNotMatch(repairText, /This is a different procedure/);
     assert.equal(res.json.steps.length, 1);
   } finally {
     await rm(root, { recursive: true, force: true });
