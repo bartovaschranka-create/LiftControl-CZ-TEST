@@ -1119,6 +1119,50 @@ test('translate-pages endpoint keeps translated pages when another page times ou
   assert.equal(res.json.debug.openai.translationBatches.pageResults.some(page => page.page === 130 && page.errorCode === 'openai_timeout'), true);
 });
 
+test('translate-pages endpoint can translate the full six page procedure range', async () => {
+  const sourcePages = [129, 130, 131, 132, 133, 134].map(page => ({
+    page,
+    title: '4.3.8 Calibrating Platform Angle Sensor',
+    chapter: 'Testing, Calibrations and Special Procedures',
+    width: 612,
+    height: 792,
+    text: `${page}. Procedure text block.`,
+    textBlocks: [{
+      text: `${page}. Procedure text block.`,
+      x: 72,
+      y: 120,
+      width: 360,
+      height: 14,
+      fontSize: 10
+    }]
+  }));
+  const res = await callTranslatePages({
+    request: { maker: 'JLG', model: '450 AJ', serial: 'B300015524', task: 'kalibrace uhloveho senzoru' },
+    sourcePages
+  }, {
+    fetch: async (url, options = {}) => {
+      if (String(url).includes('api.openai.com')) {
+        const page = Number(String(options.body || '').match(/(\d+)\. Procedure text block/)?.[1] || 0);
+        return responseJson({ output_text: JSON.stringify({
+          translatedPages: [{
+            page,
+            blocks: [{
+              blockId: '1',
+              text: `${page}. Prelozeny blok postupu.`,
+              sourceQuote: `${page}. Procedure text block.`
+            }]
+          }]
+        }) });
+      }
+      throw new Error(`Unexpected fetch ${url}`);
+    }
+  });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.json.status, 'ok');
+  assert.deepEqual(res.json.translatedPages.map(page => page.page), [129, 130, 131, 132, 133, 134]);
+  assert.deepEqual(res.json.debug.openai.sentPageNumbers, [129, 130, 131, 132, 133, 134]);
+});
+
 test('task intent keeps calibration separate from hydraulic filter terms', () => {
   const calibration = taskIntentDebug('kalibrace');
   assert.equal(calibration.detectedIntent, 'calibration');
@@ -1538,6 +1582,46 @@ test('service PDF emits readable text instead of UTF-16 font fallback', async ()
   assert.doesNotMatch(raw, /FEFF/);
   assert.match(raw, /Cesky preklad/);
   assert.match(raw, /pouzijte sipky/);
+});
+
+test('service PDF renders translated pages even when some page images are missing', async () => {
+  const payload = servicePdfPayload();
+  payload.result.translatedPages = [129, 130, 131, 132, 133, 134].map(page => ({
+    page,
+    width: 612,
+    height: 792,
+    blocks: [{
+      blockId: '1',
+      text: `Prelozeny blok strany ${page}`,
+      sourceQuote: `Original block page ${page}`,
+      x: 72,
+      y: 96,
+      width: 260,
+      height: 24,
+      fontSize: 9
+    }]
+  }));
+  payload.result.sourcePages = payload.result.translatedPages.map(page => ({
+    page: page.page,
+    width: 612,
+    height: 792,
+    textBlocks: page.blocks.map(block => ({ ...block, text: block.sourceQuote })),
+    images: page.page <= 132 ? [{
+      page: page.page,
+      stepPage: page.page,
+      bbox: 'page',
+      caption: `Originalni strana manualu ${page.page}`,
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }] : []
+  }));
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  const raw = createServiceProcedurePdf(payload).toString('latin1');
+  assert.match(raw, /\/Count 6/);
+  assert.match(raw, /Prelozeny blok strany 134/);
+  assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
 });
 
 test('service PDF uses full manual pages instead of report when translation is missing', async () => {
