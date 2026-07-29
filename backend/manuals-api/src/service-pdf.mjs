@@ -256,7 +256,7 @@ function sanitizeProcedurePages({ request, sourcePages, translatedPages }) {
     if (pageNumber > startNumber + 9) break;
     const heading = procedureHeadingText(page);
     const trimmed = trimPageAtNextProcedure(page, startHeading);
-    out.push(trimmed || page);
+    out.push(page);
     if (trimmed) break;
     if (pageNumber > startNumber && heading && isNextProcedureHeading(startHeading, heading)) break;
   }

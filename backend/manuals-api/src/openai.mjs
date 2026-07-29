@@ -296,7 +296,18 @@ export async function translateSourcePagesWithOpenAI({ request, sourcePages, con
     const repaired = repairPages.length > 1
       ? await translateTextBlocksPagesInPageBatches({ repairPages, request, config, deps, timeoutMs, openaiDebug, perf })
       : await translateTextBlocksPages({ repairPages, request, config, deps, timeoutMs });
-    const translatedPages = validateTranslatedPages(repaired?.translatedPages, pages);
+    const firstPassTranslatedPages = validateTranslatedPages(repaired?.translatedPages, pages);
+    const repairedTranslatedPages = await completeTranslatedPageTranslations({
+      parsedTranslatedPages: firstPassTranslatedPages,
+      sourcePages: pages,
+      request,
+      config,
+      deps,
+      openaiDebug,
+      perf,
+      deadlineAt
+    });
+    const translatedPages = validateTranslatedPages(repairedTranslatedPages, pages);
     setOpenAiDebug(openaiDebug, {
       responseStatus: 200,
       elapsedMs: Date.now() - startedAt,
