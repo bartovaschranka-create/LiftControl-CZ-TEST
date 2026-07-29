@@ -472,6 +472,7 @@ function preferredProcedureGroup(relevantPages, allPages, task = '') {
   const group = [start, ...procedureContinuationPages(start, allPages)]
     .map(page => ({
       ...(byPage.get(Number(page.page || 0)) || page),
+      ...page,
       score: Number(page.score || start.score || 1),
       matchedTerms: [...new Set([...(page.matchedTerms || []), ...(start.matchedTerms || []), 'contiguous procedure range'])],
       procedureStartPage: Number(start.page || 0),
@@ -493,6 +494,11 @@ function procedureContinuationPages(startPage, allPages) {
     if (pageNumber > startNumber + 9) break;
     const heading = procedureHeadingText(page);
     if (heading && isNextProcedureHeading(startHeading, heading)) break;
+    const trimmed = trimPageAtNextProcedureHeading(page, startHeading);
+    if (trimmed) {
+      out.push(trimmed);
+      break;
+    }
     out.push(page);
   }
   return out;
@@ -534,6 +540,43 @@ function isNextProcedureHeading(startHeading, heading) {
 
 function headingNumber(value) {
   return String(value || '').match(/\b(\d+(?:\.\d+){1,4})\b/)?.[1] || '';
+}
+
+function trimPageAtNextProcedureHeading(page, startHeading) {
+  const start = headingNumber(startHeading);
+  if (!start) return null;
+  const textBlocks = Array.isArray(page?.textBlocks) ? page.textBlocks : [];
+  const headingIndex = textBlocks.findIndex(block => {
+    const text = String(block?.text || '').replace(/\s+/g, ' ').trim();
+    const found = text.match(/\b(\d+(?:\.\d+){1,4})\s+[A-Za-z][A-Za-z0-9 /+.,()-]{3,140}/);
+    return found && isNextProcedureHeading(startHeading, found[0]);
+  });
+  if (headingIndex > 0) {
+    const trimmedBlocks = textBlocks.slice(0, headingIndex);
+    return {
+      ...page,
+      textBlocks: trimmedBlocks,
+      text: trimmedBlocks.map(block => block.text).filter(Boolean).join('\n'),
+      trimmedAtNextProcedure: true,
+      matchedTerms: [...new Set([...(page.matchedTerms || []), 'trimmed before next procedure'])]
+    };
+  }
+  const text = String(page?.text || '');
+  const pattern = /\b(\d+(?:\.\d+){1,4})\s+[A-Za-z][^\n]{3,140}/g;
+  let match;
+  while ((match = pattern.exec(text))) {
+    if (isNextProcedureHeading(startHeading, match[0])) {
+      const before = text.slice(0, match.index).trim();
+      if (!before) return null;
+      return {
+        ...page,
+        text: before,
+        trimmedAtNextProcedure: true,
+        matchedTerms: [...new Set([...(page.matchedTerms || []), 'trimmed before next procedure'])]
+      };
+    }
+  }
+  return null;
 }
 
 function isNextChapterAfterProcedure(page, procedureStarts) {

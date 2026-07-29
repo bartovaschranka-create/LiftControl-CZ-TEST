@@ -369,12 +369,13 @@ class Layout {
   translatedManualPage(page, data) {
     const image = bestPageImage(data.images, page.page);
     const sourcePage = (data.sourcePageData || []).find(item => Number(item.page) === Number(page.page)) || {};
+    if (!image?.dataUrl) {
+      this.translatedManualTextPage(page, data, sourcePage);
+      return;
+    }
     this.doc.newPage();
     this.y = PAGE.h;
-    const size = image?.dataUrl ? imageSize(image) : {
-      w: page.width || 612,
-      h: page.height || 792
-    };
+    const size = imageSize(image);
     const maxW = PAGE.w;
     const maxH = PAGE.h - 18;
     const scale = Math.min(maxW / size.w, maxH / size.h);
@@ -382,14 +383,7 @@ class Layout {
     const h = size.h * scale;
     const x = (PAGE.w - w) / 2;
     const y = PAGE.h - h;
-    if (image?.dataUrl) {
-      this.doc.image(x, y, w, h, image);
-    } else {
-      this.doc.rect(x, y, w, h, 0.9);
-      this.doc.line(x, y + h - 24, x + w, y + h - 24, 0.45);
-      this.doc.text(x + 10, y + h - 16, conciseManualName(data.result), 8, BOLD);
-      this.doc.text(x + w - 70, y + h - 16, `Str. ${page.page}`, 8, FONT);
-    }
+    this.doc.image(x, y, w, h, image);
     const sourceW = page.width || size.w;
     const sourceH = page.height || size.h;
     const sx = w / sourceW;
@@ -408,9 +402,9 @@ class Layout {
       const bh = Math.max(7, sourceBlock.height * sy);
       const by = y + h - (sourceBlock.y + sourceBlock.height) * sy;
       const bw = Math.max(16, sourceBlock.width * sx);
-      const pad = image?.dataUrl ? 4.8 : 1.4;
+      const pad = 4.8;
       const boxH = Math.max(bh + pad * 2, Math.min(56, bh * 2.6));
-      if (image?.dataUrl) this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
+      this.doc.fillRect(bx - pad, by - pad, bw + pad * 2, boxH, 1);
       if (!block?.text) continue;
       const fontSize = Math.max(6.8, Math.min(10.8, (sourceBlock.fontSize || sourceBlock.height || 8) * sy * 1.13));
       this.textInBox(block.text, bx, by + boxH - pad - 1.2, bw, boxH - pad * 1.3, fontSize);
@@ -418,6 +412,43 @@ class Layout {
     this.doc.fillRect(0, 0, PAGE.w, 16, 1);
     this.doc.text(x + 4, 5, sourceLabel(data, page.page), 7, FONT);
     this.y = M;
+  }
+  translatedManualTextPage(page, data, sourcePage = {}) {
+    this.doc.newPage();
+    this.y = PAGE.h - M;
+    this.doc.text(M, this.y, conciseManualName(data.result), 11, BOLD);
+    this.doc.text(PAGE.w - M - 52, this.y, `Str. ${page.page}`, 10, FONT);
+    this.y -= 14;
+    this.doc.line(M, this.y, PAGE.w - M, this.y, 0.55);
+    this.y -= 18;
+    const title = clean(sourcePage.title || sourcePage.chapter || '');
+    if (title) {
+      this.doc.text(M, this.y, title, 12, BOLD);
+      this.y -= 18;
+    }
+    const blocks = [...(page.blocks || [])].sort((a, b) => {
+      const ay = Number(a.y || 0);
+      const by = Number(b.y || 0);
+      if (Math.abs(ay - by) > 3) return ay - by;
+      return Number(a.x || 0) - Number(b.x || 0);
+    });
+    for (const block of blocks) {
+      const text = clean(block.text);
+      if (!text) continue;
+      const isHeading = /\b\d+(?:\.\d+){1,4}\b/.test(text) || text.length < 80 && /kalibr|testovani|postupy|calibrat/i.test(text);
+      const lines = wrap(text, PAGE.w - M * 2, isHeading ? 10.5 : 10);
+      this.ensure(lines.length * 13 + 8);
+      for (const line of lines) {
+        this.doc.text(M, this.y, line, isHeading ? 10.5 : 10, isHeading ? BOLD : FONT);
+        this.y -= 13;
+      }
+      this.y -= 5;
+    }
+    if (!blocks.length && sourcePage.textBlocks?.length) {
+      for (const block of sourcePage.textBlocks) this.paragraph(block.text);
+    }
+    this.doc.fillRect(0, 0, PAGE.w, 16, 1);
+    this.doc.text(M, 5, `${sourceLabel(data, page.page)} - strana bez obrazoveho podkladu je vykreslena jako cisty text.`, 7, FONT);
   }
   textInBox(text, x, topY, width, height, size) {
     const value = clean(text);
