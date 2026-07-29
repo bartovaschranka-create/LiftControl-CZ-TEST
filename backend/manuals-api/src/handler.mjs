@@ -249,7 +249,11 @@ function buildFoundPagesResult({ request, candidate, finalUrl, pages, relevantPa
   const images = imagesFromPages(pages);
   const selectedPages = sourcePages.map(page => page.page);
   const layoutBlocksCount = sourcePages.reduce((sum, page) => sum + (page.textBlocks || []).length, 0);
-  const pageImagesAvailable = sourcePages.every(page => (page.images || []).some(image => image.dataUrl));
+  const missingPageImages = sourcePages
+    .filter(page => !(page.images || []).some(image => image.dataUrl))
+    .map(page => Number(page.page))
+    .filter(Boolean);
+  const pageImagesAvailable = missingPageImages.length === 0;
   return {
     status: 'partial_procedure_found',
     maker: request.maker,
@@ -273,6 +277,7 @@ function buildFoundPagesResult({ request, candidate, finalUrl, pages, relevantPa
       translatedBlocksCount: 0,
       repairedBlocksCount: 0,
       untranslatedBlocksCount: layoutBlocksCount,
+      missingPageImages,
       fallbackReason: '',
       finalRenderMode: pageImagesAvailable && layoutBlocksCount ? 'translated_manual_pages_pending_translation' : 'fallback_report'
     },

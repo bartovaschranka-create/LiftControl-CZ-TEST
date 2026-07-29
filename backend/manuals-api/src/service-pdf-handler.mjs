@@ -66,7 +66,9 @@ export function createServicePdfHandler(deps = {}) {
     } catch (error) {
       return sendJson(res, 400, {
         status: 'error',
-        message: error?.message || 'Servisni PDF se nepodarilo vytvorit.'
+        code: error?.code || '',
+        message: error?.message || 'Servisni PDF se nepodarilo vytvorit.',
+        diagnostics: error?.diagnostics || null
       });
     }
   };
