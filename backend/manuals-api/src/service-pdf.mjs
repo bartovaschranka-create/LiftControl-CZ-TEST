@@ -107,10 +107,18 @@ function normalizeInput(input) {
     .filter(page => (page.textBlocks || []).length && !!bestPageImage(images, page.page))
     .map(page => ({ page: page.page, width: page.width, height: page.height, blocks: [] }));
   const manualLayoutPages = translatedPages.length ? translatedPages : sourceLayoutPages;
-  const pageImagesAvailable = manualLayoutPages.length
-    ? manualLayoutPages.every(page => !!bestPageImage(images, page.page))
-    : translatedPages.every(page => !!bestPageImage(images, page.page));
-  const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages });
+  const missingPageImages = manualLayoutPages
+    .filter(page => !bestPageImage(images, page.page))
+    .map(page => Number(page.page))
+    .filter(Boolean);
+  const pageImagesAvailable = manualLayoutPages.length ? missingPageImages.length === 0 : true;
+  const diagnostics = buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages, missingPageImages });
+  if (translatedPages.length && missingPageImages.length) {
+    const error = new Error(`Chybi obrazove podklady originalnich stran manualu: ${missingPageImages.join(', ')}. Vytvor a nahraj .pages.json index s --translated-pages --page-images pro cely rozsah kapitoly.`);
+    error.code = 'manual_page_images_missing';
+    error.diagnostics = diagnostics;
+    throw error;
+  }
   return { request, result, steps, safety, sources, images, translatedPages, manualLayoutPages, sourcePages: sourcePageNumbers, sourcePageData: sourcePages, pageImagesAvailable, diagnostics };
 }
 
@@ -214,7 +222,7 @@ function normalizeSourcePages(pages) {
     .filter(page => page.page);
 }
 
-function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages = [] }) {
+function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesAvailable, manualLayoutPages = [], missingPageImages = [] }) {
   const selectedPages = manualLayoutPages.length
     ? manualLayoutPages.map(page => page.page)
     : sourcePages.map(page => page.page);
@@ -228,7 +236,8 @@ function buildPdfDiagnostics({ translatedPages, sourcePages, images, pageImagesA
     translatedBlocksCount,
     repairedBlocksCount: 0,
     untranslatedBlocksCount: Math.max(0, layoutBlocksCount - translatedBlocksCount),
-    fallbackReason: manualLayoutPages.length && !translatedPages.length ? 'translation_missing_rendered_as_manual_pages' : '',
+    missingPageImages,
+    fallbackReason: missingPageImages.length ? 'manual_page_images_missing' : (manualLayoutPages.length && !translatedPages.length ? 'translation_missing_rendered_as_manual_pages' : ''),
     finalRenderMode: manualLayoutPages.length && (translatedPages.length || pageImagesAvailable) ? 'translated_manual_pages' : 'fallback_report',
     pageImagesWithDataUrl: images.filter(image => image.dataUrl && (image.bbox === 'page' || /originalni strana manualu|original manual page/i.test(image.caption || ''))).length
   };

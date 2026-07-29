@@ -1601,10 +1601,10 @@ test('service PDF emits readable text instead of UTF-16 font fallback', async ()
   assert.match(raw, /pouzijte sipky/);
 });
 
-test('service PDF renders translated pages even when some page images are missing', async () => {
+test('service PDF rejects translated manual pages when page images are missing', async () => {
   const payload = servicePdfPayload();
   payload.request.task = 'kalibrace uhloveho senzoru';
-  payload.result.translatedPages = [129, 130, 131, 132, 133, 134, 135, 136].map(page => ({
+  payload.result.translatedPages = [129, 130, 131, 132, 133, 134, 135].map(page => ({
     page,
     width: 612,
     height: 792,
@@ -1646,12 +1646,53 @@ test('service PDF renders translated pages even when some page images are missin
     }] : []
   }));
   payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
+  assert.throws(
+    () => createServiceProcedurePdf(payload),
+    error => error.code === 'manual_page_images_missing' && /133, 134, 135/.test(error.message)
+  );
+});
+
+test('service PDF renders the full platform angle procedure when every page image is available', async () => {
+  const payload = servicePdfPayload();
+  payload.request.task = 'kalibrace uhloveho senzoru';
+  payload.result.translatedPages = [129, 130, 131, 132, 133, 134, 135].map(page => ({
+    page,
+    width: 612,
+    height: 792,
+    blocks: [{
+      blockId: '1',
+      text: page === 135 ? '17. Stisknete ESC dvakrat pro navrat do CALIBRATIONS.' : `Prelozeny blok strany ${page}`,
+      sourceQuote: `Original block page ${page}`,
+      x: 72,
+      y: 96,
+      width: 260,
+      height: 24,
+      fontSize: 9
+    }]
+  }));
+  payload.result.sourcePages = payload.result.translatedPages.map(page => ({
+    page: page.page,
+    title: page.page === 129 ? '4.3.8 Calibrating Platform Angle Sensor' : 'Testing, Calibrations and Special Procedures',
+    width: 612,
+    height: 792,
+    textBlocks: page.blocks.map(block => ({ ...block, text: block.sourceQuote })),
+    images: [{
+      page: page.page,
+      stepPage: page.page,
+      bbox: 'page',
+      caption: `Originalni strana manualu ${page.page}`,
+      mimeType: 'image/jpeg',
+      width: 612,
+      height: 792,
+      dataUrl: payload.result.images[0].dataUrl
+    }]
+  }));
+  payload.result.images = payload.result.sourcePages.flatMap(page => page.images);
   const raw = createServiceProcedurePdf(payload).toString('latin1');
   assert.match(raw, /\/Count 7/);
   assert.match(raw, /Prelozeny blok strany 134/);
   assert.match(raw, /Stisknete ESC dvakrat/);
   assert.doesNotMatch(raw, /MSSO/);
-  assert.doesNotMatch(raw, /Prelozeny blok strany 136/);
   assert.doesNotMatch(raw, /Ceska servisni kapitola nebyla bezpecne sestavena/);
 });
 
