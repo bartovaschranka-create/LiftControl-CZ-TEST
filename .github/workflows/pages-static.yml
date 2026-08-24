@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          cp index.html sw.js manifest.json revize-machine-db.js liftcontrol-backup-data.js dist/
+          cp index.html sw.js zeppelin-game.js manifest.json revize-machine-db.js liftcontrol-backup-data.js dist/
           cp icon-192.png icon-512.png icon-192-v4.png icon-512-v4.png apple-touch-icon-v4.png dist/
           if [ -f protokoly_backup.json ]; then cp protokoly_backup.json dist/; fi
           touch dist/.nojekyll

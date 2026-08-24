@@ -1889,18 +1889,23 @@ body.dark .part-handler-note-display{background:rgba(59,130,246,.12);border-colo
 }
 
 
-/* LiftControl easter egg: Prague air defense mini game */
-.easter-game{position:fixed;inset:0;display:none;z-index:120;background:radial-gradient(circle at 50% 18%,#1e88e5 0%,#0f2f5f 42%,#061528 100%);color:#fff;overflow:hidden;touch-action:none}
+/* LiftControl easter egg: cinematic Prague air-defense mission. */
+.easter-game{position:fixed;inset:0;display:none;z-index:2147483600;background:#020713;color:#fff;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
 .easter-game.show{display:block}
 .easter-game canvas{display:block;width:100%;height:100%}
-.easter-hud{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.45)}
-.easter-title{font-size:.95rem;letter-spacing:.02em}.easter-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.easter-pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);backdrop-filter:blur(8px);border-radius:999px;padding:7px 10px;font-size:.82rem}
-.easter-close{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:10px 12px;font-weight:800}
-.easter-start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,10,24,.32);backdrop-filter:blur(3px)}
-.easter-card{width:min(92vw,420px);border:1px solid rgba(255,255,255,.25);background:rgba(6,21,40,.74);border-radius:22px;padding:20px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.38)}
-.easter-card h3{margin:0 0 8px;font-size:1.25rem}.easter-card p{margin:0 0 14px;color:#dbeafe;line-height:1.45}.easter-card button{background:#fff;color:#0f2f5f;border-radius:14px;min-height:48px;width:100%}
+.easter-game::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px rgba(0,0,0,.74);background:linear-gradient(180deg,rgba(0,0,0,.22),transparent 22%,transparent 76%,rgba(0,0,0,.28))}
+.easter-hud{position:absolute;left:14px;right:58px;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none;font-weight:850;text-shadow:0 2px 8px rgba(0,0,0,.72)}
+.easter-title{font-size:.95rem;letter-spacing:.04em;text-transform:uppercase}.easter-phase{display:block;margin-top:4px;color:#93c5fd;font-size:.7rem;letter-spacing:.12em}
+.easter-stats{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.easter-pill{border:1px solid rgba(191,219,254,.34);background:rgba(3,16,38,.66);backdrop-filter:blur(10px);border-radius:999px;padding:7px 10px;font-size:.8rem;white-space:nowrap;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.easter-boss{position:absolute;z-index:3;left:50%;top:calc(env(safe-area-inset-top,0px) + 74px);width:min(72vw,420px);transform:translateX(-50%);pointer-events:none;text-align:center;opacity:0;transition:opacity .35s}.easter-game.boss-fight .easter-boss{opacity:1}.easter-boss-label{font-size:.7rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;text-shadow:0 2px 6px #000}.easter-boss-track{height:8px;margin-top:5px;border:1px solid rgba(255,255,255,.45);border-radius:999px;overflow:hidden;background:rgba(0,0,0,.48)}.easter-boss-fill{height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,#ef4444,#f59e0b,#facc15);transition:width .12s}
+.easter-close,.easter-sound{position:absolute;z-index:5;width:42px;height:42px;border:1px solid rgba(255,255,255,.32);background:rgba(3,16,38,.64);backdrop-filter:blur(10px);color:#fff;border-radius:50%;padding:0;font-size:1.2rem;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.easter-close{right:10px;top:calc(env(safe-area-inset-top,0px) + 9px)}.easter-sound{left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);font-size:1rem}
+.easter-start{position:absolute;z-index:4;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 36%,rgba(25,72,125,.30),rgba(1,5,14,.82));backdrop-filter:blur(5px)}
+.easter-card{width:min(92vw,430px);border:1px solid rgba(191,219,254,.28);background:linear-gradient(160deg,rgba(7,24,51,.94),rgba(2,10,25,.92));border-radius:24px;padding:24px;text-align:center;box-shadow:0 28px 85px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.08)}
+.easter-kicker{margin-bottom:8px;color:#93c5fd;font-size:.7rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}.easter-card h3{margin:0 0 10px;font-size:clamp(1.35rem,5vw,1.8rem)}.easter-card p{margin:0 0 16px;color:#dbeafe;line-height:1.5}.easter-result{min-height:24px;margin:0 0 14px;color:#fcd34d;font-size:1.2rem;font-weight:900;letter-spacing:.1em}.easter-card button{background:linear-gradient(135deg,#fff,#bfdbfe);color:#08234a;border-radius:14px;min-height:50px;width:100%;font-weight:900;box-shadow:0 10px 30px rgba(59,130,246,.24)}
 .easter-game.playing .easter-start{display:none}
-@media(max-width:640px){.easter-hud{align-items:flex-start}.easter-title{font-size:.82rem}.easter-pill{font-size:.76rem;padding:6px 8px}.easter-close{left:14px;right:14px}}
+@media(max-width:640px){.easter-hud{left:10px;right:54px;gap:5px}.easter-title{font-size:.72rem;max-width:88px}.easter-phase{font-size:.57rem}.easter-stats{gap:4px}.easter-pill{font-size:.68rem;padding:6px 7px}.easter-boss{top:calc(env(safe-area-inset-top,0px) + 76px);width:68vw}.easter-card{padding:21px}.easter-sound{width:40px;height:40px}}
+@media(max-height:590px){.easter-card{padding:16px}.easter-card p{margin-bottom:10px}.easter-sound{bottom:8px}}
 
 /* v1.6 / 5.159: Revize ZZ / PZP */
 .revize-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}.revize-toolbar .search{min-width:min(100%,280px)}
@@ -2380,19 +2385,23 @@ body.dark .theme-toggle{
 <div class="easter-game" id="zeppelinGame" aria-hidden="true">
   <canvas id="zeppelinCanvas"></canvas>
   <div class="easter-hud">
-    <div class="easter-title">Zeppelin nad Prahou</div>
+    <div class="easter-title">Zeppelin nad Prahou<span class="easter-phase" id="zeppelinPhase">Noc 1 · Poplach</span></div>
     <div class="easter-stats">
-      <span class="easter-pill" id="zeppelinScore">Skore 0</span>
-      <span class="easter-pill" id="zeppelinLives">Praha 10</span>
-      <span class="easter-pill" id="zeppelinTime">80 s</span>
+      <span class="easter-pill" id="zeppelinScore">Skóre 0</span>
+      <span class="easter-pill" id="zeppelinLives">Památky 12</span>
+      <span class="easter-pill" id="zeppelinTime">75 s</span>
     </div>
   </div>
-  <button class="easter-close" type="button" id="zeppelinCloseBtn">Zpet do LiftControl</button>
+  <div class="easter-boss" id="zeppelinBoss"><div class="easter-boss-label">Motory Zeppelinu</div><div class="easter-boss-track"><div class="easter-boss-fill" id="zeppelinBossFill"></div></div></div>
+  <button class="easter-close" type="button" id="zeppelinCloseBtn" aria-label="Zpět do LiftControl">×</button>
+  <button class="easter-sound" type="button" id="zeppelinSoundBtn" aria-label="Vypnout zvuk">♪</button>
   <div class="easter-start" id="zeppelinStartPane">
     <div class="easter-card">
-      <h3>Praha vola o pomoc</h3>
-      <p>Zeppelin se blizi nad Prahu. Tahni prstem nebo mysi a drz bomby ve svetelnem paprsku.</p>
-      <button type="button" id="zeppelinStartBtn">Spustit obranu Prahy</button>
+      <div class="easter-kicker">Filmová mise</div>
+      <h3>Praha volá o pomoc</h3>
+      <p>Veď světlomet prstem nebo myší. Chraň čtyři pražské památky a v závěru udrž paprsek na motorech Zeppelinu.</p>
+      <div class="easter-result" id="zeppelinResult"></div>
+      <button type="button" id="zeppelinStartBtn">Spustit noční hlídku</button>
     </div>
   </div>
 </div>
@@ -2419,7 +2428,7 @@ body.dark .theme-toggle{
     <button type="button" class="side-small" onclick="exportBackup()">Export zálohy</button>
     <button type="button" class="side-small" id="sideImportBtn">Import zálohy</button>
     <button type="button" class="side-small" id="sideAuditBtn">Historie změn</button>
-    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.224</div>
+    <div class="side-version">Vlastník/Admin: Jan Bartoš<br>Testovací verze<br>Verze: 1.6 / 5.225</div>
   </div>
 </aside>
 
@@ -10523,7 +10532,7 @@ function installMobileKeyboardGuard(){
 }
 installMobileKeyboardGuard();
 
-function installZeppelinEasterEgg(){
+function installZeppelinEasterEggLegacy(){
   const title = document.querySelector('header .header-title');
   const wrap = document.getElementById('zeppelinGame');
   const canvas = document.getElementById('zeppelinCanvas');
@@ -10771,7 +10780,7 @@ function installZeppelinEasterEgg(){
   wrap.addEventListener('touchmove',ev=>{ setAimFromEvent(ev); ev.preventDefault(); },{passive:false});
   window.addEventListener('resize',()=>{ if(wrap.classList.contains('show')) resize(); }); document.addEventListener('keydown',ev=>{ if(ev.key==='Escape'&&wrap.classList.contains('show')) closeGame(); });
 }
-installZeppelinEasterEgg();
+// Cinematic training-game implementation is loaded from zeppelin-game.js.
 
 try {
   qrEnabled = false;
@@ -10861,7 +10870,7 @@ setTimeout(() => retryPendingFaultSync().catch(err => console.warn('Pending faul
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  const APP_UPDATE_VERSION = '5.224';
+  const APP_UPDATE_VERSION = '5.225';
   const APP_UPDATE_ACCEPT_KEY = 'liftcontrol_update_accepted_version';
   let appUpdateRegistration = null;
   let appUpdateWorker = null;
@@ -10929,6 +10938,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script src="./zeppelin-game.js"></script>
 </body>
 </html>
 

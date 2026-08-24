@@ -1,7 +1,8 @@
-const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-224';
+const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-225';
 const APP_SHELL = [
   './',
   './index.html',
+  './zeppelin-game.js',
   './revize-machine-db.js',
   './liftcontrol-backup-data.js',
   './manifest.json',
