@@ -31,6 +31,8 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           cp index.html sw.js zeppelin-game.js manifest.json revize-machine-db.js liftcontrol-backup-data.js dist/
+          mkdir -p dist/assets/game
+          cp assets/game/zeppelin-cinematic-v2.png assets/game/bomb-cinematic-v2.png assets/game/prague-night-cinematic-v2.png dist/assets/game/
           cp icon-192.png icon-512.png icon-192-v4.png icon-512-v4.png apple-touch-icon-v4.png dist/
           if [ -f protokoly_backup.json ]; then cp protokoly_backup.json dist/; fi
           touch dist/.nojekyll
