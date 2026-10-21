@@ -1,0 +1,35 @@
+/* All rules are scoped to the machine card; forms and printed protocols are untouched. */
+@media screen {
+  #historyModal .history-modal-content{background:#f4f1e9;color:#242627;border:1px solid #242627;border-radius:2px!important}
+  #historyModal .machine-card-block{border:0;border-top:1px solid #b8b5ad;border-radius:0;background:transparent;color:#242627;padding:18px 0;margin:0}
+  #historyModal .machine-card-block h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em}
+  #historyModal .machine-card-list{display:grid;gap:8px}
+  #historyModal .machine-card-row{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #d2cfc7;padding-top:8px;flex-wrap:wrap}
+  #historyModal .machine-card-row:first-child{border-top:0}
+  #historyModal .part-sub{color:#535650}
+  #historyModal button{border-radius:2px}
+  #historyModal .primary{background:#f0c419;color:#17191a;border:1px solid #17191a}
+  #historyModal .secondary{background:#faf8f1;color:#242627;border:1px solid #767970}
+  #historyModal button:focus-visible,#historyModal select:focus-visible,#historyModal summary:focus-visible{outline:3px solid #9c7100;outline-offset:3px}
+  #machinePassport{background:#242627;color:#faf8f1;padding:24px;margin-bottom:8px;border-top:6px solid #f0c419}
+  #machinePassport .passport-kicker{color:#f0c419;text-transform:uppercase;letter-spacing:.13em;font-size:.72rem}
+  #machinePassport .passport-title{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;margin:12px 0 20px;overflow-wrap:anywhere}
+  #machinePassport .passport-title span{display:block;font-family:monospace;color:#f0c419}
+  #machinePassport .passport-reference{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:.85rem}
+  #machinePassport select{width:auto;min-width:100px;background:#faf8f1;color:#17191a;border-radius:0;padding:8px}
+  #machinePassport .passport-notice,#machinePassport .passport-source{font-size:.8rem;color:#d2cfc7;line-height:1.6}
+  #machinePassport .passport-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;margin-top:24px}
+  #machinePassport h3{margin:0;font-size:1.5rem;overflow-wrap:anywhere}
+  #machinePassport .passport-photo{margin:0;background:#17191a;align-self:start}
+  #machinePassport img{display:block;width:100%;height:240px;object-fit:contain}
+  #machinePassport figcaption{padding:12px;font-size:.72rem;line-height:1.7;border-top:2px solid #f0c419}
+  #machinePassport .passport-no-photo{padding:48px 16px;text-align:center;color:#d2cfc7}
+  #machinePassport .passport-specs{display:grid;grid-template-columns:1fr 1fr;margin:16px 0;gap:0 16px}
+  #machinePassport .passport-specs div{padding:12px 0;border-top:1px solid #60615b;min-width:0}
+  #machinePassport dt{font-size:.75rem;color:#d2cfc7}
+  #machinePassport dd{margin:6px 0 0;font-size:1.15rem;font-weight:700;overflow-wrap:anywhere}
+  #machinePassport .passport-envelope{font-size:.8rem;line-height:1.7;border-top:1px solid #60615b;padding-top:12px}
+  #machinePassport summary{cursor:pointer;color:#f0c419}
+  #machinePassport a{color:#f0c419;text-decoration:underline;text-underline-offset:3px}
+  @media(max-width:640px){#machinePassport{padding:16px}#machinePassport .passport-layout{grid-template-columns:1fr}#historyModal .history-modal-content{border-radius:2px!important}}
+}

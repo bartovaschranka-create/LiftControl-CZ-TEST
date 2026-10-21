@@ -2375,6 +2375,7 @@ body.dark .theme-toggle{
 }
 
 </style>
+<link rel="stylesheet" href="./assets/machine-passport.css">
 </head>
 <body>
 <header>
@@ -3156,6 +3157,7 @@ body.dark .theme-toggle{
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
 <script src="./revize-machine-db.js"></script>
+<script src="./assets/machine-passport.js"></script>
 <script src="./liftcontrol-backup-data.js"></script>
 <script>
 
@@ -5974,6 +5976,7 @@ function openHistoryModal(serial){
   const latestPart = rows.parts[0] || {};
   els.historySubtitle.textContent = serial ? 'Výrobní číslo: ' + serial : '';
   els.historyBody.innerHTML = `
+    <section id="machinePassport" aria-label="Orientační pasport stroje"></section>
     <div class="machine-card-block ${machineCardToneClass(state)}">
       <h4>Aktuální stav stroje</h4>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -6009,6 +6012,7 @@ function openHistoryModal(serial){
       </div>
     </div>
   `;
+  renderMachinePassport(serial,rows);
   els.historyBody.querySelectorAll('[data-open-id]').forEach(btn => btn.addEventListener('click', () => openPreviewById(btn.dataset.openId)));
   els.historyBody.querySelectorAll('[data-fault-open]').forEach(btn => btn.addEventListener('click', () => { closeHistoryModal(); openFaultsModal(); openFaultForm(btn.dataset.faultOpen); }));
   els.historyBody.querySelectorAll('[data-fault-protocol]').forEach(btn => btn.addEventListener('click', () => printRepairProtocol(btn.dataset.faultProtocol)));
