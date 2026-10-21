@@ -1,44 +1,95 @@
-// Presentation only. Never resolve defaults into a record or persist a year selection.
+// Read-only view model: never call form defaults or persistence from this file.
+function machinePassportYear(value){return /^(19|20)\d{2}$/.test(String(value || '').trim())?String(value).trim():'';}
+function machinePassportModel(value){return normalizeSearchText(value || '').replace(/[^a-z0-9]/g,'');}
 function machinePassportReferences(rows){
   return [
-    ...(rows.revize || []).map(record=>({record,kind:'Revize ZZ',date:String(record.datum_kontroly || ''),model:record.model || record.typ,year:record.rok_vyroby})),
-    ...rows.protocols.map(record=>({record,kind:'Čtvrtletní kontrola',date:String(record.datum || ''),model:record.typ,year:record.rok}))
-  ].sort((a,b)=>b.date.localeCompare(a.date));
+    ...(rows.revize || []).map(record=>({record,kind:'Revize ZZ',serial:record.vyrobni_cislo,model:record.model || record.typ,year:machinePassportYear(record.rok_vyroby),date:String(record.datum_kontroly || ''),id:record.protokol || record.id,values:{capacity:record.nosnost,workHeight:record.pracovni_vyska,floorHeight:record.vyska_podlahy,reach:record.bocni_dosah,weight:record.hmotnost,drive:record.pohon}})),
+    ...(rows.protocols || []).map(record=>({record,kind:'Čtvrtletní kontrola',serial:record.vc,model:record.typ,year:machinePassportYear(record.rok),date:String(record.datum || ''),id:record.id,values:{capacity:record.nosnost,workHeight:record.pracovni_vyska,floorHeight:record.vyska_podlahy,reach:record.bocni_dosah,weight:record.hmotnost}})),
+    ...(rows.evidence || []).map(record=>({record,kind:'Evidence revizí',serial:record.serial,model:record.model,year:machinePassportYear(record.year),date:String(record.created || ''),id:record.protocol || record.file || record.source,values:{capacity:record.capacity,workHeight:record.workHeight,floorHeight:record.floorHeight,reach:record.reach,weight:record.weight,drive:record.drive}}))
+  ].sort((a,b)=>b.date.localeCompare(a.date) || String(a.id || '').localeCompare(String(b.id || '')));
 }
-function machinePassportPhoto(serial,model,year,protocols){
+function machinePassportContext(serial,rows,inventory){
+  const own=inventory.filter(ref=>normalizeSerial(ref.serial)===normalizeSerial(serial));
+  const model=own.find(ref=>ref.model)?.model || rows.protocols?.find(row=>row.typ)?.typ || '';
+  const key=machinePassportModel(model),bySerial=new Map();
+  // Count each serial once; repeated inspections must not bias the modal manufacture year.
+  inventory.filter(ref=>key && machinePassportModel(ref.model)===key && ref.year && ref.serial).forEach(ref=>{const serialKey=normalizeSerial(ref.serial);if(!bySerial.has(serialKey))bySerial.set(serialKey,ref.year);});
+  const counts=new Map();for(const year of bySerial.values())counts.set(year,(counts.get(year)||0)+1);
+  const ranked=[...counts].sort((a,b)=>b[1]-a[1] || Number(b[0])-Number(a[0]));
+  const modal=ranked[0],reliableModal=modal && modal[1]>=2 && (!ranked[1] || modal[1]>ranked[1][1]);
+  const knownYear=own.find(ref=>ref.year)?.year || '';
+  return {own,model,knownYear,selectedYear:knownYear || (reliableModal?modal[0]:''),years:[...new Set(inventory.filter(ref=>key && machinePassportModel(ref.model)===key && ref.year).map(ref=>ref.year))].sort((a,b)=>Number(b)-Number(a)),modalCount:modal?.[1] || 0,sampleSize:bySerial.size};
+}
+function machinePassportReferenceForYear(context,inventory,year){
+  if(!year)return null;
+  const candidates=inventory.filter(ref=>ref.year===year && machinePassportModel(ref.model)===machinePassportModel(context.model));
+  const hasTechnical=ref=>Object.values(ref.values).some(value=>value!==undefined && String(value).trim());
+  // Display one explicit source instead of assembling an untraceable mix of parameters.
+  return candidates.find(ref=>context.own.includes(ref) && hasTechnical(ref)) || candidates.find(hasTechnical) || candidates.find(ref=>context.own.includes(ref)) || candidates[0] || null;
+}
+function machinePassportPhoto(serial,model,year,protocols,variant=''){
   const photoOf=record=>['right','front','left','rear'].map(key=>record.photos?.[key]).find(photo=>photo && /^(https:\/\/|data:image\/(?:jpeg|png|webp);base64,)/i.test(photo.url || photo.dataUrl || ''));
   const exact=protocols.filter(record=>normalizeSerial(record.vc)===normalizeSerial(serial)).sort((a,b)=>String(b.datum || '').localeCompare(String(a.datum || ''))).find(photoOf);
-  if(exact) return {record:exact,photo:photoOf(exact),illustrative:false};
-  const wantedYear=Number(year);
-  if(!model || !Number.isInteger(wantedYear) || wantedYear<1900) return null;
-  const candidates=protocols.filter(record=>normalizeSearchText(record.typ)===normalizeSearchText(model) && /^\d{4}$/.test(String(record.rok)) && photoOf(record));
-  candidates.sort((a,b)=>Math.abs(Number(a.rok)-wantedYear)-Math.abs(Number(b.rok)-wantedYear) || String(b.datum || '').localeCompare(String(a.datum || '')));
-  const record=candidates[0];
-  return record ? {record,photo:photoOf(record),illustrative:true} : null;
+  if(exact)return {record:exact,photo:photoOf(exact),illustrative:false};
+  if(!model || !machinePassportYear(year))return null;
+  const candidates=protocols.filter(record=>machinePassportModel(record.typ)===machinePassportModel(model) && normalizeSearchText(record.variant || record.varianta || '')===normalizeSearchText(variant) && machinePassportYear(record.rok) && photoOf(record));
+  candidates.sort((a,b)=>Math.abs(Number(a.rok)-Number(year))-Math.abs(Number(b.rok)-Number(year)) || String(b.datum || '').localeCompare(String(a.datum || '')));
+  return candidates[0]?{record:candidates[0],photo:photoOf(candidates[0]),illustrative:true}:null;
 }
 function renderMachinePassport(serial,rows){
-  const host=document.getElementById('machinePassport');
-  if(!host) return;
-  const references=machinePassportReferences({...rows,revize:rows.revize || (revizeData || []).filter(record=>normalizeSerial(record.vyrobni_cislo)===normalizeSerial(serial))});
-  const years=[...new Set(references.map(ref=>/^\d{4}/.exec(ref.date)?.[0]).filter(Boolean))];
-  host.innerHTML=`<div class="passport-kicker">LiftControl CZ / technický atlas</div><div class="passport-title">Pasport stroje <span>${escapeHtml(serial)}</span></div><label class="passport-reference">Referenční rok kontroly <select id="machinePassportYear" ${years.length?'':'disabled'}>${years.length?years.map(year=>`<option>${year}</option>`).join(''):'<option>Bez dat</option>'}</select></label><p class="passport-notice">Orientační náhled uložených kontrol. Přepnutí roku nic neukládá. Pro provoz platí štítek, návod a platná revize konkrétního stroje.</p><div id="machinePassportReference" aria-live="polite"></div>`;
+  const host=document.getElementById('machinePassport');if(!host)return;
+  const ownRevisions=rows.revize || (revizeData || []).filter(record=>normalizeSerial(record.vyrobni_cislo)===normalizeSerial(serial));
+  const inventory=machinePassportReferences({revize:[...(revizeData || []),...ownRevisions],protocols:[...(data || []),...(rows.protocols || [])],evidence:Array.isArray(window.REVIZE_MACHINE_DB)?window.REVIZE_MACHINE_DB:[]});
+  const context=machinePassportContext(serial,rows,inventory),latest=context.own[0],info=rows.protocols?.[0] || {};
+  const unit=value=>escapeHtml(String(value || 'Neuvedeno'));
+  host.innerHTML=`<div class="passport-document-head"><div><div class="document-kicker">Evidence zařízení / digitální technický průkaz</div><h1>${escapeHtml(context.model || 'Stroj bez uvedeného typu')}</h1><p class="passport-serial">VÝROBNÍ ČÍSLO <strong>${escapeHtml(serial)}</strong></p></div><div class="passport-folio"><span>LC / CZ</span><strong>STROJNÍ<br>PASPORT</strong><span>ČTECÍ NÁHLED</span></div></div><div class="passport-identity"><div><span>Rok výroby stroje</span><strong>${context.knownYear || 'Neznámý — nedoložen'}</strong></div><div><span>Poslední evidované místo</span><strong>${unit(displayPlaceName(info.umisteni || latest?.record.place || latest?.record.umisteni || ''))}</strong></div><div><span>Motohodiny / čtvrtletní kontrola</span><strong>${unit(info.mh)} <small>${escapeHtml(info.datum || '')}</small></strong></div></div><div class="passport-reference-bar"><div><span class="document-index">01</span><strong>Technická specifikace</strong></div><label for="machinePassportYear">Referenční rok výroby <select id="machinePassportYear" ${context.years.length?'':'disabled'}>${context.years.length?context.years.map(year=>`<option value="${year}" ${year===context.selectedYear?'selected':''}>${year}</option>`).join(''):'<option value="">Nedoložen</option>'}</select></label></div><div id="machinePassportReference" aria-live="polite"></div>`;
   const render=()=>{
-    const ref=references.find(item=>item.date.startsWith(document.getElementById('machinePassportYear').value)) || references[0];
-    const record=ref?.record || {};
-    const photo=machinePassportPhoto(serial,ref?.model,ref?.year,data || []);
-    const value=(field,unit='')=>record[field]===undefined || record[field]===null || String(record[field]).trim()===''?'Neuvedeno':escapeHtml(String(record[field]))+(unit && !String(record[field]).includes(unit)?' '+unit:'');
-    // Show stored fields verbatim, with no catalogue inference or inferred curves.
-    const metric=(label,field,unit)=>`<div><dt>${label}</dt><dd>${value(field,unit)}</dd></div>`;
-    let envelopes=[];
-    if(ref?.kind==='Revize ZZ'){
-      try{const stored=typeof record.workingEnvelopes==='string'?JSON.parse(record.workingEnvelopes):record.workingEnvelopes;envelopes=Array.isArray(stored)?stored.filter(item=>item && typeof item==='object'):[];}catch(_invalidStoredEnvelopes){}
-    }
-    const source=ref?`${ref.kind} · ${ref.date} · ${record.protokol || record.id || 'bez čísla'}`:'Bez uložené kontroly';
-    document.getElementById('machinePassportReference').innerHTML=`<div class="passport-layout"><figure class="passport-photo">${photo?`<img alt="${photo.illustrative?'Ilustrační fotografie stejného typu':'Fotografie stroje podle výrobního čísla'}" src="${escapeHtml(photo.photo.url || photo.photo.dataUrl)}"><figcaption>${photo.illustrative?'ILUSTRAČNÍ · stejný typ, rok výroby '+escapeHtml(photo.record.rok):'SHODA VÝROBNÍHO ČÍSLA · '+escapeHtml(serial)}<br>Čtvrtletní kontrola ${escapeHtml(photo.record.datum || 'bez data')}</figcaption>`:'<div class="passport-no-photo">Fotografie stroje není dostupná</div>'}</figure><div><h3>${escapeHtml(ref?.model || 'Typ neuveden')}</h3><p class="passport-source">Zdroj: ${escapeHtml(source)}</p><dl class="passport-specs">${metric('Rok výroby',ref?.kind==='Revize ZZ'?'rok_vyroby':'rok')}${metric('Nosnost','nosnost','kg')}${metric('Pracovní výška','pracovni_vyska','m')}${metric('Boční dosah','bocni_dosah','m')}</dl><details class="passport-envelope"><summary>Nosnosti, dosahy a pracovní obálky — informace</summary><p>Hodnoty jsou převzaté pouze z uvedeného záznamu. Chybějící parametry ani křivky se nedopočítávají.</p>${envelopes.length?envelopes.map(envelope=>`<p><strong>${escapeHtml(envelope.label)}</strong><br>${[['Nosnost',envelope.capacity,'kg'],['Dosah',envelope.reach,'m'],['Pracovní výška',envelope.workHeight,'m']].map(([label,val,unit])=>`${label}: ${val?escapeHtml(val)+' '+unit:'neuvedeno'}`).join(' · ')}</p>`).join(''):'<p>Samostatné pracovní obálky nejsou v tomto záznamu uložené.</p>'}${record.venkovni_nosnost || record.venkovni_bocni_dosah?`<p>Druhé uložené hodnoty (režim: ${escapeHtml(record.limitVariantKind || 'neurčen')}): nosnost ${value('venkovni_nosnost','kg')}, dosah ${value('venkovni_bocni_dosah','m')}. Význam ověřte v původní revizi.</p>`:''}</details></div></div>`;
-    host.querySelector('.passport-envelope').insertAdjacentHTML('beforeend','<p><a href="https://bartovaschranka-create.github.io/pomoc-infolince-plosiny/" target="_blank" rel="noopener noreferrer">Otevřít Plošinového poradce — infolinku</a><br>Samostatný zdroj. Ověřte typ, výrobní řadu a rok; jeho údaje se do stroje nepřenášejí.</p>');
-    const img=host.querySelector('img');
-    if(img) img.addEventListener('error',()=>{img.replaceWith(Object.assign(document.createElement('div'),{className:'passport-no-photo',textContent:'Fotografii se nepodařilo načíst'}));},{once:true});
+    const savedBar=host.querySelector('.passport-reference-bar');host.querySelector('#machinePassportReference').before(savedBar);
+    if(!context.selectedYear && !context.knownYear && !document.querySelector('#machinePassportYear option[value=""]'))document.getElementById('machinePassportYear').insertAdjacentHTML('afterbegin','<option value="" selected>Zvolit orientační rok</option>');
+    const year=document.getElementById('machinePassportYear').value,ref=machinePassportReferenceForYear(context,inventory,year);
+    const record=ref?.record || {},values=ref?.values || {};
+    const source=ref?`${ref.kind} · ${ref.id || 'bez čísla'} · ${ref.date || 'bez data'} · v. č. ${ref.serial || 'neuvedeno'}`:'V evidenci nejsou doložené technické parametry pro tento ročník.';
+    const illustrative=!context.knownYear || year!==context.knownYear || normalizeSerial(ref?.serial)!==normalizeSerial(serial);
+    const notice=!context.knownYear?`ROK STROJE NENÍ DOLOŽEN. ${year?(year===context.selectedYear?'Orientační ročník '+year+' podle nejčastějšího doloženého roku stejného modelu ('+context.modalCount+' z '+context.sampleSize+' strojů).':'Ručně zvolený orientační ročník '+year+'.'):'Vzorek je malý, nerozhodný nebo ročníky nejsou doložené — zvolte rok pouze pro porovnání.'}`:illustrative?'ORIENTAČNÍ MODEL / ROČNÍK — NEOVĚŘENO PRO TOTO VÝROBNÍ ČÍSLO.':'KONKRÉTNÍ STROJ / DOLOŽENÝ ROK VÝROBY.';
+    const value=(val,suffix='')=>val===undefined || val===null || String(val).trim()===''?'Neuvedeno':escapeHtml(String(val))+(suffix && !String(val).includes(suffix)?' '+suffix:'');
+    const metric=(label,field,suffix)=>`<div><dt>${label}</dt><dd class="${String(values[field] || '').length>24?'raw-value':''}">${value(values[field],suffix)}</dd></div>`;
+    const variant=context.own.map(item=>item.record.variant || item.record.varianta).find(Boolean) || '';
+    const photo=machinePassportPhoto(serial,context.model,year,data || [],variant);
+    let envelopes=[];try{const stored=typeof record.workingEnvelopes==='string'?JSON.parse(record.workingEnvelopes):record.workingEnvelopes;envelopes=Array.isArray(stored)?stored.filter(item=>item && typeof item==='object'):[];}catch(_invalidStoredEnvelope){}
+    const secondFields=['venkovni_nosnost','venkovni_pracovni_vyska','venkovni_bocni_dosah'];
+    document.getElementById('machinePassportReference').innerHTML=`<p class="passport-reference-notice"><strong>${notice}</strong> Změna ročníku mění jen tento náhled. Neukládá se do stroje, kontroly ani revize.</p><div class="passport-technical-layout"><figure class="passport-photo">${photo?`<img alt="${photo.illustrative?'Ilustrační fotografie stejného modelu':'Fotografie konkrétního stroje'}" src="${escapeHtml(photo.photo.url || photo.photo.dataUrl)}"><figcaption>${photo.illustrative?'ILUSTRAČNÍ · stejný typ · rok výroby '+escapeHtml(photo.record.rok):'SHODA VÝROBNÍHO ČÍSLA · '+escapeHtml(serial)}<br>Čtvrtletní kontrola ${escapeHtml(photo.record.datum || 'bez data')}</figcaption>`:'<div class="passport-no-photo"><span>FOTO / 01</span><strong>Fotografie není<br>v dostupné evidenci</strong><p>Přednost má snímek výrobního čísla ze čtvrtletní kontroly.</p></div>'}</figure><div class="passport-technical-sheet"><div class="sheet-caption">PARAMETRY / ${escapeHtml(year || 'ROK NEDOLOŽEN')} <span>${illustrative?'ORIENTAČNÍ':'EVIDOVANÉ'}</span></div><dl class="passport-specs">${metric('Jmenovitá nosnost','capacity','kg')}${metric('Pracovní výška','workHeight','m')}${metric('Boční dosah','reach','m')}${metric('Výška podlahy','floorHeight','m')}${metric('Hmotnost','weight','kg')}${metric('Pohon','drive','')}</dl><div class="passport-source">ZDROJ ZÁZNAMU<br>${escapeHtml(source)}</div></div></div><section class="passport-envelope" aria-label="Pracovní obálky"><div class="document-section-title"><span class="document-index">02</span><h2>Nosnosti a pracovní obálky</h2><a href="https://bartovaschranka-create.github.io/pomoc-infolince-plosiny/" target="_blank" rel="noopener noreferrer">Infolinka ↗</a></div><div class="envelope-layout"><div class="envelope-note"><span>PROVOZNÍ ROZSAH</span><p>Platí štítek a návod konkrétního stroje. Přepnutí ročníku nemění jeho parametry.</p><small>Graf bez doložených bodů nevykreslujeme.</small></div><div class="envelope-table-wrap"><table class="envelope-table"><thead><tr><th>Pracovní režim</th><th>Nosnost</th><th>Pracovní výška</th><th>Dosah</th></tr></thead><tbody>${envelopes.length?envelopes.map(envelope=>`<tr><th>${escapeHtml(envelope.label || (envelope.mode==='restricted'?'Omezená obálka':'Uložená obálka'))}</th><td>${value(envelope.capacity,'kg')}</td><td>${value(envelope.workHeight,'m')}</td><td>${value(envelope.reach,'m')}</td></tr>`).join(''):`<tr><th>Základní uložené hodnoty</th><td>${value(values.capacity,'kg')}</td><td>${value(values.workHeight,'m')}</td><td>${value(values.reach,'m')}</td></tr>`}${secondFields.some(field=>record[field])?`<tr><th>Druhé hodnoty · ${escapeHtml(record.limitVariantKind || 'režim neurčen')}</th>${secondFields.map((field,index)=>`<td>${value(record[field],index?'m':'kg')}</td>`).join('')}</tr>`:''}</tbody></table>${!envelopes.length?'<p class="technical-note">Samostatné pracovní obálky nejsou v tomto záznamu uložené. Chybějící režimy se nedopočítávají.</p>':''}</div></div></section>`;
+    const img=host.querySelector('img');if(img){img.addEventListener('error',()=>{img.replaceWith(Object.assign(document.createElement('div'),{className:'passport-no-photo',textContent:'Fotografie je evidovaná, ale není dostupná v tomto náhledu.'}));},{once:true});img.addEventListener('click',()=>openLightbox(img.src));}
+    if(photo){const photos=['right','front','left','rear'].map(key=>photo.record.photos?.[key]).filter(item=>item && /^(https:\/\/|data:image\/(?:jpeg|png|webp);base64,)/i.test(item.url || item.dataUrl || ''));if(photos.length>1){const gallery=document.createElement('div');gallery.className='passport-gallery';gallery.innerHTML=photos.map((item,index)=>`<button type="button" aria-label="Otevřít fotografii ${index+1}"><img alt="Přehledový snímek ${index+1}" src="${escapeHtml(item.url || item.dataUrl)}"></button>`).join('');gallery.querySelectorAll('button').forEach((button,index)=>button.addEventListener('click',()=>openLightbox(photos[index].url || photos[index].dataUrl)));gallery.querySelectorAll('img').forEach(thumb=>thumb.addEventListener('error',()=>thumb.remove(),{once:true}));host.querySelector('.passport-photo').appendChild(gallery);}}
+    arrangeMachineTechnicalColumns(host,context,serial,ref);
   };
-  document.getElementById('machinePassportYear').addEventListener('change',render);
-  render();
+  document.getElementById('machinePassportYear').addEventListener('change',render);render();
+  const records=document.createElement('div');records.className='passport-records';host.after(records);
+  [...host.parentElement.children].filter(node=>node!==host && node!==records).forEach(node=>records.appendChild(node));
+  records.insertAdjacentHTML('afterbegin','<div class="document-section-title"><span class="document-index">03</span><h2>Provozní a servisní historie</h2><span class="technical-note">Původní zápisy a návazné akce</span></div>');
+  records.querySelector('.document-index').textContent='05';
+  records.querySelectorAll('[data-fault-open]').forEach(button=>{const fault=(rows.faults || []).find(item=>String(item.id)===button.dataset.faultOpen);if(fault?.repairNote){const target=button.closest('.machine-card-row').querySelector('span');target.insertAdjacentHTML('beforeend',`<p><strong>Způsob odstranění závady:</strong> ${escapeHtml(fault.repairNote)}</p>`);}});
+  const revisionSection=document.createElement('section');revisionSection.className='machine-card-block';revisionSection.innerHTML='<h4>Historie revizí ZZ</h4>'+(ownRevisions.length?ownRevisions.map((record,index)=>`<div class="machine-card-row"><span>${escapeHtml(record.datum_kontroly || 'Datum neuvedeno')} · ${escapeHtml(record.protokol || 'Bez čísla')}</span><button type="button" data-passport-revision="${index}">Otevřít celou revizi</button></div>`).join(''):'<p class="technical-note">V načtené aplikaci nejsou dostupné revizní protokoly pro toto výrobní číslo. Importovaná evidence parametrů je označená svým zdrojem.</p>');revisionSection.querySelectorAll('[data-passport-revision]').forEach(button=>button.addEventListener('click',()=>{closeHistoryModal();printRevizeById(ownRevisions[Number(button.dataset.passportRevision)].id);}));records.appendChild(revisionSection);
+  const repairs=(typeof loadLocalRepairs==='function'?loadLocalRepairs():[]).filter(record=>normalizeSerial(record.serial)===normalizeSerial(serial));
+  const repairSection=document.createElement('section');repairSection.className='machine-card-block';
+  repairSection.innerHTML='<h4>Servisní zápisy / opravy</h4>'+(repairs.length?repairs.map((record,index)=>`<div class="machine-card-row"><span><strong>${escapeHtml(record.finishedAt || record.savedAt || 'Datum neuvedeno')}</strong> · ${escapeHtml(record.tech || 'Technik neuveden')}<br>${escapeHtml(record.work || 'Popis není uveden')}</span><button type="button" data-passport-repair="${index}">Otevřít zápis opravy</button></div>`).join(''):'<p class="technical-note">Pro toto výrobní číslo nejsou dostupné samostatné servisní zápisy.</p>');
+  repairSection.querySelectorAll('[data-passport-repair]').forEach(button=>button.addEventListener('click',()=>{closeHistoryModal();printRepairRecord(repairs[Number(button.dataset.passportRepair)]);}));records.appendChild(repairSection);
+  host.querySelector('.passport-folio')?.remove();
+  host.querySelector('.passport-document-head').insertAdjacentHTML('afterbegin','<span class="document-index">01</span>');
+  const identity=host.querySelector('.passport-identity');host.querySelector('.passport-document-head').appendChild(identity);
+  identity.insertAdjacentHTML('beforeend',`<div><span>Inventární číslo</span><strong>${escapeHtml(context.own.find(ref=>ref.record.evidencni || ref.record.evidencni_cislo || ref.record.evCislo)?.record.evidencni || context.own.find(ref=>ref.record.evidencni_cislo)?.record.evidencni_cislo || context.own.find(ref=>ref.record.evCislo)?.record.evCislo || 'Neuvedeno')}</strong></div><div><span>Stav stroje / evidence</span><strong>${escapeHtml(getMachineState(serial).txt)}</strong></div>`);
+  const bottom=document.createElement('div');bottom.className='passport-bottom';records.before(bottom);bottom.appendChild(records);
+  const support=document.createElement('aside');support.className='passport-support';support.innerHTML=`<section><div class="document-section-title"><span class="document-index">06</span><h2>Dokumentace</h2></div><p class="technical-note">Zdroj technických údajů je uveden u specifikace. Dostupné návody vyhledejte v existující agendě.</p><button type="button" id="passportManuals">Vyhledat dokumentaci ↗</button><a href="https://bartovaschranka-create.github.io/pomoc-infolince-plosiny/" target="_blank" rel="noopener noreferrer">Plošinový poradce ↗</a></section><section><div class="document-section-title"><span class="document-index">07</span><h2>Identifikace / QR</h2></div><p class="passport-id-label">${escapeHtml(serial)}</p><p class="technical-note">QR štítek pro tento stroj není v dostupné evidenci uložen. Žádný náhradní kód se nevytváří.</p></section></aside>`;bottom.appendChild(support);
+  support.querySelector('#passportManuals').addEventListener('click',()=>{closeHistoryModal();openManualsModule();});
+}
+function arrangeMachineTechnicalColumns(host,context,serial,ref){
+  const layout=host.querySelector('.passport-technical-layout'),photo=host.querySelector('.passport-photo'),sheet=host.querySelector('.passport-technical-sheet'),envelope=host.querySelector('.passport-envelope');
+  const photoSection=document.createElement('section');photoSection.className='passport-photo-section';photo.before(photoSection);photoSection.innerHTML='<div class="document-section-title"><span class="document-index">02</span><h2>Fotografie stroje</h2></div>';photoSection.appendChild(photo);
+  sheet.insertAdjacentHTML('afterbegin','<div class="document-section-title"><span class="document-index">03</span><h2>Technické údaje</h2></div>');
+  const identityValue=field=>context.own.map(item=>item.record[field]).find(Boolean) || 'Neuvedeno';
+  sheet.querySelector('.passport-specs').insertAdjacentHTML('afterbegin',`<div><dt>Výrobce</dt><dd>${escapeHtml(identityValue('maker')==='Neuvedeno'?identityValue('vyrobce'):identityValue('maker'))}</dd></div><div><dt>Typ / model</dt><dd>${escapeHtml(context.model || 'Neuvedeno')}</dd></div><div><dt>Výrobní číslo</dt><dd>${escapeHtml(serial)}</dd></div><div><dt>Rok výroby konkrétního stroje</dt><dd>${context.knownYear || 'Neznámý — nedoložen'}</dd></div>`);
+  envelope.querySelector('.document-index').textContent='04';envelope.querySelector('h2').textContent='Pracovní režimy a obálka';
+  envelope.querySelector('.document-section-title').after(host.querySelector('.passport-reference-bar'));
+  envelope.querySelector('.passport-reference-bar').after(host.querySelector('.passport-reference-notice'));
+  const bar=envelope.querySelector('.passport-reference-bar');bar.querySelector('label').firstChild.textContent='Rok výroby (náhled) ';
+  layout.appendChild(envelope);
 }
