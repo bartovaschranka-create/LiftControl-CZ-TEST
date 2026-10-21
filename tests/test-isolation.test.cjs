@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(path.join(process.env.CODEX_NODE_MODULES,'playwright'));
 const root=path.resolve(__dirname,'..');
 // Exercise activation against unrelated production cache names, not a text-only assertion.
-const listeners={},deleted=[],cacheNames=['liftcontrol-cz-v1-6-5-394','other-app-cache','liftcontrol-cz-test-v1-6-5-226','liftcontrol-cz-test-isolated-workspaces-v2'];
+const listeners={},deleted=[],cacheNames=['liftcontrol-cz-v1-6-5-394','other-app-cache','liftcontrol-cz-test-v1-6-5-226','liftcontrol-cz-test-isolated-workspaces-v3'];
 vm.runInNewContext(fs.readFileSync(path.join(root,'sw.js'),'utf8'),{self:{addEventListener:(key,fn)=>listeners[key]=fn,clients:{claim:async()=>{}}},caches:{keys:async()=>cacheNames,delete:async key=>deleted.push(key)}});
 (async()=>{
  let activation;listeners.activate({waitUntil:p=>activation=p});await activation;assert.deepEqual(deleted,['liftcontrol-cz-test-v1-6-5-226']);

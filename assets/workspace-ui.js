@@ -1,8 +1,8 @@
 // Presentation modes over existing capabilities. These are NOT identities, ACLs or database roles.
 const WORKSPACE_MODES={
-  technician:{label:'Technik',description:'Konkrétní stroj, kontrola, závada nebo oprava.',sections:[['machines','Vyhledávání stroje'],['quarterly','Čtvrtletní kontroly'],['faults','Závady'],['repairs','Opravy'],['history','Historie kontrol a oprav'],['documents','Technické informace a dokumentace'],['qr','QR skener']]},
-  manager:{label:'Vedoucí',description:'Termíny, otevřené požadavky a přehled provedené práce.',sections:[['machines','Přehled strojů'],['terms','Termíny kontrol'],['faults','Otevřené závady'],['repairs','Stav a historie oprav'],['work','Provedené práce'],['records','Evidence strojů']]},
-  inspector:{label:'Revizní technik',description:'Revize, rozpracované záznamy, protokoly a podklady.',sections:[['newRevision','Nová revize'],['draftRevisions','Rozpracované revize'],['revisions','Uložené revize a historie'],['protocols','Revizní protokoly / tisk / export'],['machines','Stroj a technické podklady']]}
+  technician:{label:'Technik',description:'Konkrétní stroj, kontrola, závada nebo oprava.',sections:[['machines','Vyhledávání stroje'],['quarterly','Čtvrtletní kontroly'],['service','Servis a historie'],['documents','Technické podklady']]},
+  manager:{label:'Vedoucí',description:'Termíny, otevřené požadavky a přehled provedené práce.',sections:[['terms','Termíny kontrol'],['faults','Otevřené závady'],['work','Provedené práce'],['machines','Evidence strojů']]},
+  inspector:{label:'Revize',description:'Revize, rozpracované záznamy, protokoly a podklady.',sections:[['newRevision','Nová revize'],['draftRevisions','Rozpracované revize'],['revisions','Archiv a protokoly'],['machines','Stroj a technické podklady']]}
 };
 const workspaceView={mode:'home',lastMode:'technician',section:'',suspended:new Map()};
 function workspaceOriginalAction(action){
@@ -58,9 +58,13 @@ function showWorkspaceSection(key){
   if(key==='machines'||key==='records'){
     host.innerHTML='<div class="workspace-search-block"><h2>Vyhledání stroje</h2><div id="workspaceSearchHost"></div></div>';
     const search=document.querySelector('.dispatch-header-search');if(search)document.getElementById('workspaceSearchHost').appendChild(search);
+    if(workspaceView.mode==='technician')host.insertAdjacentHTML('beforeend',workspaceButtons([['qr','QR skener'],['newQuarterly','Nová čtvrtletní kontrola']])+workspaceRecentWork());
     reuse('.dispatch-register');
+    host.querySelectorAll('.document-index').forEach(node=>node.remove());
+    if(workspaceView.mode==='technician'){host.querySelector('.dispatch-register').hidden=true;host.insertAdjacentHTML('beforeend','<button type="button" class="workspace-show-registry" data-workspace-registry>Otevřít evidenci strojů →</button>');}
     if(key==='records')host.insertAdjacentHTML('beforeend','<p class="workspace-help">Nová správa kmenových údajů se zde nepřidává. Otevření průkazu využívá existující evidenci.</p>');
-  }else if(key==='terms'){host.innerHTML=workspaceTerms(true)+workspaceFaults(4);}
+  }else if(key==='terms'){host.innerHTML=workspaceTerms(true);}
+  else if(key==='service')host.innerHTML=workspaceButtons([['faults','Závady / nahlásit závadu'],['repair','Zapsat opravu'],['repairHistory','Historie oprav'],['quarterly','Historie kontrol']]);
   else if(key==='quarterly')host.innerHTML=workspaceButtons([['newQuarterly','Nová čtvrtletní kontrola'],['quarterly','Uložené kontroly a historie']]);
   else if(key==='faults'){
     host.innerHTML=workspaceButtons([['faults',workspaceView.mode==='manager'?'Otevřít agendu závad':'Závady / nahlásit závadu']]);
@@ -82,11 +86,18 @@ function renderWorkspaceWelcome(){
   const person=typeof getLastEnteredBy==='function'?getLastEnteredBy():'';
   document.getElementById('workspaceIdentity').textContent=person?'Místně zadaný pracovník: '+person+' · přihlášení není ověřené':'Přihlášený uživatel: ověřené přihlášení není v této verzi dostupné';
   document.getElementById('workspaceToday').textContent=new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('workspaceHomeTerms').innerHTML=workspaceTerms(false);
-  document.getElementById('workspaceHomeFaults').innerHTML=workspaceFaults(4);
+  document.getElementById('workspaceHomeTerms').innerHTML=workspaceHomeBrief();
   renderWorkspaceSummary();
 }
 function workspaceBlock(title,body,action='') {return `<section class="workspace-block"><div class="workspace-block-heading"><h2>${title}</h2>${action}</div>${body}</section>`;}
+function workspaceHomeBrief(){
+  const terms=workspaceTermRows(),today=ymd(new Date()),open=(faultsData||[]).filter(r=>!faultIsRepaired(r)).length;
+  return '<div class="workspace-brief">'+[
+    ['Termíny kontrol',terms.length?`${terms.filter(r=>r.due<today).length} po termínu · nejbližší ${formatDate(terms[0].due)}`:'Žádné doložené termíny','manager','terms'],
+    ['Otevřené závady',`${open} požadavků v načtené evidenci`,'manager','faults'],
+    ['Poslední práce',(data||[]).length?'Otevřít provedené kontroly a opravy':'V načtené evidenci nejsou kontroly','manager','work']
+  ].map(([label,text,mode,section])=>`<button type="button" data-workspace-jump="${section}" data-workspace-target="${mode}"><strong>${label}</strong><span>${escapeHtml(text)}</span><b aria-hidden="true">→</b></button>`).join('')+'</div>';
+}
 function workspaceTermRows(){
   const refs=machinePassportReferences({protocols:data || [],revize:revizeData || [],evidence:[]}),seen=new Set();
   return refs.filter(ref=>{const key=normalizeSerial(ref.serial)+'/'+ref.kind;if(!ref.serial||seen.has(key))return false;seen.add(key);return true;}).map(ref=>({...ref,due:ref.record.dalsiKontrola || ref.record.platnost || ref.record.validTo})).filter(ref=>/^\d{4}-\d{2}-\d{2}$/.test(String(ref.due||''))).sort((a,b)=>a.due.localeCompare(b.due));
@@ -108,7 +119,7 @@ function workspaceRecentWork(){
 function renderWorkspaceSummary(){
   const today=ymd(new Date()),end=ymd(addDays(new Date(),(7-new Date().getDay())%7)),terms=workspaceTermRows();
   const count=new Set(machinePassportReferences({protocols:data||[],revize:revizeData||[],evidence:window.REVIZE_MACHINE_DB||[]}).map(r=>normalizeSerial(r.serial)).filter(Boolean)).size;
-  const html=workspaceBlock('Rychlý přehled','<div class="workspace-stats">'+[['Strojů v evidenci',count],['Po termínu',terms.filter(r=>r.due<today).length],['Tento týden',terms.filter(r=>r.due>=today&&r.due<=end).length],['Uložených kontrol',(data||[]).length]].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong></div>`).join('')+'</div>')+workspaceRecentWork()+workspaceBlock('Rychlé akce',workspaceButtons([['newQuarterly','Nová čtvrtletní kontrola'],['faults','Nahlásit závadu'],['repair','Zapsat opravu'],['documents','Technická dokumentace']]));
+  const html=workspaceBlock('Rychlý přehled','<div class="workspace-stats">'+[['Strojů v evidenci',count],['Po termínu',terms.filter(r=>r.due<today).length],['Tento týden',terms.filter(r=>r.due>=today&&r.due<=end).length],['Uložených kontrol',(data||[]).length]].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong></div>`).join('')+'</div>');
   document.querySelectorAll('.workspace-summary').forEach(node=>node.innerHTML=html);
 }
 function updateWorkspaceBackLink(){
@@ -120,18 +131,20 @@ function installWorkspaceNavigation(){
   document.body.dataset.workspaceReady='1';
   const home=document.getElementById('section-home'),staging=document.createElement('div');staging.id='workspaceStaging';staging.hidden=true;
   while(home.firstChild)staging.appendChild(home.firstChild);home.appendChild(staging);
-  home.insertAdjacentHTML('afterbegin',`<div class="workspace-welcome"><div class="document-kicker">LiftControl CZ / pracovní prostředí</div><h1>Přehled provozu</h1><p>Rychlý přehled techniky, termínů a pracovních úkonů.</p></div><div class="workspace-layout"><div class="workspace-main"><section class="workspace-launcher" aria-label="Pracovní prostředí">${Object.entries(WORKSPACE_MODES).filter(([key])=>key!=='inspector').map(([key,mode])=>`<div class="workspace-launch-row"><div><h2>${mode.label}</h2><p>${mode.description}</p></div><button type="button" data-workspace-mode="${key}">Otevřít prostředí →</button></div>`).join('')}</section><div id="workspaceHomeTerms"></div><div id="workspaceHomeFaults"></div></div><aside class="workspace-summary"></aside></div>`);
-  const work=document.createElement('section');work.id='section-workspace';work.className='page-section';work.innerHTML='<div class="workspace-heading"><div><div class="document-kicker">Pracovní prostředí</div><h1 id="workspaceModeName"></h1><p id="workspaceModeDescription"></p></div><button type="button" data-workspace-mode="home">← Společný přehled</button></div><nav id="workspaceSectionNav" aria-label="Sekce pracovního prostředí"></nav><button id="workspaceResume" type="button" hidden>Pokračovat v rozepsané práci ↗</button><div class="workspace-section-heading"><span class="document-index">01</span><h2 id="workspaceSectionName"></h2></div><div class="workspace-layout"><div id="workspacePanel" class="workspace-main"></div><aside class="workspace-summary"></aside></div>';
+  home.insertAdjacentHTML('afterbegin',`<div class="workspace-welcome"><div class="document-kicker">LiftControl CZ / pracovní prostředí</div><h1>Přehled provozu</h1><p>Rychlý přehled techniky, termínů a pracovních úkonů.</p></div><div class="workspace-layout"><div class="workspace-main"><section class="workspace-launcher" aria-label="Pracovní prostředí">${Object.entries(WORKSPACE_MODES).filter(([key])=>key!=='inspector').map(([key,mode])=>`<div class="workspace-launch-row"><div><h2>${mode.label}</h2><p>${mode.description}</p></div><button type="button" data-workspace-mode="${key}">Otevřít prostředí →</button></div>`).join('')}</section><div id="workspaceHomeTerms"></div></div></div>`);
+  const work=document.createElement('section');work.id='section-workspace';work.className='page-section';work.innerHTML='<div class="workspace-heading"><div><div class="document-kicker">Pracovní prostředí</div><h1 id="workspaceModeName"></h1><p id="workspaceModeDescription"></p></div><button type="button" data-workspace-mode="home">← Společný přehled</button></div><nav id="workspaceSectionNav" aria-label="Sekce pracovního prostředí"></nav><button id="workspaceResume" type="button" hidden>Pokračovat v rozepsané práci ↗</button><div class="workspace-section-heading"><h2 id="workspaceSectionName"></h2></div><div class="workspace-layout"><div id="workspacePanel" class="workspace-main"></div><aside class="workspace-summary"></aside></div>';
   home.after(work);
   const header=document.querySelector('body > header'),legacyNav=header.querySelector('.dispatch-nav');legacyNav.classList.add('workspace-old-nav');
   header.querySelector('.lift-brand > span:last-child').firstChild.textContent='LiftControl CZ';
   const nav=document.createElement('nav');nav.className='workspace-nav';nav.setAttribute('aria-label','Pracovní prostředí');nav.innerHTML='<button type="button" data-workspace-mode="home">Přehled</button>'+Object.entries(WORKSPACE_MODES).filter(([key])=>key!=='inspector').map(([key,mode])=>`<button type="button" data-workspace-mode="${key}">${mode.label}</button>`).join('');legacyNav.after(nav);
-  const revisionEntry=document.createElement('button');revisionEntry.type='button';revisionEntry.dataset.workspaceMode='inspector';revisionEntry.textContent='Revizní pracoviště';document.getElementById('dispatchTools').prepend(revisionEntry);
-  const context=document.createElement('div');context.className='workspace-context';context.innerHTML='<span id="workspaceToday"></span><span id="workspaceNameDay"></span><span id="workspaceIdentity"></span><button type="button" data-workspace-mode="inspector">Revizní pracoviště</button><button type="button" data-workspace-action="settings">Nastavení</button><span id="workspaceStatus" role="status"></span>';header.after(context);
+  const revisionEntry=document.createElement('button');revisionEntry.type='button';revisionEntry.dataset.workspaceMode='inspector';revisionEntry.textContent='Revize';document.getElementById('dispatchTools').prepend(revisionEntry);
+  const context=document.createElement('div');context.className='workspace-context';context.innerHTML='<span id="workspaceToday"></span><span id="workspaceNameDay"></span><span id="workspaceIdentity"></span><button type="button" data-workspace-mode="inspector">Revize</button><button type="button" data-workspace-action="settings">Nastavení</button><span id="workspaceStatus" role="status"></span>';header.after(context);
   const nameday=document.getElementById('homeNameDayBox');document.getElementById('workspaceNameDay').appendChild(nameday);
   const back=document.createElement('div');back.id='workspaceBack';back.hidden=true;back.innerHTML='<button type="button">← Zpět do pracovního prostředí</button>';context.after(back);back.querySelector('button').addEventListener('click',()=>selectWorkspaceMode(workspaceView.mode==='home'?workspaceView.lastMode:workspaceView.mode,workspaceView.section));
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-mode],button[data-workspace-section],button[data-workspace-action]');if(!button)return;if(button.dataset.workspaceMode)selectWorkspaceMode(button.dataset.workspaceMode);else if(button.dataset.workspaceSection)showWorkspaceSection(button.dataset.workspaceSection);else workspaceOriginalAction(button.dataset.workspaceAction);});
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-machine]');if(button)openHistoryModal(button.dataset.workspaceMachine);});
+  document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-registry]');if(button){document.querySelector('#workspacePanel .dispatch-register').hidden=false;button.hidden=true;}});
+  document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-jump]');if(button)selectWorkspaceMode(button.dataset.workspaceTarget,button.dataset.workspaceJump);});
   document.getElementById('workspaceResume').addEventListener('click',workspaceResume);
   document.querySelector('.lift-brand').addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();selectWorkspaceMode('home');},{capture:true});
   new MutationObserver(()=>{const active=document.querySelector('.page-section.active:not(#section-workspace)');if(active && work.classList.contains('active'))work.classList.remove('active');if(active?.id==='section-home' && workspaceView.mode!=='home' && !work.classList.contains('active'))selectWorkspaceMode(workspaceView.mode,workspaceView.section);updateWorkspaceBackLink();}).observe(document.getElementById('appRoot'),{subtree:true,attributes:true,attributeFilter:['class']});

@@ -1,5 +1,5 @@
-# Pokračování pro Codex
+# Stav PR54
 
-Vizuální návrh byl schválen a funkce jsou již napojené ve větvi agent/workspace-role-navigation, draft PR #54 v bartovaschranka-create/LiftControl-CZ-TEST. Aktuální stav a přesné testy jsou v UI-REVIEW.md. Revizní pracoviště je oddělený vstup vedle nastavení, RZ zdroj a tisk se nemění.
+Aktuální požadavek je dokončit TEST a po ověření izolace sloučit PR54 a nasadit GitHub Pages výhradně v LiftControl-CZ-TEST. Detail implementace a testů: UI-REVIEW.md. Technická data se pouze čtou; RZ a původní ukládací rutiny zůstávají beze změn. Produkci nikdy neupravovat.
 
-Zachovej test-isolation.js, CSP, prefix místních úložišť a oddělení cache. TEST a produkce sdílejí doctype-test; cloudové připojení nesmí být zapnuto bez samostatného skutečně izolovaného testovacího backendu. Žádné migrace ani změny produkce. Testovací ukládání je pouze místní. Aktualizuj stávající draft PR; bez výslovného pokynu nic neslučuj ani nenasazuj.
+Zachovej CSP, test-isolation.js, místní TEST namespace a izolované cache. LIFTCONTROL_TEST_BUILD musí být pr54-2026-10-21-v3. Nepovolovat cloud do společného doctype-test. Infolinka zůstává samostatný odkaz, API spojení je blokované. Chybějící technické údaje nevymýšlet.

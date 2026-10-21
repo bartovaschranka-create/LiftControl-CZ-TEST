@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'liftcontrol-cz-test-';
-const CACHE_NAME = CACHE_PREFIX + 'isolated-workspaces-v2';
+const CACHE_NAME = CACHE_PREFIX + 'isolated-workspaces-v3';
 const APP_SHELL = [
   './',
   './index.html',

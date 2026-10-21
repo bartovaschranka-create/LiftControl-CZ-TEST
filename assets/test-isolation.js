@@ -15,6 +15,7 @@
   // Existing save routines use their original local fallback. SDKs cannot initialize the shared project.
   Object.defineProperty(window,'firebase',{get:()=>undefined,set:()=>{},configurable:false});
   Object.defineProperty(window,'LIFTCONTROL_TEST_ISOLATED',{value:true,writable:false});
+  Object.defineProperty(window,'LIFTCONTROL_TEST_BUILD',{value:'pr54-2026-10-21-v3',writable:false});
   document.addEventListener('DOMContentLoaded',()=>{
     const banner=document.createElement('div');banner.className='test-isolation-banner';banner.setAttribute('role','status');
     banner.textContent='TEST · Oddělené místní ukládání · Firebase je vypnutý · Změny se nesynchronizují do ostré aplikace';
