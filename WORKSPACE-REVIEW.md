@@ -1,3 +1,5 @@
+> Historical first-stage proposal; superseded by UI-REVIEW.md after visual approval.
+
 # Pracovní prostředí — etapa 1, návrh k vizuálnímu schválení
 
 Samostatná větev `agent/workspace-role-navigation` vychází z testovacího `main` na `fa32e1dd957df930689eb3e857675978ddf039e0` (sloučený PR #53). Cíl nového draft PR je výhradně `bartovaschranka-create/LiftControl-CZ-TEST`. Neslučovat a nenasazovat před schválením této etapy. Předchozí souhlas s nasazením PR #53 se na tuto novou etapu nepřenáší.
