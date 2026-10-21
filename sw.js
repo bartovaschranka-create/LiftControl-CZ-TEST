@@ -1,7 +1,14 @@
-const CACHE_NAME = 'liftcontrol-cz-test-v1-6-5-226';
+const CACHE_PREFIX = 'liftcontrol-cz-test-';
+const CACHE_NAME = CACHE_PREFIX + 'isolated-workspaces-v3';
 const APP_SHELL = [
   './',
   './index.html',
+  './assets/test-isolation.js',
+  './assets/workspace-ui.js',
+  './assets/workspace-ui.css',
+  './assets/dispatch-ui.js',
+  './assets/machine-passport.js',
+  './assets/machine-passport.css',
   './zeppelin-game.js',
   './assets/game/zeppelin-cinematic-v2.png',
   './assets/game/bomb-cinematic-v2.png',
@@ -29,7 +36,7 @@ self.addEventListener('message', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -40,7 +47,7 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) {
-    event.respondWith(fetch(request).catch(() => caches.match(request)));
+    event.respondWith(fetch(request).catch(() => caches.open(CACHE_NAME).then(cache=>cache.match(request))));
     return;
   }
 
@@ -51,7 +58,7 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return response;
       })
-      .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+      .catch(() => caches.open(CACHE_NAME).then(cache=>cache.match(request).then(cached => cached || cache.match('./index.html'))))
   );
 });
 

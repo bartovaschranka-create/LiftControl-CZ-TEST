@@ -22,11 +22,13 @@ const root=path.resolve(__dirname,'..');
    getMachineRows=()=>passportFixture;getMachineState=()=>({cls:'',txt:'Test'});data=photoFixtures;
    openHistoryModal('TEST');
   });
+  assert.match(await page.locator('.passport-identity').innerText(),/Rozpor/,'Conflicting stored manufacture years must not silently select a truth');
+  await page.locator('#machinePassportYear').selectOption('2020');
   assert.match(await page.locator('#machinePassportReference').innerText(),/230 kg/);
   assert.match(await page.locator('#machinePassportReference').innerText(),/Omezená obálka <test>/);
-  assert.deepEqual(await page.locator('#machinePassportYear option').allTextContents(),['2020','2019','2018']);
+  assert.deepEqual(await page.locator('#machinePassportYear option').allTextContents(),['Zvolit orientační rok','2020','2019','2018']);
   await page.locator('#machinePassportYear').selectOption('2018');
-  assert.match(await page.locator('.passport-identity').innerText(),/2020/,'Reference year must not replace the actual identity year');
+  assert.match(await page.locator('.passport-identity').innerText(),/Rozpor/,'Reference year must not replace the unresolved identity conflict');
   assert.match(await page.locator('#machinePassportReference').innerText(),/200 kg/);
   assert.match(await page.locator('#machinePassportReference').innerText(),/Neuvedeno/);
   assert.equal(await page.evaluate(()=>JSON.stringify({records:passportFixture,photos:photoFixtures,storage:{...localStorage}})===beforePassport),true);
@@ -70,7 +72,7 @@ const root=path.resolve(__dirname,'..');
    loadLocalRepairs=()=>[{id:'repair',serial:'TEST',work:'Výměna spínače <safe>'}];printRepairRecord=record=>passportCalls.push(['repair',record.id]);
   });
   for(const [selector,kind,id] of [['[data-open-id]','protocol','quarterly'],['[data-fault-open]','fault','fault'],['[data-part-open]','part','part'],['[data-passport-revision="0"]','revision','new'],['[data-passport-repair="0"]','repair','repair']]){
-   await page.evaluate(()=>openHistoryModal('TEST'));await page.locator('#historyBody '+selector).click();
+   await page.evaluate(()=>openHistoryModal('TEST'));await page.locator('[data-passport-tab="history"]').click();await page.locator('#historyBody '+selector).click();
    assert.deepEqual(await page.evaluate(()=>passportCalls.at(-1)),[kind,id]);
   }
   console.log('machine-passport: read-only manufacture years, deduplicated modal fallback, no forced tiny/tied sample, preserved unknown identity, variant-safe photos, escaped envelopes, five viewports and protocol/revision/repair routing passed');

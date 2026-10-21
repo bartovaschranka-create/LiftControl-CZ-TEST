@@ -173,3 +173,37 @@
     .dispatch-ui #historyModal{padding:12px 10px!important}.passport-document-head{grid-template-columns:24px minmax(0,1fr);gap:10px;padding:10px;margin-bottom:10px}#machinePassport h1{font-size:26px;margin:8px 0}.passport-document-head .document-kicker{font-size:8px;letter-spacing:0}.passport-serial{font-size:8px}.passport-serial strong{font-size:11px;margin:3px 0 0}.passport-identity{grid-column:1/-1;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 0;border-top:1px solid #d5d2c9;padding-top:12px}.passport-identity > div{padding:0 8px}.passport-identity span{font-size:8px}.passport-identity strong{font-size:10px}.passport-technical-layout{display:flex;flex-direction:column;gap:10px}.passport-photo img{height:285px}.passport-no-photo{min-height:255px}.passport-envelope{padding:0 10px 10px}.passport-envelope .envelope-layout{display:flex;gap:10px}.passport-envelope .envelope-note{order:2}.passport-specs dt,.passport-specs dd,.passport-specs dd.raw-value{font-size:11px}.passport-source{font-size:8px}.passport-specs > div{padding:8px 6px}.passport-bottom{margin-top:10px;gap:10px}.passport-support{grid-template-columns:1fr}.passport-records .document-section-title{flex-wrap:nowrap;gap:8px;padding:8px 0}.passport-records .document-section-title > span:last-child{display:none}.passport-records .document-section-title h2{font-size:12px}.dispatch-ui #historyModal .machine-card-row > span:first-child{font-size:10px}.dispatch-ui #historyModal .machine-card-row button{width:auto!important}.passport-reference-notice{font-size:9px}.passport-envelope .document-section-title h2{font-size:11px}
   }
 }
+@media screen {
+ #machinePassport [hidden]{display:none!important}
+ #machinePassport .passport-document-head{display:block;padding:24px 0;border:0}
+ #machinePassport .passport-identity{margin-top:20px;border-top:1px solid #deddd6;padding-top:18px}
+ #machinePassport .passport-identity span{font-size:12px}#machinePassport .passport-identity strong{font-size:14px}
+ .passport-area-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 24px;border-bottom:1px solid #deddd6}
+ .passport-area-nav button{background:none!important;color:#202124!important;border:0!important;border-radius:0!important;box-shadow:none!important;border-bottom:4px solid transparent!important;padding:14px 18px!important;font:600 14px Arial!important;min-height:48px}
+ .passport-area-nav button[aria-pressed="true"]{border-bottom-color:#ffc400!important}
+ #machinePassport .passport-technical-layout{display:block}#machinePassport .passport-technical-sheet{border:0;padding:0}
+ #machinePassport .passport-specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 24px}
+ #machinePassport .passport-specs>div{padding:14px 0;border-bottom:1px solid #e3e1d8}
+ #machinePassport .passport-specs dt{font-size:12px}#machinePassport .passport-specs dd{font-size:16px;font-weight:600}
+ #machinePassport .passport-reference-notice{font-size:13px;line-height:1.7;padding:16px 0;background:none;border:0}
+ #machinePassport .document-section-title h2{font-size:20px}#machinePassport .document-section-title a{font-size:13px}
+ #machinePassport .passport-envelope{padding:24px 0;border:0}#machinePassport .passport-envelope .envelope-layout{display:block}
+ #machinePassport .envelope-note{display:none}#machinePassport .envelope-table{font-size:13px}#machinePassport .envelope-table-wrap{overflow:auto}
+ #machinePassport .passport-reference-bar label{font-size:13px}#machinePassport .passport-reference-bar select{min-height:44px;font-size:14px}
+ #machinePassport .passport-source,#machinePassport .technical-note{font-size:12px;line-height:1.7}
+ #machinePassport .passport-source-list{margin:24px 0;padding:18px 0;border-top:1px solid #deddd6;font-size:13px}
+ #machinePassport .passport-source-list summary{cursor:pointer;font-weight:700;min-height:44px}#machinePassport .passport-source-list article{padding:16px 0;border-bottom:1px solid #deddd6}
+ #machinePassport .passport-source-list dl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}#machinePassport .passport-source-list dt{color:#575a5e}#machinePassport .passport-source-list dd{margin:0}
+ #machinePassport .passport-photo-section{max-width:650px}#machinePassport .passport-photo img{height:300px;object-fit:contain}
+ #machinePassport .passport-support{display:block;max-width:700px}#machinePassport .passport-support section{margin-top:24px}
+ #machinePassport .passport-records{padding:0;background:none}#machinePassport .passport-records .document-section-title h2{font-size:20px}
+ #machinePassport .passport-id-label{font-size:18px}
+ @media(max-width:700px){#machinePassport .passport-specs{grid-template-columns:1fr 1fr;gap:0 16px}#machinePassport .passport-specs dd{font-size:14px}#machinePassport .passport-identity{display:grid;grid-template-columns:1fr 1fr}#machinePassport .passport-identity>div{padding:8px 0}.passport-area-nav{gap:0}.passport-area-nav button{font-size:13px!important;padding:12px 8px!important;flex:1}#machinePassport .passport-source-list dl{grid-template-columns:1fr 1fr}#machinePassport .passport-document-head{padding:16px 0}#machinePassport .envelope-table{font-size:12px}#machinePassport .envelope-table th,#machinePassport .envelope-table td{padding:9px 5px}}
+}
+@media screen and (max-width:700px){
+ #machinePassport .envelope-table thead{display:none}#machinePassport .envelope-table tbody{display:block}
+ #machinePassport .envelope-table tr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #deddd6;padding:12px 0;gap:10px}
+ #machinePassport .envelope-table th{grid-column:1/-1;background:none;text-align:left;font-size:14px;padding:6px 0;border:0}
+ #machinePassport .envelope-table td{display:block;font-size:14px;padding:6px 0;border:0}
+ #machinePassport .envelope-table td:before{content:attr(data-label);display:block;font:12px Arial;color:#575a5e;margin-bottom:6px}
+}

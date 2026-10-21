@@ -6,6 +6,8 @@ const root=path.resolve(__dirname,'..');
  try{
   const context=await browser.newContext({serviceWorkers:'block'}),unexpected=[];
   await context.route('**/*',route=>{const request=route.request(),u=new URL(request.url()),file=path.resolve(root,'.'+u.pathname);if(request.method()!=='GET')unexpected.push(request.method()+' '+u.hostname);return u.origin==='http://127.0.0.1:4179'&&request.method()==='GET'&&file.startsWith(root+path.sep)&&fs.existsSync(file)?route.fulfill({path:file}):route.abort();});
+  // Exercise the original dispatch adapter independently; workspace navigation has its own suite.
+  await context.route('**/assets/workspace-ui.js',route=>route.fulfill({body:'',contentType:'text/javascript'}));
   const page=await context.newPage();page.setDefaultTimeout(7000);await page.goto('http://127.0.0.1:4179/index.html');
   const initial=await page.evaluate(()=>{
    firebaseAvailable=false;data=[{id:'d1',vc:'DISPATCH-01',typ:'Test model',rok:'2022',datum:'2026-10-01',umisteni:'Brno'}];faultsData=[{id:'fault-ui',serial:'DISPATCH-01',type:'Test model',date:'2026-10-01',status:'service',description:'Existing fault'}];partsData=[];revizeData=[];
