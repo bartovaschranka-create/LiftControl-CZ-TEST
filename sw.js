@@ -1,11 +1,16 @@
 const CACHE_PREFIX = 'liftcontrol-cz-test-';
-const CACHE_NAME = CACHE_PREFIX + 'isolated-workspaces-v3';
+const CACHE_NAME = CACHE_PREFIX + 'manager-map-2026-10-22-v4';
 const APP_SHELL = [
   './',
   './index.html',
   './assets/test-isolation.js',
   './assets/workspace-ui.js',
   './assets/workspace-ui.css',
+  './assets/manager-map.js',
+  './assets/silhouettes/nuzkova.svg',
+  './assets/silhouettes/kloubova.svg',
+  './assets/silhouettes/teleskopicka.svg',
+  './assets/silhouettes/neznamy.svg',
   './assets/dispatch-ui.js',
   './assets/machine-passport.js',
   './assets/machine-passport.css',

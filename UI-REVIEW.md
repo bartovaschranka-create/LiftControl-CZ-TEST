@@ -1,3 +1,5 @@
+> Historical PR54 review. Current map/silhouette release: MAP-REVIEW.md (22 October 2026).
+
 # UI review — 21 October 2026
 
 PR #54, branch agent/workspace-role-navigation, TEST repository only. PR #53 is already merged in baseline fa32e1d. User approved the isolated visual prototype and then authorized existing functions and descriptions to be connected and pushed to TEST GitHub. Latest user-supplied complete PR54 instruction explicitly authorizes merge and public TEST Pages deployment after isolation verification.

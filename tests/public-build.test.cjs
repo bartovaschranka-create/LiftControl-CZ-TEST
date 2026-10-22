@@ -1,0 +1,24 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {buildPublicTestData}=require('../scripts/build-public-test-data.cjs');
+const {chromium}=require(path.join(process.env.CODEX_NODE_MODULES,'playwright'));
+const root=path.resolve(__dirname,'..'),out=path.resolve(root,'../artifacts/public-build-test');
+const load=file=>{const box={window:{}};vm.runInNewContext(fs.readFileSync(file,'utf8'),box);return box.window};
+const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const originalHash=hash(path.join(root,'revize-machine-db.js')),backupHash=hash(path.join(root,'liftcontrol-backup-data.js'));
+const result=buildPublicTestData(out),source=load(path.join(root,'revize-machine-db.js')),published=load(path.join(out,'revize-machine-db.js')),backup=load(path.join(out,'liftcontrol-backup-data.js'));
+assert.equal(result.references,source.REVIZE_MACHINE_DB.length);assert.equal(published.LIFTCONTROL_PUBLIC_REFERENCE_DATA,true);
+assert.ok(Object.values(backup.LIFTCONTROL_EMBEDDED_BACKUP.collections).every(rows=>rows.length===0));
+assert.ok(published.REVIZE_MACHINE_DB.every(row=>row.referenceOnly&&/^REF-\d+$/.test(row.serial)&&!['owner','place','file','protocol','created','tech','enteredBy','photos','electro'].some(key=>key in row)));
+assert.equal(published.REVIZE_MACHINE_DB[0].workHeight,source.REVIZE_MACHINE_DB[0].workHeight);assert.equal(published.REVIZE_MACHINE_DB[0].capacity,source.REVIZE_MACHINE_DB[0].capacity);
+assert.doesNotMatch(fs.readFileSync(path.join(out,'revize-machine-db.js'),'utf8')+fs.readFileSync(path.join(out,'liftcontrol-backup-data.js'),'utf8'),/firebasestorage|https:\/\/.*token=|customerAddress|technician|enteredBy/);
+assert.equal(hash(path.join(root,'revize-machine-db.js')),originalHash);assert.equal(hash(path.join(root,'liftcontrol-backup-data.js')),backupHash);
+(async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+ const context=await browser.newContext({serviceWorkers:'block'}),mutations=[],errors=[];
+ await context.route('**/*',r=>{const u=new URL(r.request().url()),isPublicData=['/revize-machine-db.js','/liftcontrol-backup-data.js'].includes(u.pathname),file=path.resolve(isPublicData?out:root,'.'+u.pathname);if(r.request().method()!=='GET')mutations.push(u.origin);return u.origin==='http://127.0.0.1:4179'&&file.startsWith((isPublicData?out:root)+path.sep)&&fs.existsSync(file)&&r.request().method()==='GET'?r.fulfill({path:file}):r.abort()});
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4179/index.html');
+ assert.match(await page.locator('.test-isolation-banner').innerText(),/anonymizované technické reference/);
+ const state=await page.evaluate(()=>({protocols:data.length,faults:faultsData.length,plan:scheduleData.length,cloud:firebaseAvailable}));assert.deepEqual(state,{protocols:0,faults:0,plan:0,cloud:false});
+ await page.evaluate(()=>openHistoryModal(window.REVIZE_MACHINE_DB[0].serial));assert.match(await page.locator('.passport-reference-notice').innerText(),/ANONYMIZOVANÁ TECHNICKÁ REFERENCE/);assert.equal(await page.locator('.passport-photo img').count(),0);
+ assert.deepEqual(mutations,[]);assert.deepEqual(errors,[]);
+ console.log('public-build: no actual protocols/photos/worker/customer records; technical facts preserved behind REF IDs; source files unchanged; real app opens anonymized reference read-only with Firebase disabled.');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
