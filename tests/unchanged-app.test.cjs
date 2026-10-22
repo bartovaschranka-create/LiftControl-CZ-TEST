@@ -7,6 +7,7 @@ const additions=['<link rel="stylesheet" href="./assets/machine-passport.css">\n
 additions.push('<script src="./assets/dispatch-ui.js" defer></script>\n');
 additions.push('<script src="./assets/workspace-ui.js" defer></script>\n','<link rel="stylesheet" href="./assets/workspace-ui.css">\n');
 additions.push(...["<meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' data: blob:; form-action 'self'; object-src 'none'\">\n","<script src=\"./assets/test-isolation.js\"></script>\n"]);
+additions.push("<script src=\"./assets/manager-map.js\" defer></script>\n");
 let stripped=current;
 for(const line of additions){assert.equal(stripped.split(line).length,2,'Expected one presentation insertion');stripped=stripped.replace(line,'');}
 assert.equal(stripped,baseline,'Existing app, storage, RZ form and print source must remain exactly unchanged');

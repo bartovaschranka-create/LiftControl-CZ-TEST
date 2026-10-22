@@ -34,6 +34,7 @@ const root=path.resolve(__dirname,'..');
   assert.equal(await page.evaluate(()=>JSON.stringify({records:passportFixture,photos:photoFixtures,storage:{...localStorage}})===beforePassport),true);
   const photos=await page.evaluate(()=>({exact:machinePassportPhoto('TEST','Test model','2020',photoFixtures).record.id,fallback:machinePassportPhoto('MISSING','Test model','2020',photoFixtures),missing:machinePassportPhoto('MISSING','Other model','2020',photoFixtures),unknownYear:machinePassportPhoto('MISSING','Test model','',photoFixtures)}));
   assert.equal(photos.exact,'exact');assert.equal(photos.fallback.record.id,'exact');assert.equal(photos.fallback.illustrative,true);assert.equal(photos.missing,null);assert.equal(photos.unknownYear,null);
+  const mismatches=await page.evaluate(()=>({model:machinePassportPhoto('TEST','Wrong model','2020',photoFixtures),maker:machinePassportPhoto('TEST','Test model','2020',photoFixtures.map(r=>({...r,maker:'Different maker'})),'','Required maker')}));assert.equal(mismatches.model,null);assert.equal(mismatches.maker,null);
   const safety=await page.evaluate(()=>{
    const tied=machinePassportReferences({evidence:[{serial:'A',model:'Variant model',year:'2020'},{serial:'B',model:'Variant model',year:'2021'}]});
    const tiny=machinePassportReferences({evidence:[{serial:'A',model:'Variant model',year:'2020'}]});

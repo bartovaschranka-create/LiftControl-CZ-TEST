@@ -1,0 +1,29 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require(path.join(process.env.CODEX_NODE_MODULES,'playwright'));
+const root=path.resolve(__dirname,'..');
+(async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+ const context=await browser.newContext({serviceWorkers:'block'}),external=[],mutations=[],errors=[];
+ await context.route('**/*',r=>{const u=new URL(r.request().url()),file=path.resolve(root,'.'+u.pathname);if(r.request().method()!=='GET')mutations.push(u.origin);if(u.origin!=='http://127.0.0.1:4179')external.push(u.origin);return u.origin==='http://127.0.0.1:4179'&&file.startsWith(root+path.sep)&&fs.existsSync(file)&&r.request().method()==='GET'?r.fulfill({path:file}):r.abort()});
+ await context.addInitScript(()=>{navigator.geolocation.getCurrentPosition=()=>{throw Error('GPS must never be requested')};navigator.geolocation.watchPosition=()=>{throw Error('GPS must never be watched')}});
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4179/index.html');
+ const before=await page.evaluate(()=>{data=[{id:'privacy',vc:'MAP-UNIT',typ:'Map fixture',enteredBy:'DO_NOT_DISCLOSE_WORKER',umisteni:'DO_NOT_DISCLOSE_WORKPLACE',workerId:'employee-1',datum:'2026-10-22'}];const before=JSON.stringify({data,storage:{...localStorage}});selectWorkspaceMode('manager','terms');return before});
+ const unit=await page.evaluate(()=>{
+  const point={id:'a',name:'Example',street:'Same street 1',postal:'10000',city:'Example',types:['branch'],coordinates:[14,50]};
+  const unique=lcMapCompanies([point,{...point,id:'b',types:['rental']}]);
+  const latest=lcLatestWork([{workerId:'A',place:'First',performedAt:'2026-10-20',createdAt:'2026-10-25'},{workerId:'A',place:'Last',performedAt:'2026-10-21',createdAt:'2026-10-19'},{workerId:'B',place:'Without coordinates',performedAt:'2026-10-22'},{workerName:'Same display name',place:'Unreliable identity',performedAt:'2026-10-23'},{workerId:'A',place:'No work date',createdAt:'2026-10-25'}]);
+  const missing={...point,id:'unknown',street:'',coordinates:null};
+  return {count:LC_COMPANY_LOCATIONS.length,modletice:LC_COMPANY_LOCATIONS.find(r=>r.id==='praha-modletice').types,allSources:LC_COMPANY_LOCATIONS.every(r=>r.source.startsWith('https://www.zeppelin.cz/')&&r.verifiedAt==='2026-10-22'),unique,latest,unknownGroups:lcMapGroups([missing]).length,unknownHTML:renderManagerMap([missing]),types:[machineSilhouetteType({deviceType:'scissor'}),machineSilhouetteType({typ_zarizeni:'articulated'}),machineSilhouetteType({druh:'Teleskopická plošina'}),machineSilhouetteType({model:'GS-123 SCISSOR'}),machineSilhouetteType({deviceType:'telehandler'}),machineSilhouetteType({deviceType:'scissor',typ_zarizeni:'articulated'})]};
+ });
+ assert.equal(unit.count,17);assert.deepEqual(unit.modletice,['branch']);assert.equal(unit.allSources,true);assert.equal(unit.unique.length,1);assert.deepEqual(unit.unique[0].types,['branch','rental']);assert.deepEqual(unit.latest.map(r=>r.place),['Last','Without coordinates']);assert.equal(unit.unknownGroups,0);assert.match(unit.unknownHTML,/Bez zjištěné polohy/);assert.deepEqual(unit.types,['nuzkova','kloubova','teleskopicka','neznamy','neznamy','neznamy']);
+ assert.equal(await page.locator('.lc-map').isVisible(),true);assert.doesNotMatch(await page.locator('.lc-map').innerText(),/DO_NOT_DISCLOSE/);
+ await page.locator('[data-map-group]').first().click();assert.match(await page.locator('.lc-map-detail').innerText(),/Ověřeno/);
+ await page.locator('[data-map-layer="company"]').uncheck();assert.equal(await page.locator('.lc-map-markers').isVisible(),false);await page.locator('[data-map-layer="company"]').check();assert.equal(await page.locator('.lc-map-markers').isVisible(),true);
+ await page.locator('[data-map-layer="work"]').uncheck();assert.equal(await page.locator('.lc-map-work-note').isVisible(),false);await page.locator('[data-map-layer="work"]').check();assert.match(await page.locator('.lc-map-work-note').innerText(),/Bez zjištěné polohy/);
+ await page.locator('.lc-map-list summary').click();await page.locator('[data-map-place="praha-modletice"]').click();assert.match(await page.locator('.lc-map-detail').innerText(),/Lipová 72/);assert.doesNotMatch(await page.locator('.lc-map-detail').innerText(),/Půjčovna/);await page.locator('.lc-map-list summary').click();
+ fs.mkdirSync(path.resolve(root,'../artifacts'),{recursive:true});for(const width of [320,375,390,768,1440]){await page.setViewportSize({width,height:950});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Map overflow '+width);if(width===390||width===1440)await page.screenshot({path:path.resolve(root,'../artifacts/manager-map-'+(width===390?'mobile':'desktop')+'.png'),fullPage:true})}
+ for(const mode of ['technician','inspector']){await page.evaluate(mode=>selectWorkspaceMode(mode),mode);assert.equal(await page.locator('.lc-map:visible').count(),0)}
+ assert.equal(await page.evaluate(()=>JSON.stringify({data,storage:{...localStorage}})),before);assert.deepEqual(mutations,[]);assert.deepEqual(errors,[]);
+ // Vendor fonts/QR libraries from original HTML are aborted. The new map/silhouette modules never fetch external data.
+ const source=fs.readFileSync(path.join(root,'assets/manager-map.js'),'utf8');assert.doesNotMatch(source,/\bfetch\s*\(|XMLHttpRequest|navigator\.geolocation|localStorage|sessionStorage/);
+ console.log('manager-map: 17 sourced sites, company/rental types, duplicate addresses, unknown locations, stable-ID last work projection, no worker disclosure/GPS/network/storage, filters/list, five viewports and explicit silhouette classification passed.');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

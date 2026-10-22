@@ -48,7 +48,7 @@ function workspaceButtons(items){return '<div class="workspace-actions">'+items.
 function showWorkspaceSection(key){
   const search=document.querySelector('.dispatch-header-search');if(search)document.querySelector('body > header .dispatch-tools').before(search);
   const definition=WORKSPACE_MODES[workspaceView.mode];if(!definition || !definition.sections.some(item=>item[0]===key))return;
-  workspaceView.section=key;
+  workspaceView.section=key;document.body.dataset.workspaceCurrentSection=key;
   const host=document.getElementById('workspacePanel'),staging=document.getElementById('workspaceStaging');
   host.querySelectorAll('[data-workspace-reused]').forEach(node=>staging.appendChild(node));host.replaceChildren();
   document.querySelectorAll('[data-workspace-section]').forEach(button=>{const active=button.dataset.workspaceSection===key;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
@@ -60,10 +60,11 @@ function showWorkspaceSection(key){
     const search=document.querySelector('.dispatch-header-search');if(search)document.getElementById('workspaceSearchHost').appendChild(search);
     if(workspaceView.mode==='technician')host.insertAdjacentHTML('beforeend',workspaceButtons([['qr','QR skener'],['newQuarterly','Nová čtvrtletní kontrola']])+workspaceRecentWork());
     reuse('.dispatch-register');
+    const registry=host.querySelector('.dispatch-register');registry.hidden=false;if(!registry.querySelector('#workspaceRegistryFilter'))registry.insertAdjacentHTML('afterbegin','<label class="workspace-registry-filter" for="workspaceRegistryFilter">Filtrovat model, výrobní číslo nebo místo<input id="workspaceRegistryFilter" type="search" autocomplete="off"></label>');renderDispatchRegistry();
     host.querySelectorAll('.document-index').forEach(node=>node.remove());
     if(workspaceView.mode==='technician'){host.querySelector('.dispatch-register').hidden=true;host.insertAdjacentHTML('beforeend','<button type="button" class="workspace-show-registry" data-workspace-registry>Otevřít evidenci strojů →</button>');}
     if(key==='records')host.insertAdjacentHTML('beforeend','<p class="workspace-help">Nová správa kmenových údajů se zde nepřidává. Otevření průkazu využívá existující evidenci.</p>');
-  }else if(key==='terms'){host.innerHTML=workspaceTerms(true);}
+  }else if(key==='terms'){host.innerHTML='<div class="manager-overview-grid"><div>'+renderManagerMap()+'</div><div>'+workspaceTerms(true)+'</div></div><div class="manager-detail-grid">'+workspaceFaults(3)+workspaceRecentWork()+'</div>'+workspaceButtons([['plan','Otevřít původní Plán práce'],['repairHistory','Přehled oprav']]);installManagerMapEvents(host);}
   else if(key==='service')host.innerHTML=workspaceButtons([['faults','Závady / nahlásit závadu'],['repair','Zapsat opravu'],['repairHistory','Historie oprav'],['quarterly','Historie kontrol']]);
   else if(key==='quarterly')host.innerHTML=workspaceButtons([['newQuarterly','Nová čtvrtletní kontrola'],['quarterly','Uložené kontroly a historie']]);
   else if(key==='faults'){
@@ -86,7 +87,7 @@ function renderWorkspaceWelcome(){
   const person=typeof getLastEnteredBy==='function'?getLastEnteredBy():'';
   document.getElementById('workspaceIdentity').textContent=person?'Místně zadaný pracovník: '+person+' · přihlášení není ověřené':'Přihlášený uživatel: ověřené přihlášení není v této verzi dostupné';
   document.getElementById('workspaceToday').textContent=new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('workspaceHomeTerms').innerHTML=workspaceHomeBrief();
+  document.getElementById('workspaceHomeTerms').innerHTML=workspaceHomeOverview();
   renderWorkspaceSummary();
 }
 function workspaceBlock(title,body,action='') {return `<section class="workspace-block"><div class="workspace-block-heading"><h2>${title}</h2>${action}</div>${body}</section>`;}
@@ -98,6 +99,15 @@ function workspaceHomeBrief(){
     ['Poslední práce',(data||[]).length?'Otevřít provedené kontroly a opravy':'V načtené evidenci nejsou kontroly','manager','work']
   ].map(([label,text,mode,section])=>`<button type="button" data-workspace-jump="${section}" data-workspace-target="${mode}"><strong>${label}</strong><span>${escapeHtml(text)}</span><b aria-hidden="true">→</b></button>`).join('')+'</div>';
 }
+function workspaceHomeOverview(){
+  const refs=machinePassportReferences({protocols:data||[],revize:revizeData||[],evidence:window.REVIZE_MACHINE_DB||[]}),machines=new Map();refs.forEach(ref=>{const key=normalizeSerial(ref.serial);if(key&&!machines.has(key))machines.set(key,ref)});
+  const counts=[[window.LIFTCONTROL_PUBLIC_REFERENCE_DATA?'Technické reference':'Evidované stroje',machines.size],['Po termínu',workspaceTermRows().filter(r=>r.due<ymd(new Date())).length],['Otevřené závady',(faultsData||[]).filter(r=>!faultIsRepaired(r)).length],['Uložené kontroly',(data||[]).length]];
+  const strip='<div class="workspace-count-strip">'+counts.map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong></div>`).join('')+'</div>';
+  const today=(scheduleData||[]).filter(r=>r.date===ymd(new Date()));
+  const plan=workspaceBlock('Dnes v plánu',`<div class="workspace-rows">${today.slice(0,3).map(row=>`<div class="workspace-data-row"><strong>${escapeHtml(formatDate(row.date))}</strong><span>Plánovaný úkol</span><span>${escapeHtml(displayPlaceName(row.place||'Místo neuvedeno'))}</span></div>`).join('')||'<p class="workspace-help">Na dnešek nejsou v načtené evidenci plánované úkoly.</p>'}</div>`,'<button type="button" data-workspace-action="plan">Plán práce ↗</button>');
+  const preview=workspaceBlock('Evidence strojů — výběr','<div class="workspace-machine-preview">'+[...machines.values()].slice(0,4).map(ref=>`<div>${machineSilhouette(ref,refs)}<strong>${escapeHtml(ref.model||'Typ neuveden')}<small>${escapeHtml(ref.serial)}</small></strong><span>${escapeHtml(ref.date?formatDate(ref.date):'Datum nedoloženo')}</span><button type="button" data-workspace-machine="${escapeHtml(ref.serial)}">Karta stroje →</button></div>`).join('')+'</div>','<button type="button" data-workspace-jump="machines" data-workspace-target="manager">Zobrazit všechny stroje ↗</button>');
+  return strip+'<div class="workspace-home-grid"><div>'+workspaceTerms(false)+workspaceFaults(3)+'</div><div>'+plan+workspaceRecentWork()+'</div></div>'+preview;
+}
 function workspaceTermRows(){
   const refs=machinePassportReferences({protocols:data || [],revize:revizeData || [],evidence:[]}),seen=new Set();
   return refs.filter(ref=>{const key=normalizeSerial(ref.serial)+'/'+ref.kind;if(!ref.serial||seen.has(key))return false;seen.add(key);return true;}).map(ref=>({...ref,due:ref.record.dalsiKontrola || ref.record.platnost || ref.record.validTo})).filter(ref=>/^\d{4}-\d{2}-\d{2}$/.test(String(ref.due||''))).sort((a,b)=>a.due.localeCompare(b.due));
@@ -105,8 +115,8 @@ function workspaceTermRows(){
 function workspaceTerms(grouped){
   const today=ymd(new Date()),end=ymd(addDays(new Date(),(7-new Date().getDay())%7)),rows=workspaceTermRows();
   const groups=grouped?[['Po termínu',rows.filter(r=>r.due<today)],['Tento týden',rows.filter(r=>r.due>=today&&r.due<=end)],['Později',rows.filter(r=>r.due>end)]]:[['',rows]];
-  const body=groups.map(([label,items])=>`${label?`<h3 class="workspace-term-group">${label} <span>(${items.length})</span></h3>`:''}<div class="workspace-rows">${items.slice(0,grouped?5:4).map(r=>`<div class="workspace-data-row"><strong>${escapeHtml(formatDate(r.due))}</strong><button type="button" data-workspace-machine="${escapeHtml(r.serial)}">${escapeHtml(r.model||'Stroj')}<small>${escapeHtml(r.serial)}</small></button><span>${escapeHtml(r.kind)}</span></div>`).join('')||'<p class="workspace-help">Žádné doložené termíny.</p>'}</div>`).join('');
-  return workspaceBlock('Nejbližší termíny kontrol',body,`<button type="button" data-workspace-action="quarterly">Archiv kontrol ↗</button>`);
+  const body=groups.map(([label,items])=>`${label?`<h3 class="workspace-term-group">${label} <span>(${items.length})</span></h3>`:''}<div class="workspace-rows">${items.slice(0,grouped?(workspaceView.allTerms?items.length:5):4).map(r=>`<div class="workspace-data-row"><strong>${escapeHtml(formatDate(r.due))}</strong><button type="button" data-workspace-machine="${escapeHtml(r.serial)}">${escapeHtml(r.model||'Stroj')}<small>${escapeHtml(r.serial)}</small></button><span>${escapeHtml(r.kind)}</span></div>`).join('')||'<p class="workspace-help">Žádné doložené termíny.</p>'}</div>`).join('');
+  return workspaceBlock('Nejbližší termíny kontrol',body,grouped?'<button type="button" data-workspace-all-terms>'+ (workspaceView.allTerms?'Zkrátit přehled':'Zobrazit všechny termíny')+'</button>':'<button type="button" data-workspace-jump="terms" data-workspace-target="manager">Zobrazit všechny ↗</button>');
 }
 function workspaceFaults(limit){
   const rows=(faultsData||[]).filter(r=>!faultIsRepaired(r));
@@ -119,7 +129,7 @@ function workspaceRecentWork(){
 function renderWorkspaceSummary(){
   const today=ymd(new Date()),end=ymd(addDays(new Date(),(7-new Date().getDay())%7)),terms=workspaceTermRows();
   const count=new Set(machinePassportReferences({protocols:data||[],revize:revizeData||[],evidence:window.REVIZE_MACHINE_DB||[]}).map(r=>normalizeSerial(r.serial)).filter(Boolean)).size;
-  const html=workspaceBlock('Rychlý přehled','<div class="workspace-stats">'+[['Strojů v evidenci',count],['Po termínu',terms.filter(r=>r.due<today).length],['Tento týden',terms.filter(r=>r.due>=today&&r.due<=end).length],['Uložených kontrol',(data||[]).length]].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong></div>`).join('')+'</div>');
+  const html=workspaceBlock('Rychlý přehled','<div class="workspace-stats">'+[[window.LIFTCONTROL_PUBLIC_REFERENCE_DATA?'Technické reference':'Strojů v evidenci',count],['Po termínu',terms.filter(r=>r.due<today).length],['Tento týden',terms.filter(r=>r.due>=today&&r.due<=end).length],['Uložených kontrol',(data||[]).length]].map(([label,n])=>`<div><span>${label}</span><strong>${n}</strong></div>`).join('')+'</div>');
   document.querySelectorAll('.workspace-summary').forEach(node=>node.innerHTML=html);
 }
 function updateWorkspaceBackLink(){
@@ -143,6 +153,7 @@ function installWorkspaceNavigation(){
   const back=document.createElement('div');back.id='workspaceBack';back.hidden=true;back.innerHTML='<button type="button">← Zpět do pracovního prostředí</button>';context.after(back);back.querySelector('button').addEventListener('click',()=>selectWorkspaceMode(workspaceView.mode==='home'?workspaceView.lastMode:workspaceView.mode,workspaceView.section));
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-mode],button[data-workspace-section],button[data-workspace-action]');if(!button)return;if(button.dataset.workspaceMode)selectWorkspaceMode(button.dataset.workspaceMode);else if(button.dataset.workspaceSection)showWorkspaceSection(button.dataset.workspaceSection);else workspaceOriginalAction(button.dataset.workspaceAction);});
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-machine]');if(button)openHistoryModal(button.dataset.workspaceMachine);});
+  document.addEventListener('click',event=>{if(event.target.closest('[data-workspace-all-terms]')){workspaceView.allTerms=!workspaceView.allTerms;showWorkspaceSection('terms');}});
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-registry]');if(button){document.querySelector('#workspacePanel .dispatch-register').hidden=false;button.hidden=true;}});
   document.addEventListener('click',event=>{const button=event.target.closest('button[data-workspace-jump]');if(button)selectWorkspaceMode(button.dataset.workspaceTarget,button.dataset.workspaceJump);});
   document.getElementById('workspaceResume').addEventListener('click',workspaceResume);
